@@ -1,4 +1,4 @@
-[![](../static/img/logo.png?_st=20200409173604)](/)
+[![](../static/img/logo.png?_st=20200410144612)](/)
 
   * [ 入门指引 ](./#README)
   * [ 做市商项目 ](./#market)
@@ -263,7 +263,7 @@
       * [ 指数K线 ](./#Index-candel)
     * [ WebsocketAPI 错误码 ](./#swap_ws-error_code)
   * [ 更新日志 ](./#change-change)
-    * [ 2020-04-05 ](./#change-20200430)
+    * [ 2020-04-10 ](./#change-20200430)
     * [ 2020-03-30 ](./#change-20200331)
     * [ 2020-02-29 ](./#change-20200229)
     * [ 2019-12-31 ](./#change-20191210)
@@ -13046,15 +13046,15 @@ symbol | String | 交易所币对名称，如`BTC-USD`
 
 获取系统维护的状态。
 
-##### 限速规则：1次/10s
+##### 限速规则：1次/5s
 
 ##### HTTP请求
 
-`GET /api/system/v3/maintenance`
+`GET /api/system/v3/status`
 
 ##### 签名请求示例
 
-`GET /api/system/v3/maintenance`
+`GET/api/system/v3/status?status=2`
 
 ##### 请求参数
 
@@ -13080,13 +13080,22 @@ product_type | String | 产品类型 0 :Websocket ; 1:币币 ; 2:交割 ; 3:永�
     
     [
         {
-            "title": "Temporary upgrade of options system",
-            "href": "https://www.okex.com/support/hc/en-us/articles/360041487492",
+            "title": "Spot System Optimization",
+            "href": "",
             "product_type": "1",
-            "status": "1",
-            "start_time": "2020-04-04T10:17:38.000Z",
-            "end_time": "2020-04-04T10:17:38.000Z"
+            "status": "2",
+            "start_time": "2020-04-10T04:30:00.000Z",
+            "end_time": "2020-04-10T04:40:00.000Z"
+        },
+        {
+            "title": "Spot System Optimization",
+            "href": "",
+            "product_type": "1",
+            "status": "2",
+            "start_time": "2020-04-10T02:30:00.000Z",
+            "end_time": "2020-04-10T02:40:00.000Z"
         }
+    
     ]
     
 
@@ -17984,7 +17993,7 @@ Url pass 无效 | Url path error | 30000
 
 更新日志
 
-### 2020-04-05
+### 2020-04-10
 
 以下 2020年4月已上线
 
@@ -17996,6 +18005,12 @@ Url pass 无效 | Url path error | 30000
 具体接口：
 
 `POST/api/futures/v3/position/margin`
+
+  1. 获取系统维护状态接口文档修改：功能兼容
+
+当前为：GET /api/system/v3/maintenance
+
+修改后：GET /api/system/v3/status
 
 ### 2020-03-30
 
