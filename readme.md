@@ -1,4 +1,4 @@
-[![](../static/img/logo.png?_st=20200422164514)](/)
+[![](../static/img/logo.png?_st=20200427020422)](/)
 
   * [ 入门指引 ](./#README)
   * [ 做市商项目 ](./#market)
@@ -295,8 +295,8 @@
     * [ 2019-03-27 ](./#change-20190327)
     * [ 2019-01-21 ](./#change-20190121)
   * [ 常见问题 ](./#question)
-  * [ 创建我的APIkey ](./#apikey)
-  * [ OpenID开发文档说明 ](openAPI.html)
+  * [ 创建我的APIKey ](./#apikey)
+  * [ OpenID开发文档说明 ](OpenAPI.html)
   *   * [ 问题反馈 ](./#support-README)
 
 #
@@ -329,7 +329,7 @@ ______
 key](account/users/myApi)，然后根据此文档详情进行开发交易，使用过程中如有问题或者建议请及时反馈。
 [可参考SDK(点击跳转SDK详情页面)](https://github.com/okex/V3-Open-API-SDK)
 
-##### **请 使用大陆以外的ip地址访问OKEx的API，强烈建议使用香港阿里云服务器。**
+##### **请 使用大陆以外的IP地址访问OKEx的API，强烈建议使用香港阿里云服务器。**
 
 #### 接口调用方式说明
 
@@ -395,31 +395,31 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 
 ### APIKey问题
 
-**1. 如何申请APIKEY？**
+**1. 如何申请APIKey？**
 
 申请API网址 <https://www.okex.com/account/users/myApi>
 
 在网页上申请成功后，点击"查看"，通过二次验证后，就可以获取到。
 
-**2.APIKEY 的passphrase忘记了可以找回吗？**
+**2.APIKey 的passphrase忘记了可以找回吗？**
 
-无法找回，只能在页面重新申请APIKEY。
+无法找回，只能在页面重新申请APIKey。
 
-**3.APIKEY 授权第三方有风险吗？**
+**3.APIKey 授权第三方有风险吗？**
 
-apikey授权第三方有一定的风险，为了账户资产安全建议自己保存。
+APIKey授权第三方有一定的风险，为了账户资产安全建议自己保存。
 
-**4. 没有绑定手机或者谷歌，能申请APIKEY吗？**
+**4. 没有绑定手机或者谷歌，能申请APIKey吗？**
 
-不可以，申请APIKEY必须绑定手机或者谷歌。
+不可以，申请APIKey必须绑定手机或者谷歌。
 
-**5.V3 创建APIKEY的时候，必须绑定IP地址才可以创建吗**
+**5.V3 创建APIKey的时候，必须绑定IP地址才可以创建吗**
 
-不是必须，申请APIKEY时绑定IP这个选项是非必填的，但为了增加用户账户安全性，建议绑定ip地址。
+不是必须，申请APIKey时绑定IP这个选项是非必填的，但为了增加用户账户安全性，建议绑定IP地址。
 
-**6. 同一个账户里的不同的APIKEY，返回的账户信息数据，会不同吗？**
+**6. 同一个账户里的不同的APIKey，返回的账户信息数据，会不同吗？**
 
-同一个账户下不同APIKEY数据是相同的。
+同一个账户下不同APIKey数据是相同的。
 
 **7. 一个账户可以申请多少个Api Key？**
 
@@ -434,13 +434,13 @@ Key可对应设置只读、交易两种权限。
 
 3）提币权限：提币权限用于提币接口操作。
 
-**8. 申请APIKEY时如何填写**
+**8. 申请APIKey时如何填写**
 
 根据网页端提示填写，备注可根据用户需求随意填写；Pass密码要记住，调用API接口会用到；绑定ip为非必填项，为了账户安全建议填写；API权限可根据用户需求勾选。
 
 **9.passphrase 是登录密码还是资金密码**
 
-passphrase是APIKEY的密码，查看APIKEY和调用API接口都需要输入这个密码；需要注意的是，passphrase忘记之后是无法找回的，需要重新创建APIKEY。
+passphrase是APIKey的密码，查看APIKey和调用API接口都需要输入这个密码；需要注意的是，passphrase忘记之后是无法找回的，需要重新创建APIKey。
 
 ### 验签问题
 
@@ -518,16 +518,16 @@ Type，并声明为：application/json.
 
 **1.www.okex.me 可以调v3的接口吗?**
 
-OpenApi请求地址的域名是www.okex.com，www.okex.me的域名是提供给国内用户免费且方便登录的域名，两者都可以使用。
+OpenAPI请求地址的域名是www.okex.com，www.okex.me的域名是提供给国内用户免费且方便登录的域名，两者都可以使用。
 
 **2.OKEx 站wss地址是什么？**
 
 wss://real.okex.com:8443/ws/v3
 
-**3.<https://www.okex.com> 与
-[https://aws.okex.com有什么区别？](https://aws.okex.com有什么区别？)**
+**3.<https://www.okex.com> 与 <https://aws.okex.com> 有什么区别？**
 
-[https://aws.okex.com域名是对使用aws云服务的用户做了链路延迟优化，请求时延更低。另外，香港阿里云服务器用户建议使用https://www.okex.com](https://aws.okex.com域名是对使用aws云服务的用户做了链路延迟优化，请求时延更低。另外，香港阿里云服务器用户建议使用https://www.okex.com)
+<https://aws.okex.com> 域名是对使用aws云服务的用户做了链路延迟优化，请求时延更低。另外，香港阿里云服务器用户建议使用
+<https://www.okex.com>
 
 ### 限速问题
 
@@ -539,7 +539,7 @@ wss://real.okex.com:8443/ws/v3
 
 个人数据是根据UserID限制的，公共数据是根据ip限制，需要注意的是，若用户请求公共数据时传入有效的个人信息就根据UserID限制。
 
-**3.Http 状态码429是怎样造成的？**
+**3.HTTP 状态码429是怎样造成的？**
 
 请求接口超过访问频率限制，建议降低访问频率。
 
@@ -554,9 +554,9 @@ wss://real.okex.com:8443/ws/v3
 关于限速，
 
 1）rest接口，公共数据根据ip限速，
-私有数据根据userID限速，；websocket所有频道，都是根据ip来限制的（公共数据传个人信息时就根据userid去限制）；
+私有数据根据UserID限速，；websocket所有频道，都是根据ip来限制的（公共数据传个人信息时就根据UserID去限制）；
 
-2）每个子账户是独立的useriID ,请求次数与母账户是相互独立，不会累加的；
+2）每个子账户是独立的UserID ,请求次数与母账户是相互独立，不会累加的；
 
 3）超频不会封IP的，降低访问频率就可以
 
@@ -578,7 +578,7 @@ OKEx账户分为资金账户、交易账户和其他账户，其中交易账户�
 
 **4. 子账户的币，如何提到外部地址？**
 
-需要先划转到子账户的资金账户，然后通过母账户的apikey调用API资金划转接口，划转到母账户的资金账户，从母账户资金账户进行提币操作。
+需要先划转到子账户的资金账户，然后通过母账户的APIKey调用API资金划转接口，划转到母账户的资金账户，从母账户资金账户进行提币操作。
 
 **5. 子账号和母账户的区别是什么？**
 
@@ -600,7 +600,7 @@ OKEx账户分为资金账户、交易账户和其他账户，其中交易账户�
 
 **8. 子账户的币如何提到外部地址？**
 
-需要先划转到子账户的资金账户，然后通过母账户的apikey从资金账户通过资金划转接口，划转到母账户的资金账户，从母账户资金账户提币出去，
+需要先划转到子账户的资金账户，然后通过母账户的APIKey从资金账户通过资金划转接口，划转到母账户的资金账户，从母账户资金账户提币出去，
 
 **9.API 提币地址必须是认证地址吗？**
 
@@ -646,8 +646,7 @@ WebSocket断连常见原因有：
 
 客户端服务器如在中国大陆境内，连接的稳定性很难保证，建议使用香港阿里云服务器进行访问。
 
-建议用户使用
-[https://www.okex.com或https://aws.okex.com域名。](https://www.okex.com或https://aws.okex.com域名。)
+建议用户使用 <https://www.okex.com> 或 <https://aws.okex.com> 域名。
 
 **5.WebSocket 最多可以订阅多少个币对呢？是否有限制?**
 
@@ -698,7 +697,7 @@ WebSocket断连常见原因有：
 
 2）也可以用"获取某个ticker信息"接口获取，会直接返回最新成交价；
 
-如果要更即时地获取最新成交价，建议使用方法A获取。
+如果要更及时地获取最新成交价，建议使用方法1获取。
 
 **10.ticker 接口中的24小时成交量会出现负增长吗？**
 
@@ -1132,7 +1131,7 @@ WS 地址：wss://real.okex.com:8443/ws/v3
 
 所有请求基于Https协议，请求头信息中Content-Type需要统一设置为:'application/json'
 
-请使用大陆以外的ip地址访问OKEx的API，强烈建议使用香港阿里云服务器。
+请使用大陆以外的IP地址访问OKEx的API，强烈建议使用香港阿里云服务器。
 
 如果你的服务器在AWS,可以尝试使用我们AWS的网关，有可能会获得更快的速度。
 
@@ -2055,8 +2054,8 @@ epoch | UTC时区Unix时间戳的十进制秒数格式
 
 测试网站逐渐会开放的业务线为：币币交易，币币杠杆，永续合约。
 
-测试网站的API交易功能所需的APIkey，需要在[这里](https://testnet.okex.com/account/my-
-api)进行创建APIkey，测试网创建APIkey的流程与OKEx一致。
+测试网站的API交易功能所需的APIKey，需要在[这里](https://testnet.okex.com/account/my-
+api)进行创建APIKey，测试网创建APIKey的流程与OKEx一致。
 
 测试网站域名如下：
 
@@ -2068,7 +2067,7 @@ api)进行创建APIkey，测试网创建APIkey的流程与OKEx一致。
 
 以下步骤开启API模拟交易：
 
-**注 册okex账户-->登录测试网-->领取测试币-->创建测试网APIkey---->开始模拟交易**
+**注 册okex账户-->登录测试网-->领取测试币-->创建测试网APIKey---->开始模拟交易**
 
 测试网站，用户可以通过API请求交割合约和期权的所有接口，包括基本合约信息、市场行情信息、账户余额信息、持仓信息、订单信息等，详细接口功能请查看测试网的
 **[API文档](https://testnet.okex.com/docs)**。
@@ -2234,7 +2233,9 @@ result | Boolean | 划转结果。若是划转失败，将给出错误码提示
   
 ##### 解释说明
 
-`from`或`to`指定为`3`或`5`时，`instrument_id`为必填项。
+当from为3或5或9时，instrument_id为必填参数
+
+当to为3或5或9时，to_instrument_id为必填参数
 
 ##### 返回示例
 
@@ -6278,7 +6279,7 @@ timestamp | String | 返回请求时间
 
 获取账户所有合约的持仓信息。请求此接口，会在数据库遍历所有币对下的持仓数据，有大量的性能消耗,请求频率较低。建议用户传合约ID获取持仓信息。
 
-##### 限速规则：5次/2s （根据userid限速）
+##### 限速规则：5次/2s （根据UserID限速）
 
 ##### HTTP请求
 
@@ -6696,7 +6697,7 @@ last | String | 最新成交价
 
 获取合约账户所有币种的账户信息。请求此接口，会在数据库遍历所有币对下的账户数据，有大量的性能消耗,请求频率较低。建议用户传币种获取账户信息信息。
 
-##### 限速规则：1次/10s （根据userid限速）
+##### 限速规则：1次/10s （根据UserID限速）
 
 ##### HTTP请求
 
@@ -7843,6 +7844,10 @@ created_at | String | 订单成交时间
 exec_type | String | 流动性方向（`T` 或 `M`）  
 fee | String | 手续费  
 side | String | 订单方向（`buy` 或 `sell`）  
+type | String | `1`:开多  
+`2`:开空  
+`3`:平多  
+`4`:平空  
   
 ##### 解释说明
 
@@ -7873,6 +7878,7 @@ after`都会有这样的第一笔`trade_id`，以便将来的请求使用`OK-aft
             "created_at":"2019-03-21T04:41:58.0Z",
             "exec_type":"T",
             "fee":"-0.00081257",
+            "type":"1",
             "side":"buy"
         }
     ]
@@ -7882,7 +7888,7 @@ after`都会有这样的第一笔`trade_id`，以便将来的请求使用`OK-aft
 
 设置合约币种账户模式，注意：当前有仓位或者有挂单时禁止切换账户模式。
 
-##### 限速规则：5次/2s （根据underlying，分别限速）
+##### 限速规则：5次/2s
 
 ##### HTTP请求
 
@@ -8407,7 +8413,7 @@ timestamp | String | 数据返回时间
 ##### 请求示例
 
 `POST/api/futures/v3/position/margin{"instrument_id":"BTC-
-USDT-200626","direction":"long,"amount":"1","type":"1"}`
+USDT-200626","direction":"long","amount":"1","type":"1"}`
 
 ##### 请求参数
 
@@ -9853,7 +9859,7 @@ timestamp | String | 账单创建时间
 instrument_id | String | 合约ID  
 currency | String | 币种，如：`btc`  
 details | String |
-如果`type`是`trade`或者`fee`，则会有该`details`字段将包含`order`，`instrument`信息,如果`type`是`transfer`，则会有该`details`字段将包含`from`，`to`信息  
+如果`type`是`trade`，则会有该`details`字段将包含`order`，`instrument`信息,如果`type`是`transfer`，则会有该`details`字段将包含`from`，`to`信息  
 order_id | String | 订单的ID  
 from | String | 转出账户  
 `1`:币币账户  
@@ -10688,7 +10694,6 @@ order_type | String | `1`：止盈止损
 algo_id | String | 订单ID，下单失败时，此字段值为`-1`  
 error_code | String | 错误码，下单成功时为0，下单失败时会显示相应错误码  
 error_message | String | 错误信息，下单成功时为空，下单失败时会显示错误信息  
-algo_type | String | 1:限价 2:市场价；  
   
 ##### 返回示例
 
@@ -13724,9 +13729,9 @@ api 校验失败 | 30010 | 401
 无效的sign | 30013 | 401  
 请求太频繁 | 30014 | 429  
 请求头"OK_ACCESS_PASSPHRASE"错误 | 30015 | 400  
-您使用的是v1的apiKey，请调用v1接口。若您希望调用v3接口，请注册v3的apiKey。 | 30016 | 400  
-apikey所属broker ID不匹配 | 30017 | 400  
-apikey所属域名不匹配 | 30018 | 400  
+您使用的是v1的APIKey，请调用v1接口。若您希望调用v3接口，请注册v3的APIKey。 | 30016 | 400  
+APIKey所属broker ID不匹配 | 30017 | 400  
+APIKey所属域名不匹配 | 30018 | 400  
 接口已下线或无法使用 | 30019 | 400  
 body 不能为空 | 30020 | 400  
 非法的json数据 | 30021 | 400  
@@ -13736,13 +13741,13 @@ Api已被冻结，请联系客服处理 | 30022 | 401
 {0}参数类型错误（各个业务接口返回各个接口的参数） | 30025 | 400  
 用户请求频率过快，超过该接口允许的限额（调用时超过频率限制） | 30026 | 429  
 登录失败（操作了别人的订单） | 30027 | 401  
-非本人操作（Userid错误等） | 30028 | 400  
+非本人操作（UserID错误等） | 30028 | 400  
 用户被冻结 | 30029 | 400  
 请求接口失败，请您重试（请求接口失败，请您重试） | 30030 | 400  
 币种不存在 | 30031 | 400  
 币对不存在 | 30032 | 400  
-券商域名不存在（验证apikey所属交易所，为空，报这个错误） | 30033 | 400  
-券商ID不存在（验证apikey所属交易所ID，为空，报这个错误） | 30034 | 400  
+券商域名不存在（验证APIKey所属交易所，为空，报这个错误） | 30033 | 400  
+券商ID不存在（验证APIKey所属交易所ID，为空，报这个错误） | 30034 | 400  
 该网站暂不支持交易（该交易所请求，交易时，如果该交易已关闭，则提示报这个错误） | 30035 | 400  
 查询接口时，没有相应数据可以返回（各个接口返回各个接口的内容） | 30036 | 400  
 接口已下线或无法使用 | 30037 | 400  
@@ -14240,7 +14245,7 @@ response:
     "7L+zFQ+CEgGu5rzCj4+BdV2/uUHGqddA9pI6ztsRRPs="]}
     
 
-**api_key** :为用户申请的APIKEY
+**api_key** :为用户申请的APIKey
 
 **passphrase** :为申请v3 api时所填写
 
@@ -15356,7 +15361,7 @@ response:
     "7L+zFQ+CEgGu5rzCj4+BdV2/uUHGqddA9pI6ztsRRPs="]}
     
 
-**api_key** :为用户申请的APIKEY
+**api_key** :为用户申请的APIKey
 
 **passphrase** :为申请v3 api时所填写
 
@@ -16758,7 +16763,7 @@ response:
     "7L+zFQ+CEgGu5rzCj4+BdV2/uUHGqddA9pI6ztsRRPs="]}
     
 
-**api_key** :为用户申请的APIKEY
+**api_key** :为用户申请的APIKey
 
 **passphrase** :为申请v3 api时所填写
 
@@ -18751,7 +18756,7 @@ last_fill_id | String | 最新成交ID (如果没有推0)。和trade 频道推�
 
 测试网站逐渐会开放的业务线为：币币交易，币币杠杆，永续合约。
 
-测试网站的API交易功能所需的APIkey，需要在这里进行创建APIkey，测试网创建APIkey的流程与OKEx一致。
+测试网站的API交易功能所需的APIKey，需要在这里进行创建APIKey，测试网创建APIKey的流程与OKEx一致。
 
 测试网站域名如下：
 
@@ -18763,7 +18768,7 @@ Websocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181
 
 以下步骤开启API模拟交易：
 
-注册okex账户-->登录测试网-->领取测试币-->创建测试网APIkey---->开始模拟交易
+注册okex账户-->登录测试网-->领取测试币-->创建测试网APIKey---->开始模拟交易
 
 测试网站，用户可以通过API请求交割合约和期权的所有接口，包括基本合约信息、市场行情信息、账户余额信息、持仓信息、订单信息等，详细接口功能请查看测试网的API文档。  
 
@@ -20137,7 +20142,7 @@ swap/order
 
 具体新增的3个错误码描述如下：
 
-错误提示 | 错误码 | http状态码  
+错误提示 | 错误码 | HTTP状态码  
 ---|---|---  
 接口已下线或无法使用 | 30019 | 400  
 非法的json数据 | 30021 | 400  
@@ -20250,44 +20255,44 @@ futures/candle
 
 spot/candle
 
-### **一 、APIKEY相关问题**
+### **一 、APIKey相关问题**
 
-1.如何申请APIKEY？
+1.如何申请APIKey？
 
 申请API网址 <https://www.okex.com/account/users/myApi>
 在网页上申请成功后，点击"查看"，通过二次验证后，就可以获取到。
 
-2.APIKEY的passphrase忘记了可以找回吗？
+2.APIKey的passphrase忘记了可以找回吗？
 
-无法找回，只能在页面重新申请APIKEY。
+无法找回，只能在页面重新申请APIKey。
 
-3.APIKEY授权第三方有风险吗？
+3.APIKey授权第三方有风险吗？
 
-apikey授权第三方有一定的风险，为了账户资产安全建议自己保存。
+APIKey授权第三方有一定的风险，为了账户资产安全建议自己保存。
 
-4.没有绑定手机或者谷歌，能申请APIKEY吗？
+4.没有绑定手机或者谷歌，能申请APIKey吗？
 
-不可以，申请APIKEY必须绑定手机或者谷歌。
+不可以，申请APIKey必须绑定手机或者谷歌。
 
-5.V3创建APIKEY的时候，必须绑定IP地址才可以创建吗
+5.V3创建APIKey的时候，必须绑定IP地址才可以创建吗
 
-不是必须，申请APIKEY时绑定IP这个选项是非必填的，但为了增加用户账户安全性，建议绑定ip地址。
+不是必须，申请APIKey时绑定IP这个选项是非必填的，但为了增加用户账户安全性，建议绑定IP地址。
 
-6.同一个账户里的不同的APIKEY，返回的账户信息数据，会不同吗？
+6.同一个账户里的不同的APIKey，返回的账户信息数据，会不同吗？
 
-同一个账户下不同APIKEY数据是相同的。
+同一个账户下不同APIKey数据是相同的。
 
-7.一个账户最多可以能申请多少个APIKEY
+7.一个账户最多可以能申请多少个APIKey
 
-一个账户最多申请50个APIKEY。
+一个账户最多申请50个APIKey。
 
-8.申请APIKEY时如何填写
+8.申请APIKey时如何填写
 
 根据网页端提示填写，备注可根据用户需求随意填写；Pass密码要记住，调用API接口会用到；绑定ip为非必填项，为了账户安全建议填写；API权限可根据用户需求勾选。
 
 9.passphrase是登录密码还是资金密码
 
-passphrase是APIKEY的密码，查看APIKEY和调用API接口都需要输入这个密码；需要注意的是，passphrase忘记之后是无法找回的，需要重新创建APIKEY。
+passphrase是APIKey的密码，查看APIKey和调用API接口都需要输入这个密码；需要注意的是，passphrase忘记之后是无法找回的，需要重新创建APIKey。
 
 10.WebSocket最多可以订阅多少个币对呢？是否有限制?
 
@@ -20325,7 +20330,7 @@ USD-190628?state=2&before2512669605501952&limit=20（返回合约order_id=251266
 
 5.子账户的币，如何提到外部地址？
 
-需要先划转到子账户的资金账户，然后通过母账户的apikey调用API资金划转接口，划转到母账户的资金账户，从母账户资金账户进行提币操作。
+需要先划转到子账户的资金账户，然后通过母账户的APIKey调用API资金划转接口，划转到母账户的资金账户，从母账户资金账户进行提币操作。
 
 6.API每秒调用频率有限制吗？
 
@@ -20357,7 +20362,7 @@ UTC 0时时间格式。
 
 13.www.okex.me可以调v3的接口吗?
 
-OpenApi请求地址的域名是www.okex.com，www.okex.me的域名是提供给国内用户免费且方便登录的域名，两者都可以使用。
+OpenAPI请求地址的域名是www.okex.com，www.okex.me的域名是提供给国内用户免费且方便登录的域名，两者都可以使用。
 
 14.API提币地址必须是认证地址吗？
 
@@ -20435,9 +20440,9 @@ API合约下单的size是以张为单位，必须填写大于或等于1的整数
 
 没有开过仓的币种，全部账户信息接口拿不到，因为这个接口目前没有初始化信息。
 
-### 创建我的APIkey
+### 创建我的APIKey
 
-[创建我的APIkey(点击跳转创建APIkey页面)](account/users/myApi)
+[创建我的APIKey(点击跳转创建APIKey页面)](account/users/myApi)
 
 ### 问题反馈
 
