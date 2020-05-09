@@ -1,4 +1,4 @@
-[![](../static/img/logo.png?_st=20200427020422)](/)
+[![](../static/img/logo.png?_st=20200510000605)](/)
 
   * [ 入门指引 ](./#README)
   * [ 做市商项目 ](./#market)
@@ -192,7 +192,7 @@
     * [ 交割合约错误码 ](./#error-futures)
     * [ 永续错误码 ](./#error-swap)
     * [ 期权合约错误码 ](./#error-option)
-  * [ WebsocketAPI ](./#swap_ws-README)
+  * [ WebSocketAPI ](./#swap_ws-README)
     * [ 现货 ](./#spot_ws-all)
       * [ 概述 ](./#spot_ws-general)
       * [ 指令格式 ](./#spot_ws-format)
@@ -273,7 +273,7 @@
     * [ WS公共指数频道 ](./#Index-README)
       * [ 指数行情 ](./#Index-ticker)
       * [ 指数K线 ](./#Index-candel)
-    * [ WebsocketAPI 错误码 ](./#swap_ws-error_code)
+    * [ WebSocketAPI 错误码 ](./#swap_ws-error_code)
   * [ 更新日志 ](./#change-change)
     * [ 2020-04-22 ](./#change-20200430)
     * [ 2020-03-30 ](./#change-20200331)
@@ -294,7 +294,6 @@
     * [ 2019-04-12 ](./#change-20190412)
     * [ 2019-03-27 ](./#change-20190327)
     * [ 2019-01-21 ](./#change-20190121)
-  * [ 常见问题 ](./#question)
   * [ 创建我的APIKey ](./#apikey)
   * [ OpenID开发文档说明 ](OpenAPI.html)
   *   * [ 问题反馈 ](./#support-README)
@@ -321,12 +320,12 @@ ______
 此文档为用户提供了一整套简单而又强大的开发工具，旨在帮助用户快速、高效地将交易功能整合到自己的应用当中。  
 接口是提供服务的基础，API分为账户、交易和行情三类。开发者在网站创建账号后，可以根据自身需求建立不同权限的API，并利用API进行自动交易或者提现。  
 账户和交易API需要身份验证，提供下单、撤单，查询订单和帐户信息等功能。行情API提供市场的行情数据，所有行情接口都是公开的。
-如果api返回值里出现文档上没有的字段，则意味着这些字段即将被弃用，请使用文档上的字段。
+如果API返回值里出现文档上没有的字段，则意味着这些字段即将被弃用，请使用文档上的字段。
 
 #### 使用流程
 
-步骤：开发者如需使用API ，请先申请v3API key等信息 [点击申请API
-key](account/users/myApi)，然后根据此文档详情进行开发交易，使用过程中如有问题或者建议请及时反馈。
+步骤：开发者如需使用API ，请先申请V3APIKey等信息
+[点击申请APIKey](account/users/myApi)，然后根据此文档详情进行开发交易，使用过程中如有问题或者建议请及时反馈。
 [可参考SDK(点击跳转SDK详情页面)](https://github.com/okex/V3-Open-API-SDK)
 
 ##### **请 使用大陆以外的IP地址访问OKEx的API，强烈建议使用香港阿里云服务器。**
@@ -335,14 +334,14 @@ key](account/users/myApi)，然后根据此文档详情进行开发交易，使�
 
 为用户提供两种调用接口的方式，开发者可根据自己的使用场景和偏好选择适合自己的方式来查询行情、进行交易或提现。
 
-##### REST API
+##### Rest API
 
 REST，即Representational State
 Transfer的缩写，是目前最流行的一种互联网软件架构。它结构清晰、符合标准、易于理解、扩展方便，正得到越来越多网站的采用。其优点如下：
 
   * 在RESTful架构中，每一个URL代表一种资源；
   * 客户端和服务器之间，传递这种资源的某种表现层；
-  * 建议开发者使用REST API进行币币交易或者资产提现等操作;
+  * 建议开发者使用Rest API进行币币交易或者资产提现等操作;
   * 客户端通过四个HTTP指令，对服务器端资源进行操作，实现"表现层状态转化"；
 
 **HTTP/2 支持**  
@@ -375,7 +374,7 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 
 3、提供其他交易平台maker交易量截图证明（比如30天内成交量，或者VIP等级等）；
 
-**邮 件里需注明所申請的做市商类别 (可多选):**
+**邮 件里需注明所申请的做市商类别 (可多选):**
 
 • OKEx 现货做市商申请
 
@@ -391,7 +390,7 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 
 ### 常见问题
 
-**若 以下内容任未帮助到您，可加入官方微信交流群，请添加微信号：ApiSupport 备注：API+姓名+ok账号。**
+**若 以下内容仍未帮助到您，可加入官方微信交流群，请添加微信号：ApiSupport 备注：API+姓名+ok账号。**
 
 ### APIKey问题
 
@@ -409,9 +408,9 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 
 APIKey授权第三方有一定的风险，为了账户资产安全建议自己保存。
 
-**4. 没有绑定手机或者谷歌，能申请APIKey吗？**
+**4. 没有绑定手机或者谷歌验证器，能申请APIKey吗？**
 
-不可以，申请APIKey必须绑定手机或者谷歌。
+不可以，申请APIKey必须绑定手机或者谷歌验证器。
 
 **5.V3 创建APIKey的时候，必须绑定IP地址才可以创建吗**
 
@@ -421,10 +420,9 @@ APIKey授权第三方有一定的风险，为了账户资产安全建议自己�
 
 同一个账户下不同APIKey数据是相同的。
 
-**7. 一个账户可以申请多少个Api Key？**
+**7. 一个账户可以申请多少个APIKey？**
 
-答：每个母账户可创建50组Api Key，每个Api Key可对应设置只读、交易、提币三种权限。另外，每个子用户可创建50组Api Key，每个Api
-Key可对应设置只读、交易两种权限。
+答：每个母账户可创建50组APIKey，每个APIKey可对应设置只读、交易、提币三种权限。另外，每个子用户可创建50组APIKey，每个APIKey可对应设置只读、交易两种权限。
 
 三种权限的说明：
 
@@ -468,7 +466,7 @@ SDK)
 2)如果是自己编写签名函数，请务必一步步地参照如下描述：
 
 OK-ACCESS-SIGN的请求头是对timestamp + method + requestPath +
-body字符串(+表示字符串连接)，以及secretKey，使用HMAC SHA256方法加密，通过BASE64编码输出而得到的;
+body字符串(+表示字符串连接)，以及SecretKey，使用HMAC SHA256方法加密，通过Base64编码输出而得到的;
 
 检查时，可以打印出请求头信息和签名前字符串，重点有以下几点：
 
@@ -507,9 +505,9 @@ body字符串(+表示字符串连接)，以及secretKey，使用HMAC SHA256方�
 SIGN）的长度应为44位，如：6t56DBHUhMoCylVvGJka4S+Ac6RQO76/P4GyvjsDoXU=，如果长度为88位，是对签名结果进行了16进制编码导致，请确保签名结果为2进制后，再进行签名。
 
 (5)
-如果是websoket，签名前字符串是:1585403514.843GET/users/self/verify，不论哪个频道，路径都统一使用：/users/self/verify，同时确保时间戳有三位小数，总长度为14位，如：1585403514.843.
+如果是websocket，签名前字符串是:1585403514.843GET/users/self/verify，不论哪个频道，路径都统一使用：/users/self/verify，同时确保时间戳有三位小数，总长度为14位，如：1585403514.843.
 
-5.调用接口提示Invalid Content_Type (code为30007),是什么原因？
+**5. 调用接口提示Invalid Content_Type (code为30007),是什么原因？**
 
 POST请求头header中Content-Type设置不合适导致。请确保POST请求头header，声明了Content-
 Type，并声明为：application/json.
@@ -518,7 +516,7 @@ Type，并声明为：application/json.
 
 **1.www.okex.me 可以调v3的接口吗?**
 
-OpenAPI请求地址的域名是www.okex.com，www.okex.me的域名是提供给国内用户免费且方便登录的域名，两者都可以使用。
+OpenAPI请求地址的域名是www.okex.com，www.okex.me 的域名是提供给国内用户免费且方便登录的域名，两者都可以使用。
 
 **2.OKEx 站wss地址是什么？**
 
@@ -526,7 +524,7 @@ wss://real.okex.com:8443/ws/v3
 
 **3.<https://www.okex.com> 与 <https://aws.okex.com> 有什么区别？**
 
-<https://aws.okex.com> 域名是对使用aws云服务的用户做了链路延迟优化，请求时延更低。另外，香港阿里云服务器用户建议使用
+<https://aws.okex.com> 域名是对使用aws云服务的用户做了链路延迟优化，请求时延迟更低。另外，香港阿里云服务器用户建议使用
 <https://www.okex.com>
 
 ### 限速问题
@@ -554,7 +552,7 @@ wss://real.okex.com:8443/ws/v3
 关于限速，
 
 1）rest接口，公共数据根据ip限速，
-私有数据根据UserID限速，；websocket所有频道，都是根据ip来限制的（公共数据传个人信息时就根据UserID去限制）；
+私有数据根据UserID限速，；WebSocket所有频道，都是根据ip来限制的（公共数据传个人信息时就根据UserID去限制）；
 
 2）每个子账户是独立的UserID ,请求次数与母账户是相互独立，不会累加的；
 
@@ -598,17 +596,13 @@ OKEx账户分为资金账户、交易账户和其他账户，其中交易账户�
 
 如果想提高到账速度，可以让手续费，接近最大提币手续费数量。
 
-**8. 子账户的币如何提到外部地址？**
+**8. 账户有资金，调用资金账户接口但是返回数据是空？**
 
-需要先划转到子账户的资金账户，然后通过母账户的APIKey从资金账户通过资金划转接口，划转到母账户的资金账户，从母账户资金账户提币出去，
+用户可在页面上检查对应的业务账户是否有资产，每个业务账户的资产都需要用对应业务线的"账户信息"接口查询资产信息。
 
 **9.API 提币地址必须是认证地址吗？**
 
 是的，API提币地址，必须要在web页面上认证为免验证地址，才可以进行API提币。
-
-**10. 账户有资金，调用资金账户接口但是返回数据是空？**
-
-用户可在页面上检查对应的业务账户是否有资产，每个业务账户的资产都需要用对应业务线的"账户信息"接口查询资产信息。
 
 ### 公共问题
 
@@ -636,7 +630,7 @@ WebSocket断连常见原因有：
 
 （2）网络原因造成客户端发送了Ping消息，但服务端并未接收到，或其他网络原因也会导致自动断开连接。
 
-建议用户做好WebSocket断开重连机制，在确保心跳（Ping/Pong）连接意外断时，程序能够自动重新进行连接。
+建议用户做好WebSocket断开重连机制，在确保心跳（Ping/Pong）连接意外断开时，程序能够自动重新进行连接。
 
 **3. 用户请求接口报错Time Out？**
 
@@ -662,7 +656,7 @@ WebSocket断连常见原因有：
 
 可以使用"获取全部ticker信息"接口，也可以使用"获取深度数据"接口。
 
-**3.k 线能拿到历史数据吗？**
+**3.K 线能拿到历史数据吗？**
 
 币币最多获取1440条，交割合约和永续合约最多获取1440条。
 
@@ -739,7 +733,7 @@ K线接口的开始时间，是该根K线的开始时间，因为用的是 UTC �
 
 建议使用以下方式保证资金可以正确下单：
 
-1）使用 websocket 的 accounts 频道，同步接收资产变更的消息，确保资金已经完成清算。
+1）使用 WebSocket 的 accounts 频道，同步接收资产变更的消息，确保资金已经完成清算。
 
 2）收到订单推送消息时，使用rest接口调用账户余额，验证账户资金是否足够，使账户中保留相对充足的资金余额。
 
@@ -755,29 +749,36 @@ K线接口的开始时间，是该根K线的开始时间，因为用的是 UTC �
 
 ### 合约问题
 
-**1. 如何区分合约的订单是否是被强平的？**
+**1.V3API 合约开单数量是以张为单位还是以币为单位？**
 
-交割合约根据"获取账单流水"接口的type参数，永续合约根据"获取订单信息"的trigger_price参数。
+API合约下单的size都是以张为单位，必须是大于或等于1的整数
 
 **2. 合约大数据里的数据接口能拿到吗？**
 
 目前API暂无相关接口。
 
-**3.V3API 合约开单数量是以张为单位还是以币为单位？**
+**3. 如何区分合约的订单是否是被强平的？**
 
-API合约下单的size是以张为单位，必须填写大于或等于1的整数。
+交割合约，可以通过"账单流水"接口的type字段判断，有相关order_id的那一条记录，type为liquidation时，且流水产生在非交割时间，说明该订单是强平单;
 
-**4. 用户可以通过API修改交割合约和永续合约的杠杆倍数吗？**
+永续合约，"获取订单信息"接口，返回参数中有trigger_price字段，说明该订单是强平单。
 
-可以通过"设定合约杠杆倍数"接口修改（如果有挂单不能修改）。
+**4. 用户可以通过API修改永续合约和交割合约的杠杆倍数吗？**
+
+可以通过"设定合约杠杆倍数"接口修改。
+
+前提是没有相关挂单，不然会报错（32066：当前存在挂单，请撤销所有挂单后进行杠杆倍数修改 ）。
 
 **5. 交割合约用户当前没有持仓；为什么调用全部合约持仓信息接口有数据返回呢？**
 
 获取全部持仓信息接口，只要是在合约的生命周期内下过单的，这个接口都能获取到距离最近一次的仓位信息；要判断有没有持仓需要判断这个接口返回参数中long_qty和short_qty的数据。
 
-**6. 永续账户的"所有币种合约账户信息"查询返回为空，"单个币种合约账户信息"有值 这是为什么呢？**
+**6.V3 合约深度频道接口 首次返回全量，后续增量这个怎么理解？**
 
-没有开过仓的币种，全部账户信息接口拿不到，因为这个接口目前没有初始化信息。
+首次返回的是全量数据，后续为节省服务器和客户端的资源，仅推送变化了的增量部分，可以按照价格去判断是哪一档的变化，与前面最近的全量进行合并。
+
+注意：Access Key仅能证明您的身份，不会影响您账户的安全。切记不要将Secret Key信息分享给任何人，若您不小心将Secret
+Key暴露，请尽快删除其对应的APIKey，以免造成您的账户损失。
 
 **7. 为什么会触发了下单限价错误？**
 
@@ -787,29 +788,6 @@ API合约下单的size是以张为单位，必须填写大于或等于1的整数
 
 2）若在限价内，由于行情是实时变化的，行情波动太快的情况下，是会造成这个情况的，可以重新下单；限价规则可以参考公告：<https://okexsupport.zendesk.com/hc/zh-
 cn/articles/360039317072>
-
-**8. 如何区分合约的订单是否是被强平的？**
-
-交割合约，可以通过"账单流水"接口的type字段判断，有相关order_id的那一条记录，type为liquidation时，且流水产生在非交割时间，说明该订单是强平单;
-
-永续合约，"获取订单信息"接口，返回参数中有trigger_price字段，说明该订单是强平单。
-
-**9. 用户可以通过API修改永续合约和交割合约的杠杆倍数吗？**
-
-可以通过"设定合约杠杆倍数"接口修改。
-
-前提是没有相关挂单，不然会报错（32066：当前存在挂单，请撤销所有挂单后进行杠杆倍数修改 ）。
-
-**10.V3API 合约开单数量是以张为单位还是以币为单位？**
-
-API合约下单的size都是以张为单位，必须是大于或等于1的整数
-
-**11.V3 合约深度频道接口 首次返回全量，后续增量这个怎么理解？**
-
-首次返回的是全量数据，后续为节省服务器和客户端的资源，仅推送变化了的增量部分，可以按照价格去判断是哪一档的变化，与前面最近的全量进行合并。
-
-注意：Access Key仅能证明您的身份，不会影响您账户的安全。切记不要将Secret Key信息分享给任何人，若您不小心将Secret
-Key暴露，请尽快删除其对应的API Key，以免造成您的账户损失。
 
 ### API概述
 
@@ -916,8 +894,7 @@ OKEx账户分为资金账户、交易账户和其他账户，其中交易账户�
   
 子账户不仅可以继承主账户的费率等级和KYC信息，而且主账户和子账户的请求次数独立计算，增加用户交易频率的同时更方便管理。  
   
-`POST /api/account/v3/transfer`
-可以将资金从主账户划转到子账户的币币、交割合约等账户，但从子账户划转到主账户时，只能从子账户的资金账户划转到主账户的资金账户。  
+`POST /api/account/v3/transfer` 可以将资金从主账户划转到子账户的币币、交割合约等账户。  
   
 `GET/api/account/v3/sub-account` 可以获取子账户中各个账户里的余额、冻结和可用额度等信息。  
   
@@ -943,7 +920,7 @@ OKEx账户分为资金账户、交易账户和其他账户，其中交易账户�
 **3 ）合约ID**
 
 合约ID是合约交易的基本单位，其中包括标的货币、保证金类型和交割日期。以BTC-
-USD-190328为例，BTC为标的货币，USD为保证金类型，190328为交割日期是2019年3月28日。根据保证金类型的不同，可分USD保证金和USDT保证金。
+USD-190328为例，BTC为标的货币，BTC为保证金类型，190328为交割日期是2019年3月28日。根据保证金类型的不同，可分币本位保证金合约和USDT保证金合约。
 
 #### 订单、成交相关ID说明
 
@@ -1121,9 +1098,9 @@ OKEx的数据库和服务器运行在香港。为了最大限度地减少API访�
 
 #### 介绍
 
-REST API提供账户管理、行情查询和交易功能。
+Rest API提供账户管理、行情查询和交易功能。
 
-REST API终端URL <https://www.okex.com/>
+Rest API终端URL <https://www.okex.com/>
 
 同时OKEx还提供了WebSocket流，订阅WebSocket可以获取行情数据的推送。
 
@@ -1150,7 +1127,7 @@ WebSocket地址 :wss://awspush.okex.com:8443/ws/v3
 
 400 | Bad Request -- Invalid request fotmat  
 ---|---  
-**401** | **Unauthorized -- Invalid API Key**  
+**401** | **Unauthorized -- Invalid APIKey**  
 **403** | **Forbidden -- You do not have access to the requested resource**  
 **404** | **Not Found**  
 **500** | **Internal Server Error -- We had a problem with our server**  
@@ -1240,20 +1217,20 @@ USD-190628?state=2&before2512669605501952&limit=20`（返回合约`order_id=2512
 
 私有接口可用于订单管理和账户管理。每个私有请求必须使用规范的验证形式进行签名。
 
-私有接口需要使用您的API key进行验证。您可以在这里生成API key。
+私有接口需要使用您的APIKey进行验证。您可以在这里生成APIKey。
 
 ### 访问限制
 
 本章节主要为访问限制的细节分以下两个方面：
 
-  * REST API
+  * Rest API
   * WebSocket
 
 当访问超过频率限制时，将返回429状态：请求太频繁。
 
-#### REST API
+#### Rest API
 
-如果传入有效的API key 用user id限速；如果没有则拿公网IP限速。
+如果传入有效的APIKey 用UserID限速；如果没有则拿公网IP限速。
 
 限速规则：各个接口上有单独的说明，如果没有一般接口限速为 6次/秒。
 
@@ -1267,31 +1244,29 @@ WebSocket将每个命令类型限制为每秒50条命令。
 
 本章节主要为验证的细节分以下五个方面：
 
-  * 生成API Key
+  * 生成APIKey
   * 发起请求
   * 签名
   * 时间戳
   * 获取服务器时间
 
-#### 生成API Key
+#### 生成APIKey
 
-在对任何请求进行签名之前，您必须通过OKEx网站创建一个API Key。创建API Key后，您将获得3个必须记住的信息：
+在对任何请求进行签名之前，您必须通过OKEx网站创建一个APIKey。创建APIKey后，您将获得3个必须记住的信息：
 
-  * API Key 
+  * APIKey 
   * SecretKey 
   * Passphrase 
 
-API
-Key和SecretKey将由OKEx随机生成和提供，Passphrase将由您提供以确保API访问的安全性。OKEx将存储Passphrase加密后的哈希值进行验证，但如果您忘记Passphrase，则无法恢复，请您通过OKEx网站重新生成新的API
-Key。
+APIKey和SecretKey将由OKEx随机生成和提供，Passphrase将由您提供以确保API访问的安全性。OKEx将存储Passphrase加密后的哈希值进行验证，但如果您忘记Passphrase，则无法恢复，请您通过OKEx网站重新生成新的APIKey。
 
 #### 发起请求
 
 所有REST请求头都必须包含以下内容：
 
-`OK-ACCESS-KEY`字符串类型的API Key。
+`OK-ACCESS-KEY`字符串类型的APIKey。
 
-`OK-ACCESS-SIGN`使用base64编码签名(请参阅签名)。
+`OK-ACCESS-SIGN`使用Base64编码签名(请参阅签名)。
 
 `OK-ACCESS-TIMESTAMP`发起请求的时间戳。
 
@@ -1302,13 +1277,13 @@ Key。
 #### 签名
 
 `OK-ACCESS-SIGN`的请求头是对`timestamp + method + requestPath +
-body`字符串(+表示字符串连接)，以及secretKey，使用HMAC SHA256方法加密，通过BASE64编码输出而得到的。
+body`字符串(+表示字符串连接)，以及SecretKey，使用HMAC SHA256方法加密，通过Base64编码输出而得到的。
 
 例如：`sign=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' +
-'/users/self/verify', secretKey))`
+'/users/self/verify', SecretKey))`
 
 其中，`timestamp`的值与`OK-ACCESS-
-TIMESTAMP`请求头相同，必须是UTC时区Unix时间戳的十进制秒数格式或ISO8601标准的时间格式，精确到毫秒。。
+TIMESTAMP`请求头相同，必须是UTC时区Unix时间戳的十进制秒数格式或ISO8601标准的时间格式，精确到毫秒。
 
 method是请求方法，字母全部大写：`GET/POST`。
 
@@ -1317,7 +1292,7 @@ requestPath是请求接口路径。例如：`/orders?before=2&limit=30`
 body是指请求主体的字符串，如果请求没有主体(通常为GET请求)则body可省略。例如：`{"product_id":"BTC-
 USD-0309","order_id":"377454671037440"}`
 
-secretKey为用户申请API Key时所生成。例如：22582BD0CFF14C41EDBF1AB98506286D'
+SecretKey为用户申请APIKey时所生成。例如：22582BD0CFF14C41EDBF1AB98506286D'
 
     
     
@@ -1744,9 +1719,9 @@ secretKey为用户申请API Key时所生成。例如：22582BD0CFF14C41EDBF1AB98
     }
     
     type Config struct {
-        // Rest api endpoint url. eg: http://www.okex.com/
+        // Rest API endpoint url. eg: http://www.okex.com/
         Endpoint String
-        // The user's api key provided by OKEx.
+        // The user's APIKey provided by OKEx.
         ApiKey String
         // The user's secret key provided by OKEx. The secret key used to sign your request data.
         SecretKey String
@@ -1815,7 +1790,7 @@ secretKey为用户申请API Key时所生成。例如：22582BD0CFF14C41EDBF1AB98
         String data = timestamp + method + requestPath + body;
         String key = m_config.SecretKey;
         int ret = HmacEncode("sha256", key.c_str(), key.length(), data.c_str(), data.length(), mac, mac_length);
-        sign = base64_encode(mac, mac_length);
+        sign = Base64_encode(mac, mac_length);
         return sign;
     }
     
@@ -1903,7 +1878,7 @@ secretKey为用户申请API Key时所生成。例如：22582BD0CFF14C41EDBF1AB98
     
     
     import hmac
-    import base64
+    import Base64
     import requests
     import json
     
@@ -1922,7 +1897,7 @@ secretKey为用户申请API Key时所生成。例如：22582BD0CFF14C41EDBF1AB98
         message = str(timestamp) + str.upper(method) + request_path + str(body)
         mac = hmac.new(bytes(secret_key, encoding='utf8'), bytes(message, encoding='utf-8'), digestmod='sha256')
         d = mac.digest()
-        return base64.b64encode(d)
+        return Base64.b64encode(d)
     
     
     # set request header
@@ -2050,18 +2025,18 @@ epoch | UTC时区Unix时间戳的十进制秒数格式
 
 在您开启OKEx交易之前，可以在我们提供的测试网站上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
 
-测试网站目前支持的业务线为：交割合约，期权交易。
+测试网站目前支持的业务线为：币币交易，交割合约，期权交易。
 
-测试网站逐渐会开放的业务线为：币币交易，币币杠杆，永续合约。
+测试网站逐渐会开放的业务线为：币币杠杆，永续合约。
 
 测试网站的API交易功能所需的APIKey，需要在[这里](https://testnet.okex.com/account/my-
 api)进行创建APIKey，测试网创建APIKey的流程与OKEx一致。
 
 测试网站域名如下：
 
-**RestAPI Url ：<https://testnet.okex.com>**
+**RestAPI 地址：<https://testnet.okex.com>**
 
-**Websocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181**
+**WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181**
 
 测试网的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击[这里](https://www.okex.com/account/register?action=header_register_btn)进行注册。
 
@@ -2173,13 +2148,13 @@ OKEx站内在资金账户、交易账户和子账户之间进行资金划转。
 ##### 请求示例
 
 `POST
-/api/account/v3/transfer{"currency":"usdt","amount":1.5,"from":6,"to":3,"to_instrument_id":"btc-
+/api/account/v3/transfer{"currency":"usdt","amount":"1.5","from":"6","to":"3","to_instrument_id":"btc-
 usdt"}（usdt从资金账户划转到交割btc-usdt合约账户）`  
 `POST
-/api/account/v3/transfer{"currency":"usdt","amount":1.5,"from":3,"to":1,"instrument_id":"btc-
+/api/account/v3/transfer{"currency":"usdt","amount":"1.5","from":"3","to":"1","instrument_id":"btc-
 usdt"}（usdt从交割btc-usdt合约账户划转到币币账户）`  
 `POST
-/api/account/v3/transfer{"currency":"btc","amount":1.5,"from":6,"to":3}（btc从资金账户划转到交割btc-
+/api/account/v3/transfer{"currency":"btc","amount":"1.5","from":"6","to":"3"}（btc从资金账户划转到交割btc-
 usd合约账户）`
 
 ##### 请求参数
@@ -2257,12 +2232,11 @@ result | Boolean | 划转结果。若是划转失败，将给出错误码提示
 
 ##### HTTP请求
 
-`POST /api/account/v3/withdrawal`
+`POST/api/account/v3/withdrawal`
 
 ##### 请求示例
 
-`POST
-/api/account/v3/withdrawal{"amount":1,"fee":0.0005,"trade_pwd":"123456","destination":4,"currency":"btc","to_address":"17DKe3kkkkiiiiTvAKKi2vMPbm1Bz3CMKw"}`
+`POST/api/account/v3/withdrawal{"amount":"1","fee":"0.0005","trade_pwd":"123456","destination":4,"currency":"btc","to_address":"17DKe3kkkkiiiiTvAKKi2vMPbm1Bz3CMKw"}`
 
 ##### 请求参数
 
@@ -3145,7 +3119,7 @@ amount | String | 变动数量
 type | String | 流水来源  
 timestamp | String | 账单创建时间  
 details | String |
-如果`type`是`trade`或者`fee`，则会有该`details`字段将包含`order`，`instrument`信息,如果`type`是`transfer`，则会有该`details`字段将包含`from`，`to`信息  
+如果`type`是`trade`，则会有该`details`字段将包含`order`，`instrument`信息,如果`type`是`transfer`，则会有该`details`字段将包含`from`，`to`信息  
 order_id | String | 交易的ID  
 instrument_id | String | 交易的币对  
 from | String | 转出账户  
@@ -4678,7 +4652,7 @@ side | String | 成交方向
 
 ### 公共-获取K线数据
 
-获取币对的K线数据。K线数据按请求的粒度分组返回，k线数据最多可获取最近1440条。
+获取币对的K线数据。K线数据按请求的粒度分组返回，K线数据最多可获取最近1440条。
 
 ##### 限速规则：20次/2s
 
@@ -8275,7 +8249,7 @@ order_type | String | `1`：止盈止损
 `2`：跟踪委托  
 `3`：冰山委托  
 `4`：时间加权  
-timestamp | String | 委托时间  
+timestamp | String | 订单状态变化时间  
 algo_ids | String | 委托单ID  
 status | String | 订单状态  
 `1`: 待生效  
@@ -8386,7 +8360,7 @@ maker | String | 挂单手续费率
 delivery | String | 交割手续费率  
 timestamp | String | 数据返回时间  
   
-备注：maker 的值：负数，代表是反佣的费率，正数，代表平台扣除的费率。（和web页面上展示的一致）
+备注：maker 的值：负数，代表是返佣的费率，正数，代表平台扣除的费率。（和web页面上展示的一致）
 
 ##### 返回示例
 
@@ -8842,7 +8816,7 @@ side | String | 成交方向
 
 ### 公共-获取K线数据
 
-获取合约的K线数据。K线数据按请求的粒度分组返回，k线数据最多可获取最近1440条。
+获取合约的K线数据。K线数据按请求的粒度分组返回，K线数据最多可获取最近1440条。
 
 ##### 限速规则：20次/2s （根据underlying，分别限速）
 
@@ -8881,7 +8855,7 @@ currency_volume | String | 按币种折算的交易量
   
 ##### 解释说明
 
-k线衔接规则：
+K线衔接规则：
 
 1）次周合约交割时：老次周合约对接新当周合约，老当周合约对接新次周合约，季度合约不变；
 
@@ -10786,7 +10760,7 @@ error_message | String | 错误信息，撤单成功时为空，撤单失败时�
 
 ### 获取委托单列表
 
-获取委托单列表
+获取委托单列表。已完成订单最多可查7天的数据，未成交订单无查询限制。
 
 列出您当前所有的订单信息。
 
@@ -10850,7 +10824,6 @@ type | String | 订单类型
 leverage | String | 杠杆倍数  
 size | String | 委托数量（以张计数）,填写值1\<=X\<=1000000的整数  
 algo_price | String | 策略委托价格  
-real_amount | String | 实际委托数量  
 trigger_price | String | 策略委托触发价格  
 order_id | String | 订单id  
   
@@ -10862,6 +10835,7 @@ trigger_price | String | 触发价格，填写值0\<X
 algo_price | String | 委托价格，填写值0\<X\<=1000000  
 real_amount | String | 实际成交数量  
 algo_type | String | 1:限价 2:市场价；  
+real_amount | String | 实际委托数量  
   
 跟踪委托
 
@@ -10869,6 +10843,7 @@ algo_type | String | 1:限价 2:市场价；
 ---|---|---  
 callback_rate | String | 回调幅度，填写值0.001（0.1%）\<=X\<=0.05（5%）  
 trigger_price | String | 激活价格 ，填写值0\<X\<=1000000  
+real_amount | String | 实际委托数量  
 real_amount | String | 实际委托数量  
   
 冰山委托
@@ -10953,7 +10928,7 @@ taker | String | 吃单手续费率
 maker | String | 挂单手续费率  
 timestamp | String | 数据返回时间  
   
-备注：maker 的值：负数，代表是反佣的费率，正数，代表平台扣除的费率。（和web页面上展示的一致）
+备注：maker 的值：负数，代表是返佣的费率，正数，代表平台扣除的费率。（和web页面上展示的一致）
 
 ##### 返回示例
 
@@ -11393,7 +11368,7 @@ timestamp | String | 成交时间
 
 ### 公共-获取K线数据
 
-获取合约的K线数据。k线数据最多可获取最近1440条。
+获取合约的K线数据。K线数据最多可获取最近1440条。
 
 ##### 限速规则：20次/2s
 
@@ -13674,7 +13649,7 @@ status | String | 系统维护的状态 0:等待中 ; 1:进行中 ; 2:已完成
 start_time | String | 系统维护的开始时间,格式为ISO 8601标准格式 如: 2020-04-03T16:30:00.000Z  
 end_time | String | 系统维护的结束时间,格式为ISO 8601标准格式 如: 2020-04-03T17:40:00.000Z  
 href | String | 系统维护详情的超级链接,若无返回值，默认值为空，如 href: ""  
-product_type | String | 产品类型 0 :Websocket ; 1:币币 ; 2:交割 ; 3:永续 ; 4:期权  
+product_type | String | 产品类型 0 :WebSocket ; 1:币币 ; 2:交割 ; 3:永续 ; 4:期权  
   
 ##### 返回示例
 
@@ -13783,6 +13758,7 @@ NEO最小提现数量为1，且提现数量必须为整数（提现接口，某�
 请先开通余币宝服务 | 34025 | 400  
 划转过于频繁，请降低划转频率 | 34026 | 400  
 提现手续费应填写为提币数量的*% | 34027 | 400  
+子主账户资金划转时，请使用主账户的APIKey | 34032 | 400  
 参数不正确，请参考API文档 | 34036 | 400  
 获取子账户余额，account type 不支持 | 34037 | 400  
 您在法币区的交易异常，现已被限制划转功能，请您联系在线客服以解除限制 | 34038 | 400  
@@ -13854,7 +13830,7 @@ client_oid 或 order_id 必须且只能填一个 | 33060 | 400 |
 合约账户被冻结（当用户被强平后再下单时） | 32001 | 400  
 用户合约账户不存在（当用户只是注册了账号没有开通合约） | 32002 | 400  
 撤单中，请耐心等待（当用户反复撤单时，或当交割或结算时） | 32003 | 400  
-您当前没有未成交的订单（用户撤销未成交订单时） | 32004 | 400  
+您当前没有未成交的订单（用户撤销未成交订单时） | 32004 | 200  
 超过最大下单量（当用户下单量超过规定数量会出现该异常） | 32005 | 400  
 委托价格或触发价格超过100万美元（下单当用户委托价格或触发价格超过100万美元） | 32006 | 400  
 合约相同方向只支持一个杠杆，当用户有10倍杠杆的持仓，在开20倍的时候等 | 32007 | 400  
@@ -13979,7 +13955,7 @@ client_oid 或者 order_id是必要的参数 | 32031 | 400
 instrument_id 不正确 | 35061 | 400  
 match_price 不正确 | 35062 | 400  
 order_size 不正确 | 35063 | 400  
-instrument_id 不正确 | 35064 | 400  
+client_oid 不正确 | 35064 | 400  
 结算后30分钟内不能转出 | 40029 | 400  
 委托间隔错误 | 35066 | 400  
 时间加权扫单比例错误 | 35067 | 400  
@@ -14082,7 +14058,7 @@ Order submission failed due to insufficient margin. | 36238 | 400 |
 Order amendment failed due to insufficient margin. | 36239 | 400 |
 用户保证金不足，修改失败  
   
-### WebsocketAPI
+### WebSocketAPI
 
 ### 现货
 
@@ -14247,9 +14223,9 @@ response:
 
 **api_key** :为用户申请的APIKey
 
-**passphrase** :为申请v3 api时所填写
+**Passphrase** :为申请v3 api时所填写
 
-**timestamp** :为时间戳 **是 unix epoch时间，单位是秒， 时间戳30秒后会过期** 推荐使用time endponit
+**timestamp** :为时间戳 **是 Unix Epoch时间，单位是秒， 时间戳30秒后会过期** 推荐使用time endponit
 查询API 服务器的时间，如果你的服务器时间和API 服务器时间有偏差的话
 
 **sign** :为签名字符串，签名规则参照请求说明（API概述验证部分）
@@ -14752,31 +14728,31 @@ timestamp | String | 系统时间戳
 
 频道列表：
 
-spot/candle60s // 1分钟k线数据频道
+spot/candle60s // 1分钟K线数据频道
 
-spot/candle60s // 1分钟k线数据频道
+spot/candle60s // 1分钟K线数据频道
 
-spot/candle180s // 3分钟k线数据频道
+spot/candle180s // 3分钟K线数据频道
 
-spot/candle300s // 5分钟k线数据频道
+spot/candle300s // 5分钟K线数据频道
 
-spot/candle900s // 15分钟k线数据频道
+spot/candle900s // 15分钟K线数据频道
 
-spot/candle1800s // 30分钟k线数据频道
+spot/candle1800s // 30分钟K线数据频道
 
-spot/candle3600s // 1小时k线数据频道
+spot/candle3600s // 1小时K线数据频道
 
-spot/candle7200s // 2小时k线数据频道
+spot/candle7200s // 2小时K线数据频道
 
-spot/candle14400s // 4小时k线数据频道
+spot/candle14400s // 4小时K线数据频道
 
-spot/candle21600s // 6小时k线数据频道
+spot/candle21600s // 6小时K线数据频道
 
-spot/candle43200s // 12小时k线数据频道
+spot/candle43200s // 12小时K线数据频道
 
-spot/candle86400s // 1day k线数据频道
+spot/candle86400s // 1day K线数据频道
 
-spot/candle604800s // 1week k线数据频道
+spot/candle604800s // 1week K线数据频道
 
 ##### send示例
 
@@ -15365,7 +15341,7 @@ response:
 
 **passphrase** :为申请v3 api时所填写
 
-**timestamp** :为时间戳 **是 unix epoch时间，单位是秒， 时间戳30秒后会过期** 推荐使用time endponit
+**timestamp** :为时间戳 **是 Unix Epoch时间，单位是秒， 时间戳30秒后会过期** 推荐使用time endponit
 查询API 服务器的时间，如果你的服务器时间和API 服务器时间有偏差的话
 
 **sign** :为签名字符串，签名规则参照请求说明（API概述验证部分）
@@ -15497,7 +15473,7 @@ depth 频道用户收到推送数据为：
 
 futures/ticker // 行情数据频道
 
-futures/candle60s // 1分钟k线数据频道
+futures/candle60s // 1分钟K线数据频道
 
 futures/trade // 交易信息频道
 
@@ -16167,29 +16143,29 @@ best_bid_size | String | 买一价对应的数量
 
 频道列表：
 
-futures/candle60s // 1分钟k线数据频道
+futures/candle60s // 1分钟K线数据频道
 
-futures/candle180s // 3分钟k线数据频道
+futures/candle180s // 3分钟K线数据频道
 
-futures/candle300s // 5分钟k线数据频道
+futures/candle300s // 5分钟K线数据频道
 
-futures/candle900s // 15分钟k线数据频道
+futures/candle900s // 15分钟K线数据频道
 
-futures/candle1800s // 30分钟k线数据频道
+futures/candle1800s // 30分钟K线数据频道
 
-futures/candle3600s // 1小时k线数据频道
+futures/candle3600s // 1小时K线数据频道
 
-futures/candle7200s // 2小时k线数据频道
+futures/candle7200s // 2小时K线数据频道
 
-futures/candle14400s // 4小时k线数据频道
+futures/candle14400s // 4小时K线数据频道
 
-futures/candle21600s // 6小时k线数据频道
+futures/candle21600s // 6小时K线数据频道
 
-futures/candle43200s // 12小时k线数据频道
+futures/candle43200s // 12小时K线数据频道
 
-futures/candle86400s // 1dayk线数据频道
+futures/candle86400s // 1dayK线数据频道
 
-futures/candle604800s // 1week k线数据频道
+futures/candle604800s // 1week K线数据频道
 
 ##### send示例
 
@@ -16215,7 +16191,7 @@ instrument_id | String | 合约`BTC-USD-170310`,`BTC-USDT-191227`
   
 ##### 解释说明
 
-k线衔接规则：
+K线衔接规则：
 
 1）次周合约交割时：老次周合约对接新当周合约，老当周合约对接新次周合约，季度合约不变；
 
@@ -16767,7 +16743,7 @@ response:
 
 **passphrase** :为申请v3 api时所填写
 
-**timestamp** :为时间戳 **是 unix epoch时间，单位是秒， 时间戳30秒后会过期** 推荐使用time endponit
+**timestamp** :为时间戳 **是 Unix Epoch时间，单位是秒， 时间戳30秒后会过期** 推荐使用time endponit
 查询API 服务器的时间，如果你的服务器时间和API 服务器时间有偏差的话
 
 **sign** :为签名字符串，签名规则参照请求说明（API概述验证部分）
@@ -16899,7 +16875,7 @@ depth 频道用户收到推送数据为：
 
 swap/ticker // 行情数据频道
 
-swap/candle60s // 1分钟k线数据频道
+swap/candle60s // 1分钟K线数据频道
 
 swap/trade // 交易信息频道
 
@@ -17245,7 +17221,7 @@ time_interval | string | 委托间隔
 
 ### 公共-Ticker频道
 
-获取平台全部永续合约的最新成交价、买一价、卖一价和24交易量，每100ms推送一次数据。
+获取平台全部永续合约的最新成交价、买一价、卖一价和24交易量，无需用户登录，有成交数据就推送。
 
 ##### send示例
 
@@ -17310,29 +17286,29 @@ best_bid_size | String | 买一价对应的数量
 
 频道列表：
 
-swap/candle60s // 1分钟k线数据频道
+swap/candle60s // 1分钟K线数据频道
 
-swap/candle180s // 3分钟k线数据频道
+swap/candle180s // 3分钟K线数据频道
 
-swap/candle300s // 5分钟k线数据频道
+swap/candle300s // 5分钟K线数据频道
 
-swap/candle900s // 15分钟k线数据频道
+swap/candle900s // 15分钟K线数据频道
 
-swap/candle1800s // 30分钟k线数据频道
+swap/candle1800s // 30分钟K线数据频道
 
-swap/candle3600s // 1小时k线数据频道
+swap/candle3600s // 1小时K线数据频道
 
-swap/candle7200s // 2小时k线数据频道
+swap/candle7200s // 2小时K线数据频道
 
-swap/candle14400s // 4小时k线数据频道
+swap/candle14400s // 4小时K线数据频道
 
-swap/candle21600s // 6小时k线数据频道
+swap/candle21600s // 6小时K线数据频道
 
-swap/candle43200s // 12小时k线数据频道
+swap/candle43200s // 12小时K线数据频道
 
-swap/candle86400s // 1day k线数据频道
+swap/candle86400s // 1day K线数据频道
 
-swap/candle604800s // 1week k线数据频道
+swap/candle604800s // 1week K线数据频道
 
 ##### send示例
 
@@ -17723,7 +17699,7 @@ timestamp | String | 系统时间戳
 
 option/instruments // 合约信息频道
 
-option/candle60s // 1分钟k线数据频道 (其他更多时间粒度请见具体频道说明)
+option/candle60s // 1分钟K线数据频道 (其他更多时间粒度请见具体频道说明)
 
 option/summary // 期权详细定价频道
 
@@ -18110,29 +18086,29 @@ K线频道，无需用户登录，每500ms推送一次数据。
 
 频道列表：
 
-option/candle60s // 1分钟k线数据频道
+option/candle60s // 1分钟K线数据频道
 
-option/candle180s // 3分钟k线数据频道
+option/candle180s // 3分钟K线数据频道
 
-option/candle300s // 5分钟k线数据频道
+option/candle300s // 5分钟K线数据频道
 
-option/candle900s // 15分钟k线数据频道
+option/candle900s // 15分钟K线数据频道
 
-option/candle1800s // 30分钟k线数据频道
+option/candle1800s // 30分钟K线数据频道
 
-option/candle3600s // 1小时k线数据频道
+option/candle3600s // 1小时K线数据频道
 
-option/candle7200s // 2小时k线数据频道
+option/candle7200s // 2小时K线数据频道
 
-option/candle14400s // 4小时k线数据频道
+option/candle14400s // 4小时K线数据频道
 
-option/candle21600 // 6小时k线数据频道
+option/candle21600 // 6小时K线数据频道
 
-option/candle43200s // 12小时k线数据频道
+option/candle43200s // 12小时K线数据频道
 
-option/candle86400s // 1dayk线数据频道
+option/candle86400s // 1dayK线数据频道
 
-option/candle604800s // 1week k线数据频道
+option/candle604800s // 1week K线数据频道
 
 ##### send示例
 
@@ -18481,7 +18457,7 @@ checksum | String | 检验和
 
 ### WS公共指数频道
 
-websocket API 公共指数频道
+WebSocket API 公共指数频道
 
 ### 指数行情
 
@@ -18524,29 +18500,29 @@ open_24h | String | 24h开盘价
 
 频道列表：
 
-index/candle60s //1分钟k线数据频道
+index/candle60s //1分钟K线数据频道
 
-index/candle180s //3分钟k线数据频道
+index/candle180s //3分钟K线数据频道
 
-index/candle300s //5分钟k线数据频道
+index/candle300s //5分钟K线数据频道
 
-index/candle900s //15分钟k线数据频道
+index/candle900s //15分钟K线数据频道
 
-index/candle1800s //30分钟k线数据频道
+index/candle1800s //30分钟K线数据频道
 
-index/candle3600s //1小时k线数据频道
+index/candle3600s //1小时K线数据频道
 
-index/candle7200s //2小时k线数据频道
+index/candle7200s //2小时K线数据频道
 
-index/candle14400s //4小时k线数据频道
+index/candle14400s //4小时K线数据频道
 
-index/candle21600s //6小时k线数据频道
+index/candle21600s //6小时K线数据频道
 
-index/candle43200s //12小时k线数据频道
+index/candle43200s //12小时K线数据频道
 
-index/candle86400s //1day小时k线数据频道
+index/candle86400s //1day小时K线数据频道
 
-index/candle604800s //1 week k线数据频道
+index/candle604800s //1 week K线数据频道
 
 ##### send示例
 
@@ -18762,7 +18738,7 @@ last_fill_id | String | 最新成交ID (如果没有推0)。和trade 频道推�
 
 RestAPI Url：<https://testnet.okex.com>
 
-Websocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181
+WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181
 
 测试网的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击这里进行注册。
 
@@ -19021,7 +18997,7 @@ f.设置合约账户模式 POST /api/futures/v3/accounts/margin_mode - - - -此�
 
 g.获取所有币种合约账户信息 GET /api/futures/v3/accounts - - - -返回值增加必要字段
 
-3、涉及的接口: WebsocketAPI
+3、涉及的接口: WebSocketAPI
 
 a.公共-全量合约信息频道 futures/instruments - - - - 返回值增加必要字段
 
@@ -19078,7 +19054,7 @@ liqui_fee_rate | String | 强平手续费
   
   
 
-3.永续 websocket ticker 频道增加"持仓量"和"24小时开盘价"：
+3.永续 WebSocket ticker 频道增加"持仓量"和"24小时开盘价"：
 
 具体接口：
 
@@ -19216,7 +19192,7 @@ GET /api/futures/v3/accounts//ledger
 ---|---|---|---  
 type | String | 否 | 20.强减空 21.强减多  
   
-7.交割单个币种持仓接口和所有持仓接口和websocket用户持仓频道，增加"已结算收益"（多空）字段。
+7.交割单个币种持仓接口和所有持仓接口和WebSocket用户持仓频道，增加"已结算收益"（多空）字段。
 
 具体接口：
 
@@ -19233,7 +19209,7 @@ GET /api/futures/v3/position
 long_settled_pnl | String | 多仓已结算收益  
 short_settled_pnl | String | 空仓已结算收益  
   
-8.永续单个币种持仓接口和所有持仓接口和websocket持仓频道，增加"已结算收益"（多空）字段。
+8.永续单个币种持仓接口和所有持仓接口和WebSocket持仓频道，增加"已结算收益"（多空）字段。
 
 具体接口：
 
@@ -19264,7 +19240,7 @@ settled_pnl | String | 已结算收益
 estimated_rate | String | 下一期的预测资金费率  
 funding_rate | String | 当期资金费率  
   
-2）Websocket：公共-资金费率频道（swap/funding_rate）
+2）WebSocket：公共-资金费率频道（swap/funding_rate）
 
 返回参数
 
@@ -20215,7 +20191,7 @@ error_message | String | 错误信息，下单成功时为空，下单失败时�
 
 `POST /api/margin/v3/cancel_batch_orders`
 
-【功能优化】：websocket 的order 频道的返回参数增加"最新成交价"、"最新成交数量"和"最新成交时间"
+【功能优化】：WebSocket 的order 频道的返回参数增加"最新成交价"、"最新成交数量"和"最新成交时间"
 
 | last_fill_px | String | 最新成交价格（如果没有，推`0`） |
 
@@ -20254,191 +20230,6 @@ swap/candle
 futures/candle
 
 spot/candle
-
-### **一 、APIKey相关问题**
-
-1.如何申请APIKey？
-
-申请API网址 <https://www.okex.com/account/users/myApi>
-在网页上申请成功后，点击"查看"，通过二次验证后，就可以获取到。
-
-2.APIKey的passphrase忘记了可以找回吗？
-
-无法找回，只能在页面重新申请APIKey。
-
-3.APIKey授权第三方有风险吗？
-
-APIKey授权第三方有一定的风险，为了账户资产安全建议自己保存。
-
-4.没有绑定手机或者谷歌，能申请APIKey吗？
-
-不可以，申请APIKey必须绑定手机或者谷歌。
-
-5.V3创建APIKey的时候，必须绑定IP地址才可以创建吗
-
-不是必须，申请APIKey时绑定IP这个选项是非必填的，但为了增加用户账户安全性，建议绑定IP地址。
-
-6.同一个账户里的不同的APIKey，返回的账户信息数据，会不同吗？
-
-同一个账户下不同APIKey数据是相同的。
-
-7.一个账户最多可以能申请多少个APIKey
-
-一个账户最多申请50个APIKey。
-
-8.申请APIKey时如何填写
-
-根据网页端提示填写，备注可根据用户需求随意填写；Pass密码要记住，调用API接口会用到；绑定ip为非必填项，为了账户安全建议填写；API权限可根据用户需求勾选。
-
-9.passphrase是登录密码还是资金密码
-
-passphrase是APIKey的密码，查看APIKey和调用API接口都需要输入这个密码；需要注意的是，passphrase忘记之后是无法找回的，需要重新创建APIKey。
-
-10.WebSocket最多可以订阅多少个币对呢？是否有限制?
-
-用户可以选择订阅一个或者多个频道，订阅多个频道总长度不能超过4096个字节。
-
-### **二 、公共问题：**
-
-1.分页是怎样使用的？  
-1）用户第一次请求接口可以不用before、after参数，直接请求接口。  
-2）返回该接口默认100条数据和包含一个OK-BEFORE和OK-AFTER标头的headers，OK-AFTER指向的是较旧的ID，OK-
-BEFORE指向的是较新的ID。  
-3）例如返回订单ID为：10，9，8，7，6，则OK-BEFORE=10，OK-
-AFTER=6。再次请求接口时，可以使用before和after参数，使用after=6返回的是5，4，3等更旧的订单数据，使用before=10，返回的是11，12，13等更新的订单数据，每次请求接口想要多少条数据可以用limit参数来限制。  
-**举 例**  
-1）GET /api/futures/v3/orders/BTC-USD-190628?state=2（返回合约BTC-
-USD-190628的最近100条全部成交订单）  
-2）GET /api/futures/v3/orders/BTC-USD-190628?state=2&limit=20（返回合约BTC-
-USD-190628的最近20条全部成交订单）  
-3）GET /api/futures/v3/orders/BTC-
-USD-190628?state=2&after=2512669605501952&limit=20（返回合约order_id=2512669605501952更旧的20条全部成交订单，不包括2512669605501952）  
-4）GET /api/futures/v3/orders/BTC-
-USD-190628?state=2&before2512669605501952&limit=20（返回合约order_id=2512669605501952更新的20条全部成交订单，不包括2512669605501952）
-
-2.子账号和母账户的区别是什么？
-
-子账户不能提币,充币和进行法币交易。
-
-3.每个子账户的API请求次数都是独立计算的么？
-
-是的，子账户和母账户是分开计算，相互独立的。
-
-4.母账户可以通过自己的API来获取子账号的账户余额信息吗？
-
-可以，调用"获取子账户余额信息"接口。
-
-5.子账户的币，如何提到外部地址？
-
-需要先划转到子账户的资金账户，然后通过母账户的APIKey调用API资金划转接口，划转到母账户的资金账户，从母账户资金账户进行提币操作。
-
-6.API每秒调用频率有限制吗？
-
-有限制，具体可以看下文档中每个接口的访问频率限制。
-
-7.OKEx的API的访问频率是根据什么限制的？
-
-个人数据是根据UserID限制的，公共数据是根据ip限制，需要注意的是，若用户请求公共数据时传入有效的个人信息就根据UserID限制。
-
-8.Http状态码429是怎样造成的？
-
-请求接口超过访问频率限制，建议降低访问频率。
-
-9.API调用接口报超过访问频率会被封IP吗？封多久？
-
-不会的，降低访问频率就可以。
-
-10.请求接口的timestamp参数和到达服务器时间最大差值是多少？
-
-时间戳和API服务器时间前后相差30秒以上的请求将被系统视为过期并拒绝。如果用户服务器和API服务器之间存在较大的时间偏差，建议用户使用"获取服务器时间"的接口来查询API服务器时间。
-
-11.请求头"OK_ACCESS_TIMESTAMP"不能为空 如何解决？时不时产生这个错误?
-
-首先建议用户打印一下OK_ACCESS_TIMESTAMP，出现异常时检查OK_ACCESS_TIMESTAMP是否为空，另外建议用户代码优化，每次请求前先判断OK_ACCESS_TIMESTAMP是否为空。
-
-12.V3API使用的时间戳是哪里的时间？
-
-UTC 0时时间格式。
-
-13.www.okex.me可以调v3的接口吗?
-
-OpenAPI请求地址的域名是www.okex.com，www.okex.me的域名是提供给国内用户免费且方便登录的域名，两者都可以使用。
-
-14.API提币地址必须是认证地址吗？
-
-是的，API提币地址，必须要在web页面上认证为免验证地址，才可以进行API提币。
-
-15.在哪里能拿到平台所有的币对？
-
-币币的"获取币对信息"接口可以拿到，交割合约和永续合约的"获取合约信息"接口可以拿到。
-
-16.行情接口是哪个？
-
-可以使用"获取全部ticker信息"接口，也可以使用"获取深度数据"接口。
-
-17.k线能拿到历史数据吗？
-
-币币最多获取1440条，交割合约和永续合约最多获取1440条。
-
-18.OKEx站wss地址是什么？
-
-wss://real.okex.com:8443/ws/v3
-
-19.哪个接口能拿到K线图上技术指标数据？
-
-目前API暂不提供相关接口。
-
-20.API下单撤单总的数量有限制吗？
-
-没有限制。
-
-21.请问现在有可以获取账户等级/费率的API吗？
-
-可以，使用"获取当前手续费费率"接口可以获取。
-
-22.账户有资金，调用资金账户接口但是返回数据是空？
-
-用户可在页面上检查对应的业务账户是否有资产，每个业务账户的资产都需要用对应业务线的"账户信息"接口查询资产信息。
-
-23.用户请求接口报错Time Out？
-
-网络无法连接服务器，建议您检查下网络是否通畅，同时建议使用香港阿里云服务器。
-
-24.V3的深度频道接口，首次返回400档，后续增量怎么理解？
-
-首次返回400条全量数据，有深度变化100毫秒推送一次，快照这个时间段内有更改的订单簿数据。后续增量出来的是需要在400条数据基础上修改，按照价格去判断是哪一档的变化。
-
-### **三 、币币、币币杠杆问题：**
-
-1.为什么币币和币币杠杆的获取成交明细接口1笔交易会返回2条数据？
-
-因为这个接口一笔成交会返回2条数据，一个以计价货币计算的，一个是以交易货币计算的。
-
-### **四 、合约相关问题：**
-
-1.如何区分合约的订单是否是被强平的？
-
-交割合约根据"获取账单流水"接口的type参数，永续合约根据"获取订单信息"的trigger_price参数。
-
-2.合约大数据里的数据接口能拿到吗
-
-目前API暂无相关接口。
-
-3.V3API合约开单数量是以张为单位还是以币为单位？
-
-API合约下单的size是以张为单位，必须填写大于或等于1的整数。
-
-4.用户可以通过API修改交割合约和永续合约的杠杆倍数吗？
-
-可以通过"设定合约杠杆倍数"接口修改（如果有挂单不能修改）。
-
-5.交割合约用户当前没有持仓；为什么调用全部合约持仓信息接口有数据返回呢？
-
-获取全部持仓信息接口，只要是在合约的生命周期内下过单的，这个接口都能获取到距离最近一次的仓位信息；要判断有没有持仓需要判断这个接口返回参数中long_qty和short_qty的数据。
-
-6.永续账户的"所有币种合约账户信息"查询返回为空，"单个币种合约账户信息"有值 这是为什么呢？
-
-没有开过仓的币种，全部账户信息接口拿不到，因为这个接口目前没有初始化信息。
 
 ### 创建我的APIKey
 
