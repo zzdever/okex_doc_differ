@@ -1,4 +1,4 @@
-[![](../static/img/logo.png?_st=20200526185857)](/)
+[![](../static/img/logo.png?_st=20200601184501)](/)
 
   * [ 入门指引 ](./#README)
   * [ 做市商项目 ](./#market)
@@ -276,6 +276,8 @@
       * [ 指数K线 ](./#Index-candel)
     * [ WebSocketAPI 错误码 ](./#swap_ws-error_code)
   * [ 更新日志 ](./#change-change)
+    * [ 2020-06-01 ](./#change-20200630)
+    * [ 2020-05-15 ](./#change-20200531)
     * [ 2020-04-22 ](./#change-20200430)
     * [ 2020-03-30 ](./#change-20200331)
     * [ 2020-02-29 ](./#change-20200229)
@@ -2028,29 +2030,54 @@ epoch | UTC时区Unix时间戳的十进制秒数格式
 
 ### 测试环境
 
-在您开启OKEx交易之前，可以在我们提供的测试网站上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
+**模 拟盘，用户可以通过模拟盘API请求除充提币外的所有接口，包括市场行情信息、账户余额信息、持仓信息、订单信息等。**
 
-测试网站目前支持的业务线为：币币交易，交割合约，期权交易。
+在您开启OKEx交易之前，可以在我们提供的模拟盘上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
 
-测试网站逐渐会开放的业务线为：币币杠杆，永续合约。
+模拟盘API交易功能所需的APIKey，需要在[这里](https://www.okex.com/account/my-
+api)进行创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
 
-测试网站的API交易功能所需的APIKey，需要在[这里](https://testnet.okex.com/account/my-
-api)进行创建APIKey，测试网创建APIKey的流程与OKEx一致。
+模拟盘API交易域名如下：
 
-测试网站域名如下：
+**RestAPI 地址：<https://www.okex.com>**
 
-**RestAPI 地址：<https://testnet.okex.com>**
+**WebSocket 地址: wss://okex.com:8443/ws/v3?brokerId=9999**
 
-**WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181**
-
-测试网的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击[这里](https://www.okex.com/account/register?action=header_register_btn)进行注册。
+模拟盘的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击[这里](https://www.okex.com/account/register?action=header_register_btn)进行注册。
 
 以下步骤开启API模拟交易：
 
-**注 册okex账户-->登录测试网-->领取测试币-->创建测试网APIKey---->开始模拟交易**
+**注 册okex账户-->资产管理-->开始模拟盘交易-->个人中心-->创建模拟盘APIKey---->开始模拟交易**
 
-测试网站，用户可以通过API请求交割合约和期权的所有接口，包括基本合约信息、市场行情信息、账户余额信息、持仓信息、订单信息等，详细接口功能请查看测试网的
-**[API文档](https://testnet.okex.com/docs)**。
+**注 意：1）模拟盘与okex实盘API的不同：模拟盘的请求的header里面需要添加"x-simulated-trading: 1"**
+
+    
+    
+    请求头示例：
+    
+    Content-Type: application/json
+    
+    OK-ACCESS-KEY: 37c541a1-****-****-****-10fe7a038418
+    
+    OK-ACCESS-SIGN: leaVRETrtaoEQ3yI9qEtI1CZ82ikZ4xSG5Kj8gnl3uw=
+    
+    OK-ACCESS-PASSPHRASE: 1****6
+    
+    OK-ACCESS-TIMESTAMP: 2020-03-28T12:21:41.274Z
+    
+    x-simulated-trading: 1
+    
+
+2）模拟盘支持币种或合约：
+
+币币/杠杆USDT交易区：BTC、ETH、LTC、ETC、XRP、EOS、BCH、BSV、TRX
+
+交割合约USDT本位/永续合约USDT本位：BTC、ETH、LTC、ETC、XRP、EOS、BCH、BSV、TRX
+
+交割合约币本位/永续合约币本位/期权合约：BTC
+
+注意：模拟盘的交易币对名称或合约名称前均加MN以区分，例如：MNBTC-MNUSDT（币币/杠杆）、MNBTC-
+USD-180213(交割合约)、MNBTC-MNUSDT-SWAP(永续合约)、MNBTC-USD-190927-5000-C(期权合约)
 
 ### 资金账户API
 
@@ -4696,8 +4723,9 @@ volume | String | 交易量
 如果用户没有提供开始时间或结束时间中的任一字段，则两个字段都将被忽略。未提供开始时间和结束时间的请求，则系统按时间粒度返回最近的200条数据。
 
 时间粒度`granularity`必须是`[60 180 300 900 1800 3600 7200 14400 21600 43200 86400
-604800]`中的任一值，否则请求将被拒绝。这些值分别对应的是`[1min 3min 5min 15min 30min 1hour 2hour 4hour
-6hour 12hour 1day 1week]`的时间段。
+604800 2678400 8035200 16070400 31536000]]`中的任一值，否则请求将被拒绝。这些值分别对应的是`[1min 3min
+5min 15min 30min 1hour 2hour 4hour 6hour 12hour 1day 1week 1 month 3 months 6
+months and 1 year]`的时间段。
 
 K线数据可能不完整。K线数据不应该轮询调用。
 
@@ -8870,8 +8898,9 @@ K线衔接规则：
 如果用户没有提供开始时间或结束时间中的任一字段，则两个字段都将被忽略。未提供开始时间和结束时间的请求，则系统按时间粒度返回最近的300条数据。
 
 时间粒度`granularity`必须是`[60 180 300 900 1800 3600 7200 14400 21600 43200 86400
-604800]`中的任一值，否则请求将被拒绝。这些值分别对应的是`[1min 3min 5min 15min 30min 1hour 2hour 4hour
-6hour 12hour 1day 1week]`的时间段。
+604800 2678400 8035200 16070400 31536000]]`中的任一值，否则请求将被拒绝。这些值分别对应的是`[1min 3min
+5min 15min 30min 1hour 2hour 4hour 6hour 12hour 1day 1week 1 month 3 months 6
+months and 1 year]`的时间段。
 
 K线数据可能不完整。
 
@@ -11416,9 +11445,10 @@ currency_volume | String | 交易量（按币折算）
 
 如果用户没有提供开始时间或结束时间中的任一字段，则两个字段都将被忽略。未提供开始时间和结束时间的请求，则系统按时间粒度返回最近的200条数据。
 
-时间粒度granularity必须是`[60 180 300 900 1800 3600 7200 14400 21600 43200 86400
-604800]`中的任一值，否则请求将被拒绝。这些值分别对应的是`[1min 3min 5min 15min 30min 1hour 2hour 4hour
-6hour 12hour 1day 1week]`的时间段。
+时间粒度`granularity`必须是`[60 180 300 900 1800 3600 7200 14400 21600 43200 86400
+604800 2678400 8035200 16070400 31536000]]`中的任一值，否则请求将被拒绝。这些值分别对应的是`[1min 3min
+5min 15min 30min 1hour 2hour 4hour 6hour 12hour 1day 1week 1 month 3 months 6
+months and 1 year]`的时间段。
 
 K线数据可能不完整。
 
@@ -11970,7 +12000,6 @@ total_avail_balance | String | 总余额
 margin_balance | String | 保证金余额  
 margin_frozen | String | 已用保证金（IMR，包含挂单和持仓保证金）  
 avail_margin | String | 可用保证金  
-max_withdraw | String | 可划转数量  
 margin_for_unfilled | String | 总挂单保证金  
 maintenance_margin | String | 持仓最低维持保证金  
 realized_pnl | String | 当期已实现盈亏汇总  
@@ -13492,9 +13521,10 @@ currency_volume | String | 交易量(按币种折算)
   
 ##### 解释说明
 
-时间粒度granularity必须是`[60 180 300 900 1800 3600 7200 14400 21600 43200 86400
-604800]`中的任一值，否则请求将被拒绝。这些值分别对应的是`[1min 3min 5min 15min 30min 1hour 2hour 4hour
-6hour 12hour 1day 1week]`的时间段。
+时间粒度`granularity`必须是`[60 180 300 900 1800 3600 7200 14400 21600 43200 86400
+604800 2678400 8035200 16070400 31536000]]`中的任一值，否则请求将被拒绝。这些值分别对应的是`[1min 3min
+5min 15min 30min 1hour 2hour 4hour 6hour 12hour 1day 1week 1 month 3 months 6
+months and 1 year]`的时间段。
 
 K线数据可能不完整。
 
@@ -14632,7 +14662,6 @@ state | String | `-2`:失败
 `3`:下单中  
 `4`:撤单中  
 created_at | String | 订单创建时间  
-last_fill_id | String | 成交ID。和交易频道trade_id对应（如果没有，推`0`）  
   
 ##### 解释说明
 
@@ -18588,6 +18617,73 @@ Url pass 无效 | Url path error | 30000
 ### 更新日志
 
 更新日志
+
+### 2020-06-01
+
+以下 2020年6月已上线
+
+  
+  
+
+1、模拟盘的交易域名、业务线以及开启交易流程更新：
+
+**模 拟盘，用户可以通过模拟盘API请求除充提币外的所有接口，包括市场行情信息、账户余额信息、持仓信息、订单信息等。**
+
+在您开启OKEx交易之前，可以在我们提供的模拟盘上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
+
+模拟盘API交易功能所需的APIKey，需要在[这里](https://www.okex.com/account/my-
+api)进行创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
+
+模拟盘API交易域名如下：
+
+**RestAPI 地址：<https://www.okex.com>**
+
+**WebSocket 地址: wss://okex.com:8443/ws/v3?brokerId=9999**
+
+模拟盘的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击[这里](https://www.okex.com/account/register?action=header_register_btn)进行注册。
+
+以下步骤开启API模拟交易：
+
+**注 册okex账户-->资产管理-->开始模拟盘交易-->个人中心-->创建模拟盘APIKey---->开始模拟交易**
+
+**注 意：1）模拟盘与okex实盘API的不同：模拟盘的请求的header里面需要添加"x-simulated-trading: 1"**
+
+    
+    
+    请求头示例：
+    
+    Content-Type: application/json
+    
+    OK-ACCESS-KEY: 37c541a1-****-****-****-10fe7a038418
+    
+    OK-ACCESS-SIGN: leaVRETrtaoEQ3yI9qEtI1CZ82ikZ4xSG5Kj8gnl3uw=
+    
+    OK-ACCESS-PASSPHRASE: 1****6
+    
+    OK-ACCESS-TIMESTAMP: 2020-03-28T12:21:41.274Z
+    
+    x-simulated-trading: 1
+    
+
+2）模拟盘支持币种或合约：
+
+币币/杠杆USDT交易区：BTC、ETH、LTC、ETC、XRP、EOS、BCH、BSV、TRX
+
+交割合约USDT本位/永续合约USDT本位：BTC、ETH、LTC、ETC、XRP、EOS、BCH、BSV、TRX
+
+交割合约币本位/永续合约币本位/期权合约：BTC
+
+注意：模拟盘的交易币对名称或合约名称前均加MN以区分，例如：MNBTC-MNUSDT（币币/杠杆）、MNBTC-
+USD-180213(交割合约)、MNBTC-MNUSDT-SWAP(永续合约)、MNBTC-USD-190927-5000-C(期权合约)
+
+### 2020-05-15
+
+以下 2020年5月已上线
+
+  
+  
+
+1.新增API新手教程模块，为新用户提供简单易懂的API接入、使用教程视频。
 
 ### 2020-04-22
 
