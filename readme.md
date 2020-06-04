@@ -1,4 +1,4 @@
-[![](../static/img/logo.png?_st=20200601184501)](/)
+[![](../static/img/logo.png?_st=20200604124847)](/)
 
   * [ 入门指引 ](./#README)
   * [ 做市商项目 ](./#market)
@@ -1111,7 +1111,7 @@ Rest API终端URL <https://www.okex.com/>
 
 同时OKEx还提供了WebSocket流，订阅WebSocket可以获取行情数据的推送。
 
-WS 地址：wss://real.okex.com:8443/ws/v3
+WebSocket地址：wss://real.okex.com:8443/ws/v3
 
 所有请求基于Https协议，请求头信息中Content-Type需要统一设置为:'application/json'
 
@@ -2041,7 +2041,7 @@ api)进行创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
 
 **RestAPI 地址：<https://www.okex.com>**
 
-**WebSocket 地址: wss://okex.com:8443/ws/v3?brokerId=9999**
+**WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=9999**
 
 模拟盘的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击[这里](https://www.okex.com/account/register?action=header_register_btn)进行注册。
 
