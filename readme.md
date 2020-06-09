@@ -1,4 +1,4 @@
-[![](../static/img/logo.png?_st=20200608184737)](/)
+[![](../static/img/logo.png?_st=20200609152346)](/)
 
   * [ 入门指引 ](./#README)
   * [ 做市商项目 ](./#market)
@@ -626,7 +626,7 @@ last_fill_id | String | 最新成交ID (如果没有推0)。和trade 频道推�
 
 测试网站逐渐会开放的业务线为：币币交易，币币杠杆，永续合约。
 
-测试网站的API交易功能所需的APIKey，需要在这里进行创建APIKey，测试网创建APIKey的流程与OKEx一致。
+测试网站的API交易功能所需的APIKey，需要进行创建APIKey，测试网创建APIKey的流程与OKEx一致。
 
 测试网站域名如下：
 
@@ -634,7 +634,7 @@ RestAPI Url：<https://testnet.okex.com>
 
 WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181
 
-测试网的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击这里进行注册。
+测试网的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。
 
 以下步骤开启API模拟交易：
 
@@ -2942,7 +2942,7 @@ USD-190628?state=2&before2512669605501952&limit=20`（返回合约`order_id=2512
 
 私有接口可用于订单管理和账户管理。每个私有请求必须使用规范的验证形式进行签名。
 
-私有接口需要使用您的APIKey进行验证。您可以在这里生成APIKey。
+私有接口需要使用您的APIKey进行验证。您可以在[这里](https://www.okex.com/account/my-api)生成APIKey。
 
 ### 访问限制
 
