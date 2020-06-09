@@ -1,7 +1,30 @@
-[![](../static/img/logo.png?_st=20200604124847)](/)
+[![](../static/img/logo.png?_st=20200608184737)](/)
 
   * [ 入门指引 ](./#README)
   * [ 做市商项目 ](./#market)
+  * [ 新手教程 ](./#vedio)
+  * [ 更新日志 ](./#change-change)
+    * [ 2020-06-01 ](./#change-20200630)
+    * [ 2020-05-15 ](./#change-20200531)
+    * [ 2020-04-22 ](./#change-20200430)
+    * [ 2020-03-30 ](./#change-20200331)
+    * [ 2020-02-29 ](./#change-20200229)
+    * [ 2019-12-31 ](./#change-20191210)
+    * [ 2019-11-30 ](./#change-20191130)
+    * [ 2019-10-31 ](./#change-20191031)
+    * [ 2019-09-30 ](./#change-20190930)
+    * [ 2019-08-31 ](./#change-20190831)
+    * [ 2019-07-31 ](./#change-20190731)
+    * [ 2019-06-30 ](./#change-20190630)
+    * [ 2019-05-31 ](./#change-20190531)
+    * [ 关于V1 API 支持交割合约梯度保证金优化 ](./#change-20190515)
+    * [ 2019-05-15 ](./#change-20190516)
+    * [ 2019-04-28 ](./#change-20190428)
+    * [ 2019-04-26 ](./#change-20190426)
+    * [ 2019-04-24 ](./#change-20190424)
+    * [ 2019-04-12 ](./#change-20190412)
+    * [ 2019-03-27 ](./#change-20190327)
+    * [ 2019-01-21 ](./#change-20190121)
   * [ 常见问题 ](./#question-README)
     * [ APIKey问题 ](./#question-apikey)
     * [ 验签问题 ](./#question-verify)
@@ -12,7 +35,6 @@
     * [ 接口功能问题 ](./#question-endpoint)
     * [ 币币/杠杆问题 ](./#question-spot_margin)
     * [ 合约问题 ](./#question-contract)
-  * [ 新手教程 ](./#vedio)
   * [ API概述 ](./#summary-README)
     * [ 账户体系 ](./#summary-doc)
     * [ 业务字典 ](./#summary-product)
@@ -275,28 +297,6 @@
       * [ 指数行情 ](./#Index-ticker)
       * [ 指数K线 ](./#Index-candel)
     * [ WebSocketAPI 错误码 ](./#swap_ws-error_code)
-  * [ 更新日志 ](./#change-change)
-    * [ 2020-06-01 ](./#change-20200630)
-    * [ 2020-05-15 ](./#change-20200531)
-    * [ 2020-04-22 ](./#change-20200430)
-    * [ 2020-03-30 ](./#change-20200331)
-    * [ 2020-02-29 ](./#change-20200229)
-    * [ 2019-12-31 ](./#change-20191210)
-    * [ 2019-11-30 ](./#change-20191130)
-    * [ 2019-10-31 ](./#change-20191031)
-    * [ 2019-09-30 ](./#change-20190930)
-    * [ 2019-08-31 ](./#change-20190831)
-    * [ 2019-07-31 ](./#change-20190731)
-    * [ 2019-06-30 ](./#change-20190630)
-    * [ 2019-05-31 ](./#change-20190531)
-    * [ 关于V1 API 支持交割合约梯度保证金优化 ](./#change-20190515)
-    * [ 2019-05-15 ](./#change-20190516)
-    * [ 2019-04-28 ](./#change-20190428)
-    * [ 2019-04-26 ](./#change-20190426)
-    * [ 2019-04-24 ](./#change-20190424)
-    * [ 2019-04-12 ](./#change-20190412)
-    * [ 2019-03-27 ](./#change-20190327)
-    * [ 2019-01-21 ](./#change-20190121)
   * [ 创建我的APIKey ](./#apikey)
   * [ OpenID开发文档说明 ](OpenAPI.html)
   *   * [ 问题反馈 ](./#support-README)
@@ -390,6 +390,1740 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 *OKEx保留对做市商项目的最终解释权
 
 做市商项目不支持VIP、交易量相关活动以及任何形式的返佣活动
+
+### 新手教程
+
+以下为API新手教程的视频，更多教学内容持续更新中，敬请期待：
+
+1、API交易与申请 [点击这里观看](https://www.okex.me/academy/zh/api-transactions-and-
+applications-cn)
+
+2、Web页面和API接口数据对比 [点击这里观看](https://www.okex.me/academy/zh/web-page-and-api-
+excuse-data-comparison-cn)
+
+3、Websocket API使用介绍和注意事项 [点击这里观看](https://www.okex.me/academy/zh/websocket-
+api-usage-introduction-and-precautions-cn)
+
+4、API如何获取个人数据 [点击这里观看](https://www.okex.me/academy/zh/how-api-gets-personal-
+data-cn)
+
+### 更新日志
+
+更新日志
+
+### 2020-06-01
+
+以下 2020年6月已上线
+
+  
+  
+
+1、模拟盘的交易域名、业务线以及开启交易流程更新：
+
+**模 拟盘，用户可以通过模拟盘API请求除充提币外的所有接口，包括市场行情信息、账户余额信息、持仓信息、订单信息等。**
+
+在您开启OKEx交易之前，可以在我们提供的模拟盘上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
+
+模拟盘API交易功能需要在模拟盘上创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
+
+模拟盘API交易域名如下：
+
+**RestAPI 地址：<https://www.okex.com>**
+
+**WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=9999**
+
+模拟盘的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。
+
+以下步骤开启API模拟交易：
+
+**注 册okex账户-->资产管理-->开始模拟盘交易-->个人中心-->创建模拟盘APIKey---->开始模拟交易**
+
+**注 意：1）模拟盘与okex实盘API的不同：模拟盘的请求的header里面需要添加"x-simulated-trading: 1"**
+
+    
+    
+    请求头示例：
+    
+    Content-Type: application/json
+    
+    OK-ACCESS-KEY: 37c541a1-****-****-****-10fe7a038418
+    
+    OK-ACCESS-SIGN: leaVRETrtaoEQ3yI9qEtI1CZ82ikZ4xSG5Kj8gnl3uw=
+    
+    OK-ACCESS-PASSPHRASE: 1****6
+    
+    OK-ACCESS-TIMESTAMP: 2020-03-28T12:21:41.274Z
+    
+    x-simulated-trading: 1
+    
+
+2）模拟盘支持币种或合约：
+
+币币/杠杆USDT交易区：BTC、ETH、LTC、ETC、XRP、EOS、BCH、BSV、TRX
+
+交割合约USDT本位/永续合约USDT本位：BTC、ETH、LTC、ETC、XRP、EOS、BCH、BSV、TRX
+
+交割合约币本位/永续合约币本位/期权合约：BTC
+
+注意：模拟盘的交易币种前均加MN以区分，例如：MNBTC-MNUSDT（币币/杠杆）、MNBTC-USD-180213(交割合约)、MNBTC-
+MNUSDT-SWAP(永续合约)、MNBTC-USD-190927-5000-C(期权合约)
+
+### 2020-05-15
+
+以下 2020年5月已上线
+
+  
+  
+
+1.新增API新手教程模块，为新用户提供简单易懂的API接入、使用教程视频。
+
+### 2020-04-22
+
+以下 2020年4月已上线
+
+  
+  
+
+1.交割合约增加"增加/减少逐仓仓位的保证金"接口
+
+具体接口：
+
+`POST/api/futures/v3/position/margin`
+
+  
+2.获取系统维护状态接口文档修改：功能兼容  
+当前为：GET /api/system/v3/maintenance  
+修改后：GET /api/system/v3/status  
+  
+3.新增"业务字典"模块  
+  
+  
+4.币币、交割合约、永续合约止盈止损新增"市价止盈止损"参数：
+
+具体接口：
+
+`POST /api/spot/v3/order_algo`
+
+`POST /api/futures/v3/order_algo`
+
+`POST /api/swap/v3/order_algo`
+
+##### 请求参数
+
+**参 数名** | **参 数类型** | **是 否必须** | **描 述**  
+---|---|---|---  
+algo_type | String | 否 | 1:限价 2:市场价；触发价格类型，默认是限价；为市场价时，委托价格不必填；  
+  
+  
+  
+  
+5.交割合约增加"逐仓自动增加保证金"接口
+
+具体接口：
+
+`POST /api/futures/v3/accounts/auto_margin`
+
+  
+  
+  
+6.永续合约
+
+1）持仓频道增加"多仓/空仓开仓冻结张数"参数
+
+具体接口：
+
+`{"op": "subscribe", "args": ["swap/position:BTC-USD-SWAP"]}`
+
+##### 返回参数
+
+**参 数名** | **参 数类型** | **描 述**  
+---|---|---  
+open_outstanding | String | 多仓/空仓开仓冻结张数  
+  
+2）用户账户频道增加"可用保证金"、"多仓最大可开张数"和"空仓最大可开张数"参数
+
+`{"op": "subscribe", "args": ["swap/account:BTC-USD-SWAP"]}`
+
+##### 返回参数
+
+**参 数名** | **参 数类型** | **描 述**  
+---|---|---  
+available_qty | String | 可用保证金  
+long_open_max | string | 多仓最大可开张数  
+short_open_max | string | 空仓最大可开张数  
+  
+3)订单列表、订单信息、交易频道增加"杠杆倍数"和"最新成交ID"参数
+
+具体接口：
+
+`GET/api/swap/v3/orders/<instrument_id>/<order_id>`
+
+`GET/api/swap/v3/orders/<instrument_id>`
+
+`{"op": "subscribe", "args": ["swap/order:BTC-USD-SWAP"]}`
+
+##### 返回参数
+
+**参 数名** | **参 数类型** | **描 述**  
+---|---|---  
+leverage | String | 杠杆倍数  
+last_fill_id | String | 最新成交ID (如果没有推0)。和trade 频道推送的trade ID一致  
+  
+### 2020-03-30
+
+以下 2020年3 月已上线
+
+  
+  
+
+#### **1. 以下接口限速更新为：10次/2秒：**
+
+币币API：账单流水；订单列表；成交明细
+
+1）GET/api/spot/v3/accounts//ledger
+
+2）GET/api/spot/v3/orders
+
+3）GET/api/spot/v3/fills
+
+币币杠杆API：账单流水；订单列表；成交明细
+
+4）GET/api/margin/v3/accounts//ledger
+
+5）GET/api/margin/v3/orders
+
+6）GET/api/margin/v3/fills
+
+交割合约API：订单列表；成交明细
+
+7）GET/api/futures/v3/orders/
+
+8）GET/api/futures/v3/fills
+
+永续合约API：订单列表；成交明细
+
+9）GET/api/swap/v3/orders/
+
+10）GET/api/swap/v3/fills
+
+期权API：订单列表；成交明细
+
+11）GET/api/option/v3/orders/
+
+12）GET/api/option/v3/fills/;  
+
+#### **2. 交割合约增加接口：公共-获取历史结算记录**
+
+具体接口：
+
+`GET/api/futures/v3/settlement/history`  
+
+#### **3. 增加"测试环境"：**
+
+在您开启OKEx交易之前，可以在我们提供的测试网站上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
+
+测试网站目前支持的业务线为：交割合约，期权交易。
+
+测试网站逐渐会开放的业务线为：币币交易，币币杠杆，永续合约。
+
+测试网站的API交易功能所需的APIKey，需要在这里进行创建APIKey，测试网创建APIKey的流程与OKEx一致。
+
+测试网站域名如下：
+
+RestAPI Url：<https://testnet.okex.com>
+
+WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181
+
+测试网的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击这里进行注册。
+
+以下步骤开启API模拟交易：
+
+注册okex账户-->登录测试网-->领取测试币-->创建测试网APIKey---->开始模拟交易
+
+测试网站，用户可以通过API请求交割合约和期权的所有接口，包括基本合约信息、市场行情信息、账户余额信息、持仓信息、订单信息等，详细接口功能请查看测试网的API文档。  
+
+#### **4. 交割合约、永续合约下单接口增加市价委托功能；**
+
+具体接口：
+
+`POST /api/futures/v3/order`
+
+`POST /api/swap/v3/order`  
+
+#### 5.交割合约、永续合约止盈止损下单中增加触发价格类型：
+
+具体接口：
+
+`POST /api/futures/v3/order_algo`
+
+`POST /api/swap/v3/order_algo`
+
+新增参数：
+
+**参 数名** | **参 数类型** | **描 述**  
+---|---|---  
+algo_type | String | 1:限价 2:市场价；  
+  
+### 2020-02-29
+
+以下 2020年2 月已上线
+
+  
+  
+
+1.币币用户交易频道增加"last_fill_id"，成交ID，和交易频道trade_id对应
+
+具体接口：
+
+{"op": "subscribe", "args": ["spot/order:LTC-USDT"]}
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+last_fill_id | String | 成交ID，和交易频道trade_id对应  
+  
+  
+  
+
+2.币币、交割合约、永续合约、期权增加"公共-400档增量数据频道"
+
+具体接口：
+
+{"op": "subscribe", "args": ["spot/depth_l2_tbt:BTC-USDT"]} {"op":
+"subscribe", "args": ["futures/depth_l2_tbt:BTC-USD-200327"]} {"op":
+"subscribe", "args": ["swap/depth_l2_tbt:BTC-USD-SWAP"]} {"op": "subscribe",
+"args": ["option/depth_l2_tbt:BTC-USD-200207-9500-C"]}
+
+##### 返回参数
+
+**参 数名** | **参 数类型** | **描 述**  
+---|---|---  
+asks | List<String> | 卖方深度  
+bids | List<String> | 买方深度  
+timestamp | String | 时间戳  
+instrument_id | String | 币对  
+checksum | String | 检验和  
+  
+  
+  
+
+3.币币获取成交明细和公共-交易频道增加"成交id"：
+
+具体接口：
+
+GET /api/spot/v3/fills
+
+{"op": "subscribe", "args": ["spot/trade:ETH-USDT"]}
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+trade_id | String | 成交id  
+  
+  
+  
+
+4.增加获取现货杠杆标记价格接口：
+
+##### 限速规则：20次/2s
+
+##### HTTP请求
+
+`GET/api/margin/v3/instruments/<instrument_id>/mark_price`
+
+##### 请求示例
+
+`GET/api/margin/v3/instruments/EOS-USDT/mark_price`
+
+##### 请求参数
+
+参数名 | 参数类型 | 是否必须 | 描述  
+---|---|---|---  
+instrument_id | String | 是 | 杠杆币对名称  
+  
+##### 返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+instrument_id | String | 杠杆币对名称  
+mark_price | String | 指定杠杆的标记价格  
+timestamp | String | 返回请求时间  
+  
+5.tbt频道由首次返回市场订单簿的全部深度数据变更为：首次返回市场订单簿的400档深度数据。
+
+6.alias 枚举值中增加：次季度 `bi_quarter`
+
+具体接口：
+
+`GET/api/futures/v3/instruments`
+
+##### 返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+alias | String | 本周 `this_week`  
+次周 `next_week`  
+季度 `quarter`  
+次季度 `bi_quarter`  
+  
+### 2019-12-31
+
+以下 12 月已上线
+
+  
+  
+
+    
+    
+      1.增加获取 "当前账户交易手续等级的费率 " 接口<br>
+        涉及接口：<br>GET /api/spot/v3/trade_fee,GET /api/futures/v3/trade_fee<br>
+    
+    
+      2.增加获取子账户余额信息接口<br>
+        涉及接口：<br>GET /api/account/v3/sub-account<br>
+    
+      3.增加获取账户总资产接口<br>
+         涉及接口：<br>GET /api/account/v3/asset-valuation <br>
+    
+      4.币币杠杆 账户信息接口增加维持保证金率字段和借币数量档位字段<br>
+         涉及接口：<br>GET /api/margin/v3/accounts<br>
+                  GET/api/margin/v3/accounts/<instrument_id><br>
+                  {"op": "subscribe", "args": ["spot/margin_account:ETH-USDT"]}<br>
+    
+      5.币币杠杆增加设置杠杆倍数接口和查询杠杆倍数接口<br>
+         涉及接口：<br>POST  /api/margin/v3/accounts/<instrument_id>/leverage<br>
+                  GET /api/margin/v3/accounts/<instrument_id>/leverage<br>
+    
+      6.wsAPI币币杠杆account频道新增强平价（liquidation_price）字段<br>
+         涉及接口：{"op": "subscribe", "args": ["spot/margin_account:ETH-USDT"]}<br>
+    
+      7. 币币成交明细接口增加currency字段<br>
+         涉及的接口：GET /api/spot/v3/fills<br>
+    
+
+  
+  
+
+### 2019-11-30
+
+以下 11 月已上线
+
+  
+  
+一：支持永续usdt保证金合约交易 1、涉及的接口： a.公共-获取合约信息 GET /api/swap/v3/instruments - - -
+-返回值增加必要字段 API接口改造后，您的程序不会受影响。但是在接口中会有新的字段增加。给您带来的不便，敬请谅解！  
+二：永续接口优化
+
+    
+    
+      1.增加获取 "当前账户交易手续等级的费率 " 接口
+        涉及接口：GET /api/swap/v3/trade_fee
+    
+      2.永续ws order里增加last_fill_id
+        涉及接口：{"op": "subscribe", "args": ["swap/order:BTC-USD-SWAP"]}
+    
+      3.RestAPI永续合约深度接口，增加  合并深度 查询条件
+         涉及接口：GET /api/swap/v3/instruments/<instrument_id>/depth
+    
+      4.永续合约，下单和撤单和持仓查询等接口的  instrumentid字段，入参支持大小写参数。
+    
+      5.永续合约持仓接口返回信息增加未实现盈亏字段。
+         涉及接口：GET /api/swap/v3/<instrument_id>/position，GET /api/swap/v3/position，
+    
+      6. 永续账户信息接口，增加可划转数量字段
+         涉及的接口：GET /api/futures/v3/accounts/{currency}，GET /api/futures/v3/accounts，
+    
+
+  
+  
+
+### 2019-10-31
+
+以下 10 月已上线
+
+  
+  
+
+改造内容如下（此公告仅涉及到API交易用户，V1 OpenAPI不支持USDT保证金合约交易）：
+
+1、改造内容： 现状是：API接口无法通过请求参数区分'币本位保证金合约'和'USDT保证金合约'。
+
+    
+    
+          端口：GET /api/futures/v3/accounts/<currency>
+          示例：GET /api/futures/v3/accounts/BTC 
+    
+
+改造后： 请求参数currency更换成underlying。币本位保证金合约的传参值为BTC-USD，USDT保证金合约的传参值为BTC-USDT
+
+    
+    
+         端口：GET /api/futures/v3/accounts/<underlying>
+         USDT保证金合约示例：GET /api/futures/v3/accounts/BTC-USDT
+         币本位保证金合约示例：GET /api/futures/v3/accounts/BTC-USD
+    
+
+改造后，仍然兼容之前的请求格式，如果传入，等价于其目前对应的（标的指数）。
+
+    
+    
+         例如：GET /api/futures/v3/accounts/BTC 等价于 GET /api/futures/v3/accounts/BTC-USD   
+    
+
+注意：restAPI 中"设置账户模式接口POST
+/api/futures/v3/accounts/margin_mode"不做兼容处理。使用此接口需要传相应的underlying。
+
+2、涉及的接口：restAPI
+
+a.单个币种合约账户信息 GET /api/futures/v3/accounts/
+
+b.账单流水查询 GET /api/futures/v3/accounts//ledger
+
+c.设定合约杠杆倍数（全仓） POST /api/futures/v3/accounts//leverage
+
+d.获取合约币种杠杆倍数 GET /api/futures/v3/accounts//leverage
+
+e.公共获取合约信息 GET /api/futures/v3/instruments - - - -返回值增加必要字段
+
+f.设置合约账户模式 POST /api/futures/v3/accounts/margin_mode - - - -此接口不做兼容
+
+g.获取所有币种合约账户信息 GET /api/futures/v3/accounts - - - -返回值增加必要字段
+
+3、涉及的接口: WebSocketAPI
+
+a.公共-全量合约信息频道 futures/instruments - - - - 返回值增加必要字段
+
+b.个人-订阅账户信息频道 futures/account
+
+示例：币本位保证金合约：{"op": "subscribe", "args": ["futures/account:BTC"]} USDT保证金合约：
+{"op": "subscribe", "args": ["futures/account:BTC-USDT"]}
+
+如果您不交易USDT保证金合约，您的程序不会受影响。但是在接口中会有新的字段增加。给您带来的不便，敬请谅解！
+
+  
+  
+
+### 2019-09-30
+
+以下 9 月已上线
+
+  
+  
+
+1.下线币币账户信息接口里的id字段
+
+具体接口：
+
+GET /api/spot/v3/accounts/
+
+GET /api/spot/v3/accounts
+
+{"op": "subscribe", "args": ["spot/account:BTC"]}
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+id | String | 账户 id  
+  
+  
+  
+
+2.交割合约获取所有/单个账户信息接口，全仓返回增加"强平手续费"字段。
+
+具体接口：
+
+GET /api/futures/v3/accounts/
+
+GET /api/futures/v3/accounts
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+liqui_fee_rate | String | 强平手续费  
+  
+  
+  
+
+3.永续 WebSocket ticker 频道增加"持仓量"和"24小时开盘价"：
+
+具体接口：
+
+{"op": "subscribe", "args": ["swap/ticker:BTC-USD-SWAP"]}
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+open_interest | String | 持仓量  
+open_24h | String | 24 小时开盘价  
+  
+  
+  
+
+4.杠杆倍数字段调整
+
+4.1) restAPi：永续的 持仓接口 GET /api/swap/v3/position GET /api/swap/v3/position
+
+4.2) wsAPI： 永续持仓频道 {"op": "subscribe", "args": ["swap/position:BTC-USD-SWAP"]}
+
+4.3) rest ： 永续获取委托单列表 （策略委托） GET /api/swap/v3/order_algo
+
+返回的leverage 之前返回的是个整数。现在是带小数的返回了。 之前 leverage ："20" ,现在 leverage："20.00"。
+
+  
+  
+
+5.币币ws交易频道，增加一个created_at字段
+
+涉及接口：
+
+{"op": "subscribe", "args": ["spot/order:LTC-USDT"]}
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+created_at | String | 订单创建时间  
+  
+### 2019-08-31
+
+以下8月已上线。
+
+1.请求参数和返回参数增加withdraw_id提币id字段
+
+具体接口：
+
+`GET /api/account/v3/withdrawal/history/<currency>`
+
+请求参数
+
+参数名 | 参数类型 | 是否必须 | 描述  
+---|---|---|---  
+withdraw_id | String | 否 | 提币申请ID  
+  
+只传currency，返回这个币对下的所有的提币记录。
+
+同时传currency和withdraw_id后，返回指定 的提币记录
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+withdraw_id | String | 提币申请ID  
+  
+2.查询所有币种的提币记录，返回参数增加withdraw_id字段。
+
+具体接口：
+
+`GET /api/account/v3/withdrawal/history`
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+withdraw_id | String | 提币申请ID  
+  
+3.币币，交割，永续的获取成交明细接口请求参数"order_id"字段改成非必须填。
+
+具体接口：
+
+`GET /api/spot/v3/fills，GET /api/futures/v3/fills，GET /api/swap/v3/fills`
+
+请求参数
+
+参数名 | 参数类型 | 是否必须 | 描述  
+---|---|---|---  
+order_id | String | 否 | 订单ID  
+  
+4.交割合约下单时，请求参数杠杆倍数（leverage）字段改为非必填，文档已下线。
+
+具体接口：
+
+POST /api/futures/v3/order
+
+POST /api/futures/v3/orders
+
+请求参数
+
+参数名 | 参数类型 | 是否必须 | 描述  
+---|---|---|---  
+leverage | String | 否 | 杠杆倍数  
+  
+5.交割合约和永续合约深度接口，请求参数增加depth字段。
+
+具体接口：
+
+`GET /api/futures/v3/instruments/<instrument_id>/book`
+
+`GET /api/swap/v3/instruments/<instrument_id>/depth`
+
+请求参数
+
+参数名 | 参数类型 | 是否必须 | 描述  
+---|---|---|---  
+depth | String | 否 | 按价格合并深度，例如：`0.1`或`0.001`  
+  
+depth：合并的档位，与精度保持一致，
+
+例如btc，价格精度是小数点后一位（11111.1）。合并价格精度 为 0.1时（11111.1） 为 时（1111）
+
+例如xrp。价格精度是小数点后4为（0.4112）。合并价格精度为
+0.1时（0.4），0.01时（0.41），0.001时（0.411），0.0001时（0.4112）
+
+6.交割合约通过APi接口获取强减仓的明细信息
+
+具体接口：
+
+GET /api/futures/v3/accounts//ledger
+
+请求参数
+
+参数名 | 参数类型 | 是否必须 | 描述  
+---|---|---|---  
+type | String | 否 | 20.强减空 21.强减多  
+  
+7.交割单个币种持仓接口和所有持仓接口和WebSocket用户持仓频道，增加"已结算收益"（多空）字段。
+
+具体接口：
+
+GET /api/futures/v3//position
+
+GET /api/futures/v3/position
+
+用户持仓频道 {"op": "subscribe", "args": ["futures/position:BTC-USD-170317"]}
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+long_settled_pnl | String | 多仓已结算收益  
+short_settled_pnl | String | 空仓已结算收益  
+  
+8.永续单个币种持仓接口和所有持仓接口和WebSocket持仓频道，增加"已结算收益"（多空）字段。
+
+具体接口：
+
+GET /api/swap/v3//position
+
+GET /api/swap/v3/position
+
+用户持仓频道{"op": "subscribe", "args": ["swap/position:BTC-USD-SWAP"]}
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+settled_pnl | String | 已结算收益  
+  
+9.永续合约每日结算调整内容：
+
+1）Restful：公共-获取合约下一次结算时间
+
+具体接口：
+
+`GET /api/swap/v3/instruments/<instrument_id>/funding_time`
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+estimated_rate | String | 下一期的预测资金费率  
+funding_rate | String | 当期资金费率  
+  
+2）WebSocket：公共-资金费率频道（swap/funding_rate）
+
+返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+estimated_rate | String | 下一期的预测资金费率  
+  
+3）v3 现使用参数：funding_rate 取值由目前"资金费率"变为"当期资金费率"
+
+10.OKEx关于V3 OpenAPI现货/杠杆接口手续费(Fee)字段的优化
+
+1)获取成交明细  
+GET /api/margin/v3/fills 和 GET /api/spot/v3/fills
+
+2)获取账单流水  
+GET /api/margin/v3/accounts//ledger 和 GET /api/spot/v3/accounts//ledger
+
+返佣和扣除手续费，都用Fee参数表示，且返佣为正数，扣除手续费为负数
+
+### 2019-07-31
+
+以下内容预计7月上线，请用户提前做好准备。
+
+1、交割合约和永续合约增加参数：已结算收益
+
+具体接口：
+
+`GET /api/futures/v3/position`
+
+`GET /api/futures/v3/<instrument_id>/position`
+
+ws-futures/position
+
+`GET /api/swap/v3/position`
+
+`GET /api/swap/v3/<instrument_id>/position`
+
+ws-swap/position
+
+2、下线交割合约"设置合约币种强平模式接口"
+
+3、ws地址由：wss://real.okex.com:10442/ws/v3 变更为：wss://real.okex.com:8443/ws/v3
+
+### 2019-06-30
+
+以下内容预计6月上线，请用户提前做好准备。
+
+1、分页 OKEx对返回数组的有些REST请求使用游标分页。游标分页允许在当前结果页面之前和之后获取结果，并且非常适合实时数据。端点如/ trades，/
+fills，/ orders，默认返回最新100项。要检索更多结果，后续请求应根据先前返回的数据指定要分页的方向。
+`before`和`after`游标可以通过响应头`OK-BEFORE`和`OK-AFTER`。在初始请求之后发出页面请求时，您的请求应使用这些游标值。
+
+例 `GET /api/spot/v3/orders?before=2&limit=30`
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+after | String |
+请求此id之前（更旧的数据）的分页内容，传的值为对应接口的`order_id`、`ledger_id`或`trade_id`等  
+before | String |
+请求此id之后（更新的数据）的分页内容，传的值为对应接口的`order_id`、`ledger_id`或`trade_id`等 |  
+limit | String | 分页返回的结果集数量，最大为100，不填默认返回100条  
+  
+游标之前和之后 将before光标引用在结果页中的第一项和after光标引用了一组结果的最后一个数据。
+
+headers将包含一个`OK-
+BEFORE`标头，该标头将返回光标id，以便在当前页面的下一个页面请求中使用。之前的页面是一个较新的页面，而不是在按时间顺序排列之前发生的页面。
+响应还将包含一个`OK-
+AFTER`标头，该标头将返回光标id，以便在此页面之后的页面的下一个请求中使用。之后的页面是较旧的页面，而不是按时间顺序排在此页面之后的页面。
+
+涉及到的接口：
+
+`GET /api/futures/v3/accounts/<currency>/ledger`
+
+`GET /api/futures/v3/orders/<instrument_id>`
+
+`GET /api/futures/v3/fills`
+
+`GET /api/futures/v3/instruments/<instrument_id>/trades`
+
+`GET /api/spot/v3/orders_pending`
+
+`GET /api/account/v3/ledger`
+
+`GET /api/futures/v3/accounts/<currency>/ledger`
+
+`GET /api/futures/v3/orders/<instrument_id>`
+
+`GET /api/futures/v3/fills`
+
+`GET /api/futures/v3/instruments/<instrument_id>/trades`
+
+`GET /api/swap/v3/accounts/<instrument_id>/ledger`
+
+`GET /api/swap/v3/orders/<instrument_id>`
+
+`GET /api/swap/v3/fills`
+
+`GET /api/swap/v3/instruments/<instrument_id>/trades`
+
+2、资金账户的"资金划转"接口，增加"母账户直接划转到子账户的资金账户、币币账户、交割账户、永续账户"：
+
+##### HTTP请求
+
+POST /api/account/v3/transfer
+
+##### 请求示例
+
+POST
+/api/account/v3/transfer{"amount":0.0001,"currency":"eos","from":6,"to":5,"instrument_id":"eos-
+usdt"}
+
+##### 请求参数
+
+参数名 | 参数类型 | 是否必须 | 描述  
+---|---|---|---  
+currency | String | 是 | 币种  
+amount | String | 是 | 划转数量  
+from | String | 是 | 转出账户  
+`0`:子账户  
+`1`:币币  
+`3`:合约  
+`4`:C2C  
+`5`:币币杠杆  
+`6`:资金账户  
+`8`:余币宝  
+`9`:永续合约  
+to | String | 是 | 转入账户  
+`0`:子账户  
+`1`:币币  
+`3`:合约  
+`4`:C2C  
+`5`:币币杠杆  
+`6`:资金账户  
+`8`:余币宝  
+`9`:永续合约  
+sub_account | String | 否 | 子账号登录名，`from`或`to`指定为`0`时，sub_account为必填项  
+instrument_id | String | 否 | 杠杆币对，如：eos-usdt，仅限已开通杠杆的币对  
+  
+from或to指定为0时，sub_account为必填项。
+
+当from为0时，to只能填6，即子账户的资金账户只能转到母账户的资金账户。
+
+当from指定为6，to指定为1-9，且sub_account填写子账户名时，可从母账户直接划转至子账户对应的币币、合约等账户。
+
+from或to指定为5时，instrument_id为必填项。
+
+### 2019-05-31
+
+1、OKEx为所有返回数据集的REST请求使用分页。分页允许在结果的当前页面之前和之后获取结果，并且非常适合于实时数据。像/ trades，/ fill，/
+orders这样默认返回最新内容的请求。根据当前的返回结果，后续请求可以在他的基础之上指定请求数据的方向，可以请求在这之前的，也可以请求在这之后的数据。
+
+`from`游标指向的是返回结果页的第一条内容，`to`游标指向的是返回结果页的最后一条内容。(页面内容是按照最新的排在最上面的顺序)
+
+`from`、`to`后传的值为对应接口的`order_id`、`ledger_id`或`trade_id`等
+
+`from`、`to`和`limit` 均为非必填，用户可不传此三个参数调用对应接口，返回最新的100条数据，再根据得到数据的id作为请求头，查询其他数据；
+
+`from-to`的游标范围是左开右闭`(from, to]`，即查询的返回数据，不包括from的标识的数据；
+
+如果查询返回的数量<`limit`指定的数量，则返回`from-to`游标查到的全部数据；
+
+如果查询返回的数据>`limit`指定的数量，则返回从`from`开始的id，向前limit条(如limit=50就是50条）数据；
+
+举例如果你请求返回的结果每一条内容的id是111，112，113，114，115，116，117，118，119，120
+
+那么在返回结果里面这些内容的排列顺序是120，119，118，117，116，115，114，113，112，111
+
+如果你想访问更新的数据，如115以前更旧的数据那么你需要使用`from`参数，如：`orders?from=115&limit=3`,则返回的是115以前更旧的3条数据，且排列顺序为：114，113，112（不包括115）
+
+如果你想访问更新的数据，如115以后更新的数据那么你需要使用`to`参数，如：`orders?to=115&limit=3`,则返回的是115以前更旧的3条数据，且排列顺序为：117，116，115（包括115）
+
+涉及到的接口：
+
+`GET /api/futures/v3/accounts/<currency>/ledger`
+
+`GET /api/futures/v3/orders/<instrument_id>`
+
+`GET /api/futures/v3/fills`
+
+`GET /api/futures/v3/instruments/<instrument_id>/trades`
+
+`GET /api/spot/v3/orders_pending`
+
+`GET /api/account/v3/ledger`
+
+`GET /api/futures/v3/accounts/<currency>/ledger`
+
+`GET /api/futures/v3/orders/<instrument_id>`
+
+`GET /api/futures/v3/fills`
+
+`GET /api/futures/v3/instruments/<instrument_id>/trades`
+
+`GET /api/swap/v3/accounts/<instrument_id>/ledger`
+
+`GET /api/swap/v3/orders/<instrument_id>`
+
+`GET /api/swap/v3/fills`
+
+`GET /api/swap/v3/instruments/<instrument_id>/trades`
+
+2、加入一个推全量合约的频道：有新合约上线，就推一次全量合约数据；
+
+3、【功能优化】：永续合约的账单流水查询接口的返回参数增加details、currency和balance（表示流水类型）
+
+| details | String | 如果类型是交易产生的，则该`details`字段将包含`order_id`和`instrument_id` | |
+currency | String | 币种，如：`btc` | | balance | String |
+开仓平仓的张数（开仓为正数，平仓为负数，当`type`是`fee`时，`balance`为`0`） |
+
+影响的业务线：永续合约
+
+影响的具体接口rest接口：
+
+GET /api/swap/v3/accounts//ledger
+
+4、【功能优化】：币币、币币杠杆的获取订单列表和获取订单信息的返回参数增加成交均价 price_avg
+
+| price_avg | String | 成交均价 |
+
+影响的业务线：币币、币币杠杆
+
+影响的具体接口rest接口：
+
+`GET /api/spot/v3/orders`
+
+`GET /api/spot/v3/orders/<order_id>`
+
+`GET /api/margin/v3/orders`
+
+`GET /api/margin/v3/orders/<order_id>`
+
+5、【功能优化】：币币、币币杠杆、交割合约、永续合约的获取成交明细接口的请求和返回增加参数用户ID
+client_oid，且将order_id改为非必填参数，即可获取当前币对的所有成交明细。
+
+| client_oid | String | 否 | 由您设置的订单ID来识别您的订单 ,类型为字母（大小写）+数字或者纯字母（大小写），1-32位字符
+| | order_id | String | 否 | 订单ID，下单失败时，此字段值为`-1` |
+
+影响的业务线：币币、币币杠杆、交割合约、永续合约
+
+影响的具体接口rest接口：
+
+`GET /api/spot/v3/fills`
+
+`GET /api/margin/v3/fills`
+
+`GET /api/futures/v3/fills`
+
+`GET /api/swap/v3/fills`
+
+6、【功能优化】: 币币、币币杠杆、交割合约、永续合约的批量下单端口；：
+
+1）币币、币币杠杆的批量下单返回，币对中的下线"_"，改为中划线"-"; 例如："btc_usdt" 改为"btc-usdt".
+
+2）当币币、币币杠杆批量下单返回error_code 33017, 交割、永续的批量下单返回error_code 32015时，http状态码应返回400;
+
+3） 如果下的多个单，只有部分发生了余额不足的错误，http状态码也应为400.
+
+影响的业务线：币币、币币杠杆、交割合约、永续合约
+
+影响的具体接口
+
+REST接口：
+
+`POST /api/spot/v3/batch_orders`
+
+`POST /api/margin/v3/batch_orders`
+
+`POST /api/futures/v3/batch_orders`
+
+`POST /api/swap/v3/batch_orders`
+
+7、【功能优化】：币币、交割合约、永续合约的账单流水查询接口的请求参数增加流水类型 type
+
+币币： | type | String | 非必填 | `1` .充值  
+`2` .提现  
+`3` .借入  
+`4` .还款  
+`7` .买入  
+`8` .卖出  
+`9` .新手任务  
+`10` .邀请好友完成新手任务  
+`11` .扣除任务奖励  
+`12` .邀请分成  
+`13` .撤销提现  
+`14` .活动送出  
+`15` .活动得到  
+`18` .交割合约转入  
+`19` .转出至交割合约  
+`20` .转入子账户  
+`21` .转出至子账户  
+`22` .返手续费  
+`23` .接收红包  
+`24` .发送红包  
+`25` .otc买入  
+`26` .otc卖出  
+`27` .扣除  
+`28` .兑换  
+`29` .转出至资金账户  
+`30` .资金账户转入  
+`31` .转出至法币  
+`32` .法币转入  
+`33` .转出至杠杆  
+`34` .杠杆转入  
+`35` .借币  
+`36` .还币  
+`37` .市商计划送出  
+`38` .市商计划返还  
+`41` .点卡抵扣币币手续费  
+`42` .购买点卡  
+`43` .点卡转让  
+`44` .市商计划额外送出  
+`45` .市商计划返还  
+`46` .币币账户转入  
+`47` .转出至币币账户  
+`48` .转出至组合  
+`49` .组合转入  
+`50` .挖矿扣除  
+`51` .挖矿所得  
+`52` .收益倍增  
+`53` .鼓励金分配  
+`55` .余币宝转入  
+`56` .转出至余币宝  
+`57` .永续合约转入  
+`58` .转出至永续合约  
+`59` .还糖果  
+`60` .点卡抵扣杠杆手续费 |
+
+交割合约： | type | String | 非必填 |1.开多 2.开空 3.平多 4.平空 5.手续费 6.转入，7.转出 8.清算已实现盈亏
+9.穿仓分摊，11.强平剩余 12.剩余拨付 13-强平平多 14-强平平空 15.交割平多 16.交割平空 17.清算未实现收益-多头
+18.清算未实现收益-空头 |
+
+永续合约： | type | String | 非必填 | 1. 开多 2\. 开空 3\. 平多 4\. 平空 5.转入 6.转出 7.清算未实现
+8.分摊 9.剩余拨付 10.强平多 11.强平空 14.资金费 15.手动追加 16.手动减少 17.自动追加 18.修改持仓模式 19.强减多
+20.强减空 21.用户调低杠杆追加保证金 22.清算已实现 |
+
+影响的业务线：币币、交割合约、永续合约
+
+影响的具体接口rest接口：
+
+`GET /api/spot/v3/accounts/<currency>/ledger`
+
+`GET /api/futures/v3/accounts/<currency>/ledger`
+
+`GET /api/swap/v3/accounts/<instrument_id>/ledger`
+
+### 关于V1 API 支持交割合约梯度保证金优化
+
+更新时间：2019年5月15日15：00(HKT)
+
+更新内容：
+
+推送
+
+1）ok_sub_futureusd_positions 合约持仓信息频道
+
+a.逐仓返回格式修改：
+
+优化前：多空方向，返回10倍和20倍杠杆持仓信息，若没有推0；
+
+优化后：多空方向，返回n倍和m倍杠杆持仓信息，若没有不推；
+
+优化前前格式：
+
+    
+    
+    [
+        {
+            "binary":0,
+            "channel":"ok_sub_futureusd_positions",
+            "data":{
+                "symbol":"eos_usd",
+                "user_id":7669455,
+                "positions":[
+                    {
+                        "lever_rate":10,
+                        "avgprice":4.849,
+                        "contract_id":201906280200053,
+                        "hold_amount":1,
+                        "contract_name":"EOS0628",
+                        "costprice":4.849,
+                        "forcedprice":4.44862378,
+                        "bondfreez":0,
+                        "eveningup":1,
+                        "fixmargin":0.20622809,
+                        "balance":0.20684677,
+                        "position":1,
+                        "profitreal":-0.00061868,
+                        "position_id":2517385395344384
+                    },
+                    {
+                        "lever_rate":10,
+                        "avgprice":0,
+                        "contract_id":201906280200053,
+                        "hold_amount":0,
+                        "contract_name":"EOS0628",
+                        "costprice":0,
+                        "forcedprice":0,
+                        "bondfreez":0,
+                        "eveningup":0,
+                        "fixmargin":0,
+                        "balance":0.20684677,
+                        "position":2,
+                        "profitreal":-0.00061868,
+                        "position_id":2517385395344384
+                    },
+                    {
+                        "lever_rate":20,
+                        "avgprice":0,
+                        "contract_id":201906280200053,
+                        "hold_amount":0,
+                        "contract_name":"EOS0628",
+                        "costprice":0,
+                        "forcedprice":0,
+                        "bondfreez":0,
+                        "eveningup":0,
+                        "fixmargin":0,
+                        "balance":0.20684677,
+                        "position":1,
+                        "profitreal":-0.00061868,
+                        "position_id":2517385395344384
+                    },
+                    {
+                        "lever_rate":20,
+                        "avgprice":5.423,
+                        "contract_id":201906280200053,
+                        "hold_amount":0,
+                        "contract_name":"EOS0628",
+                        "costprice":5.423,
+                        "forcedprice":0,
+                        "bondfreez":0,
+                        "eveningup":0,
+                        "fixmargin":0,
+                        "balance":0.20684677,
+                        "position":2,
+                        "profitreal":-0.00061868,
+                        "position_id":2517385395344384
+                    }
+                ]
+            }
+        }
+    ]
+    
+
+改之后格式：
+
+    
+    
+    [
+        {
+            "binary":0,
+            "channel":"ok_sub_futureusd_positions",
+            "data":{
+        "symbol":"etc_usd",
+        "user_id":36203808,
+        "positions":[
+            {
+                "lever_rate":5,
+                "avgprice":56.89655172,
+                "contract_id":20170310446,
+                "hold_amount":10,
+                "contract_name":"ETC0310",
+                "costprice":56.89655172,
+                "forcedprice":52.5,
+                "bondfreez":0,
+                "eveningup":5,
+                "fixmargin":0.17575758,
+                "balance":0.2067697,
+                "position":1,
+                "longMaintainenceRatio":"0.015",
+                "profitreal":-0.00070909,
+                "position_id":2778972475169792
+            },
+            {
+                "lever_rate":25,
+                "avgprice":33,
+                "contract_id":20170310446,
+                "hold_amount":2,
+                "contract_name":"ETC0310",
+                "costprice":33,
+                "forcedprice":34.2157,
+                "bondfreez":0,
+                "eveningup":1,
+                "fixmargin":0.03030303,
+                "balance":0.2067697,
+                "shortMaintainenceRatio":"0.015",
+                "position":2,
+                "profitreal":-0.00070909,
+                "position_id":2778972475169792
+            }
+        ]
+    }
+    
+
+b.新增返回参数：
+
+逐仓
+
+| longMaintainenceRatio |String |多仓维持保证金率 |
+
+| shortMaintainenceRatio |String |空仓维持保证金率 |
+
+2）ok_sub_futureusd_userinfo 合约账户信息频道
+
+新增返回参数：
+
+逐仓
+
+| bannerFrozen| String |冻结|
+
+全仓
+
+| bannerFrozen | String | 冻结 |
+
+| maintainenceRatio | String | 维持保证金率 |
+
+### 2019-05-15
+
+交割合约梯度保证金同步（v3）
+
+业务逻辑详见：OKEx关于交割合约上线梯度保证金模式、手续费等级试用功能及交易手续费调整的公告
+
+中文链接：<https://support.okex.com/hc/zh-cn/articles/360028302371>
+
+v3 API 同步优化如下：
+
+1、设置合约币种强平模式
+
+设置合约币种强平模式，注意当前仓位有挂单禁止切换账户模式。
+
+限速规则：5次/2s
+
+HTTP请求
+
+`POST /api/futures/v3/accounts/liqui_mode`
+
+请求示例
+
+`POST
+/api/futures/v3/accounts/liqui_mode{"currency":"btc","liqui_mode":"tier"}`
+
+请求参数
+
+| 参数名 | 参数类型 | 是否必须 | 描述 |
+
+| currency | String | 是 | 币种，如`BTC` |
+
+| liqui_mode | string | 是 | 强平模式  
+`tier`（梯度强平）  
+`legacy`（一次强平）|
+
+返回参数
+
+| 参数名 | 参数类型 | 描述|
+
+| liqui_mode | string | 强平模式  
+`tier`（梯度强平）  
+`legacy`（一次强平）|
+
+| currency | String | 币种，如`BTC` |
+
+| result | String | 返回设定结果，成功或错误码 |
+
+  
+
+2、所有/单个账户信息：
+
+全仓增加：维持保证金率/和获取当前强平模式
+
+逐仓增加：获取当前强平模式
+
+所有币种合约账户信息【单个币种合约账户信息同理】
+
+用于获取全币种账户信息，会有大量的性能消耗，建议用户传币种获取。
+
+限速规则：1次/10s
+
+HTTP请求
+
+GET /api/futures/v3/accounts
+
+请求示例
+
+GET /api/futures/v3/accounts
+
+返回参数增加：
+
+全仓
+
+| 全仓参数名 | 参数类型 | 描述 |
+
+| maint_margin_ratio | String | 维持保证金率 |
+
+| liqui_mode | string | 强平模式  
+`tier`（梯度强平）  
+`legacy`（一次强平）|
+
+逐仓
+
+| 逐仓参数名 | 参数类型 | 描述 |
+
+| liqui_mode | string | 强平模式  
+`tier`（梯度强平）  
+`legacy`（一次强平）|
+
+  
+
+3、持仓信息：
+
+全仓增加：保证金、收益、收益率、未实现盈亏
+
+逐仓增加：保证金率、维持保证金率、收益、未实现盈亏
+
+合约持仓信息
+
+获取合约账户所有的持仓信息。会有大量的性能消耗，建议用户传币种获取。
+
+限速规则：5次/2s
+
+HTTP请求
+
+GET /api/futures/v3/position
+
+请求示例
+
+GET /api/futures/v3/position
+
+返回参数增加：
+
+全仓
+
+| 全仓参数名 | 参数类型 | 描述 |
+
+| short_margin | String | 空仓保证金 |
+
+| short_pnl | String | 空仓收益 |
+
+| short_pnl_ratio | String | 空仓收益率 |
+
+| short_unrealised_pnl | String | 空仓未实现盈亏 |
+
+| long_margin | String | 多仓保证金 |
+
+| long_pnl | String | 多仓收益|
+
+| long_pnl_ratio | String | 多仓收益率|
+
+| long_unrealised_pnl | String | 多仓未实现盈亏|
+
+逐仓
+
+| 逐仓参数名 | 参数类型 | 描述 |
+
+| short_margin_ratio | String | 空仓保证金率 |
+
+| short_maint_margin_ratio | String | 空仓维持保证金率 |
+
+| short_pnl | String | 空仓收益 |
+
+| short_unrealised_pnl | String | 空仓未实现盈亏 |
+
+| long_margin_ratio | String | 多仓保证金率 |
+
+| long_maint_margin_ratio | String | 多仓维持保证金率|
+
+| long_pnl | String | 多仓收益 |
+
+| long_unrealised_pnl | String | 多仓未实现盈亏 |
+
+  
+
+4、持仓杠杆倍数调整（持仓中也能调整，1-100倍）
+
+设定合约币种杠杆倍数
+
+设定合约账户币种杠杆倍数，注意当前仓位有挂单禁止切换杠杆。
+
+限速规则：5次/2s
+
+HTTP请求
+
+`POST /api/futures/v3/accounts/<currency>/leverage`
+
+请求示例
+
+`POST /api/futures/v3/accounts/btc/leverage{"leverage":"99"}`（全仓示例）
+
+`POST /api/futures/v3/accounts/btc/leverage{"instrument_id":"BTC-
+USD-180213","direction":"long","leverage":"99"}`（逐仓示例）
+
+请求参数增加：
+
+全仓
+
+| 全仓参数名 | 参数类型 | 是否必须 | 描述 |
+
+| leverage | String | 是 | 要设定的杠杆倍数，填写`1-100`的整数 |
+
+| currency | String | 是 | 币种，如：`btc` |
+
+逐仓
+
+| 逐仓参数名 | 参数类型 | 是否必须 | 描述 |
+
+| currency | String | 是 | 币种，如：`btc`|
+
+| instrument_id | String | 是 | 合约ID，如`BTC-USD-180213`|
+
+| direction| String| 是 | 开仓方向  
+long（做多）或者short（做空）|
+
+| leverage | String | 是| 要设定的杠杆倍数，填写`1-100`的整数|
+
+错误码增加：
+
+32040:当前有持仓仓位或挂单（error message："EOS-USD-180213") You have open positions or
+orders.
+
+32060:保证金不足，无法调整杠杆 Insufficient margin. Unable to adjust leverage.
+
+  
+
+WEBSOCKECT:
+
+  
+
+1、账户频道：
+
+全仓增加维持保证金率/和获取当前强平模式
+
+逐仓增加获取当前强平模式
+
+用户账户频道
+
+获取账户信息，需用用户登录
+
+send示例
+
+{"op": "subscribe", "args": ["futures/account:BTC"]}
+
+其中`futures/account`为频道名，`BTC`为`token`
+
+返回参数增加：
+
+| 参数名（全仓）| 参数类型 | 描述|
+
+| maint_margin_ratio| String | 维持保证金率|
+
+| liqui_mode| string | 强平模式  
+`tier`（梯度强平）  
+`legacy`（一次强平）|
+
+| 参数名（逐仓） | 参数类型 | 描述|
+
+| liqui_mode | string| 强平模式  
+`tier`（梯度强平）  
+`legacy`（一次强平）|
+
+  
+
+2、持仓信息：
+
+全仓增加：保证金、收益、收益率、未实现盈亏
+
+逐仓增加：保证金率、维持保证金率、收益、未实现盈亏
+
+用户持仓频道
+
+获取用户持仓信息，需用用户登录
+
+send示例
+
+{"op": "subscribe", "args": ["futures/position:BTC-USD-170317"]}
+
+其中`futures/position`为频道名，`BTC-USD-170317`为`instrument_id`
+
+全仓增加：
+
+| 全仓参数名 | 参数类型| 描述|
+
+| short_margin | String | 空仓保证金|
+
+| short_pnl String | 空仓收益|
+
+| short_pnl_ratio | String | 空仓收益率 |
+
+| short_unrealised_pnl | String | 空仓未实现盈亏|
+
+| long_margin | String | 多仓保证金 |
+
+| long_pnl | String | 多仓收益|
+
+| long_pnl_ratio | String | 多仓收益率 |
+
+| long_unrealised_pnl | String | 多仓未实现盈亏|
+
+逐仓增加：
+
+| 逐仓参数名 | 参数类型 | 描述 |
+
+| short_margin_ratio | String | 空仓保证金率 |
+
+| short_maint_margin_ratio | String | 空仓维持保证金率 |
+
+| short_pnl | String | 空仓收益 |
+
+| short_unrealised_pnl | String | 空仓未实现盈亏 |
+
+| long_margin_ratio | String | 多仓保证金率 |
+
+| long_maint_margin_ratio | String | 多仓维持保证金率 |
+
+| long_pnl | String | 多仓收益 |
+
+| long_unrealised_pnl | String | 多仓未实现盈亏 |
+
+### 2019-04-28
+
+变更1【功能下线】币币的多状态查询功能下线，将不再支持多状态查询
+
+影响的业务线：币币
+
+影响的具体接口：Rest API `GET /api/spot/v3/orders`
+
+变更2【功能优化】：增加参数state（表示订单状态），将币币、交割合约、永续合约的订单状态定义统一一致。
+
+说明：state为新增加的字段，功能等同原有status字段。短期会对这2个字段做兼容，建议原用户尽早切换成state，status的下线时会提前通知用户。
+
+state，状态集说明："-2":失败,"-1":撤单成功,"0":等待成交 ,"1":部分成交,
+"2":完全成交,"3":下单中,"4":撤单中,"6": 未完成（等待成交+部分成交），"7":已完成（撤单成功+完全成交））
+
+影响的业务线：币币、币币杠杆、交割合约、永续合约
+
+影响的具体接口rest接口：
+
+`GET /api/spot/v3/orders`；
+
+`GET /api/spot/v3/orders_pending`；
+
+`GET /api/spot/v3/orders/<order_id>`
+
+`GET /api/margin/v3/orders`；
+
+`GET /api/margin/v3/orders/<order_id>`；
+
+`GET /api/margin/v3/orders_pending`；
+
+`GET /api/futures/v3/orders/<instrument_id>`
+
+`GET /api/futures/v3/orders/<instrument_id>/<order_id>`；
+
+`GET /api/swap/v3/orders/<instrument_id>`；
+
+`GET /api/swap/v3/orders/<instrument_id>/<order_id>`
+
+影响的具体接口WS接口：
+
+spot/order
+
+futures/order
+
+swap/order
+
+### 2019-04-26
+
+【功能优化】：所有接口返回参数的数据类型(除Boolean以外)全部统一为String类型
+
+影响的业务线：币币、币币杠杆、交割合约、永续合约
+
+影响的具体接口：涉及到的接口很多，建议用户统一检查一遍，rest和ws接口均有。
+
+### 2019-04-24
+
+【新增接口】增加3个公共错误码
+
+影响的业务线：币币、币币杠杆、交割合约、永续合约
+
+具体新增的3个错误码描述如下：
+
+错误提示 | 错误码 | HTTP状态码  
+---|---|---  
+接口已下线或无法使用 | 30019 | 400  
+非法的json数据 | 30021 | 400  
+Api已被冻结 | 30022 | 401  
+  
+### 2019-04-12
+
+【新增接口】交割合约增加：设置合约币种账户模式接口
+
+影响的业务线：交割合约
+
+影响的具体接口：`POST /api/futures/v3/accounts/margin_mode`
+
+设置合约币种账户模式，注意当前仓位有持仓或者挂单禁止切换账户模式。
+
+限速规则：5次/2s
+
+##### HTTP请求
+
+`POST /api/futures/v3/accounts/margin_mode`
+
+##### 请求示例
+
+`POST
+/api/futures/v3/accounts/margin_mode{"currency":"btc","margin_mode":"crossed"}`
+
+##### 请求参数
+
+参数名 | 参数类型 | 是否必须 | 描述  
+---|---|---|---  
+currency | String | 是 | 币种，如：`btc`  
+margin_mode | String | 是 | 账户模式  
+`crossed`:全仓  
+`fixed`:逐仓  
+  
+##### 返回参数
+
+参数名 | 参数类型 | 描述  
+---|---|---  
+currency | String | 币种，如：`btc`  
+margin_mode | String | 账户模式  
+`crossed`:全仓  
+`fixed`:逐仓  
+result | String | 返回设定结果  
+error_code | String | 错误码，下单成功时为`0`，下单失败时会显示相应错误码  
+error_message | String | 错误信息，下单成功时为空，下单失败时会显示错误信息  
+  
+##### 返回示例
+
+    
+    
+    {
+        "result":true,
+        "error_message":"",
+        "error_code":"0",
+        "currency":"btc",
+        "margin_mode":"crossed"
+    }
+    
+
+### 2019-03-27
+
+【功能优化】: 用client_oid批量撤销订单，由之前每个币对可撤一个，优化为每个币对可撤十个。
+
+影响的业务线：币币、币币杠杆
+
+影响的具体接口REST接口：
+
+`POST /api/spot/v3/cancel_batch_orders`
+
+`POST /api/margin/v3/cancel_batch_orders`
+
+【功能优化】：WebSocket 的order 频道的返回参数增加"最新成交价"、"最新成交数量"和"最新成交时间"
+
+| last_fill_px | String | 最新成交价格（如果没有，推`0`） |
+
+| last_fill_qty | String | 最新成交数量（如果没有，推`0`） |
+
+| last_fill_time | String | 最新成交时间（如果没有，推`1970-01-01T00:00:00.000Z`） |
+
+影响的业务线：币币、币币杠杆、交割合约和永续合约
+
+影响的具体接口REST接口：
+
+swap/order
+
+futures/order
+
+spot/order
+
+### 2019-01-21
+
+【功能优化】: K线接口返回格式统一为数组 【时间，开，高，低，收，交易量】
+
+影响的业务线：币币、币币杠杆、交割合约和永续合约
+
+影响的具体接口REST接口：
+
+`GET /api/spot/v3/instruments/<instrument_id>/candles`
+
+`GET /api/futures/v3/instruments/<instrument-id>/candles`
+
+`GET /api/swap/v3/instruments/<instrument_id>/candles`
+
+影响的具体接口WS接口：
+
+swap/candle
+
+futures/candle
+
+spot/candle
 
 ### 常见问题
 
@@ -779,22 +2513,6 @@ API合约下单的size都是以张为单位，必须是大于或等于1的整数
 
 2）若在限价内，由于行情是实时变化的，行情波动太快的情况下，是会造成这个情况的，可以重新下单；限价规则可以参考公告：<https://okexsupport.zendesk.com/hc/zh-
 cn/articles/360039317072>
-
-### 新手教程
-
-以下为API新手教程的视频，更多教学内容持续更新中，敬请期待：
-
-1、API交易与申请 [点击这里观看](https://www.okex.me/academy/zh/api-transactions-and-
-applications-cn)
-
-2、Web页面和API接口数据对比 [点击这里观看](https://www.okex.me/academy/zh/web-page-and-api-
-excuse-data-comparison-cn)
-
-3、Websocket API使用介绍和注意事项 [点击这里观看](https://www.okex.me/academy/zh/websocket-
-api-usage-introduction-and-precautions-cn)
-
-4、API如何获取个人数据 [点击这里观看](https://www.okex.me/academy/zh/how-api-gets-personal-
-data-cn)
 
 ### API概述
 
@@ -2034,8 +3752,7 @@ epoch | UTC时区Unix时间戳的十进制秒数格式
 
 在您开启OKEx交易之前，可以在我们提供的模拟盘上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
 
-模拟盘API交易功能所需的APIKey，需要在[这里](https://www.okex.com/account/my-
-api)进行创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
+模拟盘API交易功能需要在模拟盘上创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
 
 模拟盘API交易域名如下：
 
@@ -2043,7 +3760,7 @@ api)进行创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
 
 **WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=9999**
 
-模拟盘的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击[这里](https://www.okex.com/account/register?action=header_register_btn)进行注册。
+模拟盘的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。
 
 以下步骤开启API模拟交易：
 
@@ -2076,8 +3793,8 @@ api)进行创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
 
 交割合约币本位/永续合约币本位/期权合约：BTC
 
-注意：模拟盘的交易币对名称或合约名称前均加MN以区分，例如：MNBTC-MNUSDT（币币/杠杆）、MNBTC-
-USD-180213(交割合约)、MNBTC-MNUSDT-SWAP(永续合约)、MNBTC-USD-190927-5000-C(期权合约)
+注意：模拟盘的交易币种前均加MN以区分，例如：MNBTC-MNUSDT（币币/杠杆）、MNBTC-USD-180213(交割合约)、MNBTC-
+MNUSDT-SWAP(永续合约)、MNBTC-USD-190927-5000-C(期权合约)
 
 ### 资金账户API
 
@@ -11912,7 +13629,7 @@ updated_at | String | 最后一次仓位变化时间，ISO 8601格式
                 "position":"20",
                 "avg_cost":"3.26",
                 "avail_position":"20",
-                "settlement_price":"3.6",
+                "settlement_price":"0.017",
                 "total_pnl":"50",
                 "pnl_ratio":"0.3",
                 "realized_pnl":"40",
@@ -11927,7 +13644,7 @@ updated_at | String | 最后一次仓位变化时间，ISO 8601格式
                 "position":"20",
                 "avg_cost":"3.26",
                 "avail_position":"20",
-                "settlement_price":"3.6",
+                "settlement_price":"0.018",
                 "total_pnl":"50",
                 "pnl_ratio":"0.3",
                 "realized_pnl":"40",
@@ -13902,7 +15619,7 @@ client_oid 或者 order_id是必要的参数 | 32031 | 400
 下单后保证金率小于对应档位要求的最低保证金率 | 32044 | 400  
 委托数量超过100万 | 32045 | 400  
 每个用户最多可同时持有100笔未成交的止盈止损 | 32046 | 400  
-市价委托单笔数量不能超过最大限制 | 32047 | 500  
+系统错误，当合约暂停或者极端情况会出现 | 32047 | 500  
 跟踪委托回调幅度错误 | 32048 | 400  
 每个用户最多可同时持有10笔未成交的跟踪委托 | 32049 | 400  
 回调幅度错误 | 32050 | 400  
@@ -13936,11 +15653,15 @@ client_oid 或者 order_id是必要的参数 | 32031 | 400
 您在该币种下存在挂单，请撤销所有挂单后切换 | 32078 | 400  
 当前仓位风险过高，请增加保证金或减少仓位后切换 | 32079 | 400  
 交割结算后30分钟内不能转出 | 32080 | 400  
-下单张数需要是%%的整数倍，请重新下单。 | 32083 | 400  
+您当前全仓仓位最多还可开几张 | 32081 | 400  
+您当前逐仓仓位最多还可开几张 | 32082 | 400  
+下单张数为整数，请重新下单。 | 32083 | 400  
+时间加权单笔均值或冰山委托单笔均值超限 | 32084 | 400  
 市价单价格超过限价 | 32086 | 400  
 市价单下单数量超出最大值 | 32087 | 400  
 订单类型填写错误 | 32088 | 400  
 市价委托时不必填委托价格 | 32089 | 400  
+平仓挂单撤销失败 | 32090 | 400  
   
 #### 永续合约错误码（35000-36000）
 
@@ -14111,7 +15832,7 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 
 **强 烈建议开发者使用WebSocket API获取市场行情和买卖深度等信息。**
 
-地址： _wss://real.OKEx.com:8443/ws/v3_
+地址： _wss://real.okex.com:8443/ws/v3_
 
 访问时需要科学上网
 
@@ -17800,7 +19521,7 @@ updated_at | String | 最后一次仓位变化时间，ISO 8601格式
                 "position":"20",
                 "avg_cost":"3.26",
                 "avail_position":"20",
-                "settlement_price":"3.6",
+                "settlement_price":"0.017",
                 "total_pnl":"50",
                 "pnl_ratio":"0.3",
                 "realized_pnl":"40",
@@ -18103,7 +19824,7 @@ estimated_price | String | 预估交割价
                 "leverage":"4.0922",
                 "low_24h":"0",
                 "lowest_sell":"0.0905",
-                "mark_price":"0.24436617",
+                "mark_price":"0.013",
                 "theta":"-0.0005075296",
                 "vega":"0.0001420339",
                 "volume_24h":"0",
@@ -18224,7 +19945,7 @@ timestamp | String | 成交时间，ISO 8601格式
         "data": [{
                 "instrument_id": "BTC-USD-190927-12500-C",
                 "trade_id": "227897880202387456",
-                "price": "5611.9",
+                "price": "0.017",
                 "side": "buy",
                 "qty": "2",
                 "timestamp": "2019-05-06T06:51:24.389Z"
@@ -18232,7 +19953,7 @@ timestamp | String | 成交时间，ISO 8601格式
             {
                 "instrument_id": "BTC-USD-190927-12500-C",
                 "trade_id": "227897880202387457",
-                "price": "5611.6",
+                "price": "0.019",
                 "side": "buy",
                 "qty": "1",
                 "timestamp": "2019-05-06T06:51:24.392Z"
@@ -18614,1725 +20335,6 @@ Url pass 无效 | Url path error | 30000
 重复登录 | Already logged in | 30042  
 内部系统错误 | Internal system error | 30043  
   
-### 更新日志
-
-更新日志
-
-### 2020-06-01
-
-以下 2020年6月已上线
-
-  
-  
-
-1、模拟盘的交易域名、业务线以及开启交易流程更新：
-
-**模 拟盘，用户可以通过模拟盘API请求除充提币外的所有接口，包括市场行情信息、账户余额信息、持仓信息、订单信息等。**
-
-在您开启OKEx交易之前，可以在我们提供的模拟盘上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
-
-模拟盘API交易功能所需的APIKey，需要在[这里](https://www.okex.com/account/my-
-api)进行创建APIKey，模拟盘创建APIKey的流程与OKEx一致。
-
-模拟盘API交易域名如下：
-
-**RestAPI 地址：<https://www.okex.com>**
-
-**WebSocket 地址: wss://okex.com:8443/ws/v3?brokerId=9999**
-
-模拟盘的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击[这里](https://www.okex.com/account/register?action=header_register_btn)进行注册。
-
-以下步骤开启API模拟交易：
-
-**注 册okex账户-->资产管理-->开始模拟盘交易-->个人中心-->创建模拟盘APIKey---->开始模拟交易**
-
-**注 意：1）模拟盘与okex实盘API的不同：模拟盘的请求的header里面需要添加"x-simulated-trading: 1"**
-
-    
-    
-    请求头示例：
-    
-    Content-Type: application/json
-    
-    OK-ACCESS-KEY: 37c541a1-****-****-****-10fe7a038418
-    
-    OK-ACCESS-SIGN: leaVRETrtaoEQ3yI9qEtI1CZ82ikZ4xSG5Kj8gnl3uw=
-    
-    OK-ACCESS-PASSPHRASE: 1****6
-    
-    OK-ACCESS-TIMESTAMP: 2020-03-28T12:21:41.274Z
-    
-    x-simulated-trading: 1
-    
-
-2）模拟盘支持币种或合约：
-
-币币/杠杆USDT交易区：BTC、ETH、LTC、ETC、XRP、EOS、BCH、BSV、TRX
-
-交割合约USDT本位/永续合约USDT本位：BTC、ETH、LTC、ETC、XRP、EOS、BCH、BSV、TRX
-
-交割合约币本位/永续合约币本位/期权合约：BTC
-
-注意：模拟盘的交易币对名称或合约名称前均加MN以区分，例如：MNBTC-MNUSDT（币币/杠杆）、MNBTC-
-USD-180213(交割合约)、MNBTC-MNUSDT-SWAP(永续合约)、MNBTC-USD-190927-5000-C(期权合约)
-
-### 2020-05-15
-
-以下 2020年5月已上线
-
-  
-  
-
-1.新增API新手教程模块，为新用户提供简单易懂的API接入、使用教程视频。
-
-### 2020-04-22
-
-以下 2020年4月已上线
-
-  
-  
-
-1.交割合约增加"增加/减少逐仓仓位的保证金"接口
-
-具体接口：
-
-`POST/api/futures/v3/position/margin`
-
-  
-2.获取系统维护状态接口文档修改：功能兼容  
-当前为：GET /api/system/v3/maintenance  
-修改后：GET /api/system/v3/status  
-  
-3.新增"业务字典"模块  
-  
-  
-4.币币、交割合约、永续合约止盈止损新增"市价止盈止损"参数：
-
-具体接口：
-
-`POST /api/spot/v3/order_algo`
-
-`POST /api/futures/v3/order_algo`
-
-`POST /api/swap/v3/order_algo`
-
-##### 请求参数
-
-**参 数名** | **参 数类型** | **是 否必须** | **描 述**  
----|---|---|---  
-algo_type | String | 否 | 1:限价 2:市场价；触发价格类型，默认是限价；为市场价时，委托价格不必填；  
-  
-  
-  
-  
-5.交割合约增加"逐仓自动增加保证金"接口
-
-具体接口：
-
-`POST /api/futures/v3/accounts/auto_margin`
-
-  
-  
-  
-6.永续合约
-
-1）持仓频道增加"多仓/空仓开仓冻结张数"参数
-
-具体接口：
-
-`{"op": "subscribe", "args": ["swap/position:BTC-USD-SWAP"]}`
-
-##### 返回参数
-
-**参 数名** | **参 数类型** | **描 述**  
----|---|---  
-open_outstanding | String | 多仓/空仓开仓冻结张数  
-  
-2）用户账户频道增加"可用保证金"、"多仓最大可开张数"和"空仓最大可开张数"参数
-
-`{"op": "subscribe", "args": ["swap/account:BTC-USD-SWAP"]}`
-
-##### 返回参数
-
-**参 数名** | **参 数类型** | **描 述**  
----|---|---  
-available_qty | String | 可用保证金  
-long_open_max | string | 多仓最大可开张数  
-short_open_max | string | 空仓最大可开张数  
-  
-3)订单列表、订单信息、交易频道增加"杠杆倍数"和"最新成交ID"参数
-
-具体接口：
-
-`GET/api/swap/v3/orders/<instrument_id>/<order_id>`
-
-`GET/api/swap/v3/orders/<instrument_id>`
-
-`{"op": "subscribe", "args": ["swap/order:BTC-USD-SWAP"]}`
-
-##### 返回参数
-
-**参 数名** | **参 数类型** | **描 述**  
----|---|---  
-leverage | String | 杠杆倍数  
-last_fill_id | String | 最新成交ID (如果没有推0)。和trade 频道推送的trade ID一致  
-  
-### 2020-03-30
-
-以下 2020年3 月已上线
-
-  
-  
-
-#### **1. 以下接口限速更新为：10次/2秒：**
-
-币币API：账单流水；订单列表；成交明细
-
-1）GET/api/spot/v3/accounts//ledger
-
-2）GET/api/spot/v3/orders
-
-3）GET/api/spot/v3/fills
-
-币币杠杆API：账单流水；订单列表；成交明细
-
-4）GET/api/margin/v3/accounts//ledger
-
-5）GET/api/margin/v3/orders
-
-6）GET/api/margin/v3/fills
-
-交割合约API：订单列表；成交明细
-
-7）GET/api/futures/v3/orders/
-
-8）GET/api/futures/v3/fills
-
-永续合约API：订单列表；成交明细
-
-9）GET/api/swap/v3/orders/
-
-10）GET/api/swap/v3/fills
-
-期权API：订单列表；成交明细
-
-11）GET/api/option/v3/orders/
-
-12）GET/api/option/v3/fills/;  
-
-#### **2. 交割合约增加接口：公共-获取历史结算记录**
-
-具体接口：
-
-`GET/api/futures/v3/settlement/history`  
-
-#### **3. 增加"测试环境"：**
-
-在您开启OKEx交易之前，可以在我们提供的测试网站上模拟交易，测试API接口相关功能，并调试您的代码交易逻辑。
-
-测试网站目前支持的业务线为：交割合约，期权交易。
-
-测试网站逐渐会开放的业务线为：币币交易，币币杠杆，永续合约。
-
-测试网站的API交易功能所需的APIKey，需要在这里进行创建APIKey，测试网创建APIKey的流程与OKEx一致。
-
-测试网站域名如下：
-
-RestAPI Url：<https://testnet.okex.com>
-
-WebSocket 地址: wss://real.okex.com:8443/ws/v3?brokerId=181
-
-测试网的登陆账户与OKEx登录账户是互通的，如果您已经有okex账户，可以直接登录。如果没有，请进点击这里进行注册。
-
-以下步骤开启API模拟交易：
-
-注册okex账户-->登录测试网-->领取测试币-->创建测试网APIKey---->开始模拟交易
-
-测试网站，用户可以通过API请求交割合约和期权的所有接口，包括基本合约信息、市场行情信息、账户余额信息、持仓信息、订单信息等，详细接口功能请查看测试网的API文档。  
-
-#### **4. 交割合约、永续合约下单接口增加市价委托功能；**
-
-具体接口：
-
-`POST /api/futures/v3/order`
-
-`POST /api/swap/v3/order`  
-
-#### 5.交割合约、永续合约止盈止损下单中增加触发价格类型：
-
-具体接口：
-
-`POST /api/futures/v3/order_algo`
-
-`POST /api/swap/v3/order_algo`
-
-新增参数：
-
-**参 数名** | **参 数类型** | **描 述**  
----|---|---  
-algo_type | String | 1:限价 2:市场价；  
-  
-### 2020-02-29
-
-以下 2020年2 月已上线
-
-  
-  
-
-1.币币用户交易频道增加"last_fill_id"，成交ID，和交易频道trade_id对应
-
-具体接口：
-
-{"op": "subscribe", "args": ["spot/order:LTC-USDT"]}
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-last_fill_id | String | 成交ID，和交易频道trade_id对应  
-  
-  
-  
-
-2.币币、交割合约、永续合约、期权增加"公共-400档增量数据频道"
-
-具体接口：
-
-{"op": "subscribe", "args": ["spot/depth_l2_tbt:BTC-USDT"]} {"op":
-"subscribe", "args": ["futures/depth_l2_tbt:BTC-USD-200327"]} {"op":
-"subscribe", "args": ["swap/depth_l2_tbt:BTC-USD-SWAP"]} {"op": "subscribe",
-"args": ["option/depth_l2_tbt:BTC-USD-200207-9500-C"]}
-
-##### 返回参数
-
-**参 数名** | **参 数类型** | **描 述**  
----|---|---  
-asks | List<String> | 卖方深度  
-bids | List<String> | 买方深度  
-timestamp | String | 时间戳  
-instrument_id | String | 币对  
-checksum | String | 检验和  
-  
-  
-  
-
-3.币币获取成交明细和公共-交易频道增加"成交id"：
-
-具体接口：
-
-GET /api/spot/v3/fills
-
-{"op": "subscribe", "args": ["spot/trade:ETH-USDT"]}
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-trade_id | String | 成交id  
-  
-  
-  
-
-4.增加获取现货杠杆标记价格接口：
-
-##### 限速规则：20次/2s
-
-##### HTTP请求
-
-`GET/api/margin/v3/instruments/<instrument_id>/mark_price`
-
-##### 请求示例
-
-`GET/api/margin/v3/instruments/EOS-USDT/mark_price`
-
-##### 请求参数
-
-参数名 | 参数类型 | 是否必须 | 描述  
----|---|---|---  
-instrument_id | String | 是 | 杠杆币对名称  
-  
-##### 返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-instrument_id | String | 杠杆币对名称  
-mark_price | String | 指定杠杆的标记价格  
-timestamp | String | 返回请求时间  
-  
-5.tbt频道由首次返回市场订单簿的全部深度数据变更为：首次返回市场订单簿的400档深度数据。
-
-6.alias 枚举值中增加：次季度 `bi_quarter`
-
-具体接口：
-
-`GET/api/futures/v3/instruments`
-
-##### 返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-alias | String | 本周 `this_week`  
-次周 `next_week`  
-季度 `quarter`  
-次季度 `bi_quarter`  
-  
-### 2019-12-31
-
-以下 12 月已上线
-
-  
-  
-
-    
-    
-      1.增加获取 "当前账户交易手续等级的费率 " 接口<br>
-        涉及接口：<br>GET /api/spot/v3/trade_fee,GET /api/futures/v3/trade_fee<br>
-    
-    
-      2.增加获取子账户余额信息接口<br>
-        涉及接口：<br>GET /api/account/v3/sub-account<br>
-    
-      3.增加获取账户总资产接口<br>
-         涉及接口：<br>GET /api/account/v3/asset-valuation <br>
-    
-      4.币币杠杆 账户信息接口增加维持保证金率字段和借币数量档位字段<br>
-         涉及接口：<br>GET /api/margin/v3/accounts<br>
-                  GET/api/margin/v3/accounts/<instrument_id><br>
-                  {"op": "subscribe", "args": ["spot/margin_account:ETH-USDT"]}<br>
-    
-      5.币币杠杆增加设置杠杆倍数接口和查询杠杆倍数接口<br>
-         涉及接口：<br>POST  /api/margin/v3/accounts/<instrument_id>/leverage<br>
-                  GET /api/margin/v3/accounts/<instrument_id>/leverage<br>
-    
-      6.wsAPI币币杠杆account频道新增强平价（liquidation_price）字段<br>
-         涉及接口：{"op": "subscribe", "args": ["spot/margin_account:ETH-USDT"]}<br>
-    
-      7. 币币成交明细接口增加currency字段<br>
-         涉及的接口：GET /api/spot/v3/fills<br>
-    
-
-  
-  
-
-### 2019-11-30
-
-以下 11 月已上线
-
-  
-  
-一：支持永续usdt保证金合约交易 1、涉及的接口： a.公共-获取合约信息 GET /api/swap/v3/instruments - - -
--返回值增加必要字段 API接口改造后，您的程序不会受影响。但是在接口中会有新的字段增加。给您带来的不便，敬请谅解！  
-二：永续接口优化
-
-    
-    
-      1.增加获取 "当前账户交易手续等级的费率 " 接口
-        涉及接口：GET /api/swap/v3/trade_fee
-    
-      2.永续ws order里增加last_fill_id
-        涉及接口：{"op": "subscribe", "args": ["swap/order:BTC-USD-SWAP"]}
-    
-      3.RestAPI永续合约深度接口，增加  合并深度 查询条件
-         涉及接口：GET /api/swap/v3/instruments/<instrument_id>/depth
-    
-      4.永续合约，下单和撤单和持仓查询等接口的  instrumentid字段，入参支持大小写参数。
-    
-      5.永续合约持仓接口返回信息增加未实现盈亏字段。
-         涉及接口：GET /api/swap/v3/<instrument_id>/position，GET /api/swap/v3/position，
-    
-      6. 永续账户信息接口，增加可划转数量字段
-         涉及的接口：GET /api/futures/v3/accounts/{currency}，GET /api/futures/v3/accounts，
-    
-
-  
-  
-
-### 2019-10-31
-
-以下 10 月已上线
-
-  
-  
-
-改造内容如下（此公告仅涉及到API交易用户，V1 OpenAPI不支持USDT保证金合约交易）：
-
-1、改造内容： 现状是：API接口无法通过请求参数区分'币本位保证金合约'和'USDT保证金合约'。
-
-    
-    
-          端口：GET /api/futures/v3/accounts/<currency>
-          示例：GET /api/futures/v3/accounts/BTC 
-    
-
-改造后： 请求参数currency更换成underlying。币本位保证金合约的传参值为BTC-USD，USDT保证金合约的传参值为BTC-USDT
-
-    
-    
-         端口：GET /api/futures/v3/accounts/<underlying>
-         USDT保证金合约示例：GET /api/futures/v3/accounts/BTC-USDT
-         币本位保证金合约示例：GET /api/futures/v3/accounts/BTC-USD
-    
-
-改造后，仍然兼容之前的请求格式，如果传入，等价于其目前对应的（标的指数）。
-
-    
-    
-         例如：GET /api/futures/v3/accounts/BTC 等价于 GET /api/futures/v3/accounts/BTC-USD   
-    
-
-注意：restAPI 中"设置账户模式接口POST
-/api/futures/v3/accounts/margin_mode"不做兼容处理。使用此接口需要传相应的underlying。
-
-2、涉及的接口：restAPI
-
-a.单个币种合约账户信息 GET /api/futures/v3/accounts/
-
-b.账单流水查询 GET /api/futures/v3/accounts//ledger
-
-c.设定合约杠杆倍数（全仓） POST /api/futures/v3/accounts//leverage
-
-d.获取合约币种杠杆倍数 GET /api/futures/v3/accounts//leverage
-
-e.公共获取合约信息 GET /api/futures/v3/instruments - - - -返回值增加必要字段
-
-f.设置合约账户模式 POST /api/futures/v3/accounts/margin_mode - - - -此接口不做兼容
-
-g.获取所有币种合约账户信息 GET /api/futures/v3/accounts - - - -返回值增加必要字段
-
-3、涉及的接口: WebSocketAPI
-
-a.公共-全量合约信息频道 futures/instruments - - - - 返回值增加必要字段
-
-b.个人-订阅账户信息频道 futures/account
-
-示例：币本位保证金合约：{"op": "subscribe", "args": ["futures/account:BTC"]} USDT保证金合约：
-{"op": "subscribe", "args": ["futures/account:BTC-USDT"]}
-
-如果您不交易USDT保证金合约，您的程序不会受影响。但是在接口中会有新的字段增加。给您带来的不便，敬请谅解！
-
-  
-  
-
-### 2019-09-30
-
-以下 9 月已上线
-
-  
-  
-
-1.下线币币账户信息接口里的id字段
-
-具体接口：
-
-GET /api/spot/v3/accounts/
-
-GET /api/spot/v3/accounts
-
-{"op": "subscribe", "args": ["spot/account:BTC"]}
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-id | String | 账户 id  
-  
-  
-  
-
-2.交割合约获取所有/单个账户信息接口，全仓返回增加"强平手续费"字段。
-
-具体接口：
-
-GET /api/futures/v3/accounts/
-
-GET /api/futures/v3/accounts
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-liqui_fee_rate | String | 强平手续费  
-  
-  
-  
-
-3.永续 WebSocket ticker 频道增加"持仓量"和"24小时开盘价"：
-
-具体接口：
-
-{"op": "subscribe", "args": ["swap/ticker:BTC-USD-SWAP"]}
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-open_interest | String | 持仓量  
-open_24h | String | 24 小时开盘价  
-  
-  
-  
-
-4.杠杆倍数字段调整
-
-4.1) restAPi：永续的 持仓接口 GET /api/swap/v3/position GET /api/swap/v3/position
-
-4.2) wsAPI： 永续持仓频道 {"op": "subscribe", "args": ["swap/position:BTC-USD-SWAP"]}
-
-4.3) rest ： 永续获取委托单列表 （策略委托） GET /api/swap/v3/order_algo
-
-返回的leverage 之前返回的是个整数。现在是带小数的返回了。 之前 leverage ："20" ,现在 leverage："20.00"。
-
-  
-  
-
-5.币币ws交易频道，增加一个created_at字段
-
-涉及接口：
-
-{"op": "subscribe", "args": ["spot/order:LTC-USDT"]}
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-created_at | String | 订单创建时间  
-  
-### 2019-08-31
-
-以下8月已上线。
-
-1.请求参数和返回参数增加withdraw_id提币id字段
-
-具体接口：
-
-`GET /api/account/v3/withdrawal/history/<currency>`
-
-请求参数
-
-参数名 | 参数类型 | 是否必须 | 描述  
----|---|---|---  
-withdraw_id | String | 否 | 提币申请ID  
-  
-只传currency，返回这个币对下的所有的提币记录。
-
-同时传currency和withdraw_id后，返回指定 的提币记录
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-withdraw_id | String | 提币申请ID  
-  
-2.查询所有币种的提币记录，返回参数增加withdraw_id字段。
-
-具体接口：
-
-`GET /api/account/v3/withdrawal/history`
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-withdraw_id | String | 提币申请ID  
-  
-3.币币，交割，永续的获取成交明细接口请求参数"order_id"字段改成非必须填。
-
-具体接口：
-
-`GET /api/spot/v3/fills，GET /api/futures/v3/fills，GET /api/swap/v3/fills`
-
-请求参数
-
-参数名 | 参数类型 | 是否必须 | 描述  
----|---|---|---  
-order_id | String | 否 | 订单ID  
-  
-4.交割合约下单时，请求参数杠杆倍数（leverage）字段改为非必填，文档已下线。
-
-具体接口：
-
-POST /api/futures/v3/order
-
-POST /api/futures/v3/orders
-
-请求参数
-
-参数名 | 参数类型 | 是否必须 | 描述  
----|---|---|---  
-leverage | String | 否 | 杠杆倍数  
-  
-5.交割合约和永续合约深度接口，请求参数增加depth字段。
-
-具体接口：
-
-`GET /api/futures/v3/instruments/<instrument_id>/book`
-
-`GET /api/swap/v3/instruments/<instrument_id>/depth`
-
-请求参数
-
-参数名 | 参数类型 | 是否必须 | 描述  
----|---|---|---  
-depth | String | 否 | 按价格合并深度，例如：`0.1`或`0.001`  
-  
-depth：合并的档位，与精度保持一致，
-
-例如btc，价格精度是小数点后一位（11111.1）。合并价格精度 为 0.1时（11111.1） 为 时（1111）
-
-例如xrp。价格精度是小数点后4为（0.4112）。合并价格精度为
-0.1时（0.4），0.01时（0.41），0.001时（0.411），0.0001时（0.4112）
-
-6.交割合约通过APi接口获取强减仓的明细信息
-
-具体接口：
-
-GET /api/futures/v3/accounts//ledger
-
-请求参数
-
-参数名 | 参数类型 | 是否必须 | 描述  
----|---|---|---  
-type | String | 否 | 20.强减空 21.强减多  
-  
-7.交割单个币种持仓接口和所有持仓接口和WebSocket用户持仓频道，增加"已结算收益"（多空）字段。
-
-具体接口：
-
-GET /api/futures/v3//position
-
-GET /api/futures/v3/position
-
-用户持仓频道 {"op": "subscribe", "args": ["futures/position:BTC-USD-170317"]}
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-long_settled_pnl | String | 多仓已结算收益  
-short_settled_pnl | String | 空仓已结算收益  
-  
-8.永续单个币种持仓接口和所有持仓接口和WebSocket持仓频道，增加"已结算收益"（多空）字段。
-
-具体接口：
-
-GET /api/swap/v3//position
-
-GET /api/swap/v3/position
-
-用户持仓频道{"op": "subscribe", "args": ["swap/position:BTC-USD-SWAP"]}
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-settled_pnl | String | 已结算收益  
-  
-9.永续合约每日结算调整内容：
-
-1）Restful：公共-获取合约下一次结算时间
-
-具体接口：
-
-`GET /api/swap/v3/instruments/<instrument_id>/funding_time`
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-estimated_rate | String | 下一期的预测资金费率  
-funding_rate | String | 当期资金费率  
-  
-2）WebSocket：公共-资金费率频道（swap/funding_rate）
-
-返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-estimated_rate | String | 下一期的预测资金费率  
-  
-3）v3 现使用参数：funding_rate 取值由目前"资金费率"变为"当期资金费率"
-
-10.OKEx关于V3 OpenAPI现货/杠杆接口手续费(Fee)字段的优化
-
-1)获取成交明细  
-GET /api/margin/v3/fills 和 GET /api/spot/v3/fills
-
-2)获取账单流水  
-GET /api/margin/v3/accounts//ledger 和 GET /api/spot/v3/accounts//ledger
-
-返佣和扣除手续费，都用Fee参数表示，且返佣为正数，扣除手续费为负数
-
-### 2019-07-31
-
-以下内容预计7月上线，请用户提前做好准备。
-
-1、交割合约和永续合约增加参数：已结算收益
-
-具体接口：
-
-`GET /api/futures/v3/position`
-
-`GET /api/futures/v3/<instrument_id>/position`
-
-ws-futures/position
-
-`GET /api/swap/v3/position`
-
-`GET /api/swap/v3/<instrument_id>/position`
-
-ws-swap/position
-
-2、下线交割合约"设置合约币种强平模式接口"
-
-3、ws地址由：wss://real.okex.com:10442/ws/v3 变更为：wss://real.okex.com:8443/ws/v3
-
-### 2019-06-30
-
-以下内容预计6月上线，请用户提前做好准备。
-
-1、分页 OKEx对返回数组的有些REST请求使用游标分页。游标分页允许在当前结果页面之前和之后获取结果，并且非常适合实时数据。端点如/ trades，/
-fills，/ orders，默认返回最新100项。要检索更多结果，后续请求应根据先前返回的数据指定要分页的方向。
-`before`和`after`游标可以通过响应头`OK-BEFORE`和`OK-AFTER`。在初始请求之后发出页面请求时，您的请求应使用这些游标值。
-
-例 `GET /api/spot/v3/orders?before=2&limit=30`
-
-参数名 | 参数类型 | 描述  
----|---|---  
-after | String |
-请求此id之前（更旧的数据）的分页内容，传的值为对应接口的`order_id`、`ledger_id`或`trade_id`等  
-before | String |
-请求此id之后（更新的数据）的分页内容，传的值为对应接口的`order_id`、`ledger_id`或`trade_id`等 |  
-limit | String | 分页返回的结果集数量，最大为100，不填默认返回100条  
-  
-游标之前和之后 将before光标引用在结果页中的第一项和after光标引用了一组结果的最后一个数据。
-
-headers将包含一个`OK-
-BEFORE`标头，该标头将返回光标id，以便在当前页面的下一个页面请求中使用。之前的页面是一个较新的页面，而不是在按时间顺序排列之前发生的页面。
-响应还将包含一个`OK-
-AFTER`标头，该标头将返回光标id，以便在此页面之后的页面的下一个请求中使用。之后的页面是较旧的页面，而不是按时间顺序排在此页面之后的页面。
-
-涉及到的接口：
-
-`GET /api/futures/v3/accounts/<currency>/ledger`
-
-`GET /api/futures/v3/orders/<instrument_id>`
-
-`GET /api/futures/v3/fills`
-
-`GET /api/futures/v3/instruments/<instrument_id>/trades`
-
-`GET /api/spot/v3/orders_pending`
-
-`GET /api/account/v3/ledger`
-
-`GET /api/futures/v3/accounts/<currency>/ledger`
-
-`GET /api/futures/v3/orders/<instrument_id>`
-
-`GET /api/futures/v3/fills`
-
-`GET /api/futures/v3/instruments/<instrument_id>/trades`
-
-`GET /api/swap/v3/accounts/<instrument_id>/ledger`
-
-`GET /api/swap/v3/orders/<instrument_id>`
-
-`GET /api/swap/v3/fills`
-
-`GET /api/swap/v3/instruments/<instrument_id>/trades`
-
-2、资金账户的"资金划转"接口，增加"母账户直接划转到子账户的资金账户、币币账户、交割账户、永续账户"：
-
-##### HTTP请求
-
-POST /api/account/v3/transfer
-
-##### 请求示例
-
-POST
-/api/account/v3/transfer{"amount":0.0001,"currency":"eos","from":6,"to":5,"instrument_id":"eos-
-usdt"}
-
-##### 请求参数
-
-参数名 | 参数类型 | 是否必须 | 描述  
----|---|---|---  
-currency | String | 是 | 币种  
-amount | String | 是 | 划转数量  
-from | String | 是 | 转出账户  
-`0`:子账户  
-`1`:币币  
-`3`:合约  
-`4`:C2C  
-`5`:币币杠杆  
-`6`:资金账户  
-`8`:余币宝  
-`9`:永续合约  
-to | String | 是 | 转入账户  
-`0`:子账户  
-`1`:币币  
-`3`:合约  
-`4`:C2C  
-`5`:币币杠杆  
-`6`:资金账户  
-`8`:余币宝  
-`9`:永续合约  
-sub_account | String | 否 | 子账号登录名，`from`或`to`指定为`0`时，sub_account为必填项  
-instrument_id | String | 否 | 杠杆币对，如：eos-usdt，仅限已开通杠杆的币对  
-  
-from或to指定为0时，sub_account为必填项。
-
-当from为0时，to只能填6，即子账户的资金账户只能转到母账户的资金账户。
-
-当from指定为6，to指定为1-9，且sub_account填写子账户名时，可从母账户直接划转至子账户对应的币币、合约等账户。
-
-from或to指定为5时，instrument_id为必填项。
-
-### 2019-05-31
-
-1、OKEx为所有返回数据集的REST请求使用分页。分页允许在结果的当前页面之前和之后获取结果，并且非常适合于实时数据。像/ trades，/ fill，/
-orders这样默认返回最新内容的请求。根据当前的返回结果，后续请求可以在他的基础之上指定请求数据的方向，可以请求在这之前的，也可以请求在这之后的数据。
-
-`from`游标指向的是返回结果页的第一条内容，`to`游标指向的是返回结果页的最后一条内容。(页面内容是按照最新的排在最上面的顺序)
-
-`from`、`to`后传的值为对应接口的`order_id`、`ledger_id`或`trade_id`等
-
-`from`、`to`和`limit` 均为非必填，用户可不传此三个参数调用对应接口，返回最新的100条数据，再根据得到数据的id作为请求头，查询其他数据；
-
-`from-to`的游标范围是左开右闭`(from, to]`，即查询的返回数据，不包括from的标识的数据；
-
-如果查询返回的数量<`limit`指定的数量，则返回`from-to`游标查到的全部数据；
-
-如果查询返回的数据>`limit`指定的数量，则返回从`from`开始的id，向前limit条(如limit=50就是50条）数据；
-
-举例如果你请求返回的结果每一条内容的id是111，112，113，114，115，116，117，118，119，120
-
-那么在返回结果里面这些内容的排列顺序是120，119，118，117，116，115，114，113，112，111
-
-如果你想访问更新的数据，如115以前更旧的数据那么你需要使用`from`参数，如：`orders?from=115&limit=3`,则返回的是115以前更旧的3条数据，且排列顺序为：114，113，112（不包括115）
-
-如果你想访问更新的数据，如115以后更新的数据那么你需要使用`to`参数，如：`orders?to=115&limit=3`,则返回的是115以前更旧的3条数据，且排列顺序为：117，116，115（包括115）
-
-涉及到的接口：
-
-`GET /api/futures/v3/accounts/<currency>/ledger`
-
-`GET /api/futures/v3/orders/<instrument_id>`
-
-`GET /api/futures/v3/fills`
-
-`GET /api/futures/v3/instruments/<instrument_id>/trades`
-
-`GET /api/spot/v3/orders_pending`
-
-`GET /api/account/v3/ledger`
-
-`GET /api/futures/v3/accounts/<currency>/ledger`
-
-`GET /api/futures/v3/orders/<instrument_id>`
-
-`GET /api/futures/v3/fills`
-
-`GET /api/futures/v3/instruments/<instrument_id>/trades`
-
-`GET /api/swap/v3/accounts/<instrument_id>/ledger`
-
-`GET /api/swap/v3/orders/<instrument_id>`
-
-`GET /api/swap/v3/fills`
-
-`GET /api/swap/v3/instruments/<instrument_id>/trades`
-
-2、加入一个推全量合约的频道：有新合约上线，就推一次全量合约数据；
-
-3、【功能优化】：永续合约的账单流水查询接口的返回参数增加details、currency和balance（表示流水类型）
-
-| details | String | 如果类型是交易产生的，则该`details`字段将包含`order_id`和`instrument_id` | |
-currency | String | 币种，如：`btc` | | balance | String |
-开仓平仓的张数（开仓为正数，平仓为负数，当`type`是`fee`时，`balance`为`0`） |
-
-影响的业务线：永续合约
-
-影响的具体接口rest接口：
-
-GET /api/swap/v3/accounts//ledger
-
-4、【功能优化】：币币、币币杠杆的获取订单列表和获取订单信息的返回参数增加成交均价 price_avg
-
-| price_avg | String | 成交均价 |
-
-影响的业务线：币币、币币杠杆
-
-影响的具体接口rest接口：
-
-`GET /api/spot/v3/orders`
-
-`GET /api/spot/v3/orders/<order_id>`
-
-`GET /api/margin/v3/orders`
-
-`GET /api/margin/v3/orders/<order_id>`
-
-5、【功能优化】：币币、币币杠杆、交割合约、永续合约的获取成交明细接口的请求和返回增加参数用户ID
-client_oid，且将order_id改为非必填参数，即可获取当前币对的所有成交明细。
-
-| client_oid | String | 否 | 由您设置的订单ID来识别您的订单 ,类型为字母（大小写）+数字或者纯字母（大小写），1-32位字符
-| | order_id | String | 否 | 订单ID，下单失败时，此字段值为`-1` |
-
-影响的业务线：币币、币币杠杆、交割合约、永续合约
-
-影响的具体接口rest接口：
-
-`GET /api/spot/v3/fills`
-
-`GET /api/margin/v3/fills`
-
-`GET /api/futures/v3/fills`
-
-`GET /api/swap/v3/fills`
-
-6、【功能优化】: 币币、币币杠杆、交割合约、永续合约的批量下单端口；：
-
-1）币币、币币杠杆的批量下单返回，币对中的下线"_"，改为中划线"-"; 例如："btc_usdt" 改为"btc-usdt".
-
-2）当币币、币币杠杆批量下单返回error_code 33017, 交割、永续的批量下单返回error_code 32015时，http状态码应返回400;
-
-3） 如果下的多个单，只有部分发生了余额不足的错误，http状态码也应为400.
-
-影响的业务线：币币、币币杠杆、交割合约、永续合约
-
-影响的具体接口
-
-REST接口：
-
-`POST /api/spot/v3/batch_orders`
-
-`POST /api/margin/v3/batch_orders`
-
-`POST /api/futures/v3/batch_orders`
-
-`POST /api/swap/v3/batch_orders`
-
-7、【功能优化】：币币、交割合约、永续合约的账单流水查询接口的请求参数增加流水类型 type
-
-币币： | type | String | 非必填 | `1` .充值  
-`2` .提现  
-`3` .借入  
-`4` .还款  
-`7` .买入  
-`8` .卖出  
-`9` .新手任务  
-`10` .邀请好友完成新手任务  
-`11` .扣除任务奖励  
-`12` .邀请分成  
-`13` .撤销提现  
-`14` .活动送出  
-`15` .活动得到  
-`18` .交割合约转入  
-`19` .转出至交割合约  
-`20` .转入子账户  
-`21` .转出至子账户  
-`22` .返手续费  
-`23` .接收红包  
-`24` .发送红包  
-`25` .otc买入  
-`26` .otc卖出  
-`27` .扣除  
-`28` .兑换  
-`29` .转出至资金账户  
-`30` .资金账户转入  
-`31` .转出至法币  
-`32` .法币转入  
-`33` .转出至杠杆  
-`34` .杠杆转入  
-`35` .借币  
-`36` .还币  
-`37` .市商计划送出  
-`38` .市商计划返还  
-`41` .点卡抵扣币币手续费  
-`42` .购买点卡  
-`43` .点卡转让  
-`44` .市商计划额外送出  
-`45` .市商计划返还  
-`46` .币币账户转入  
-`47` .转出至币币账户  
-`48` .转出至组合  
-`49` .组合转入  
-`50` .挖矿扣除  
-`51` .挖矿所得  
-`52` .收益倍增  
-`53` .鼓励金分配  
-`55` .余币宝转入  
-`56` .转出至余币宝  
-`57` .永续合约转入  
-`58` .转出至永续合约  
-`59` .还糖果  
-`60` .点卡抵扣杠杆手续费 |
-
-交割合约： | type | String | 非必填 |1.开多 2.开空 3.平多 4.平空 5.手续费 6.转入，7.转出 8.清算已实现盈亏
-9.穿仓分摊，11.强平剩余 12.剩余拨付 13-强平平多 14-强平平空 15.交割平多 16.交割平空 17.清算未实现收益-多头
-18.清算未实现收益-空头 |
-
-永续合约： | type | String | 非必填 | 1. 开多 2\. 开空 3\. 平多 4\. 平空 5.转入 6.转出 7.清算未实现
-8.分摊 9.剩余拨付 10.强平多 11.强平空 14.资金费 15.手动追加 16.手动减少 17.自动追加 18.修改持仓模式 19.强减多
-20.强减空 21.用户调低杠杆追加保证金 22.清算已实现 |
-
-影响的业务线：币币、交割合约、永续合约
-
-影响的具体接口rest接口：
-
-`GET /api/spot/v3/accounts/<currency>/ledger`
-
-`GET /api/futures/v3/accounts/<currency>/ledger`
-
-`GET /api/swap/v3/accounts/<instrument_id>/ledger`
-
-### 关于V1 API 支持交割合约梯度保证金优化
-
-更新时间：2019年5月15日15：00(HKT)
-
-更新内容：
-
-推送
-
-1）ok_sub_futureusd_positions 合约持仓信息频道
-
-a.逐仓返回格式修改：
-
-优化前：多空方向，返回10倍和20倍杠杆持仓信息，若没有推0；
-
-优化后：多空方向，返回n倍和m倍杠杆持仓信息，若没有不推；
-
-优化前前格式：
-
-    
-    
-    [
-        {
-            "binary":0,
-            "channel":"ok_sub_futureusd_positions",
-            "data":{
-                "symbol":"eos_usd",
-                "user_id":7669455,
-                "positions":[
-                    {
-                        "lever_rate":10,
-                        "avgprice":4.849,
-                        "contract_id":201906280200053,
-                        "hold_amount":1,
-                        "contract_name":"EOS0628",
-                        "costprice":4.849,
-                        "forcedprice":4.44862378,
-                        "bondfreez":0,
-                        "eveningup":1,
-                        "fixmargin":0.20622809,
-                        "balance":0.20684677,
-                        "position":1,
-                        "profitreal":-0.00061868,
-                        "position_id":2517385395344384
-                    },
-                    {
-                        "lever_rate":10,
-                        "avgprice":0,
-                        "contract_id":201906280200053,
-                        "hold_amount":0,
-                        "contract_name":"EOS0628",
-                        "costprice":0,
-                        "forcedprice":0,
-                        "bondfreez":0,
-                        "eveningup":0,
-                        "fixmargin":0,
-                        "balance":0.20684677,
-                        "position":2,
-                        "profitreal":-0.00061868,
-                        "position_id":2517385395344384
-                    },
-                    {
-                        "lever_rate":20,
-                        "avgprice":0,
-                        "contract_id":201906280200053,
-                        "hold_amount":0,
-                        "contract_name":"EOS0628",
-                        "costprice":0,
-                        "forcedprice":0,
-                        "bondfreez":0,
-                        "eveningup":0,
-                        "fixmargin":0,
-                        "balance":0.20684677,
-                        "position":1,
-                        "profitreal":-0.00061868,
-                        "position_id":2517385395344384
-                    },
-                    {
-                        "lever_rate":20,
-                        "avgprice":5.423,
-                        "contract_id":201906280200053,
-                        "hold_amount":0,
-                        "contract_name":"EOS0628",
-                        "costprice":5.423,
-                        "forcedprice":0,
-                        "bondfreez":0,
-                        "eveningup":0,
-                        "fixmargin":0,
-                        "balance":0.20684677,
-                        "position":2,
-                        "profitreal":-0.00061868,
-                        "position_id":2517385395344384
-                    }
-                ]
-            }
-        }
-    ]
-    
-
-改之后格式：
-
-    
-    
-    [
-        {
-            "binary":0,
-            "channel":"ok_sub_futureusd_positions",
-            "data":{
-        "symbol":"etc_usd",
-        "user_id":36203808,
-        "positions":[
-            {
-                "lever_rate":5,
-                "avgprice":56.89655172,
-                "contract_id":20170310446,
-                "hold_amount":10,
-                "contract_name":"ETC0310",
-                "costprice":56.89655172,
-                "forcedprice":52.5,
-                "bondfreez":0,
-                "eveningup":5,
-                "fixmargin":0.17575758,
-                "balance":0.2067697,
-                "position":1,
-                "longMaintainenceRatio":"0.015",
-                "profitreal":-0.00070909,
-                "position_id":2778972475169792
-            },
-            {
-                "lever_rate":25,
-                "avgprice":33,
-                "contract_id":20170310446,
-                "hold_amount":2,
-                "contract_name":"ETC0310",
-                "costprice":33,
-                "forcedprice":34.2157,
-                "bondfreez":0,
-                "eveningup":1,
-                "fixmargin":0.03030303,
-                "balance":0.2067697,
-                "shortMaintainenceRatio":"0.015",
-                "position":2,
-                "profitreal":-0.00070909,
-                "position_id":2778972475169792
-            }
-        ]
-    }
-    
-
-b.新增返回参数：
-
-逐仓
-
-| longMaintainenceRatio |String |多仓维持保证金率 |
-
-| shortMaintainenceRatio |String |空仓维持保证金率 |
-
-2）ok_sub_futureusd_userinfo 合约账户信息频道
-
-新增返回参数：
-
-逐仓
-
-| bannerFrozen| String |冻结|
-
-全仓
-
-| bannerFrozen | String | 冻结 |
-
-| maintainenceRatio | String | 维持保证金率 |
-
-### 2019-05-15
-
-交割合约梯度保证金同步（v3）
-
-业务逻辑详见：OKEx关于交割合约上线梯度保证金模式、手续费等级试用功能及交易手续费调整的公告
-
-中文链接：<https://support.okex.com/hc/zh-cn/articles/360028302371>
-
-v3 API 同步优化如下：
-
-1、设置合约币种强平模式
-
-设置合约币种强平模式，注意当前仓位有挂单禁止切换账户模式。
-
-限速规则：5次/2s
-
-HTTP请求
-
-`POST /api/futures/v3/accounts/liqui_mode`
-
-请求示例
-
-`POST
-/api/futures/v3/accounts/liqui_mode{"currency":"btc","liqui_mode":"tier"}`
-
-请求参数
-
-| 参数名 | 参数类型 | 是否必须 | 描述 |
-
-| currency | String | 是 | 币种，如`BTC` |
-
-| liqui_mode | string | 是 | 强平模式  
-`tier`（梯度强平）  
-`legacy`（一次强平）|
-
-返回参数
-
-| 参数名 | 参数类型 | 描述|
-
-| liqui_mode | string | 强平模式  
-`tier`（梯度强平）  
-`legacy`（一次强平）|
-
-| currency | String | 币种，如`BTC` |
-
-| result | String | 返回设定结果，成功或错误码 |
-
-  
-
-2、所有/单个账户信息：
-
-全仓增加：维持保证金率/和获取当前强平模式
-
-逐仓增加：获取当前强平模式
-
-所有币种合约账户信息【单个币种合约账户信息同理】
-
-用于获取全币种账户信息，会有大量的性能消耗，建议用户传币种获取。
-
-限速规则：1次/10s
-
-HTTP请求
-
-GET /api/futures/v3/accounts
-
-请求示例
-
-GET /api/futures/v3/accounts
-
-返回参数增加：
-
-全仓
-
-| 全仓参数名 | 参数类型 | 描述 |
-
-| maint_margin_ratio | String | 维持保证金率 |
-
-| liqui_mode | string | 强平模式  
-`tier`（梯度强平）  
-`legacy`（一次强平）|
-
-逐仓
-
-| 逐仓参数名 | 参数类型 | 描述 |
-
-| liqui_mode | string | 强平模式  
-`tier`（梯度强平）  
-`legacy`（一次强平）|
-
-  
-
-3、持仓信息：
-
-全仓增加：保证金、收益、收益率、未实现盈亏
-
-逐仓增加：保证金率、维持保证金率、收益、未实现盈亏
-
-合约持仓信息
-
-获取合约账户所有的持仓信息。会有大量的性能消耗，建议用户传币种获取。
-
-限速规则：5次/2s
-
-HTTP请求
-
-GET /api/futures/v3/position
-
-请求示例
-
-GET /api/futures/v3/position
-
-返回参数增加：
-
-全仓
-
-| 全仓参数名 | 参数类型 | 描述 |
-
-| short_margin | String | 空仓保证金 |
-
-| short_pnl | String | 空仓收益 |
-
-| short_pnl_ratio | String | 空仓收益率 |
-
-| short_unrealised_pnl | String | 空仓未实现盈亏 |
-
-| long_margin | String | 多仓保证金 |
-
-| long_pnl | String | 多仓收益|
-
-| long_pnl_ratio | String | 多仓收益率|
-
-| long_unrealised_pnl | String | 多仓未实现盈亏|
-
-逐仓
-
-| 逐仓参数名 | 参数类型 | 描述 |
-
-| short_margin_ratio | String | 空仓保证金率 |
-
-| short_maint_margin_ratio | String | 空仓维持保证金率 |
-
-| short_pnl | String | 空仓收益 |
-
-| short_unrealised_pnl | String | 空仓未实现盈亏 |
-
-| long_margin_ratio | String | 多仓保证金率 |
-
-| long_maint_margin_ratio | String | 多仓维持保证金率|
-
-| long_pnl | String | 多仓收益 |
-
-| long_unrealised_pnl | String | 多仓未实现盈亏 |
-
-  
-
-4、持仓杠杆倍数调整（持仓中也能调整，1-100倍）
-
-设定合约币种杠杆倍数
-
-设定合约账户币种杠杆倍数，注意当前仓位有挂单禁止切换杠杆。
-
-限速规则：5次/2s
-
-HTTP请求
-
-`POST /api/futures/v3/accounts/<currency>/leverage`
-
-请求示例
-
-`POST /api/futures/v3/accounts/btc/leverage{"leverage":"99"}`（全仓示例）
-
-`POST /api/futures/v3/accounts/btc/leverage{"instrument_id":"BTC-
-USD-180213","direction":"long","leverage":"99"}`（逐仓示例）
-
-请求参数增加：
-
-全仓
-
-| 全仓参数名 | 参数类型 | 是否必须 | 描述 |
-
-| leverage | String | 是 | 要设定的杠杆倍数，填写`1-100`的整数 |
-
-| currency | String | 是 | 币种，如：`btc` |
-
-逐仓
-
-| 逐仓参数名 | 参数类型 | 是否必须 | 描述 |
-
-| currency | String | 是 | 币种，如：`btc`|
-
-| instrument_id | String | 是 | 合约ID，如`BTC-USD-180213`|
-
-| direction| String| 是 | 开仓方向  
-long（做多）或者short（做空）|
-
-| leverage | String | 是| 要设定的杠杆倍数，填写`1-100`的整数|
-
-错误码增加：
-
-32040:当前有持仓仓位或挂单（error message："EOS-USD-180213") You have open positions or
-orders.
-
-32060:保证金不足，无法调整杠杆 Insufficient margin. Unable to adjust leverage.
-
-  
-
-WEBSOCKECT:
-
-  
-
-1、账户频道：
-
-全仓增加维持保证金率/和获取当前强平模式
-
-逐仓增加获取当前强平模式
-
-用户账户频道
-
-获取账户信息，需用用户登录
-
-send示例
-
-{"op": "subscribe", "args": ["futures/account:BTC"]}
-
-其中`futures/account`为频道名，`BTC`为`token`
-
-返回参数增加：
-
-| 参数名（全仓）| 参数类型 | 描述|
-
-| maint_margin_ratio| String | 维持保证金率|
-
-| liqui_mode| string | 强平模式  
-`tier`（梯度强平）  
-`legacy`（一次强平）|
-
-| 参数名（逐仓） | 参数类型 | 描述|
-
-| liqui_mode | string| 强平模式  
-`tier`（梯度强平）  
-`legacy`（一次强平）|
-
-  
-
-2、持仓信息：
-
-全仓增加：保证金、收益、收益率、未实现盈亏
-
-逐仓增加：保证金率、维持保证金率、收益、未实现盈亏
-
-用户持仓频道
-
-获取用户持仓信息，需用用户登录
-
-send示例
-
-{"op": "subscribe", "args": ["futures/position:BTC-USD-170317"]}
-
-其中`futures/position`为频道名，`BTC-USD-170317`为`instrument_id`
-
-全仓增加：
-
-| 全仓参数名 | 参数类型| 描述|
-
-| short_margin | String | 空仓保证金|
-
-| short_pnl String | 空仓收益|
-
-| short_pnl_ratio | String | 空仓收益率 |
-
-| short_unrealised_pnl | String | 空仓未实现盈亏|
-
-| long_margin | String | 多仓保证金 |
-
-| long_pnl | String | 多仓收益|
-
-| long_pnl_ratio | String | 多仓收益率 |
-
-| long_unrealised_pnl | String | 多仓未实现盈亏|
-
-逐仓增加：
-
-| 逐仓参数名 | 参数类型 | 描述 |
-
-| short_margin_ratio | String | 空仓保证金率 |
-
-| short_maint_margin_ratio | String | 空仓维持保证金率 |
-
-| short_pnl | String | 空仓收益 |
-
-| short_unrealised_pnl | String | 空仓未实现盈亏 |
-
-| long_margin_ratio | String | 多仓保证金率 |
-
-| long_maint_margin_ratio | String | 多仓维持保证金率 |
-
-| long_pnl | String | 多仓收益 |
-
-| long_unrealised_pnl | String | 多仓未实现盈亏 |
-
-### 2019-04-28
-
-变更1【功能下线】币币的多状态查询功能下线，将不再支持多状态查询
-
-影响的业务线：币币
-
-影响的具体接口：Rest API `GET /api/spot/v3/orders`
-
-变更2【功能优化】：增加参数state（表示订单状态），将币币、交割合约、永续合约的订单状态定义统一一致。
-
-说明：state为新增加的字段，功能等同原有status字段。短期会对这2个字段做兼容，建议原用户尽早切换成state，status的下线时会提前通知用户。
-
-state，状态集说明："-2":失败,"-1":撤单成功,"0":等待成交 ,"1":部分成交,
-"2":完全成交,"3":下单中,"4":撤单中,"6": 未完成（等待成交+部分成交），"7":已完成（撤单成功+完全成交））
-
-影响的业务线：币币、币币杠杆、交割合约、永续合约
-
-影响的具体接口rest接口：
-
-`GET /api/spot/v3/orders`；
-
-`GET /api/spot/v3/orders_pending`；
-
-`GET /api/spot/v3/orders/<order_id>`
-
-`GET /api/margin/v3/orders`；
-
-`GET /api/margin/v3/orders/<order_id>`；
-
-`GET /api/margin/v3/orders_pending`；
-
-`GET /api/futures/v3/orders/<instrument_id>`
-
-`GET /api/futures/v3/orders/<instrument_id>/<order_id>`；
-
-`GET /api/swap/v3/orders/<instrument_id>`；
-
-`GET /api/swap/v3/orders/<instrument_id>/<order_id>`
-
-影响的具体接口WS接口：
-
-spot/order
-
-futures/order
-
-swap/order
-
-### 2019-04-26
-
-【功能优化】：所有接口返回参数的数据类型(除Boolean以外)全部统一为String类型
-
-影响的业务线：币币、币币杠杆、交割合约、永续合约
-
-影响的具体接口：涉及到的接口很多，建议用户统一检查一遍，rest和ws接口均有。
-
-### 2019-04-24
-
-【新增接口】增加3个公共错误码
-
-影响的业务线：币币、币币杠杆、交割合约、永续合约
-
-具体新增的3个错误码描述如下：
-
-错误提示 | 错误码 | HTTP状态码  
----|---|---  
-接口已下线或无法使用 | 30019 | 400  
-非法的json数据 | 30021 | 400  
-Api已被冻结 | 30022 | 401  
-  
-### 2019-04-12
-
-【新增接口】交割合约增加：设置合约币种账户模式接口
-
-影响的业务线：交割合约
-
-影响的具体接口：`POST /api/futures/v3/accounts/margin_mode`
-
-设置合约币种账户模式，注意当前仓位有持仓或者挂单禁止切换账户模式。
-
-限速规则：5次/2s
-
-##### HTTP请求
-
-`POST /api/futures/v3/accounts/margin_mode`
-
-##### 请求示例
-
-`POST
-/api/futures/v3/accounts/margin_mode{"currency":"btc","margin_mode":"crossed"}`
-
-##### 请求参数
-
-参数名 | 参数类型 | 是否必须 | 描述  
----|---|---|---  
-currency | String | 是 | 币种，如：`btc`  
-margin_mode | String | 是 | 账户模式  
-`crossed`:全仓  
-`fixed`:逐仓  
-  
-##### 返回参数
-
-参数名 | 参数类型 | 描述  
----|---|---  
-currency | String | 币种，如：`btc`  
-margin_mode | String | 账户模式  
-`crossed`:全仓  
-`fixed`:逐仓  
-result | String | 返回设定结果  
-error_code | String | 错误码，下单成功时为`0`，下单失败时会显示相应错误码  
-error_message | String | 错误信息，下单成功时为空，下单失败时会显示错误信息  
-  
-##### 返回示例
-
-    
-    
-    {
-        "result":true,
-        "error_message":"",
-        "error_code":"0",
-        "currency":"btc",
-        "margin_mode":"crossed"
-    }
-    
-
-### 2019-03-27
-
-【功能优化】: 用client_oid批量撤销订单，由之前每个币对可撤一个，优化为每个币对可撤十个。
-
-影响的业务线：币币、币币杠杆
-
-影响的具体接口REST接口：
-
-`POST /api/spot/v3/cancel_batch_orders`
-
-`POST /api/margin/v3/cancel_batch_orders`
-
-【功能优化】：WebSocket 的order 频道的返回参数增加"最新成交价"、"最新成交数量"和"最新成交时间"
-
-| last_fill_px | String | 最新成交价格（如果没有，推`0`） |
-
-| last_fill_qty | String | 最新成交数量（如果没有，推`0`） |
-
-| last_fill_time | String | 最新成交时间（如果没有，推`1970-01-01T00:00:00.000Z`） |
-
-影响的业务线：币币、币币杠杆、交割合约和永续合约
-
-影响的具体接口REST接口：
-
-swap/order
-
-futures/order
-
-spot/order
-
-### 2019-01-21
-
-【功能优化】: K线接口返回格式统一为数组 【时间，开，高，低，收，交易量】
-
-影响的业务线：币币、币币杠杆、交割合约和永续合约
-
-影响的具体接口REST接口：
-
-`GET /api/spot/v3/instruments/<instrument_id>/candles`
-
-`GET /api/futures/v3/instruments/<instrument-id>/candles`
-
-`GET /api/swap/v3/instruments/<instrument_id>/candles`
-
-影响的具体接口WS接口：
-
-swap/candle
-
-futures/candle
-
-spot/candle
-
 ### 创建我的APIKey
 
 [创建我的APIKey(点击跳转创建APIKey页面)](account/users/myApi)
