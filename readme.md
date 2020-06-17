@@ -1,4 +1,4 @@
-[![](../static/img/logo.png?_st=20200611125034)](/)
+[![](//static.bafang.com/cdn/assets/broker/api-static/logo/okex_logo.png)](/)
 
   * [ 入门指引 ](./#README)
   * [ 做市商项目 ](./#market)
@@ -204,6 +204,7 @@
     * [ 公共-获取成交数据 ](./#option-option---deal_data)
     * [ 公共-获取某个Ticker信息 ](./#option-option---ticker)
     * [ 公共-获取K线数据 ](./#option-option---line)
+    * [ 公共-获取历史结算/行权记录 ](./#option-option---settlement_history)
   * [ 指数 API ](./#index-restful-README)
     * [ 公共-获取指数成分 ](./#index-restful-content)
   * [ 获取系统升级状态 ](./#status-readme)
@@ -467,6 +468,10 @@ data-cn)
 
 注意：模拟盘的交易币种前均加MN以区分，例如：MNBTC-MNUSDT（币币/杠杆）、MNBTC-USD-180213(交割合约)、MNBTC-
 MNUSDT-SWAP(永续合约)、MNBTC-USD-190927-5000-C(期权合约)
+
+2、期权增加"获取历史结算/行权记录"接口：`GET/api/option/v3/settlement/history/<underlying>`
+
+3、期权"成交明细"接口：成交ID与last_fill_id保持一致，账单ID与账单流水里的ledger_id保持一致。
 
 ### 2020-05-15
 
@@ -3012,7 +3017,7 @@ TIMESTAMP`请求头相同，必须是UTC时区Unix时间戳的十进制秒数格
 
 method是请求方法，字母全部大写：`GET/POST`。
 
-requestPath是请求接口路径。例如：`/orders?before=2&limit=30`
+requestPath是请求接口路径。例如：`/api/spot/v3/orders?instrument_id=OKB-USDT&state=2`
 
 body是指请求主体的字符串，如果请求没有主体(通常为GET请求)则body可省略。例如：`{"product_id":"BTC-
 USD-0309","order_id":"377454671037440"}`
@@ -6094,7 +6099,7 @@ deal_value | String | 已委托量
 
 ##### 请求示例
 
-`2018-09-12T07:56:45.645ZGET/api/spot/v3/instruments`
+GET/api/spot/v3/instruments`
 
 ##### 返回参数
 
@@ -6149,8 +6154,7 @@ tick_size | String | 交易价格精度
 
 ##### 请求示例
 
-`2019-03-20T07:48:09.130ZGET/api/spot/v3/instruments/BTC-
-USDT/book?size=5&depth=0.2`
+`GET/api/spot/v3/instruments/BTC-USDT/book?size=5&depth=0.2`
 
 ##### 请求参数
 
@@ -6226,7 +6230,7 @@ asks和bids值数组举例说明： ["411.8","10","8"] 411.8为深度价格，10
 
 ##### 请求示例
 
-`2018-09-12T07:57:26.537ZGET/api/spot/v3/instruments/ticker`
+`GET/api/spot/v3/instruments/ticker`
 
 ##### 返回参数
 
@@ -6289,7 +6293,7 @@ timestamp | String | 系统时间戳
 
 ##### 请求示例
 
-`2019-03-13T11:42:09.849ZGET/api/spot/v3/instruments/BTC-USDT/ticker`
+`GET/api/spot/v3/instruments/BTC-USDT/ticker`
 
 ##### 请求参数
 
@@ -6358,7 +6362,7 @@ timestamp | String | 系统时间戳
 
 ##### 签名请求示例
 
-`2018-09-12T07:58:34.414ZGET/api/spot/v3/instruments/LTC-USDT/trades?limit=20`
+`GET/api/spot/v3/instruments/LTC-USDT/trades?limit=20`
 
 ##### 请求参数
 
@@ -14521,15 +14525,16 @@ USD-190927-12500-C&client_oid=oktoption15&limit=50`
 underlying | String | 是 | 合约标的指数，如BTC-USD  
 order_id | String | 否 | 订单ID  
 instrument_id | String | 否 | 合约名称，如BTC-USD-190927-12500-C  
-after | String | 否 | 请求此id之前(更旧的数据)的分页内容，传的值为对应接口的trade_id  
-before | String | 否 | 请求此id之后(更新的数据)的分页内容，传的值为对应接口的trade_id |  
+after | String | 否 | 请求此id之前(更旧的数据)的分页内容，传的值为对应接口的ledger_id  
+before | String | 否 | 请求此id之后(更新的数据)的分页内容，传的值为对应接口的ledger_id |  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 ##### 返回参数
 
 **参 数名** | **参 数类型** | **描 述**  
 ---|---|---  
-trade_id | String | 成交ID  
+trade_id | String | 成交ID，与last_fill_id保持一致，为撮合id  
+ledger_id | String | 账单ID，与账单流水里的ledger_id保持一致  
 order_id | String | 订单ID  
 instrument_id | String | 合约名称，如BTC-USD-190927-12500-C  
 fill_price | String | 成交价格  
@@ -14547,6 +14552,7 @@ fee | String | 手续费
     [
         {
             "trade_id": "135383019552770048",
+            "ledger_id": "1009099",
             "order_id": "135383019066273792",
             "instrument_id": "BTC-USD-200110-6500-P",
             "fill_price": "0.001",
@@ -14559,6 +14565,7 @@ fee | String | 手续费
         {
          {
             "trade_id": "130026669872252928",
+            "ledger_id": "1009099",
             "order_id": "130019947002728448",
             "instrument_id": "TBTC-USD-191227-8000-P",
             "fill_price": "0.011",
@@ -15287,6 +15294,70 @@ K线数据可能不完整。
     }
     
 
+### 公共-获取历史结算/行权记录
+
+获取历史结算/行权记录
+
+##### 限速规则：1次/10s
+
+##### HTTP请求
+
+`GET/api/option/v3/settlement/history/<underlying>`
+
+##### 请求示例
+
+`GET/api/option/v3/settlement/history/BTC-USD`
+
+##### 请求参数
+
+**参 数名** | **参 数类型** | **是 否必须** | **描 述**  
+---|---|---|---  
+instrument_id | String | 是 | 标的指数 e.g BTC-USD ETH-USD  
+start | String | 否 | 开始时间（ISO 8601标准，例如：2020-03-08T08:00:00Z）  
+limit | String | 否 | 默认5条  
+end | String | 否 | 结束时间（ISO 8601标准，例如：2020-03-10T08:00:00Z）  
+  
+##### 返回参数
+
+**参 数名** | **参 数类型** | **描 述**  
+---|---|---  
+instrument_id | String | 期权ID，如BTC-USD-200605-5500-C  
+type | String | 行权：exercised/expired OTM (实值已行权/虚值已过期) 结算：settlement（结算）  
+settlement_price | String | 结算价格  
+underlying_fixing | String | 到期日标的价格  
+clawback_loss | String | 穿仓用户亏损分摊  
+reserve | String | 准备金分摊  
+clawback_rate | String | 分摊比例 如 0 ，0.01（1%）  
+timestamp | String | 交割/结算日期  
+  
+##### 返回示例
+
+    
+    
+    [
+        {
+            "instrument_id": "btc-usd-180213",
+            "type": "settlement",
+            "settlement_price": "0.01",
+            "underlying_fixing": "7923.88",
+            "clawback_loss": "0.0",
+            "reserve": "0.0252",
+            "clawback_rate": "0.0",
+            "timestamp": "2020-03-09T08:00:21.000Z"
+        },
+        {
+            "instrument_id": "btc-usd-180213",
+            "type": "settlement",
+            "settlement_price": "0.02",
+            "underlying_fixing": "7923.88",
+            "clawback_loss": "0.0",
+            "reserve": "0.0",
+            "clawback_rate": "0.0",
+            "timestamp": "2020-03-08T08:00:20.000Z"
+        }
+    ]
+    
+
 ### 指数 API
 
 指数接口
@@ -15447,8 +15518,6 @@ v3API将使用统一30000开头的错误码
 错误提示 | 错误码 | http状态码  
 ---|---|---  
 成功（下单成功，撤单成功，操作成功等） | 0 | 200  
-长时间没有接收到数据 | 4001 | 400  
-缓冲区无法写入数据关闭 | 4002 | 400  
 请求头"OK_ACCESS_KEY"不能为空 | 30001 | 400  
 请求头"OK_ACCESS_SIGN"不能为空 | 30002 | 400  
 请求头"OK_ACCESS_TIMESTAMP"不能为空 | 30003 | 400  
@@ -20318,7 +20387,7 @@ instrument_id | String | BTC-USD ,BTC-USDT
     {"table":"index/candle60s","data":[{"instrument_id":"BTC-USD","candle":["2018-11-27T10:01:23.341Z","3811.31","3811.31","3811.31","3811.31","0"]}]}
     
 
-### 错误码
+### 这里是Websocket错误码
 
 error message 格式：
 
@@ -20328,6 +20397,8 @@ error message 格式：
 
 错误描述 |  | Code  
 ---|---|---  
+长时间没有接收到数据 | no data received in 30s | 4001  
+缓冲区无法写入数据关闭 | Buffer full. cannot write data | 4002  
 Url pass 无效 | Url path error | 30000  
 "OK_ACCESS_KEY"不能为空 | OK_ACCESS_KEY cannot be blank | 30001  
 "OK_ACCESS_SIGN"不能为空 | OK_ACCESS_SIGN cannot be blank | 30002  
