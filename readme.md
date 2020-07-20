@@ -4,7 +4,7 @@
   * [ 做市商项目 ](./#market)
   * [ 新手教程 ](./#vedio)
   * [ 更新日志 __](./#change-change)
-    * [ 2020-07-07 ](./#change-20200731)
+    * [ 2020-07-20 ](./#change-20200731)
     * [ 2020-06-18 ](./#change-20200630)
     * [ 2020-05-15 ](./#change-20200531)
     * [ 2020-04-22 ](./#change-20200430)
@@ -86,6 +86,7 @@
     * [ 公共-获取某个ticker信息 ](./#spot-some)
     * [ 公共-获取成交数据 ](./#spot-deal_information)
     * [ 公共-获取K线数据 ](./#spot-line)
+    * [ 公共-获取历史K线数据 ](./#spot-line_history)
   * [ 币币杠杆API __](./#spot_leverage-README)
     * [ 币币杠杆账户信息 ](./#spot_leverage-account_information)
     * [ 单一币对账户信息 ](./#spot_leverage-singleness)
@@ -147,6 +148,7 @@
     * [ 公共-获取标记价格 ](./#futures-markprice)
     * [ 公共-获取强平单 ](./#futures-get-liquidation)
     * [ 公共-获取历史结算/交割记录 ](./#futures-settlement_history)
+    * [ 公共-获取历史K线数据 ](./#spot-line_history)
   * [ 永续合约API __](./#swap-README)
     * [ 所有合约持仓信息 ](./#swap-swap---hold_information)
     * [ 单个合约持仓信息 ](./#swap-swap---only)
@@ -183,6 +185,7 @@
     * [ 公共-获取合约资金费率 ](./#swap-swap---funding_time)
     * [ 公共-获取合约标记价格 ](./#swap-swap---markprice)
     * [ 公共-获取合约历史资金费率 ](./#swap-swap---funding_rate)
+    * [ 公共-获取历史K线数据 ](./#swap-swap---line_history)
   * [ 期权合约API __](./#option-README)
     * [ 单个标的指数持仓信息 ](./#option-option---position)
     * [ 单个标的物账户信息 ](./#option-option---account_underlying)
@@ -331,7 +334,7 @@ ______
 #### 使用流程
 
 步骤：开发者如需使用API ，请先申请V3APIKey等信息
-[点击申请APIKey](account/users/myApi)，然后根据此文档详情进行开发交易，使用过程中如有问题或者建议请及时反馈。
+[点击申请APIKey](/account/users/myApi)，然后根据此文档详情进行开发交易，使用过程中如有问题或者建议请及时反馈。
 [可参考SDK(点击跳转SDK详情页面)](https://github.com/okex/V3-Open-API-SDK)
 
 ##### **请 使用大陆以外的IP地址访问OKEx的API，强烈建议使用香港阿里云服务器。**
