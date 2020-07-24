@@ -150,7 +150,7 @@
     * [ 公共-获取标记价格 ](./#futures-markprice)
     * [ 公共-获取强平单 ](./#futures-get-liquidation)
     * [ 公共-获取历史结算/交割记录 ](./#futures-settlement_history)
-    * [ 公共-获取历史K线数据 ](./#spot-line_history)
+    * [ 公共-获取历史K线数据 ](./#futures-line_history)
   * [ 永续合约API __](./#swap-README)
     * [ 所有合约持仓信息 ](./#swap-swap---hold_information)
     * [ 单个合约持仓信息 ](./#swap-swap---only)
