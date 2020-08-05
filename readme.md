@@ -314,7 +314,6 @@
       * [ 指数K线 ](./#Index-candel)
     * [ WebSocketAPI 错误码 ](./#swap_ws-error_code)
   * [ 创建我的APIKey ](./#apikey)
-  * [ OpenID开发文档说明 ](OpenAPI.html)
   *   * [ 问题反馈 ](./#support-README)
 
 #
