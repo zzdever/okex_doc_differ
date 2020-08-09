@@ -224,6 +224,7 @@
   * [ 公共-获取系统升级状态 __](./#status-readme)
     * [ Rest-获取系统升级状态 ](./#status-status)
     * [ WebSocket-获取系统升级状态 ](./#status-status---ws)
+  * [ 公共-Oracle ](./#oracle-oracle)
   * [ RestAPI 错误码 __](./#error-Error_Code)
     * [ 公共错误码 ](./#error-public)
     * [ 资金账户错误码 ](./#error-account)
