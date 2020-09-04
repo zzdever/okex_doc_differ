@@ -73,6 +73,8 @@
     * [ 批量下单 ](./#spot-batch)
     * [ 撤销指定订单 ](./#spot-revocation)
     * [ 批量撤销订单 ](./#spot-repeal)
+    * [ 修改订单 ](./#spot-amend)
+    * [ 批量修改订单 ](./#spot-amend_batch)
     * [ 获取订单列表 ](./#spot-list)
     * [ 获取所有未成交订单 ](./#spot-orders_pending)
     * [ 获取订单信息 ](./#spot-order_information)
