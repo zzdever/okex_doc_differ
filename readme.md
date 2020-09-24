@@ -200,6 +200,7 @@
     * [ 下单 ](./#option-option---order)
     * [ 批量下单 ](./#option-option---orders)
     * [ 撤单 ](./#option-option---cancel)
+    * [ 撤销全部订单 ](./#option-option---cancel_all)
     * [ 批量撤单 ](./#option-option---cancel_batch)
     * [ 修改订单 ](./#option-option---amend)
     * [ 批量修改订单 ](./#option-option---amend_batch)
