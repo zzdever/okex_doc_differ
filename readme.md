@@ -388,7 +388,7 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 
 #### 联系我们
 
-如需帮助请添加微信号：ApiSupport 备注：API+姓名+ok账号，拉你进API问题交流群
+如需帮助请添加微信号：OK_ApiSupport 备注：API+姓名+ok账号，拉你进API问题交流群
 
 ### 做市商项目
 
