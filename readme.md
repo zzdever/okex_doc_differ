@@ -52,7 +52,6 @@
     * [ 接口类型 ](./#summary-ports)
     * [ 访问限制 ](./#summary-limit)
     * [ 验证 ](./#summary-yan-zheng)
-    * [ 测试环境 ](./#summary-testnet)
   * [ 资金账户API __](./#account-README)
     * [ 资金账户信息 ](./#account-information)
     * [ 单一币种账户信息 ](./#account-singleness)
