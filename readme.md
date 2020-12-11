@@ -419,15 +419,15 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了客户端与服�
 
 以下为API新手教程的视频，更多教学内容持续更新中，敬请期待：
 
-1、API交易与申请 [点击这里观看](https://www.okex.me/academy/zh/api-transactions-and-
+1、API交易与申请 [点击这里观看](https://www.okexcn.com/academy/zh/api-transactions-and-
 applications-cn)
 
-2、Web页面和API接口数据对比 [点击这里观看](https://www.okex.me/academy/zh/web-page-and-api-
+2、Web页面和API接口数据对比 [点击这里观看](https://www.okexcn.com/academy/zh/web-page-and-api-
 excuse-data-comparison-cn)
 
-3、Websocket API使用介绍和注意事项 [点击这里观看](https://www.okex.me/academy/zh/websocket-
+3、Websocket API使用介绍和注意事项 [点击这里观看](https://www.okexcn.com/academy/zh/websocket-
 api-usage-introduction-and-precautions-cn)
 
-4、API如何获取个人数据 [点击这里观看](https://www.okex.me/academy/zh/how-api-gets-personal-
-data-cn)
+4、API如何获取个人数据 [点击这里观看](https://www.okexcn.com/academy/zh/how-api-gets-
+personal-data-cn)
 
