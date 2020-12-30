@@ -213,6 +213,7 @@
     * [ 获取成交明细 ](./#option-option---fills)
     * [ 获取账单流水 ](./#option-option---ledger)
     * [ 获取手续费费率 ](./#option-option---trade_fee)
+    * [ 设置希腊字母 ](./#option-option---set_greeks)
     * [ 公共-获取标的指数 ](./#option-option---underlying)
     * [ 公共-获取期权合约 ](./#option-option---instrument)
     * [ 公共-获取期权合约详细定价 ](./#option-option---instrument_summary)
