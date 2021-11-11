@@ -181,13 +181,13 @@ Java Python Go C++
 
 # 做市商申请
 
-欢迎优秀的做市商参与长期做市项目。 申请条件(至少满足一条)：
+满足以下任意条件的用户即可申请加入欧易做市商计划：
 
-  * 用户等级VIP1及以上  
+  * 交易等级VIP2及以上  
 
-  * 账户资产价值>=200,000 USD  
+  * 其他交易所达标做市商（需审核）  
 
-提供以下信息发送邮件至： `lpservice@okex.com`
+提供以下信息发送邮件至：`lpservice@okex.com`或咨询大客户经理
 
   * 账户信息  
 
@@ -978,8 +978,10 @@ clOrdId | String | 可选 | 用户自定义ID
                 "avgPx":"0",
                 "lever":"20",
                 "tpTriggerPx":"",
+                "tpTriggerPxType":"last",
                 "tpOrdPx":"",
                 "slTriggerPx":"",
+                "slTriggerPxType":"last",
                 "slOrdPx":"",
                 "feeCcy":"",
                 "fee":"",
@@ -1005,7 +1007,7 @@ instType | String | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 instId | String | 产品ID  
-tgtCcy | String | 委托数量的类型  
+tgtCcy | String | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
@@ -1037,8 +1039,18 @@ state | String | 订单状态
 `filled`：完全成交  
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 slOrdPx | String | 止损委托价  
 feeCcy | String | 交易手续费币种  
 fee | String | 订单交易手续费，平台向用户收取的交易手续费，手续费扣除为`负数`。如： `-0.01`  
@@ -1133,6 +1145,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "side": "buy",
                 "slOrdPx": "",
                 "slTriggerPx": "",
+                "slTriggerPxType": "last",
                 "state": "live",
                 "sz": "1",
                 "tag": "",
@@ -1140,6 +1153,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "tgtCcy": "",
                 "tpOrdPx": "",
                 "tpTriggerPx": "",
+                "tpTriggerPxType": "last",
                 "tradeId": "",
                 "uTime": "1618235248028"
             }
@@ -1184,8 +1198,17 @@ state | String | 订单状态
   
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
-tpOrdPx | String | 止盈委托价  
+tpTriggerPxType | String | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 slOrdPx | String | 止损委托价  
 feeCcy | String | 交易手续费币种  
 fee | String | 订单交易手续费，平台向用户收取的交易手续费，手续费扣除为`负数`。如： `-0.01`  
@@ -1278,8 +1301,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "avgPx":"0",
                 "lever":"20",
                 "tpTriggerPx":"",
+                "tpTriggerPxType":"last",
                 "tpOrdPx":"",
                 "slTriggerPx":"",
+                "slTriggerPxType":"last",
                 "slOrdPx":"",
                 "feeCcy":"",
                 "fee":"",
@@ -1330,8 +1355,18 @@ state | String | 订单状态
 `filled`：完全成交  
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 slOrdPx | String | 止损委托价  
 feeCcy | String | 交易手续费币种  
 fee | String | 订单交易手续费，平台向用户收取的交易手续费，手续费扣除为`负数`。如： `-0.01`  
@@ -1431,8 +1466,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "avgPx":"0",
                 "lever":"20",
                 "tpTriggerPx":"",
+                "tpTriggerPxType":"last",
                 "tpOrdPx":"",
                 "slTriggerPx":"",
+                "slTriggerPxType":"last",
                 "slOrdPx":"",
                 "feeCcy":"",
                 "fee":"",
@@ -1483,8 +1520,18 @@ state | String | 订单状态
 `filled`：完全成交  
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 slOrdPx | String | 止损委托价  
 feeCcy | String | 交易手续费币种  
 fee | String | 订单交易手续费，平台向用户收取的交易手续费，手续费扣除为`负数`。如： `-0.01`  
@@ -1769,9 +1816,21 @@ reduceOnly | Boolean | 否 | 是否只减仓 `true` 或 `false`
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 tpTriggerPx | String | 否 | 止盈触发价，如果填写此参数，必须填写 止盈委托价  
+tpTriggerPxType | String | 否 | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
 tpOrdPx | String | 否 | 止盈委托价，如果填写此参数，必须填写 止盈触发价  
 委托价格为-1时，执行市价止盈  
 slTriggerPx | String | 否 | 止损触发价，如果填写此参数，必须填写 止损委托价  
+slTriggerPxType | String | 否 | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
 slOrdPx | String | 否 | 止损委托价，如果填写此参数，必须填写 止损触发价  
 委托价格为-1时，执行市价止损  
   
@@ -2022,8 +2081,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "state":"1",
                 "lever":"20",
                 "tpTriggerPx":"",
+                "tpTriggerPxType":"",
                 "tpOrdPx":"",
                 "slTriggerPx":"",
+                "slTriggerPxType":"",
                 "triggerPx":"99",
                 "ordPx":"12",
                 "actualSz":"",
@@ -2052,8 +2113,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "state":"1",
                 "lever":"20",
                 "tpTriggerPx":"",
+                "tpTriggerPxType":"",
                 "tpOrdPx":"",
                 "slTriggerPx":"",
+                "slTriggerPxType":"",
                 "triggerPx":"99",
                 "ordPx":"12",
                 "actualSz":"",
@@ -2085,13 +2148,23 @@ ordType | String | 订单类型
 side | String | 订单方向  
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
-tgtCcy | String | 委托数量的类型  
+tgtCcy | String | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 state | String | 订单状态 ，`live`：待生效 `pause`：暂停生效 `partially_effective`:部分生效  
 lever | String | 杠杆倍数  
 tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 slOrdPx | String | 止损委托价  
 triggerPx | String | 计划委托触发价格  
 ordPx | String | 计划委托委托价格  
@@ -2179,8 +2252,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "state":"effective",
                 "lever":"20",
                 "tpTriggerPx":"",
+                "tpTriggerPxType":"",
                 "tpOrdPx":"",
                 "slTriggerPx":"",
+                "slTriggerPxType":"",
                 "triggerPx":"99",
                 "ordPx":"12",
                 "actualSz":"",
@@ -2209,8 +2284,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "state":"effective",
                 "lever":"20",
                 "tpTriggerPx":"",
+                "tpTriggerPxType":"",
                 "tpOrdPx":"",
                 "slTriggerPx":"",
+                "slTriggerPxType":"",
                 "triggerPx":"99",
                 "ordPx":"12",
                 "actualSz":"",
@@ -2242,7 +2319,7 @@ ordType | String | 订单类型
 side | String | 订单方向  
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
-tgtCcy | String | 委托数量的类型  
+tgtCcy | String | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 state | String | 订单状态  
 `effective`： 已生效  
@@ -2250,8 +2327,18 @@ state | String | 订单状态
 `order_failed`：委托失败  
 lever | String | 杠杆倍数  
 tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 slOrdPx | String | 止损委托价  
 triggerPx | String | 计划委托触发价格  
 ordPx | String | 计划委托委托价格  
@@ -2928,7 +3015,7 @@ wdId | String | 提币申请ID
   
 ### 获取提币记录
 
-根据币种，提币状态，时间范围获取提币记录，按照时间倒序排列，默认返回 100 条数据。
+根据币种，提币状态，时间范围获取提币记录，按照时间倒序排列，默认返回100条数据。
 
 #### 限速： 6 次/s
 
@@ -4209,7 +4296,7 @@ availSell | String | 最大卖出可用数量
 
 ### 调整保证金
 
-增加或者减少逐仓保证金。
+增加或者减少逐仓保证金。减少保证金可能会导致实际杠杆倍数发生变化。
 
 #### 限速：20次/2s
 
@@ -6218,13 +6305,14 @@ state | String | 产品状态
 `live`：交易中  
 `suspend`：暂停中  
 `preopen`：预上线  
+`settlement`：资金费结算  
 当有系统升级，或者产品升级，或者故障问题时，产品的状态变更为暂停中；
 当恢复时，状态变更为交易中；当合约预上线时，状态变更为预上线（即新生成一个合约，新合约会处于预上线状态）；
 当产品下线的时候（如交割合约被交割的时候，期权合约被行权的时候），查询不到该产品
 
 ### 获取交割和行权记录
 
-获取交割合约的交割记录和期权的行权记录
+获取3个月内的交割合约的交割记录和期权的行权记录
 
 #### 限速： 40次/2s
 
@@ -9848,8 +9936,10 @@ msg | String | 否 | 错误消息
             "avgPx": "0",
             "lever": "20",
             "tpTriggerPx": "0",
+            "tpTriggerPxType": "last",
             "tpOrdPx": "20",
             "slTriggerPx": "0",
+            "slTriggerPxType": "last",
             "slOrdPx": "20",
             "feeCcy": "",
             "fee": "",
@@ -9921,8 +10011,18 @@ data | Array | 订阅的数据
 `filled`：完全成交  
 > lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 > tpTriggerPx | String | 止盈触发价  
+> tpTriggerPx | String | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 > tpOrdPx | String | 止盈委托价，止盈委托价格为`-1`时，执行市价止盈  
 > slTriggerPx | String | 止损触发价  
+> slTriggerPx | String | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 > slOrdPx | String | 止损委托价，止损委托价格为`-1`时，执行市价止损  
 > feeCcy | String | 交易手续费币种  
 `币币/币币杠杆`：如果是买的话，收取的就是BTC；如果是卖的话，收取的就是USDT  
@@ -10079,8 +10179,10 @@ msg | String | 否 | 错误消息
             "state": "live",
             "lever": "20",
             "tpTriggerPx": "",
+            "tpTriggerPxType": "",
             "tpOrdPx": "",
             "slTriggerPx": "",
+            "slTriggerPxType": "",
             "triggerPx": "99",
             "ordPx": "12",
             "actualSz": "",
@@ -10120,7 +10222,7 @@ data | Array | 订阅的数据
 > tdMode | String | 交易模式  
 保证金模式 `cross`：全仓 `isolated`：逐仓  
 非保证金模式 `cash`：现金  
->tgtCcy | String | 市价单委托数量的类型  
+> tgtCcy | String | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 > lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 > state | String | 订单状态  
@@ -10129,8 +10231,18 @@ data | Array | 订阅的数据
 `canceled`：已撤销  
 `order_failed`：委托失败  
 > tpTriggerPx | String | 止盈触发价  
+> tpTriggerPxType | String | 发布在模拟盘  
+止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 > tpOrdPx | String | 止盈委托价，委托价格为`-1`时，执行市价止盈  
 > slTriggerPx | String | 止损触发价  
+> slTriggerPxType | String | 发布在模拟盘  
+止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 > slOrdPx | String | 止损委托价委托价格为`-1`时，执行市价止损  
 > triggerPx | String | 计划委托单的触发价格  
 > ordPx | String | 计划委托单的委托价格  
@@ -10312,7 +10424,7 @@ data | Array | 订阅的数据
 > tdMode | String | 交易模式  
 保证金模式 `cross`：全仓 `isolated`：逐仓  
 非保证金模式 `cash`：现金  
->tgtCcy | String | 市价单委托数量的类型  
+> tgtCcy | String | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 > lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 > state | String | 订单状态  
