@@ -322,6 +322,8 @@ requestPath是请求接口路径。如：`/api/v5/account/balance`
 body是指请求主体的字符串，如果请求没有主体（通常为GET请求）则body可省略。如：`{"instId":"BTC-
 USDT","lever":"5","mgnMode":"isolated"}`
 
+GET请求参数是算作requestPath，不算body
+
 SecretKey为用户申请APIKey时所生成。如：`22582BD0CFF14C41EDBF1AB98506286D`
 
 ## 交易
@@ -1809,7 +1811,6 @@ ordType | String | 是 | 订单类型
 sz | String | 是 | 委托数量  
 tgtCcy | String | 否 | 委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`单向止盈止损买单  
 仅适用于`币币`单向止盈止损买单  
 reduceOnly | Boolean | 否 | 是否只减仓 `true` 或 `false`  
   
@@ -4330,7 +4331,8 @@ posSide | String | 是 | 持仓方向，默认值是`net`
 `short`：双向持仓空头  
 `net`：单向持仓  
 type | String | 是 | 增加/减少保证金  
-`add`：增加 `reduce`：减少  
+`add`：增加  
+`reduce`：减少  
 amt | String | 是 | 增加或减少的保证金数量  
   
 > 返回结果
@@ -4343,7 +4345,8 @@ amt | String | 是 | 增加或减少的保证金数量
             "instId": "BTC-USDT-200626",
             "posSide": "short",
             "amt": "1",
-            "type": "add"
+            "type": "add",
+            "leverage": "100"
         }]
     }
     
@@ -4356,6 +4359,8 @@ instId | String | 产品ID
 posSide | String | 持仓方向  
 amt | String | 已增加/减少的保证金数量  
 type | String | 增加/减少保证金  
+leverage | String | 调整保证金后的实际杠杆倍数  
+发布于模拟盘  
   
 ### 获取杠杆倍数
 
@@ -4951,12 +4956,12 @@ ts | String | 创建时间
 
 #### HTTP请求
 
-`get /api/v5/users/subaccount/apikey`
+`GET /api/v5/users/subaccount/apikey`
 
 > 请求示例
     
     
-    get /api/v5/users/subaccount/apikey
+    GET /api/v5/users/subaccount/apikey
     
 
 #### 请求参数
@@ -4964,7 +4969,7 @@ ts | String | 创建时间
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 subAcct | String | 是 | 子账户名称  
-apiKey | String | 是 | API的公钥  
+apiKey | String | 否 | API的公钥  
   
 > 返回结果
     
@@ -5022,8 +5027,8 @@ ts | String | 创建时间
 ---|---|---|---  
 pwd | String | 是 | 母账户的资金密码  
 subAcct | String | 是 | 子账户名称  
-label | String | 是 | APIKey的备注  
 apiKey | String | 是 | API的公钥  
+label | String | 是 | APIKey的备注  
 perm | String | 是 | APIKey权限 `read_only`：只读 ；`trade` ：交易  
 ip | String | 否 | 绑定ip地址，多个ip用半角逗号隔开，最多支持20个ip  
   
@@ -11844,7 +11849,7 @@ args | Array | 是 | 请求订阅的频道列表
 `index-candle5Dutc`  
 `index-candle12Hutc`  
 `index-candle6Hutc`  
-> instId | String | 是 | 产品ID  
+> instId | String | 是 | 现货指数，如 `BTC-USD`  
   
 > 成功返回示例
     
@@ -11875,7 +11880,7 @@ args | Array | 是 | 请求订阅的频道列表
 event | String | 是 | `subscribe` `unsubscribe`  
 arg | Object | 否 | 订阅的频道  
 > channel | String | 是 | 频道名  
-> instId | String | 否 | 产品ID  
+> instId | String | 否 | 现货指数  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
   
@@ -11899,7 +11904,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
-> instId | String | 产品ID  
+> instId | String | 现货指数  
 data | Array | 订阅的数据  
 > ts | String | 开始时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > o | String | 开盘价格  
@@ -12223,6 +12228,7 @@ PM账户仅支持买卖模式 | 200 | 51041
 委托价格或触发价格超过{0}美元 | 200 | 51116  
 平仓单挂单单数超过限制 | 200 | 51117  
 委托总数量需大于单笔上限 | 200 | 51118  
+下单失败，用户{currency}余额不足 | 200 | 51119  
 下单数量不足{0}张 | 200 | 51120  
 下单张数应为一手张数的倍数 | 200 | 51121  
 委托价格小于最小值{0} | 200 | 51122  
@@ -12467,7 +12473,6 @@ APIKey 不存在 | 200 | 59506
 无效的签名 | 60007  
 公共频道不支持登录 | 60008  
 登陆失败 | 60009  
-重复登录 | 60010  
 用户需要登录 | 60011  
 不合法的请求 | 60012  
 无效的参数 args | 60013  
