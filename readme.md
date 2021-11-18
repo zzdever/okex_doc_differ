@@ -1,4 +1,4 @@
-[ 导航 ![](images/navbar-cad8cdcb.png) ](“#")
+导航 ![](images/navbar-cad8cdcb.png)
 
 [ ![](images/logo-fe50f81e.png) ](/)
 
@@ -47,7 +47,7 @@ Java Python Go C++
       * 获取资金账户余额 
       * 资金划转 
       * 获取资金划转状态 
-      * 资金流水查询 
+      * 获取资金流水 
       * 获取充值地址信息 
       * 获取充值记录 
       * 提币 
@@ -264,7 +264,7 @@ AWS 地址如下：
 
 ## 使用说明
 
-该功能接口用户需先登陆，接口只会请求模拟环境
+该功能接口用户需先登录，接口只会请求模拟环境
 
   * Parameters 面板中点击`Try it out`按钮，编辑请求参数。
 
@@ -290,15 +290,15 @@ APIKey和SecretKey将由平台随机生成和提供，Passphrase将由您提供�
 
 ### 发起请求
 
-所有REST请求头都必须包含以下内容：
+所有REST私有请求头都必须包含以下内容：
 
-`OK-ACCESS-KEY`字符串类型的APIKey。
+  * `OK-ACCESS-KEY`字符串类型的APIKey。
 
-`OK-ACCESS-SIGN`使用HMAC SHA256哈希函数获得哈希值，再使用Base-64编码（请参阅签名）。
+  * `OK-ACCESS-SIGN`使用HMAC SHA256哈希函数获得哈希值，再使用Base-64编码（请参阅签名）。
 
-`OK-ACCESS-TIMESTAMP`发起请求的时间（UTC），如：2020-12-08T09:08:57.715Z
+  * `OK-ACCESS-TIMESTAMP`发起请求的时间（UTC），如：2020-12-08T09:08:57.715Z
 
-`OK-ACCESS-PASSPHRASE`您在创建API密钥时指定的Passphrase。
+  * `OK-ACCESS-PASSPHRASE`您在创建API密钥时指定的Passphrase。
 
 所有请求都应该含有application/json类型内容，并且是有效的JSON。
 
@@ -336,9 +336,9 @@ SecretKey为用户申请APIKey时所生成。如：`22582BD0CFF14C41EDBF1AB98506
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### HTTP请求
 
@@ -433,6 +433,11 @@ tdMode
 \- 全仓币币：cross  
 \- 全仓交割/永续/期权：cross  
 \- 逐仓交割/永续/期权：isolated  
+**组合保证金模式：**  
+\- 逐仓杠杆：isolated  
+\- 全仓币币：cross  
+\- 全仓交割/永续/期权：cross  
+\- 逐仓交割/永续/期权：isolated  
 clOrdId  
 clOrdId是用户自定义的唯一ID用来跟识别订单。如果在请求参数中传入了，那它一定会在返回参数内，并且可以用于查询订单，撤销订单，修改订单等接口。
 clOrdId不能与当前所有的挂单的clOrdId重复  posSide  
@@ -445,9 +450,9 @@ clOrdId不能与当前所有的挂单的clOrdId重复  posSide
 订单类型，创建新订单时必须指定，您指定的订单类型将影响需要哪些订单参数和撮合系统如何执行您的订单，以下是有效的ordType：  
 普通委托：  
 limit：限价单，要求指定sz 和 px  
-market：市价单，币币和币币杠杆，是市价委托吃单；交割合约和永续合约，是自动以`最高买/最低卖`价格委托，遵循限价机制；`期权合约`不支持市价委托  
+market：市价单，币币和币币杠杆，是市价委托吃单；交割合约和永续合约，是自动以最高买/最低卖价格委托，遵循限价机制；期权合约不支持市价委托  
 高级委托：  
-post_only：限价委托，Post-only在下单那一刻只做maker，如果该笔订单的任何部分会吃掉当前挂单深度，则该订单将被全部撤销。  
+post_only：限价委托，在下单那一刻只做maker，如果该笔订单的任何部分会吃掉当前挂单深度，则该订单将被全部撤销。  
 fok：限价委托，全部成交或立即取消，如果无法全部成交该笔订单，则该订单将被全部撤销。  
 ioc：限价委托，立即成交并取消剩余，立即按照委托价格成交，并取消该订单剩余未完成数量，不会再深度列表上展示委托数量。  
 optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交割合约和永续合约。  sz  
@@ -467,7 +472,7 @@ optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交�
 
 #### 限速： 300次/2s
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 限速规则：批请求中包含几个元素，限速计数就加几次，总的限制是`300次/2s`
 
@@ -575,9 +580,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### HTTP请求
 
@@ -635,9 +640,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 300次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 限速规则：批请求中包含几个元素，限速计数就加几次，总的限制是`300次/2s`
 
@@ -710,9 +715,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### HTTP请求
 
@@ -780,9 +785,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 300次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 限速规则：批请求中包含几个元素，限速计数就加几次，总的限制是`300次/2s`
 
@@ -867,9 +872,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### HTTP请求
 
@@ -927,9 +932,9 @@ posSide | String | 持仓方向
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### HTTP请求
 
@@ -1099,7 +1104,7 @@ instType | String | 否 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 合约标的指数  
+uly | String | 否 | 标的指数  
 instId | String | 否 | 产品ID，如`BTC-USD-200927`  
 ordType | String | 否 | 订单类型  
 `market`：市价单  
@@ -1251,7 +1256,7 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 合约标的指数  
+uly | String | 否 | 标的指数  
 instId | String | 否 | 产品ID，如`BTC-USD-190927`  
 ordType | String | 否 | 订单类型  
 `market`：市价单  
@@ -1416,7 +1421,7 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 合约标的指数  
+uly | String | 否 | 标的指数  
 instId | String | 否 | 产品ID，如`BTC-USD-200927`  
 ordType | String | 否 | 订单类型  
 `market`：市价单  
@@ -1581,7 +1586,7 @@ instType | String | 否 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 合约标的指数  
+uly | String | 否 | 标的指数  
 instId | String | 否 | 产品 ID，如`BTC-USD-190927`  
 ordId | String | 否 | 订单 ID  
 after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
@@ -1685,7 +1690,7 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 合约标的指数  
+uly | String | 否 | 标的指数  
 instId | String | 否 | 产品 ID，如`BTC-USD-190927`  
 ordId | String | 否 | 订单 ID  
 after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
@@ -1766,9 +1771,9 @@ tradeId
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### HTTP请求
 
@@ -1902,9 +1907,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### HTTP请求
 
@@ -1965,9 +1970,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### HTTP请求
 
@@ -2367,9 +2372,11 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
 
 ### 获取币种列表
 
-获取平台所有币种列表。并非所有币种都可被用于交易。
+获取平台所有币种列表。
 
 #### 限速： 6 次/s
+
+#### 限速规则：UserID
 
 #### HTTP 请求
 
@@ -2434,6 +2441,8 @@ mainNet | Boolean | 当前链是否为主链
 
 #### 限速： 6次/s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/asset/balances`
@@ -2482,6 +2491,8 @@ availBal | String | 可用余额
 支持母账户的资金账户划转到交易账户，母账户到子账户的资金账户和交易账户划转。不支持子账户和子账户之间直接划转。
 
 #### 限速： 1 次/s
+
+#### 限速规则：UserID + Currency
 
 #### HTTP 请求
 
@@ -2588,6 +2599,8 @@ to | String | 转入账户
 
 #### 限速： 10 次/s
 
+#### 限速规则：UserID
+
 #### HTTP 请求
 
 `GET /api/v5/asset/transfer-state`
@@ -2649,11 +2662,13 @@ toInstId | String | 币币杠杆转入币对（如 `BTC-USDT`）或者转入合�
 state | String | 转账状态  
 成功：`success`，处理中：`pending`，失败：`failed`  
   
-### 资金流水查询
+### 获取资金流水
 
 查询资金账户账单流水，可查询最近一个月的数据。
 
 #### 限速：6 次/s
+
+#### 限速规则：UserID
 
 #### HTTP 请求
 
@@ -2806,6 +2821,8 @@ IOTA充值地址不能重复使用！在向IOTA地址发起充值后，再次充
 
 #### 限速： 6次/s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/asset/deposit-address`
@@ -2880,6 +2897,8 @@ ctAddr | String | 合约地址后6位
 
 #### 限速： 6 次/s
 
+#### 限速规则：UserID
+
 #### HTTP 请求
 
 `GET /api/v5/asset/deposit-history`
@@ -2952,6 +2971,8 @@ depId | String | 充值记录 ID
 
 #### 限速： 6次/s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `POST /api/v5/asset/withdrawal`
@@ -2987,7 +3008,7 @@ dest | String | 是 | 提币到
 `4`：数字货币地址  
 toAddr | String | 是 | 认证过的数字货币地址、邮箱或手机号。  
 某些数字货币地址格式为:地址+标签，如 `ARDOR-7JF3-8F2E-QUWZ-CAN7F:123456`  
-pwd | String | 是 | 交易密码  
+pwd | String | 是 | 资金密码  
 fee | String | 是 | 网络手续费≥`0`，提币到数字货币地址所需网络手续费可通过获取币种列表接口查询  
 关于标签：某些币种如XRP充币时同时需要一个充值地址和标签（又名memo/payment_id），标签是一种保证您的充币地址唯一性的数字串，与充币地址成对出现并一一对应。请您务必遵守正确的充值步骤，在提币时输入完整信息，否则将面临丢失币的风险！
 
@@ -3021,6 +3042,8 @@ wdId | String | 提币申请ID
 根据币种，提币状态，时间范围获取提币记录，按照时间倒序排列，默认返回100条数据。
 
 #### 限速： 6 次/s
+
+#### 限速规则：UserID
 
 #### HTTP 请求
 
@@ -3100,6 +3123,8 @@ wdId | String | 提币申请 ID
 
 #### 限速： 6次/s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `POST /api/v5/asset/purchase_redempt`
@@ -3154,6 +3179,8 @@ side | String | 操作类型
 
 #### 限速： 6次/s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/asset/piggy-balance`
@@ -3197,9 +3224,11 @@ earnings | String | 币种持仓收益
   
 ### 闪电网络充币
 
-一个用户在一天之内可以反复生成至多100个不同的invoice.
+一个用户在最近24小时内可以反复生成不超过100个不同的invoice.
 
 #### 限速： 2次/s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -3220,7 +3249,7 @@ ccy | String | 是 | 币种，仅支持`BTC`
 amt | String | 是 | 充值数量，推荐在0.000001〜0.05之间  
 to | String | 否 | 资金充值到账账户  
 6:资金账户  
-18:组合账户  
+18:统一账户  
 不填写此参数，默认到账资金账户  
   
 > 返回结果
@@ -3248,9 +3277,11 @@ cTime | String | 生成invoice时间
 
 ### 闪电网络提币
 
-单笔提币金额最大值为”0.1BTC“，最小值暂定为”0.000001BTC“，每天最大提币数量为1BTC。
+单笔提币金额最大值为"0.1BTC"，最小值暂定为"0.000001BTC"，最近24小时内最大提币数量为1BTC。
 
 #### 限速： 2次/s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -3275,7 +3306,7 @@ cTime | String | 生成invoice时间
 ---|---|---|---  
 ccy | String | 是 | 币种，如 `BTC`  
 invoice | String | 是 | invoice 号码  
-pwd | String | 是 | 交易密码  
+pwd | String | 是 | 资金密码  
   
 > 返回结果
     
@@ -3309,6 +3340,8 @@ cTime | String | 提币ID生成时间
 免息额度和折算率都是公共数据，不在账户接口内展示
 
 #### 限速： 10次/2s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -3511,6 +3544,8 @@ details |  |  |
 
 #### 限速：10次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/account/positions`
@@ -3646,6 +3681,8 @@ PM账户下，持仓的 IMR MMR的数据是后端服务以ristUnit为最小粒�
 
 #### 限速： 10次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/account/account-position-risk`
@@ -3742,6 +3779,8 @@ posData | Array | 持仓详细信息
 帐户资产流水是指导致帐户余额增加或减少的行为。本接口可以查询最近7天的账单数据。
 
 #### 限速：5次/s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -3860,6 +3899,8 @@ notes | String | 备注
 
 #### 限速：5次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/account/bills-archive`
@@ -3976,6 +4017,8 @@ notes | String | 备注
 
 #### 限速：5次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/account/config`
@@ -4015,7 +4058,7 @@ notes | String | 备注
 ---|---|---  
 uid | String | 账户ID，账户uid和app上的一致  
 acctLv | String | 账户层级  
-`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合账户  
+`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
 posMode | String | 持仓方式  
 `long_short_mode`：双向持仓 `net_mode`：单向持仓  
 仅适用`交割/永续`  
@@ -4028,10 +4071,12 @@ levelTmp | String | 特约用户的临时体验用户等级，例如 `lv3`
   
 ### 设置持仓模式
 
-单币种账户和跨币种账户模式：交割和永续合约支持双向持仓模式和单向持仓模式。单向持仓只会有一个方向的仓位；双向持仓可以分别持有多、空2个方向的仓位。
-组合账户模式：交割和永续仅支持单向持仓模式
+单币种账户和跨币种账户模式：交割和永续合约支持双向持仓模式和单向持仓模式。单向持仓只会有一个方向的仓位；双向持仓可以分别持有多、空2个方向的仓位。  
+组合保证金模式：交割和永续仅支持单向持仓模式
 
 #### 限速：5次/2s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -4087,6 +4132,8 @@ posMode | String | 持仓方式
 `交割/永续`逐仓/全仓杠杆倍数（合约/指数层面）。
 
 #### 限速：20次/2s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -4188,7 +4235,11 @@ posSide | String | 持仓方向
 
 ### 获取最大可买卖/开仓数量
 
+PM账户下，衍生品的全仓模式不支持最大可买卖/开仓数量的计算。
+
 #### 限速：20次/2s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -4247,6 +4298,8 @@ maxSell | String | `币币/币币杠杆`：最大可卖的计价币数量
 
 #### 限速：20次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/account/max-avail-size`
@@ -4302,6 +4355,8 @@ availSell | String | 最大卖出可用数量
 增加或者减少逐仓保证金。减少保证金可能会导致实际杠杆倍数发生变化。
 
 #### 限速：20次/2s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -4366,6 +4421,8 @@ leverage | String | 调整保证金后的实际杠杆倍数
 
 #### 限速：20次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/account/leverage-info`
@@ -4422,6 +4479,8 @@ lever | String | 杠杆倍数
 ### 获取交易产品最大可借
 
 #### 限速：20 次/2s
+
+#### 限速规则：UserID
 
 #### HTTP 请求
 
@@ -4495,6 +4554,8 @@ side | String | 订单方向
 
 #### 限速：5次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/account/trade-fee`
@@ -4522,7 +4583,7 @@ instType | String | 是 | 产品类型
 `OPTION`：期权  
 instId | String | 可选 | 产品ID，如 `BTC-USDT`  
 仅适用于instType为`币币/币币杠杆`  
-uly | String | 可选 | 合约标的指数  
+uly | String | 可选 | 标的指数  
 仅适用于instType为`交割/永续/期权`，如 `BTC-USD`  
 category | String | 可选 | 币种手续费类别  
 `1`：第一类币种费率 `2`：第二类币种费率 `3`：第三类币种费率 `4`：第四类币种费率  
@@ -4566,6 +4627,8 @@ maker的值：正数，代表是返佣的费率；负数，代表平台扣除的
 ### 获取计息记录
 
 #### 限速：5次/2s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -4635,6 +4698,8 @@ ts | String | 计息时间，Unix时间戳的毫秒数格式 ，如 `15970263830
 
 #### 限速：5次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `GET /api/v5/account/interest-rate`
@@ -4684,6 +4749,8 @@ ccy | String | 币种
 
 #### 限速：5次/2s
 
+#### 限速规则：UserID
+
 #### HTTP请求
 
 `POST /api/v5/account/set-greeks`
@@ -4729,6 +4796,8 @@ greeksType | String | 当前希腊字母展示方式
 当指定币种时会返回该币种的最大可划转数量，不指定币种会返回所有拥有的币种资产可划转数量。
 
 #### 限速：20次/2s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -4778,6 +4847,8 @@ ccy | String | 币种
 仅适用于PM账户
 
 #### 限速： 10次/2s
+
+#### 限速规则：UserID
 
 #### HTTP请求
 
@@ -4943,7 +5014,7 @@ subAcct | String | 子账户名称
 label | String | APIKey的备注  
 apiKey | String | API公钥  
 secretKey | String | API的私钥  
-Passphrase | String | APIKey的密码  
+passphrase | String | APIKey的密码  
 perm | String | APIKey权限  
 ip | String | APIKey绑定的ip地址  
 ts | String | 创建时间  
@@ -5203,19 +5274,19 @@ subAcct | String | 是 | 子账户名称
 uTime | String | 获取账户信息的最新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 totalEq | String | 美金层面权益  
 isoEq | String | 美金层面逐仓仓位权益  
-适用于`单币种保证金模式`和`跨币种保证金模式`  
+适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
 adjEq | String | 美金层面有效保证金  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 ordFroz | String | 美金层面全仓挂单占用保证金  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 imr | String | 美金层面占用保证金  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 mmr | String | 美金层面维持保证金  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 mgnRatio | String | 美金层面保证金率  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 notionalUsd | String | 以美金价值为单位的持仓数量，即仓位美金价值  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 details | Array | 各币种资产详细信息  
 > ccy | String | 币种  
 > eq | String | 币种总权益  
@@ -5231,24 +5302,24 @@ details | Array | 各币种资产详细信息
 > frozenBal | String | 币种占用金额  
 > ordFrozen | String | 挂单冻结数量  
 > liab | String | 币种负债额  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > upl | String | 未实现盈亏  
-适用于`单币种保证金模式`和`跨币种保证金模式`  
+适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
 > uplLiab | String | 由于仓位未实现亏损导致的负债  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > crossLiab | String | 币种全仓负债额  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > isoLiab | String | 币种逐仓负债额  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > mgnRatio | String | 保证金率  
 适用于`单币种保证金模式`  
 > interest | String | 计息  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > twap | String | 当前负债币种触发系统自动换币的风险  
 0、1、2、3、4、5其中之一，数字越大代表您的负债币种触发自动换币概率越高  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > maxLoan | String | 币种最大可借  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > eqUsd | String | 币种权益美金价值  
 > notionalLever | String | 币种杠杆倍数  
 适用于`单币种保证金模式`  
@@ -5397,7 +5468,7 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 合约标的指数，仅适用于`交割/永续/期权` ，如 `BTC-USD`  
+uly | String | 否 | 标的指数，仅适用于`交割/永续/期权` ，如 `BTC-USD`  
   
 > 返回结果
     
@@ -5781,7 +5852,7 @@ before | String | 否 | 请求此时间戳之后（更新的数据）的分页�
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
 香港时间开盘价k线：[6H/12H/1D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[/6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -5925,7 +5996,7 @@ before | String | 否 | 请求此时间戳之后（更新的数据）的分页�
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
 香港时间开盘价k线：[6H/12H/1D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[/6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -6058,7 +6129,8 @@ ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`159702638308
         "data":[
          {
             "volUsd":"2222",
-            "volCny":"14220.8"
+            "volCny":"14220.8",
+            "ts": "1597026383085"
          }
       ]
     }
@@ -6117,8 +6189,8 @@ ts | String | 接口返回数据时间
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-messages | String | 数组包含ABI编码的值[
-kind，timestamp，key，value]，其中kind恒等于`prices`，timestamp是当得到的价格时，key是加密资产（例如，`ETH`）和value是资产价格  
+messages | String | 数组包含对[
+kind，timestamp，key，value]进行ABI编码的值，其中kind恒等于`prices`，timestamp是获取价格的时间戳，key是加密资产（例如，`ETH`），value是资产价格  
 price | String | 价格  
 signatures | String | 每个消息的以太坊兼容ECDSA签名的数组  
 timestamp | String | 获取最新数据点的时间  
@@ -6199,11 +6271,12 @@ index | String | 是 | 指数，如 `BTC-USDT`
 index | String | 指数名称  
 last | String | 最新指数价格  
 ts | String | 数据产生时间，Unix时间戳的毫秒数格式， 如`1597026383085`  
-exch | String | 交易所名称  
-symbol | String | 采集的币对名称  
-symPx | String | 采集的币对价格  
-wgt | String | 权重  
-cnvPx | String | 换算成指数后的价格  
+components | String | 成分  
+> exch | String | 交易所名称  
+> symbol | String | 采集的币对名称  
+> symPx | String | 采集的币对价格  
+> wgt | String | 权重  
+> cnvPx | String | 换算成指数后的价格  
   
 ## 公共数据
 
@@ -6237,7 +6310,7 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 可选 | 合约标的指数，仅适用于`交割/永续/期权`，期权必填  
+uly | String | 可选 | 标的指数，仅适用于`交割/永续/期权`，期权必填  
 instId | String | 否 | 产品ID  
   
 > 返回结果
@@ -6280,7 +6353,7 @@ instId | String | 否 | 产品ID
 ---|---|---  
 instType | String | 产品类型  
 instId | String | 产品id， 如 `BTC-USD-SWAP`  
-uly | String | 合约标的指数，如 `BTC-USD`，仅适用于`交割/永续/期权`  
+uly | String | 标的指数，如 `BTC-USD`，仅适用于`交割/永续/期权`  
 category | String | 手续费档位，每个交易产品属于哪个档位手续费  
 baseCcy | String | 交易货币币种，如 `BTC-USDT` 中的 `BTC` ，仅适用于`币币`  
 quoteCcy | String | 计价货币币种，如 `BTC-USDT` 中的`USDT` ，仅适用于`币币`  
@@ -6342,7 +6415,7 @@ state | String | 产品状态
 instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 是 | 合约标的指数，仅适用于`交割/期权`  
+uly | String | 是 | 标的指数，仅适用于`交割/期权`  
 after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，传的值为对应接口的`ts`  
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
@@ -6422,7 +6495,7 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 合约标的指数，仅适用于`交割/永续/期权`，期权必填  
+uly | String | 否 | 标的指数，仅适用于`交割/永续/期权`，期权必填  
 instId | String | 否 | 产品ID，如 `BTC-USD-180216`  
 仅适用于`交割/永续/期权`  
   
@@ -6649,7 +6722,7 @@ ts | String | 限价数据更新时间 ，Unix时间戳的毫秒数格式，如 
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-uly | String | 是 | 合约标的指数，仅适用于期权  
+uly | String | 是 | 标的指数，仅适用于期权  
 expTime | String | 否 | 合约到期日，格式为"YYMMDD"，如 "200527"  
   
 > 返回结果
@@ -6708,7 +6781,7 @@ expTime | String | 否 | 合约到期日，格式为"YYMMDD"，如 "200527"
 instType | String | 产品类型  
 `OPTION`：期权  
 instId | String | 产品ID，如 `BTC-USD-200103-5500-C`  
-uly | String | 合约标的指数  
+uly | String | 标的指数  
 delta | String | 期权价格对`uly`价格的敏感度  
 gamma | String | delta对`uly`价格的敏感度  
 vega | String | 权价格对隐含波动率的敏感度  
@@ -6929,7 +7002,7 @@ mgnMode | String | 否 | 保证金模式
 `isolated`：逐仓  
 instId | String | 否 | 产品ID，仅适用于`币币杠杆`  
 ccy | String | 否 | 币种 ，仅适用于`币币杠杆`（全仓）  
-uly | String | 可选 | 合约标的指数  
+uly | String | 可选 | 标的指数  
 `交割/永续/期权`合约情况下，该参数必填  
 alias | String | 可选 | `this_week`：本周  
 `next_week`：次周  
@@ -6990,7 +7063,7 @@ instType | String | 产品类型
 totalLoss | String | 当前`underlying`下，当期内的总穿仓亏损  
 以`USDT`为单位，每天16:00（UTC+8）清零  
 instId | String | 产品ID，如 `BTC-USD-SWAP`  
-uly | String | 合约标的指数，仅适用于`交割/永续/期权`  
+uly | String | 标的指数，仅适用于`交割/永续/期权`  
 details | Array | 详细内容  
 >side | String | 订单方向  
 `buy`：买  
@@ -7032,7 +7105,7 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 合约标的指数  
+uly | String | 否 | 标的指数  
 instId | String | 否 | 产品ID，如 `BTC-USD-SWAP`  
   
 > 返回结果
@@ -7126,7 +7199,7 @@ tier | String | 否 | 查指定档位
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-uly | String | 合约标的指数  
+uly | String | 标的指数  
 instId | String | 币对  
 tier | String | 仓位档位  
 minSz | String | 该档位最少持仓数量 期权/永续/交割 最小持仓量 默认0  
@@ -7219,8 +7292,6 @@ regular | Array | 普通用户
   
 ### 获取衍生品标的指数
 
-获取当前资金费率
-
 #### 限速： 20次/2s
 
 #### 限速规则：IP
@@ -7264,7 +7335,7 @@ instType | String | 是 | 产品类型
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-uly | array | 合约标的指数 如：BTC-USDT  
+uly | Array | 标的指数 如：BTC-USDT  
   
 ## 交易大数据
 
@@ -8073,7 +8144,7 @@ args | Array | 是 | 请求订阅的频道列表
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`： 全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
   
 > 返回示例
@@ -8102,7 +8173,7 @@ arg | Object | 否 | 订阅的频道
 `FUTURES`：交割合约  
 `OPTION` ： 期权  
 `ANY`： 全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -8153,7 +8224,7 @@ args | Array | 是 | 取消订阅的频道列表
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`： 全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
   
 > 返回示例
@@ -8182,7 +8253,7 @@ arg | Object | 否 | 取消订阅的频道
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`： 全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -8248,9 +8319,9 @@ msg | String | 否 | 错误消息
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 同restAPI共享限速
 
@@ -8396,9 +8467,9 @@ long 或 short。
 订单类型，创建新订单时必须指定，您指定的订单类型将影响需要哪些订单参数和撮合系统如何执行您的订单，以下是有效的ordType：  
 普通委托：  
 limit：限价单，要求指定sz 和 px  
-market：市价单，币币和币币杠杆，是市价委托吃单；交割合约和永续合约，是自动以`最高买/最低卖`价格委托，遵循限价机制；`期权合约`不支持市价委托  
+market：市价单，币币和币币杠杆，是市价委托吃单；交割合约和永续合约，是自动以最高买/最低卖价格委托，遵循限价机制；期权合约不支持市价委托  
 高级委托：  
-post_only：限价委托，Post-only在下单那一刻只做maker，如果该笔订单的任何部分会吃掉当前挂单深度，则该订单将被全部撤销。  
+post_only：限价委托，在下单那一刻只做maker，如果该笔订单的任何部分会吃掉当前挂单深度，则该订单将被全部撤销。  
 fok：限价委托，全部成交或立即取消，如果无法全部成交该笔订单，则该订单将被全部撤销。  
 ioc：限价委托，立即成交并取消剩余，立即按照委托价格成交，并取消该订单剩余未完成数量，不会再深度列表上展示委托数量。  
 optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交割合约和永续合约。  sz  
@@ -8418,9 +8489,9 @@ optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交�
 
 #### 限速：300次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 限速规则：批请求中包含几个元素，限速计数就加几次，总的限制是`300次/2s`
 
@@ -8591,9 +8662,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 同restAPI共享限速
 
@@ -8691,9 +8762,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：300次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 限速规则：批请求中包含几个元素，限速计数就加几次，总的限制是`300次/2s`
 
@@ -8828,9 +8899,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 同restAPI共享限速
 
@@ -8941,9 +9012,9 @@ newSz : 当修改已经部分成交的订单时，新的委托数量必须大于
 
 #### 限速：300次/2s
 
-#### 限速规则：衍生品：UserID +(instrument_type、underlying)
+#### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrument_type、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
 #### 限速规则：批请求中包含几个元素，限速计数就加几次，总的限制是`300次/2s`
 
@@ -9413,7 +9484,7 @@ args | Array | 是 | 请求订阅的频道列表
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`：全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
   
 > 成功返回示例：单个
@@ -9465,7 +9536,7 @@ arg | Object | 否 | 订阅的频道
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`： 全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -9620,7 +9691,7 @@ msg | String | 否 | 错误消息
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
 > instType | String | 产品类型  
-> uly | String | 合约标的指数  
+> uly | String | 标的指数  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -9848,7 +9919,7 @@ args | Array | 是 | 请求订阅的频道列表
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`：全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
   
 > 成功返回示例：单个
@@ -9902,7 +9973,7 @@ arg | Object | 否 | 订阅的频道
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`： 全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -9971,7 +10042,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
-> uly | String | 合约标的指数  
+> uly | String | 标的指数  
 > instType | String | 产品类型  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
@@ -10102,7 +10173,7 @@ args | Array | 是 | 请求订阅的频道列表
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `ANY`：全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
   
 > 成功返回示例：单个
@@ -10155,7 +10226,7 @@ arg | Object | 否 | 订阅的频道
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `ANY`：全部  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -10208,7 +10279,7 @@ msg | String | 否 | 错误消息
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
 > instType | String | 产品类型  
-> uly | String | 合约标的指数  
+> uly | String | 标的指数  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -10600,7 +10671,7 @@ data | Array | 订阅的数据
 > instType | String | 产品类型  
 > instId | String | 产品ID，如 `BTC-USD-SWAP`  
 > category | String | 手续费档位，每个交易产品属于哪个档位手续费  
-> uly | String | 合约标的指数，如 `BTC-USD` ，仅适用于`交割/永续/期权`  
+> uly | String | 标的指数，如 `BTC-USD` ，仅适用于`交割/永续/期权`  
 > baseCcy | String | 交易货币币种，如 `BTC-USDT` 中`BTC` ，仅适用于`币币`  
 > quoteCcy | String | 计价货币币种，如 `BTC-USDT` 中 `USDT` ，仅适用于`币币`  
 > settleCcy | String | 盈亏结算和保证金币种，如 `BTC` ，仅适用于 `交割/永续/期权`  
@@ -11067,7 +11138,7 @@ args | Array | 是 | 请求订阅的频道列表
 > instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-> uly | String | 可选 | 合约标的指数  
+> uly | String | 可选 | 标的指数  
 `uly`和`instId`必须指定一个  
 > instId | String | 可选 | 产品ID  
   
@@ -11104,7 +11175,7 @@ arg | Object | 否 | 订阅的频道
 > instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-> uly | String | 否 | 合约标的指数  
+> uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -11136,7 +11207,7 @@ arg | Object | 订阅成功的频道
 > instType | String | 产品类型  
 `OPTION`：期权  
 `FUTURES`：交割  
-> uly | String | 合约标的指数  
+> uly | String | 标的指数  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -11616,7 +11687,7 @@ asks和bids值数组举例说明： ["411.8", "10", "1", "4"]
 op | String | 是 | 操作，`subscribe` `unsubscribe`  
 args | Array | 是 | 请求订阅的频道列表  
 > channel | String | 是 | 频道名，`opt-summary`  
-> uly | String | 是 | 合约标的指数  
+> uly | String | 是 | 标的指数  
   
 > 返回示例
     
@@ -11647,7 +11718,7 @@ args | Array | 是 | 请求订阅的频道列表
 event | String | 是 | 事件，`subscribe` `unsubscribe` `error`  
 arg | Object | 否 | 订阅的频道  
 > channel | String | 是 | 频道名  
-> uly | String | 是 | 合约标的指数  
+> uly | String | 是 | 标的指数  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
   
@@ -11687,11 +11758,11 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
-> uly | String | 合约标的指数  
+> uly | String | 标的指数  
 data | Array | 订阅的数据  
 > instType | String | 产品类型， `OPTION`  
 > instId | String | 产品ID  
-> uly | String | 合约标的指数  
+> uly | String | 标的指数  
 > delta | String | 期权价格对`uly`价格的敏感度  
 > gamma | String | delta对`uly`价格的敏感度  
 > vega | String | 期权价格对隐含波动率的敏感度  
@@ -12472,7 +12543,7 @@ APIKey 不存在 | 200 | 59506
 请求时间戳过期 | 60006  
 无效的签名 | 60007  
 公共频道不支持登录 | 60008  
-登陆失败 | 60009  
+登录失败 | 60009  
 用户需要登录 | 60011  
 不合法的请求 | 60012  
 无效的参数 args | 60013  
