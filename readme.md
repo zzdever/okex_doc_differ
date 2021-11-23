@@ -56,6 +56,7 @@ Java Python Go C++
       * 获取余币宝余额 
       * 闪电网络充币 
       * 闪电网络提币 
+      * 获取账户资产估值 
     * 账户 
       * 查看账户余额 
       * 查看持仓信息 
@@ -153,6 +154,7 @@ Java Python Go C++
       * 订单频道 
       * 策略委托订单频道 
       * 高级策略委托订单频道 
+      * 爆仓风险预警推送频道 
     * 公共频道 
       * 产品频道 
       * 行情频道 
@@ -169,6 +171,19 @@ Java Python Go C++
       * 指数K线频道 
       * 指数行情频道 
       * Status 频道 
+  * Broker API 
+    * 母子账户Broekr 
+      * Broker账户信息 
+      * 创建子账户 
+      * 删除子账户 
+      * 查询子账户列表 
+      * 设置子账户的账户等级 
+      * 设置子账户的交易手续费费率 
+      * 创建子账户充值地址 
+      * 查看充值地址 
+      * 查询子账户获取充值记录 
+      * 子账户返佣记录 
+      * 爆仓预警推送 
   * 错误码 
     * REST 
       * 公共 
@@ -458,7 +473,7 @@ market：市价单，币币和币币杠杆，是市价委托吃单；交割合�
 高级委托：  
 post_only：限价委托，在下单那一刻只做maker，如果该笔订单的任何部分会吃掉当前挂单深度，则该订单将被全部撤销。  
 fok：限价委托，全部成交或立即取消，如果无法全部成交该笔订单，则该订单将被全部撤销。  
-ioc：限价委托，立即成交并取消剩余，立即按照委托价格成交，并取消该订单剩余未完成数量，不会再深度列表上展示委托数量。  
+ioc：限价委托，立即成交并取消剩余，立即按照委托价格撮合成交，并取消该订单剩余未完成数量，不会在深度列表上展示委托数量。  
 optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交割合约和永续合约。  sz  
 交易数量，表示要购买或者出售的数量。  
 当币币/币币杠杆以限价买入和卖出时，指交易货币数量。  
@@ -2928,7 +2943,7 @@ state | String | 否 | 充值状态
 `0`：等待确认 `1`：确认到账 `2`：充值成功  
 after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-limit | string | 否 | 返回的结果集数量，默认为 100，最大为 100  
+limit | string | 否 | 返回的结果集数量，默认为100，最大为100，不填默认返回100条  
   
 > 返回结果
     
@@ -3076,7 +3091,7 @@ state | String | 否 | 提币状态
 `3`：邮箱确认 `4`：人工审核中 `5`：等待身份认证  
 after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-limit | string | 否 | 返回的结果集数量，默认为 100，最大为 100  
+limit | string | 否 | 返回的结果集数量，默认为100，最大为100，不填默认返回100条  
   
 > 返回结果
     
@@ -3333,6 +3348,68 @@ wdId | String | 提币申请ID
 cTime | String | 提币ID生成时间  
 仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`wallace.yan@okg.com`申请
 
+### 获取账户资产估值
+
+查看账户资产估值
+
+#### 限速： 1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/asset/asset-valuation`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/asset-valuation
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | String | 否 | 资产估值对应的单位  
+BTC 、USDT  
+USD 、CNY 、JPY、KRW、RUB、EUR  
+VND 、IDR 、INR、PHP、THB、TRY  
+AUD 、SGD 、ARS、SAR、AED、IQD  
+默认为 BTC 为单位的估值  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "details": {
+                    "classic": "124.6",
+                    "earn": "1122.73",
+                    "funding": "0.09",
+                    "trading": "2544.28"
+                },
+                "totalBal": "3790.09",
+                "ts": "1637566660769"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+totalBal | String | 账户总资产估值  
+ts | String | 数据更新时间，Unix时间戳的毫秒数格式，如 1597026383085  
+details | Array | 各个账户的资产估值  
+> funding | String | 资金账户  
+> trading | String | 统一账户  
+> classic | String | 经典账户  
+> earn | String | 金融账户  
+  
 ## 账户
 
 `账户`功能模块下的API接口需要身份验证。
@@ -5038,8 +5115,8 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
 ---|---|---  
 ccy | String | 借贷币种，如 `BTC`  
 type | String | 类型  
-`1`：尊享借币  
-`2`：市场借币  
+`1`：借币  
+`2`：还币  
 `3`：扣息失败系统还币  
 tradedLoan | String | 借/还币数量  
 usedLoan | String | 当前账户已借额度  
@@ -5107,8 +5184,8 @@ ccy | String | 否 | 借贷币种，如 `BTC`
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-debt | String | 当前负债  
-interest | String | 当前记息  
+debt | String | 当前负债，单位为`USDT`  
+interest | String | 当前记息，单位为`USDT`  
 仅适用于`市场借币`  
 nextDiscountTime | String | 下次扣息时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 nextInterestTime | String | 下次计息时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -6630,7 +6707,7 @@ lotSz | String | 下单数量精度，如 BTC-USDT-SWAP：`1`
 minSz | String | 最小下单数量  
 ctType | String | `linear`：正向合约  
 `inverse`：反向合约  
-仅`交割/永续`有效  
+仅适用于`交割/永续`  
 alias | String | 合约日期别名  
 `this_week`：本周  
 `next_week`：次周  
@@ -7610,8 +7687,8 @@ regular | Array | 普通用户
 ccy | String | 币种  
 rate | String | 基础杠杆日利率  
 quota | String | 基础借币限额  
-levelList | Array | 不同等级下的限额信息  
-> level | String | 用户等级  
+levelList | Array | 不同VIP等级下的限额信息  
+> level | String | 用户VIP等级  
 > loanQuotaCoef | String | 借币限额  
   
 ### 获取衍生品标的指数
@@ -8700,6 +8777,7 @@ args | Array | 是 | 请求参数
 > reduceOnly | Boolean | 否 | 是否只减仓，`true` `false` ，仅适用于`币币杠杆`  
 > tgtCcy | String | 否 | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
   
 > 成功返回示例
     
@@ -8794,7 +8872,7 @@ market：市价单，币币和币币杠杆，是市价委托吃单；交割合�
 高级委托：  
 post_only：限价委托，在下单那一刻只做maker，如果该笔订单的任何部分会吃掉当前挂单深度，则该订单将被全部撤销。  
 fok：限价委托，全部成交或立即取消，如果无法全部成交该笔订单，则该订单将被全部撤销。  
-ioc：限价委托，立即成交并取消剩余，立即按照委托价格成交，并取消该订单剩余未完成数量，不会再深度列表上展示委托数量。  
+ioc：限价委托，立即成交并取消剩余，立即按照委托价格撮合成交，并取消该订单剩余未完成数量，不会在深度列表上展示委托数量。  
 optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交割合约和永续合约。  sz  
 交易数量，表示要购买或者出售的数量。  
 当币币/币币杠杆以限价买入和卖出时，指交易货币数量。  
@@ -8879,6 +8957,7 @@ args | Array | 是 | 请求参数
 > reduceOnly | Boolean | 否 | 是否只减仓，`true` `false` ，仅适用于币币杠杆  
 > tgtCcy | String | 否 | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
   
 > 全部成功返回示例
     
@@ -10859,6 +10938,191 @@ data | Array | 订阅的数据
 仅适用于`冰山委托`和`时间加权委托`  
 > pTime | String | 订单信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
+### 爆仓风险预警推送频道
+
+此推送频道仅作为风险提示，不建议作为策略交易的风险判断  
+在行情剧烈不动的情况下，可能会出现此消息推送的同时仓位已经被强平的可能性。  
+
+> 请求示例
+    
+    
+    {
+        "op": "subscribe",
+        "args": [{
+            "channel": "liquidation-warning",
+            "instType": "ANY"
+        }]
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+op | String | 是 | 操作，`subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名，`liquidation-warning`  
+> instType | String | 是 | 产品类型  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+`ANY`：全部  
+> uly | String | 否 | 标的指数  
+> instId | String | 否 | 产品ID  
+  
+> 成功返回示例：单个
+    
+    
+    {
+        "event": "subscribe",
+        "arg": {
+            "channel": "liquidation-warning",
+            "instType": "FUTURES",
+            "uly": "BTC-USD",
+            "instId": "BTC-USD-200329"
+        }
+    }
+    
+    
+    
+    > 失败返回示例
+    
+    ```json
+    {
+        "event": "error",
+        "code": "60012",
+        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"liquidation-warning\", \"instType\" : \"FUTURES\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+event | String | 是 | 事件，`subscribe` `unsubscribe` `errror`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名 ，`liquidation-warning`  
+> instType | String | 是 | 产品类型  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+`ANY`： 全部  
+> uly | String | 否 | 标的指数  
+> instId | String | 否 | 产品ID  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例：单个
+    
+    
+    {
+        "arg":{
+            "channel":"liquidation-warning",
+            "instType":"FUTURES"
+        },
+        "data":[
+            {
+                "adl":"1",
+                "availPos":"1",
+                "avgPx":"2566.31",
+                "cTime":"1619507758793",
+                "ccy":"ETH",
+                "deltaBS":"",
+                "deltaPA":"",
+                "gammaBS":"",
+                "gammaPA":"",
+                "imr":"",
+                "instId":"ETH-USD-210430",
+                "instType":"FUTURES",
+                "interest":"0",
+                "last":"2566.22",
+                "lever":"10",
+                "liab":"",
+                "liabCcy":"",
+                "liqPx":"2352.8496681818233",
+                "markPx":"2353.849",
+                "margin":"0.0003896645377994",
+                "mgnMode":"isolated",
+                "mgnRatio":"11.731726509588816",
+                "mmr":"0.0000311811092368",
+                "notionalUsd":"2276.2546609009605",
+                "optVal":"",
+                "pTime":"1619507761462",
+                "pos":"1",
+                "posCcy":"",
+                "posId":"307173036051017730",
+                "posSide":"long",
+                "thetaBS":"",
+                "thetaPA":"",
+                "tradeId":"109844",
+                "uTime":"1619507761462",
+                "upl":"-0.0000009932766034",
+                "uplRatio":"-0.0025490556801078",
+                "vegaBS":"",
+                "vegaPA":""
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> instType | String | 产品类型  
+> uly | String | 标的指数  
+> instId | String | 产品ID  
+data | Array | 订阅的数据  
+> instType | String | 产品类型  
+> mgnMode | String | 保证金模式， `cross`：全仓 `isolated`：逐仓  
+> posId | String | 持仓ID  
+> posSide | String | 持仓方向  
+`long`：双向持仓多头  
+`short`：双向持仓空头  
+`net`：单向持仓（`交割/永续/期权`：`pos`为正代表多头，`pos`为负代表空头。`币币杠杆`：`posCcy`为交易货币时，代表多头；`posCcy`为计价货币时，代表空头。）  
+> pos | String | 持仓数量  
+> posCcy | String | 持仓数量币种，仅适用于`币币杠杆`  
+> availPos | String | 可平仓数量  
+适用于 `币币杠杆`,`交割/永续`（开平仓模式），`期权`（交易账户及保证金账户逐仓）。  
+> avgPx | String | 开仓平均价  
+> upl | String | 未实现收益  
+> uplRatio | String | 未实现收益率  
+> instId | String | 产品ID，如 BTC-USD-180216  
+> lever | String | 杠杆倍数，不适用于`期权卖方`  
+> liqPx | String | 预估强平价  
+不适用于`期权`  
+> markPx | String | 标记价格  
+> imr | String | 初始保证金，仅适用于`全仓`  
+> margin | String | 保证金余额，仅适用于`逐仓`，可增减  
+> mgnRatio | String | 保证金率  
+> mmr | String | 维持保证金  
+> liab | String | 负债额，仅适用于`币币杠杆`  
+> liabCcy | String | 负债币种，仅适用于`币币杠杆`  
+> interest | String | 利息，已经生成未扣利息  
+> tradeId | String | 最新成交ID  
+> notionalUsd | String | 以美金价值为单位的持仓数量  
+> optVal | String | 期权价值，仅适用于`期权`  
+> adl | String | 信号区，分为5档，从1到5，数字越小代表adl强度越弱  
+> ccy | String | 占用保证金的币种  
+> last | String | 最新成交价  
+> deltaBS | String | 美金本位持仓仓位delta，仅适用于`期权`  
+> deltaPA | String | 币本位持仓仓位delta，仅适用于`期权`  
+> gammaBS | String | 美金本位持仓仓位gamma，仅适用于`期权`  
+> gammaPA | String | 币本位持仓仓位gamma，仅适用于`期权`  
+> thetaBS | String | 美金本位持仓仓位theta，仅适用于`期权`  
+> thetaPA | String | 币本位持仓仓位theta，仅适用于`期权`  
+> vegaBS | String | 美金本位持仓仓位vega，仅适用于`期权`  
+> vegaPA | String | 币本位持仓仓位vega，仅适用于`期权`  
+> cTime | String | 持仓创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+> uTime | String | 最近一次持仓更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+> pTime | String | 持仓信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+触发推送逻辑：爆仓预警和爆仓短信的触发逻辑一致
+
 ## 公共频道
 
 ### 产品频道
@@ -11009,7 +11273,7 @@ data | Array | 订阅的数据
 > tickSz | String | 下单价格精度，如 `0.0001`  
 > lotSz | String | 下单数量精度，如 `1`：BTC-USDT-200925 `0.001`：BTC-USDT  
 > minSz | String | 最小下单数量  
-> ctType | String | 合约类型，`linear`：正向合约 `inverse`：反向合约  
+> ctType | String | 合约类型，`linear`：正向合约 `inverse`：反向合约 ，仅适用于 `交割/永续`  
 > alias | String | 合约日期别名  
 `this_week`：本周  
 `next_week`：次周  
@@ -12499,6 +12763,622 @@ data | Array | 订阅的数据
 > 2021-01-28T16:30:00.000Z`  
 > ts | String | 推送时间，Unix时间戳的毫秒数格式，如：`1617788463867`  
   
+# Broker API
+
+## 母子账户Broekr
+
+`ND-Broker`功能模块下的API接口需要身份验证。
+
+### Broker账户信息
+
+查看broker母账户的账户信息
+
+#### 限速：1次/s
+
+#### HTTP请求
+
+`GET /api/v5/broker/nd/info`
+
+> 请求示例
+    
+    
+    GET /api/v5/broker/nd/info
+    
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "level": "Lv1",
+                "maxSubAcctQty": "1000",
+                "subAcctQty": "6",
+                "ts": "1637301641775"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subAcctQty | String | 已创建子账户的数量  
+maxSubAcctQty | String | 最多可以创建子账户数量  
+level | String | 交易等级，例如 `lv1`  
+ts | String | 数据返回时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
+  
+### 创建子账户
+
+Broker母账户的创建子账户
+
+#### 限速：1次/s
+
+#### HTTP请求
+
+`POST /api/v5/broker/nd/create-subaccount`
+
+> 请求示例
+    
+    
+    POST /api/v5/broker/nd/create-subaccount
+    body
+    {
+        "pwd":"1234567890",
+        "subAcct":"brokerTest5",
+        "acctLv":"3",
+        "label":"5566"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+pwd | String | 是 | 母账户的资金密码  
+subAcct | String | 是 | 子账户名称  
+label | String | 否 | 子账户的备注  
+acctLv | String | 是 | 账户模式  
+`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "acctLv": "3",
+                "label": "5566",
+                "subAcct": "brokerTest5",
+                "ts": "1637141950450"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subAcct | String | 子账户名称  
+label | String | APIKey的备注  
+acctLv | String | 账户模式  
+ts | String | 创建时间  
+  
+### 删除子账户
+
+Broker母账户删除子账户，该子账户被删除前，需将子账户的资金全部划转出去。
+
+#### 限速：1次/s
+
+#### HTTP请求
+
+`POST /api/v5/broker/nd/delete-subaccount`
+
+> 请求示例
+    
+    
+    POST /api/v5/broker/nd/delete-subaccount
+    body
+    {
+        "pwd":"1234567890",
+        "subAcct":"yonxws"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+pwd | String | 是 | 母账户的资金密码  
+subAcct | String | 是 | 子账户名称  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [{
+            "subAcct": "test-1"
+        }]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subAcct | String | 子账户名称  
+  
+### 查询子账户列表
+
+Broker母账户查询子账户列表
+
+#### 限速：1次/1s
+
+#### HTTP请求
+
+`GET /api/v5/broker/nd/subaccount-info`
+
+> 请求示例
+    
+    
+    GET /api/v5/broker/nd/subaccount-info
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 否 | 子账户名称  
+page | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式  
+limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "details": [
+                    {
+                        "acctLv": "1",
+                        "label": "11122",
+                        "subAcct": "yonxws",
+                        "ts": "1637052976000"
+                    },
+                    {
+                        "acctLv": "1",
+                        "label": "11122",
+                        "subAcct": "brokerTest1",
+                        "ts": "1637056638000"
+                    }
+                ],
+                "page": "1",
+                "totalPage": "1"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+totalPage | String | 总的页数  
+page | String | 当前页数  
+details | Array | 子账户列表  
+subAcct | String | 子账户名称  
+label | String | 子账户的备注  
+acctLv | String | 账户模式  
+`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
+ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
+  
+### 设置子账户的账户等级
+
+Broker母账户调整子账户的账户等级
+
+#### 限速：5次/2s
+
+#### HTTP请求
+
+`POST /api/v5/broker/nd/set-subaccount-level`
+
+> 请求示例
+    
+    
+    POST /api/v5/broker/nd/set-subaccount-level
+    body
+    {
+        "acctLv":"3",
+        "subAcct":"brokerTest3"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 是 | 子账户名称  
+acctLv | String | 是 | 账户模式  
+`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "acctLv": "3"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+acctLv | String | 账户模式  
+`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
+  
+### 设置子账户的交易手续费费率
+
+设置子账户手续费费率后，生效日期为T+1的0点。 例如今天调整子账户的手续费率，明天的0点生效。生效时间可能存在15分钟左右时间误差
+
+#### 限速：1次/s
+
+#### HTTP请求
+
+`POST /api/v5/broker/nd/set-subaccount-fee-rate`
+
+> 请求示例
+    
+    
+    POST /api/v5/broker/nd/set-subaccount-fee-rate
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 是 | 子账户名称  
+instType | String | 是 | 产品类型  
+`SPOT`：币币  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+chgType | String | 是 | 手续费加点类型  
+`absolute`:固定加点  
+`percentage`:百分比加点  
+chgTaker | String | 是 | Taker手续费加点  
+`固定加点`：单位`bp`(1bp = 0.01%)，范围【0.1bp，1,000bp】，即【0.001%，10%】，精度为`0.1bp`  
+`百分比加点`：单位`%`范围【1%，1,0000%】，精度为`1%`  
+chgMaker | String | 是 | Maker手续费加点  
+`固定加点`：单位`bp`(1bp = 0.01%)，范围【0.1bp，1,000bp】，即【0.001%，10%】，精度为`0.1bp`  
+`百分比加点`：单位`%`范围【1%，1,0000%】，精度为`1%`  
+effDate | String | 是 | 手续费加点的生效日期  
+格式：YYYYMMdd ，例如：`20210623`  
+如果不填写，就是第二天0点生效（T+1生效）  
+如果填写，就在指定日期0点生效  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "subAcct": "brokerTest4",
+                "effTs": "20211119"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subAcct | String | 子账户名称  
+effDate | String | 手续费加点的生效日期  
+格式：YYYYMMdd ，例如：`20210623`  
+  
+### 创建子账户充值地址
+
+Broker母账户的创建子账户的充值地址，每个币种最多20个充值地址
+
+#### 限速：5次/2s
+
+#### HTTP请求
+
+`POST /api/v5/asset/broker/nd/subaccount-deposit-address`
+
+> 请求示例
+    
+    
+    POST /api/v5/asset/broker/nd/subaccount-deposit-address
+    body
+    {
+        "ccy":"BTC",
+        "subAcct":"brokerTest5"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 是 | 子账户名称  
+ccy | String | 是 | 币种名称，仅支持大写，如 BTC  
+chain | String | 否 | 币种链信息  
+有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
+addrType | String | 否 | 充值地址类型  
+`1`:普通地址  
+`2`:隔离验证地址  
+默认为普通地址，仅适用于btc和ltc  
+to | String | 否 | 充值到账账户  
+`6`：资金账户 `18`：统一账户  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "chain": "EOS-EOS",
+                "ccy": "EOS",
+                "memo": "10810086",
+                "addr": "okbtothemoon",
+                "ts": "1637141950450"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ccy | String | 充值币种  
+addr | String | 充值地址  
+chain | String | 币种链信息  
+pmtId | String | 部分币种提币需要此字段，如果不需要此字段的币种吗，返回”“ ，如 `xmr`  
+tag | String | 部分币种提币需要此字段，如果不需要此字段的币种吗，返回”“ ， 如`XRP`  
+memo | String | 部分币种充值需要标签，若不需要则不返回此字段，返回”“，如`eos`  
+ts | String | 创建时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 查看充值地址
+
+根据币种，充值状态，时间范围获取充值记录，按照时间倒序排列，默认返回 100 条数据。
+
+#### 限速：6次/s
+
+#### HTTP请求
+
+`GET /api/v5/asset/broker/nd/subaccount-deposit-address`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/broker/nd/subaccount-deposit-address?ccy=BTC
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 是 | 子账户名称  
+ccy | String | 是 | 币种，仅支持大写：如 `BTC`  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "chain": "XMR-Monero",
+                "ctAddr": "",
+                "ccy": "XMR",
+                "to": "6",
+                "addr": "884ifkSCavs9X759FZhfmrNmEbimqnXdofsd5kqXwuxfJMKZPKCfSAubrnwanuUf2JJi6hwskfcYzAUGodkJj3RsHAVFoDm",
+                "selected": false
+            },
+            {
+                "chain": "XMR-Monero",
+                "ctAddr": "",
+                "ccy": "XMR",
+                "to": "6",
+                "addr": "88aCNpJgfX1DGZ2HPd5i9DaAmyuRiQbnFGVbc8AFXgAhi4i7eX6sRm75m1UuJNZxwfMh4xBwV5fv6h4A5v1qQET5LHnXqgn",
+                "selected": false
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+addr | String | 充值地址  
+tag | String | 部分币种充值需要标签，若不需要则不返回此字段  
+memo | String | 部分币种充值需要标签，若不需要则不返回此字段  
+pmtId | String | 部分币种充值需要此字段（payment_id），若不需要则不返回此字段  
+ccy | String | 币种，如`BTC`  
+chain | String | 币种链信息  
+有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
+to | String | 转入账户  
+`6`：资金账户 `18`：统一账户  
+selected | Boolean | 该地址是否为页面选中的地址  
+ctAddr | String | 合约地址后6位  
+  
+### 查询子账户获取充值记录
+
+根据币种，充值状态，时间范围获取充值记录，按照时间倒序排列，默认返回 100 条数据。
+
+#### 限速： 5 次/2s
+
+#### HTTP 请求
+
+`GET /api/v5/asset/broker/nd/subaccount-deposit-history`
+
+> 请求示例
+    
+    
+    查询最近的充值记录
+    GET /api/v5/asset/broker/nd/subaccount-deposit-history
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 是 | 子账户名称  
+ccy | String | 否 | 币种名称，如 `BTC`  
+txId | String | 否 | 区块转账哈希记录  
+state | String | 否 | 充值状态  
+`0`：等待确认 `1`：确认到账 `2`：充值成功  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
+limit | string | 否 | 返回的结果集数量，默认为 100，最大为 100  
+  
+> 返回结果
+    
+    
+    {
+      "code": "0",
+      "msg": "",
+      "data": [
+        {
+          "amt": "0.01044408",
+          "txId": "1915737_3_0_0_asset",
+          "ccy": "BTC",
+          "chain":"BTC-Bitcoin",
+          "from": "13801825426",
+          "to": "",
+          "ts": "1597026383085",
+          "state": "2",
+          "depId": "4703879"
+        }
+      ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ccy | String | 币种名称，如 `BTC`  
+chain | String | 币种链信息  
+有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
+amt | String | 充值数量  
+from | String | 充值地址，只显示内部账户转账地址，不显示区块链充值地址  
+to | String | 到账地址  
+txId | String | 区块转账哈希记录  
+ts | String | 充值到账时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
+state | String | 充值状态  
+`0`：等待确认 `1`：确认到账 `2`：充值成功 `8`：因该币种暂停充值而未到账，恢复充值后自动到账  
+depId | String | 充值记录 ID  
+等待确认是没有达到充币确认数。 确认到账是够充币确认数，且币已经到账户中，但是不可提。 充值成功是当前账户完成到提币确认，可以提出。
+
+### 子账户返佣记录
+
+Broker账户查看子账户的返佣记录
+
+#### 限速：1次/10s
+
+#### HTTP请求
+
+`GET /api/v5/broker/nd/rebate-daily`
+
+> 请求示例
+    
+    
+    GET /api/v5/broker/nd/rebate-daily
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 否 | 子账户名称  
+begin | String | 否 | 获取历史记录的时间区间  
+格式: YYYYMMdd，例如：`20210623`  
+end | String | 否 | 获取历史记录的时间区间  
+格式: YYYYMMdd，例如：`20210627`  
+page | String | 否 | 页码  
+例如：`1`第一页  
+limit | String | 否 | 返佣记录数量，最大为100，不填默认返回100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "details": [
+                    {
+                        "income": "1.9050116363636365",
+                        "rebateDate": "20211119",
+                        "subAcct": "brokerTest2"
+                    },
+                    {
+                        "income": "3.5728228419999565",
+                        "rebateDate": "20211119",
+                        "subAcct": "brokerTest1"
+                    },
+                    {
+                        "income": "10.6047378063846898",
+                        "rebateDate": "20211119",
+                        "subAcct": "brokerTest2"
+                    }
+                ],
+                "page": "",
+                "totIncome": "16.0630733992516302",
+                "totPage": "1",
+                "ts": "1637303853605"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ts | String | 接口数据时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
+totIncome | String | 所有子账户总返佣金额  
+totPage | String | 总的页数  
+page | String | 当前页数  
+details | Array | 子账户返佣记录列表  
+subAcct | String | 子账户名称  
+income | String | 返佣金额 ，单位usdt  
+rebateDate | String | 子账户返佣金额的更新时间  
+  
+### 爆仓预警推送
+
+推送：[爆仓预警通知](/docs-v5/zh/#websocket-api-private-channel-position-risk-warning)  
+频道名：`liquidation-warning`  
+此推送频道仅作为风险提示，不建议作为策略交易的风险判断  
+在行情剧烈不动的情况下，可能会出现此消息推送的同时仓位已经被强平的可能性。  
+
 # 错误码
 
 ## REST
@@ -12642,6 +13522,7 @@ PM账户仅支持买卖模式 | 200 | 51041
 您的开仓价格已触发限价，最高买入价格为{0} | 200 | 51137  
 您的开仓价格已触发限价，最低卖出价格为{0} | 200 | 51138  
 交易账户下币币不支持只减仓功能 | 200 | 51139  
+交易账户资产总价值需要大于5万美元 | 200 | 51147  
 市价委托单笔价值不能超过 1,000,000 USDT | 200 | 51201  
 市价单下单数量超出最大值 | 200 | 51202  
 普通委托数量超出最大限制{0} | 200 | 51203  
@@ -12835,6 +13716,16 @@ invoice无效 | 200 | 58352
 追加保证金失败，指定仓位不存在 | 200 | 59300  
 调整保证金超过当前最大可调整数量 | 200 | 59301  
 当前仓位存在平仓挂单，请撤销平仓挂单后进行保证金修改 | 200 | 59302  
+可用保证金不足，请尝试增加保证金或减少借币数量 | 200 | 59303  
+借币币种权益不足，请至少留有一天的利息 | 200 | 59304  
+您当前没有进行尊享借币，无法设置尊享借币优先 | 200 | 59305  
+借币数量超过总额度，不可继续借币 | 200 | 59306  
+当前用户不满足尊享借币条件 | 200 | 59307  
+市场化借币额度不足，VIP还币失败 | 200 | 59308  
+还币数量超出已借数量，还币失败 | 200 | 59309  
+当前账户不支持尊享借币 | 200 | 59310  
+存在尊享借币，无法设置 | 200 | 59311  
+{币种}不支持尊享借币 | 200 | 59312  
 持仓价值达到持仓限制 | 200 | 59401  
 查询条件中的instId的交易产品当前不是可交易状态，请填写单个instid逐个查询状态详情 | 200 | 59402  
 仅母账户有操作权限 | 200 | 59500  
