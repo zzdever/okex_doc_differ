@@ -17,7 +17,7 @@ Java Python Go C++
     * 实盘交易 
     * 模拟盘交易 
   * 交互式浏览器 
-    * 使用说明
+    * 使用说明 
   * REST API
     * 请求验证 
       * 生成APIKey 
@@ -78,7 +78,7 @@ Java Python Go C++
       * 查看账户最大可转余额 
       * 查看账户特定风险状态 
       * 尊享借币还币 
-      * 获取尊享借币借还历史 
+      * 获取尊享借币还币历史 
       * 获取借币利率与限额 
     * 子账户 
       * 查看子账户列表 
@@ -172,7 +172,7 @@ Java Python Go C++
       * 指数行情频道 
       * Status 频道 
   * Broker API 
-    * 母子账户Broekr 
+    * 独立经纪商 
       * Broker账户信息 
       * 创建子账户 
       * 删除子账户 
@@ -5056,7 +5056,7 @@ posLoan | String | 当前账户开仓占用
 availLoan | String | 当前账户剩余可用  
 usedLoan | String | 当前账户已借额度  
   
-### 获取尊享借币借还历史
+### 获取尊享借币还币历史
 
 发布在模拟盘
 
@@ -7653,23 +7653,23 @@ regular | Array | 普通用户
                 "levelList": [
                     {
                         "level": "5",
-                        "loanQuotaCoef": "100000.00000000"
+                        "loanQuota": "100000.00000000"
                     },
                     {
                         "level": "6",
-                        "loanQuotaCoef": "110000.00000000"
+                        "loanQuota": "110000.00000000"
                     },
                     {
                         "level": "7",
-                        "loanQuotaCoef": "120000.00000000"
+                        "loanQuota": "120000.00000000"
                     },
                     {
                         "level": "8",
-                        "loanQuotaCoef": "130000.00000000"
+                        "loanQuota": "130000.00000000"
                     },
                     {
                         "level": "9",
-                        "loanQuotaCoef": "140000.00000000"
+                        "loanQuota": "140000.00000000"
                     }
                 ],
                 "quota": "10000.0000",
@@ -7689,7 +7689,7 @@ rate | String | 基础杠杆日利率
 quota | String | 基础借币限额  
 levelList | Array | 不同VIP等级下的限额信息  
 > level | String | 用户VIP等级  
-> loanQuotaCoef | String | 借币限额  
+> loanQuota | String | 借币限额  
   
 ### 获取衍生品标的指数
 
@@ -10984,11 +10984,10 @@ args | Array | 是 | 请求订阅的频道列表
         }
     }
     
+
+> 失败返回示例
     
     
-    > 失败返回示例
-    
-    ```json
     {
         "event": "error",
         "code": "60012",
@@ -12765,9 +12764,9 @@ data | Array | 订阅的数据
   
 # Broker API
 
-## 母子账户Broekr
+## 独立经纪商
 
-`ND-Broker`功能模块下的API接口需要身份验证。
+`独立经纪商`功能模块下的API接口需要身份验证。
 
 ### Broker账户信息
 
@@ -12792,7 +12791,7 @@ data | Array | 订阅的数据
         "code": "0",
         "data": [
             {
-                "level": "Lv1",
+                "level": "lv1",
                 "maxSubAcctQty": "1000",
                 "subAcctQty": "6",
                 "ts": "1637301641775"
@@ -12976,11 +12975,11 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
 totalPage | String | 总的页数  
 page | String | 当前页数  
 details | Array | 子账户列表  
-subAcct | String | 子账户名称  
-label | String | 子账户的备注  
-acctLv | String | 账户模式  
+> subAcct | String | 子账户名称  
+> label | String | 子账户的备注  
+> acctLv | String | 账户模式  
 `1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
-ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
+> ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
   
 ### 设置子账户的账户等级
 
@@ -13368,9 +13367,9 @@ totIncome | String | 所有子账户总返佣金额
 totPage | String | 总的页数  
 page | String | 当前页数  
 details | Array | 子账户返佣记录列表  
-subAcct | String | 子账户名称  
-income | String | 返佣金额 ，单位usdt  
-rebateDate | String | 子账户返佣金额的更新时间  
+> subAcct | String | 子账户名称  
+> income | String | 返佣金额 ，单位usdt  
+> rebateDate | String | 子账户返佣金额的更新时间  
   
 ### 爆仓预警推送
 
