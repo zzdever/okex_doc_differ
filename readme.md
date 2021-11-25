@@ -328,7 +328,7 @@ APIKey和SecretKey将由平台随机生成和提供，Passphrase将由您提供�
 `OK-ACCESS-SIGN`的请求头是对`timestamp + method + requestPath +
 body`字符串（+表示字符串连接），以及SecretKey，使用HMAC SHA256方法加密，通过Base-64编码输出而得到的。
 
-如：`sign=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp + 'GET' +
+如：`sign=CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(timestamp + 'GET' +
 '/users/self/verify', SecretKey))`
 
 其中，`timestamp`的值与`OK-ACCESS-
@@ -405,7 +405,8 @@ ordType | String | 是 | 订单类型
 sz | String | 是 | 委托数量  
 px | String | 可选 | 委托价格，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
 reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
-仅适用于`币币杠杆`订单  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
+仅适用于`单币种保证金模式`和`跨币种保证金模式`  
 tgtCcy | String | 否 | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`订单  
@@ -480,7 +481,9 @@ optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交�
 当币币/币币杠杆以市价买入时，指计价货币的数量。  
 当币币/币币杠杆以市价卖出时，指交易货币的数量。  
 当交割、永续、期权买入和卖出时，指合约张数。  reduceOnly  
-只减仓，下单时，此参数设置为 true 时，表示此笔订单具有减仓属性，只会减少持仓数量，不会增加新的持仓仓位，仅适用于`币币杠杆`订单  tgtCcy  
+只减仓，下单时，此参数设置为 true 时，表示此笔订单具有减仓属性，只会减少持仓数量，不会增加新的持仓仓位  
+仅适用于`单币种账户模式`和`跨币种账户模式`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  tgtCcy  
 市价单委托数量的类型：仅适用于币币市价下单交易。  
 交易货币：base_ccy  
 计价货币：quote_ccy
@@ -552,7 +555,9 @@ ordType | String | 是 | 订单类型
 `optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
 sz | String | 是 | 委托数量  
 px | String | 否 | 委托价格，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
-reduceOnly | Boolean | 否 | 是否只减仓 `true` 或 `false`，默认`false`  
+reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
+仅适用于`单币种保证金模式`和`跨币种保证金模式`  
 tgtCcy | String | 否 | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`订单  
@@ -8481,7 +8486,7 @@ SHA256方法将拼接后的字符串和SecretKey加密，然后进行Base64编�
 **其中 timestamp 示例** :const timestamp = '' \+ Date.now() / 1000
 
 **其中 sign 示例** :
-sign=CryptoJS.enc.Base64.Stringify(CryptoJS.HmacSHA256(timestamp +'GET'\+
+sign=CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(timestamp +'GET'\+
 '/users/self/verify', secret))
 
 **method** 总是 'GET'。
@@ -8774,7 +8779,9 @@ args | Array | 是 | 请求参数
 当type为market时，现货交易买入时，表示买入的总金额，而  
 当其他产品买入或卖出时，表示数量  
 > px | String | 否 | 委托价，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
-> reduceOnly | Boolean | 否 | 是否只减仓，`true` `false` ，仅适用于`币币杠杆`  
+> reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
+仅适用于`单币种保证金模式`和`跨币种保证金模式`  
 > tgtCcy | String | 否 | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`订单  
@@ -8879,7 +8886,9 @@ optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交�
 当币币/币币杠杆以市价买入时，指计价货币的数量。  
 当币币/币币杠杆以市价卖出时，指交易货币的数量。  
 当交割、永续、期权买入和卖出时，指合约张数。  reduceOnly  
-只减仓，下单时，此参数设置为 true 时，表示此笔订单具有减仓属性，只会减少持仓数量，不会增加新的持仓仓位  tgtCcy  
+只减仓，下单时，此参数设置为 true 时，表示此笔订单具有减仓属性，只会减少持仓数量，不会增加新的持仓仓位  
+仅适用于`单币种账户模式`和`跨币种账户模式`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  tgtCcy  
 市价单委托数量的类型：仅适用于币币市价下单交易。  
 交易货币：base_ccy  
 计价货币：quote_ccy
@@ -8954,7 +8963,9 @@ args | Array | 是 | 请求参数
 当type为market时，表示买入或卖出的总金额，而  
 当其他产品买入或卖出时，表示数量  
 > px | String | 否 | 委托价，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
-> reduceOnly | Boolean | 否 | 是否只减仓，`true` `false` ，仅适用于币币杠杆  
+> reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
+仅适用于`单币种保证金模式`和`跨币种保证金模式`  
 > tgtCcy | String | 否 | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`订单  
@@ -13522,6 +13533,7 @@ PM账户仅支持买卖模式 | 200 | 51041
 您的开仓价格已触发限价，最低卖出价格为{0} | 200 | 51138  
 交易账户下币币不支持只减仓功能 | 200 | 51139  
 交易账户资产总价值需要大于5万美元 | 200 | 51147  
+只减仓委托仅允许减少仓位数量，确保你的仓位不会增加 | 200 | 51148  
 市价委托单笔价值不能超过 1,000,000 USDT | 200 | 51201  
 市价单下单数量超出最大值 | 200 | 51202  
 普通委托数量超出最大限制{0} | 200 | 51203  
