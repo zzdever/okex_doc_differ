@@ -45,18 +45,22 @@ Java Python Go C++
     * 资金 
       * 获取币种列表 
       * 获取资金账户余额 
+      * 获取账户资产估值 
       * 资金划转 
       * 获取资金划转状态 
       * 获取资金流水 
+      * 闪电网络充币 
       * 获取充值地址信息 
       * 获取充值记录 
       * 提币 
-      * 获取提币记录 
-      * 余币宝申购/赎回 
-      * 获取余币宝余额 
-      * 闪电网络充币 
       * 闪电网络提币 
-      * 获取账户资产估值 
+      * 获取提币记录 
+      * 获取余币宝余额 
+      * 余币宝申购/赎回 
+      * 设置余币宝借贷利率 
+      * 获取余币宝出借明细 
+      * 获取市场借贷信息（公共）
+      * 获取市场借贷历史（公共） 
     * 账户 
       * 查看账户余额 
       * 查看持仓信息 
@@ -117,7 +121,7 @@ Java Python Go C++
       * 获取平台公共爆仓单信息 
       * 获取标记价格 
       * 获取衍生品仓位档位 
-      * 获取杠杆利率和借币限额 
+      * 获取市场借币杠杆利率和借币限额 
       * 获取尊享借币杠杆利率和借币限额 
       * 获取衍生品标的指数 
     * 交易大数据 
@@ -1071,15 +1075,13 @@ state | String | 订单状态
 `filled`：完全成交  
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 发布在模拟盘  
-止盈触发价类型  
+tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 发布在模拟盘  
-止损触发价类型  
+slTriggerPxType | String | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -1230,14 +1232,12 @@ state | String | 订单状态
   
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 发布在模拟盘  
-止盈触发价类型  
+tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
 slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 发布在模拟盘  
-止损触发价类型  
+slTriggerPxType | String | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -1387,15 +1387,13 @@ state | String | 订单状态
 `filled`：完全成交  
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 发布在模拟盘  
-止盈触发价类型  
+tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 发布在模拟盘  
-止损触发价类型  
+slTriggerPxType | String | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -1552,15 +1550,13 @@ state | String | 订单状态
 `filled`：完全成交  
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 发布在模拟盘  
-止盈触发价类型  
+tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 发布在模拟盘  
-止损触发价类型  
+slTriggerPxType | String | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -1850,8 +1846,7 @@ reduceOnly | Boolean | 否 | 是否只减仓 `true` 或 `false`
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 tpTriggerPx | String | 否 | 止盈触发价，如果填写此参数，必须填写 止盈委托价  
-tpTriggerPxType | String | 否 | 发布在模拟盘  
-止盈触发价类型  
+tpTriggerPxType | String | 否 | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -1859,8 +1854,7 @@ tpTriggerPxType | String | 否 | 发布在模拟盘
 tpOrdPx | String | 否 | 止盈委托价，如果填写此参数，必须填写 止盈触发价  
 委托价格为-1时，执行市价止盈  
 slTriggerPx | String | 否 | 止损触发价，如果填写此参数，必须填写 止损委托价  
-slTriggerPxType | String | 否 | 发布在模拟盘  
-止损触发价类型  
+slTriggerPxType | String | 否 | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -2187,15 +2181,13 @@ tgtCcy | String | 市价单委托数量的类型
 state | String | 订单状态 ，`live`：待生效 `pause`：暂停生效 `partially_effective`:部分生效  
 lever | String | 杠杆倍数  
 tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 发布在模拟盘  
-止盈触发价类型  
+tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 发布在模拟盘  
-止损触发价类型  
+slTriggerPxType | String | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -2361,15 +2353,13 @@ state | String | 订单状态
 `order_failed`：委托失败  
 lever | String | 杠杆倍数  
 tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 发布在模拟盘  
-止盈触发价类型  
+tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
 tpOrdPx | String | 止盈委托价  
 slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 发布在模拟盘  
-止损触发价类型  
+slTriggerPxType | String | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -2512,6 +2502,68 @@ bal | String | 余额
 frozenBal | String | 冻结（不可用）  
 availBal | String | 可用余额  
   
+### 获取账户资产估值
+
+查看账户资产估值
+
+#### 限速： 1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/asset/asset-valuation`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/asset-valuation
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | String | 否 | 资产估值对应的单位  
+BTC 、USDT  
+USD 、CNY 、JPY、KRW、RUB、EUR  
+VND 、IDR 、INR、PHP、THB、TRY  
+AUD 、SGD 、ARS、SAR、AED、IQD  
+默认为 BTC 为单位的估值  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "details": {
+                    "classic": "124.6",
+                    "earn": "1122.73",
+                    "funding": "0.09",
+                    "trading": "2544.28"
+                },
+                "totalBal": "3790.09",
+                "ts": "1637566660769"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+totalBal | String | 账户总资产估值  
+ts | String | 数据更新时间，Unix时间戳的毫秒数格式，如 1597026383085  
+details | Array | 各个账户的资产估值  
+> funding | String | 资金账户  
+> trading | String | 统一账户  
+> classic | String | 经典账户  
+> earn | String | 金融账户  
+  
 ### 资金划转
 
 支持母账户的资金账户划转到交易账户，母账户到子账户的资金账户和交易账户划转。不支持子账户和子账户之间直接划转。
@@ -2590,6 +2642,8 @@ type | String | 否 | `0`：账户内划转
 `1`：母账户转子账户  
 `2`：子账户转母账户  
 默认为`0`。  
+loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`下的借币转出  
+默认为`false`。  
 当 **from** 是 3 或 5 或 9 时, **instId** 是必填的。  
 当 **to** 是 3 或 5 或 9时, **toInstId** 是必填的。
 
@@ -2804,7 +2858,7 @@ type | String | 否 | 账单类型
 `129`：奖励转入  
 `130`：从统一账户转入  
 `131`：转出至统一账户  
-  
+`151`：邀请奖励  
 after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 limit | String | 否 | 分页返回的结果集数量，最大为 100，不填默认返回 100 条  
@@ -2839,6 +2893,59 @@ bal | String | 账户层面的余额数量
 type | String | 账单类型  
 ts | String | 账单创建时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
   
+### 闪电网络充币
+
+一个用户在最近24小时内可以生成不超过100个不同的invoice。
+
+#### 限速： 2次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/asset/deposit-lightning`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/deposit-lightning
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | String | 是 | 币种，仅支持`BTC`  
+amt | String | 是 | 充值数量，推荐在0.000001〜0.05之间  
+to | String | 否 | 资金充值到账账户  
+6:资金账户  
+18:统一账户  
+不填写此参数，默认到账资金账户  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "cTime": "1631171307612",
+                "invoice": "lnbc100u1psnnvhtpp5yq2x3q5hhrzsuxpwx7ptphwzc4k4wk0j3stp0099968m44cyjg9sdqqcqzpgxqzjcsp5hzzdszuv6yv6yw5svctl8kc8uv6y77szv5kma2kuculj86tk3yys9qyyssqd8urqgcensh9l4zwlwr3lxlcdqrlflvvlwldutm6ljx486h7lylqmd06kky6scas7warx69sregzrx20ffmsr4sp865x3wasrjd8ttgqrlx3tr"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+invoice | String | invoice 号码  
+cTime | String | 生成invoice时间  
+仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`wallace.yan@okg.com`申请
+
 ### 获取充值地址信息
 
 获取各个币种的充值地址，包括曾使用过的老地址。
@@ -3063,6 +3170,60 @@ chain | String | 币种链信息
 amt | String | 提币数量  
 wdId | String | 提币申请ID  
   
+### 闪电网络提币
+
+单笔提币金额最大值为"0.1BTC"，最小值暂定为"0.000001BTC"，最近24小时内最大提币数量为"1BTC"。
+
+#### 限速： 2次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/asset/withdrawal-lightning`
+
+> 请求示例
+    
+    
+    POST /api/v5/asset/withdrawal-lightning
+    body
+    {
+        "ccy":"BTC",
+        "pwd":"123456",
+        "invoice":"lnbc100u1psnnvhtpp5yq2x3q5hhrzsuxpwx7ptphwzc4k4wk0j3stp0099968m44cyjg9sdqqcqzpgxqzjcsp5hz"
+    }
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | String | 是 | 币种，如 `BTC`  
+invoice | String | 是 | invoice 号码  
+pwd | String | 是 | 资金密码  
+  
+> 返回结果
+    
+    
+    {
+            "code": "0",
+            "msg": "",
+            "data": [{
+                    "wdId": "121212",
+                    "cTime": "1597026383085"
+            }]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+wdId | String | 提币申请ID  
+cTime | String | 提币ID生成时间  
+仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`wallace.yan@okg.com`申请
+
 ### 获取提币记录
 
 根据币种，提币状态，时间范围获取提币记录，按照时间倒序排列，默认返回100条数据。
@@ -3145,6 +3306,53 @@ state | String | 提币状态
 `3`：邮箱确认 `4`：人工审核中 `5`：等待身份认证  
 wdId | String | 提币申请 ID  
   
+### 获取余币宝余额
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/asset/piggy-balance`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/piggy-balance?ccy=BTC
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | String | 否 | 币种，如 `BTC`  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg":"",
+        "data": [
+            {
+                "earnings": "0.0000000000000000",
+                "ccy": "USDT",
+                "amt": "1.0000000064666295"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ccy | String | 币种，如 `BTC`  
+amt | String | 币种数量  
+earnings | String | 币种持仓收益  
+  
 ### 余币宝申购/赎回
 
 #### 限速： 6次/s
@@ -3201,7 +3409,7 @@ ccy | String | 币种名称
 amt | String | 申购（赎回）数量  
 side | String | 操作类型  
   
-### 获取余币宝余额
+### 设置余币宝借贷利率
 
 #### 限速： 6次/s
 
@@ -3209,12 +3417,124 @@ side | String | 操作类型
 
 #### HTTP请求
 
-`GET /api/v5/asset/piggy-balance`
+`POST /api/v5/asset/set-lending-rate`
 
 > 请求示例
     
     
-    GET /api/v5/asset/piggy-balance?ccy=BTC
+    POST /api/v5/asset/set-lending-rate
+    body
+    {
+        "ccy":"BTC",
+        "rate":"0.02"
+    }
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | String | 是 | 币种名称，如 `BTC`  
+rate | String | 是 | 贷出利率  
+参数取值范围在1%到365%之间  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [{
+            "ccy": "BTC",
+            "rate": "0.02"
+        }]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ccy | String | 币种名称，如 `BTC`  
+rate | String | 贷出利率  
+  
+### 获取余币宝出借明细
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/asset/lending-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/lending-history
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | String | 否 | 币种，如 `BTC`  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
+limit | String | 否 | 分页返回的结果集数量，最大为 100，不填默认返回 100 条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [{
+                "ccy": "BTC",
+                "amt": "0.01",
+                "earnings": "0.001",
+                "rate": "0.01",
+                "ts": "1597026383085"
+            },
+            {
+                "ccy": "ETH",
+                "amt": "0.2",
+                "earnings": "0.001",
+                "rate": "0.01",
+                "ts": "1597026383085"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ccy | String | 币种，如 `BTC`  
+amt | String | 出借数量  
+earnings | String | 已赚取利息  
+rate | String | 出借年利率  
+ts | String | 出借时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取市场借贷信息（公共）
+
+公共接口无须鉴权
+
+#### 限速： 6次/s
+
+#### 限速规则：IP
+
+#### HTTP请求
+
+`GET /api/v5/asset/lending-rate-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/lending-rate-history
     
     
 
@@ -3229,14 +3549,15 @@ ccy | String | 否 | 币种，如 `BTC`
     
     {
         "code": "0",
-        "msg":"",
-        "data": [
-            {
-                "earnings": "0.0000000000000000",
-                "ccy": "USDT",
-                "amt": "1.0000000064666295"
-            }
-        ]
+        "msg": "",
+        "data": [{
+            "ccy": "BTC",
+            "avgAmt": "10000",
+            "avgAmtUsd": "10000000000",
+            "avgRate": "0.03",
+            "preRate": "0.02",
+            "estRate": "0.01"
+        }]
     }
     
 
@@ -3245,25 +3566,28 @@ ccy | String | 否 | 币种，如 `BTC`
 参数名 | 类型 | 描述  
 ---|---|---  
 ccy | String | 币种，如 `BTC`  
-amt | String | 币种数量  
-earnings | String | 币种持仓收益  
+avgAmt | String | 过去24小时平均借贷量  
+avgAmtUsd | String | 过去24小时平均借贷美元价值  
+avgRate | String | 过去24小时平均借出利率  
+preRate | String | 上一次借贷年利率  
+estRate | String | 下一次预估借贷年利率  
   
-### 闪电网络充币
+### 获取市场借贷历史（公共）
 
-一个用户在最近24小时内可以生成不超过100个不同的invoice。
+公共接口无须鉴权
 
-#### 限速： 2次/s
+#### 限速： 6次/s
 
-#### 限速规则：UserID
+#### 限速规则：IP
 
 #### HTTP请求
 
-`GET /api/v5/asset/deposit-lightning`
+`GET /api/v5/asset/lending-rate-summary`
 
 > 请求示例
     
     
-    GET /api/v5/asset/deposit-lightning
+    GET /api/v5/asset/lending-rate-summary
     
     
 
@@ -3271,25 +3595,23 @@ earnings | String | 币种持仓收益
 
 参数 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-ccy | String | 是 | 币种，仅支持`BTC`  
-amt | String | 是 | 充值数量，推荐在0.000001〜0.05之间  
-to | String | 否 | 资金充值到账账户  
-6:资金账户  
-18:统一账户  
-不填写此参数，默认到账资金账户  
+ccy | String | 否 | 币种，如 `BTC`  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
+limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
     
     
     {
         "code": "0",
-        "data": [
-            {
-                "cTime": "1631171307612",
-                "invoice": "lnbc100u1psnnvhtpp5yq2x3q5hhrzsuxpwx7ptphwzc4k4wk0j3stp0099968m44cyjg9sdqqcqzpgxqzjcsp5hzzdszuv6yv6yw5svctl8kc8uv6y77szv5kma2kuculj86tk3yys9qyyssqd8urqgcensh9l4zwlwr3lxlcdqrlflvvlwldutm6ljx486h7lylqmd06kky6scas7warx69sregzrx20ffmsr4sp865x3wasrjd8ttgqrlx3tr"
-            }
-        ],
-        "msg": ""
+        "msg": "",
+        "data": [{
+            "ccy": "BTC",
+            "amt": "0.01",
+            "rate": "0.001",
+            "ts": "1597026383085"
+        }]
     }
     
 
@@ -3297,125 +3619,10 @@ to | String | 否 | 资金充值到账账户
 
 参数名 | 类型 | 描述  
 ---|---|---  
-invoice | String | invoice 号码  
-cTime | String | 生成invoice时间  
-仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`wallace.yan@okg.com`申请
-
-### 闪电网络提币
-
-单笔提币金额最大值为"0.1BTC"，最小值暂定为"0.000001BTC"，最近24小时内最大提币数量为"1BTC"。
-
-#### 限速： 2次/s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`POST /api/v5/asset/withdrawal-lightning`
-
-> 请求示例
-    
-    
-    POST /api/v5/asset/withdrawal-lightning
-    body
-    {
-        "ccy":"BTC",
-        "pwd":"123456",
-        "invoice":"lnbc100u1psnnvhtpp5yq2x3q5hhrzsuxpwx7ptphwzc4k4wk0j3stp0099968m44cyjg9sdqqcqzpgxqzjcsp5hz"
-    }
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-ccy | String | 是 | 币种，如 `BTC`  
-invoice | String | 是 | invoice 号码  
-pwd | String | 是 | 资金密码  
-  
-> 返回结果
-    
-    
-    {
-            "code": "0",
-            "msg": "",
-            "data": [{
-                    "wdId": "121212",
-                    "cTime": "1597026383085"
-            }]
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 描述  
----|---|---  
-wdId | String | 提币申请ID  
-cTime | String | 提币ID生成时间  
-仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`wallace.yan@okg.com`申请
-
-### 获取账户资产估值
-
-查看账户资产估值
-
-#### 限速： 1次/2s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`GET /api/v5/asset/asset-valuation`
-
-> 请求示例
-    
-    
-    GET /api/v5/asset/asset-valuation
-    
-
-#### 请求参数
-
-参数 | 类型 | 是否必须 | 描述  
----|---|---|---  
-ccy | String | 否 | 资产估值对应的单位  
-BTC 、USDT  
-USD 、CNY 、JPY、KRW、RUB、EUR  
-VND 、IDR 、INR、PHP、THB、TRY  
-AUD 、SGD 、ARS、SAR、AED、IQD  
-默认为 BTC 为单位的估值  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "details": {
-                    "classic": "124.6",
-                    "earn": "1122.73",
-                    "funding": "0.09",
-                    "trading": "2544.28"
-                },
-                "totalBal": "3790.09",
-                "ts": "1637566660769"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 描述  
----|---|---  
-totalBal | String | 账户总资产估值  
-ts | String | 数据更新时间，Unix时间戳的毫秒数格式，如 1597026383085  
-details | Array | 各个账户的资产估值  
-> funding | String | 资金账户  
-> trading | String | 统一账户  
-> classic | String | 经典账户  
-> earn | String | 金融账户  
+ccy | String | 币种，如 `BTC`  
+amt | String | 市场总出借数量  
+rate | String | 出借年利率  
+ts | String | 时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ## 账户
 
@@ -4481,6 +4688,8 @@ type | String | 是 | 增加/减少保证金
 `add`：增加  
 `reduce`：减少  
 amt | String | 是 | 增加或减少的保证金数量  
+loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`下的借币转入/转出  
+默认为`false`。  
   
 > 返回结果
     
@@ -4933,11 +5142,13 @@ ccy | String | 否 | 币种，如 `BTC`
         "msg": "",
         "data": [{
                 "ccy": "BTC",
-                "maxWd": "124"
+                "maxWd": "124",
+                "maxWdEx": "125"
             },
             {
                 "ccy": "ETH",
-                "maxWd": "10"
+                "maxWd": "10",
+                "maxWdEx": "12"
             }
         ]
     }
@@ -4947,8 +5158,9 @@ ccy | String | 否 | 币种，如 `BTC`
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-maxWd | String | 最大可划转数量  
 ccy | String | 币种  
+maxWd | String | 最大可划转数量（不支持`跨币种保证金模式`借币转出）  
+maxWdEx | String | 最大可划转数量（支持`跨币种保证金模式`借币转出）  
   
 ### 查看账户特定风险状态
 
@@ -5149,6 +5361,7 @@ ts | String | 借/还币时间
 type | String | 否 | 借币类型  
 `1`：尊享借币  
 `2`：市场借币  
+默认为`市场借币`  
 ccy | String | 否 | 借贷币种，如 `BTC`  
   
 > 返回结果
@@ -5749,6 +5962,8 @@ from | String | 是 | `6`：资金账户 `18`：统一账户
 to | String | 是 | `6`：资金账户 `18`：统一账户  
 fromSubAccount | String | 是 | 转出子账户的子账户名称  
 toSubAccount | String | 是 | 转入子账户的子账户名称  
+loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`下的借币转出  
+默认为`false`。  
   
 > 返回结果
     
@@ -7581,9 +7796,7 @@ optMgnFactor | String | 期权保证金系数 （仅适用于期权）
 quoteMaxLoan | String | 计价货币 最大借币量（仅适用于杠杆），例如 BTC-USDT 里的 USDT最大借币量  
 baseMaxLoan | String | 交易货币 最大借币量（仅适用于杠杆），例如 BTC-USDT 里的 BTC最大借币量  
   
-### 获取杠杆利率和借币限额
-
-获取币币杠杆借币利率和借币限额
+### 获取市场借币杠杆利率和借币限额
 
 #### 限速： 2次/2s
 
@@ -7609,31 +7822,36 @@ baseMaxLoan | String | 交易货币 最大借币量（仅适用于杠杆），�
                 "basic": [
                     {
                         "ccy": "USDT",
-                        "quota": "300000",
-                        "rate": "0.00024984"
+                        "quota": "500000",
+                        "rate": "0.00043728"
+                    },
+                    {
+                        "ccy": "BTC",
+                        "quota": "10",
+                        "rate": "0.00019992"
                     }
                 ],
                 "vip": [
                     {
                         "irDiscount": "0.7",
-                        "loanQuotaCoef": 6,
+                        "loanQuotaCoef": "6",
                         "level": "VIP1"
                     },
                     {
                         "irDiscount": "0.65",
-                        "loanQuotaCoef": 7,
+                        "loanQuotaCoef": "7",
                         "level": "VIP2"
                     }
                 ],
                 "regular": [
                     {
                         "irDiscount": "1",
-                        "loanQuotaCoef": 1,
+                        "loanQuotaCoef": "1",
                         "level": "Lv1"
                     },
                     {
                         "irDiscount": "0.95",
-                        "loanQuotaCoef": 2,
+                        "loanQuotaCoef": "2",
                         "level": "Lv2"
                     }
                 ]
@@ -7652,11 +7870,11 @@ basic | Array | 基础利率和借币限额
 > rate | String | 基础杠杆日利率  
 > quota | String | 基础借币限额  
 vip | Array | 专业用户  
-> level | String | 账户交易手续费等级  
+> level | String | 账户交易手续费等级，如 `VIP1`  
 > loanQuotaCoef | String | 借币限额系数  
 > irDiscount | String | 利率的折扣率  
 regular | Array | 普通用户  
-> level | String | 账户交易手续费等级  
+> level | String | 账户交易手续费等级，如 `Lv1`  
 > loanQuotaCoef | String | 借币限额系数  
 > irDiscount | String | 利率的折扣率  
   
@@ -7687,24 +7905,20 @@ regular | Array | 普通用户
                 "ccy": "ENJ",
                 "levelList": [
                     {
-                        "level": "5",
+                        "level": "VIP5",
                         "loanQuota": "100000.00000000"
                     },
                     {
-                        "level": "6",
+                        "level": "VIP6",
                         "loanQuota": "110000.00000000"
                     },
                     {
-                        "level": "7",
+                        "level": "VIP7",
                         "loanQuota": "120000.00000000"
                     },
                     {
-                        "level": "8",
+                        "level": "VIP8",
                         "loanQuota": "130000.00000000"
-                    },
-                    {
-                        "level": "9",
-                        "loanQuota": "140000.00000000"
                     }
                 ],
                 "quota": "10000.0000",
@@ -7723,7 +7937,7 @@ ccy | String | 币种
 rate | String | 基础杠杆日利率  
 quota | String | 基础借币限额  
 levelList | Array | 不同VIP等级下的限额信息  
-> level | String | 用户VIP等级  
+> level | String | 用户VIP等级，如 `VIP5`  
 > loanQuota | String | 借币限额  
   
 ### 获取衍生品标的指数
@@ -10535,15 +10749,13 @@ data | Array | 订阅的数据
 `filled`：完全成交  
 > lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 > tpTriggerPx | String | 止盈触发价  
-> tpTriggerPxType | String | 发布在模拟盘  
-止盈触发价类型  
+> tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
 > tpOrdPx | String | 止盈委托价，止盈委托价格为`-1`时，执行市价止盈  
 > slTriggerPx | String | 止损触发价  
-> slTriggerPxType | String | 发布在模拟盘  
-止损触发价类型  
+> slTriggerPxType | String | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -10755,15 +10967,13 @@ data | Array | 订阅的数据
 `canceled`：已撤销  
 `order_failed`：委托失败  
 > tpTriggerPx | String | 止盈触发价  
-> tpTriggerPxType | String | 发布在模拟盘  
-止盈触发价类型  
+> tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
 > tpOrdPx | String | 止盈委托价，委托价格为`-1`时，执行市价止盈  
 > slTriggerPx | String | 止损触发价  
-> slTriggerPxType | String | 发布在模拟盘  
-止损触发价类型  
+> slTriggerPxType | String | 止损触发价类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
@@ -13547,7 +13757,6 @@ PM账户仅支持买卖模式 | 200 | 51041
 委托价格或触发价格超过{0}美元 | 200 | 51116  
 平仓单挂单单数超过限制 | 200 | 51117  
 委托总数量需大于单笔上限 | 200 | 51118  
-下单失败，用户{currency}余额不足 | 200 | 51119  
 下单数量不足{0}张 | 200 | 51120  
 下单张数应为一手张数的倍数 | 200 | 51121  
 委托价格小于最小值{0} | 200 | 51122  
