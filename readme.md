@@ -59,8 +59,6 @@ Java Python Go C++
       * 余币宝申购/赎回 
       * 设置余币宝借贷利率 
       * 获取余币宝出借明细 
-      * 获取市场借贷信息（公共）
-      * 获取市场借贷历史（公共） 
     * 账户 
       * 查看账户余额 
       * 查看持仓信息 
@@ -397,7 +395,7 @@ ccy | String | 否 | 保证金币种，仅适用于`单币种保证金模式`下
 clOrdId | String | 否 | 客户自定义订单ID  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-8位之间。  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 side | String | 是 | 订单方向 `buy`：买 `sell`：卖  
 posSide | String | 可选 | 持仓方向 在双向持仓模式下必填，且仅可选择 `long` 或 `short`  
 ordType | String | 是 | 订单类型  
@@ -548,7 +546,7 @@ ccy | String | 否 | 保证金币种，仅适用于单币种保证金模式下�
 clOrdId | String | 否 | 客户自定义订单ID  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-8位之间。  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-16位之间。  
 side | String | 是 | 订单方向 `buy`：买 `sell`：卖  
 posSide | String | 可选 | 持仓方向 在双向持仓模式下必填，且仅可选择 `long` 或 `short`  
 ordType | String | 是 | 订单类型  
@@ -3341,7 +3339,11 @@ ccy | String | 否 | 币种，如 `BTC`
             {
                 "earnings": "0.0000000000000000",
                 "ccy": "USDT",
-                "amt": "1.0000000064666295"
+                "amt": "1.0000000064666295",
+                "rate": "0.01",
+                "loanAmt":"300",
+                "pendingAmt":"100",
+                "redemptAmt":"0"
             }
         ]
     }
@@ -3354,6 +3356,10 @@ ccy | String | 否 | 币种，如 `BTC`
 ccy | String | 币种，如 `BTC`  
 amt | String | 币种数量  
 earnings | String | 币种持仓收益  
+rate | String | 最新出借利率  
+loanAmt | String | 已出借数量  
+pendingAmt | String | 未出借数量  
+redemptAmt | String | 赎回中的数量  
   
 ### 余币宝申购/赎回
 
@@ -3386,6 +3392,10 @@ ccy | String | 是 | 币种名称，如 `BTC`
 amt | String | 是 | 申购（赎回）数量  
 side | String | 是 | 操作类型  
 `purchase`：申购 `redempt`：赎回  
+rate | String | 否 | 申购利率  
+仅适用于申购，新申购的利率会覆盖上次申购的利率  
+如果不填按照默认1%的利率申购  
+参数取值范围在1%到365%之间  
   
 > 返回结果
     
@@ -3397,7 +3407,8 @@ side | String | 是 | 操作类型
             {
                 "ccy":"BTC",
                 "amt":"1",
-                "side":"purchase"
+                "side":"purchase",
+                "rate":"0.01"
             }
         ]
     }
@@ -3410,6 +3421,7 @@ side | String | 是 | 操作类型
 ccy | String | 币种名称  
 amt | String | 申购（赎回）数量  
 side | String | 操作类型  
+rate | String | 申购利率  
   
 ### 设置余币宝借贷利率
 
@@ -3520,111 +3532,6 @@ amt | String | 出借数量
 earnings | String | 已赚取利息  
 rate | String | 出借年利率  
 ts | String | 出借时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-  
-### 获取市场借贷信息（公共）
-
-公共接口无须鉴权
-
-#### 限速： 6次/s
-
-#### 限速规则：IP
-
-#### HTTP请求
-
-`GET /api/v5/asset/lending-rate-history`
-
-> 请求示例
-    
-    
-    GET /api/v5/asset/lending-rate-history
-    
-    
-
-#### 请求参数
-
-参数 | 类型 | 是否必须 | 描述  
----|---|---|---  
-ccy | String | 否 | 币种，如 `BTC`  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "msg": "",
-        "data": [{
-            "ccy": "BTC",
-            "avgAmt": "10000",
-            "avgAmtUsd": "10000000000",
-            "avgRate": "0.03",
-            "preRate": "0.02",
-            "estRate": "0.01"
-        }]
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 描述  
----|---|---  
-ccy | String | 币种，如 `BTC`  
-avgAmt | String | 过去24小时平均借贷量  
-avgAmtUsd | String | 过去24小时平均借贷美元价值  
-avgRate | String | 过去24小时平均借出利率  
-preRate | String | 上一次借贷年利率  
-estRate | String | 下一次预估借贷年利率  
-  
-### 获取市场借贷历史（公共）
-
-公共接口无须鉴权
-
-#### 限速： 6次/s
-
-#### 限速规则：IP
-
-#### HTTP请求
-
-`GET /api/v5/asset/lending-rate-summary`
-
-> 请求示例
-    
-    
-    GET /api/v5/asset/lending-rate-summary
-    
-    
-
-#### 请求参数
-
-参数 | 类型 | 是否必须 | 描述  
----|---|---|---  
-ccy | String | 否 | 币种，如 `BTC`  
-after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "msg": "",
-        "data": [{
-            "ccy": "BTC",
-            "amt": "0.01",
-            "rate": "0.001",
-            "ts": "1597026383085"
-        }]
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 描述  
----|---|---  
-ccy | String | 币种，如 `BTC`  
-amt | String | 市场总出借数量  
-rate | String | 出借年利率  
-ts | String | 时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ## 账户
 
@@ -9009,7 +8916,7 @@ args | Array | 是 | 请求参数
 > clOrdId | String | 否 | 由用户设置的订单ID  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 > tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-8位之间。  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-16位之间。  
 > side | String | 是 | 订单方向，`buy` `sell`  
 > posSide | String | 否 | 持仓方向  
 在单向持仓模式下，默认 `net`  
@@ -9192,7 +9099,7 @@ args | Array | 是 | 请求参数
 > clOrdId | String | 否 | 用户提供的订单ID  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 > tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-8位之间。  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-16位之间。  
 > side | String | 是 | 订单方向， `buy` `sell`  
 > posSide | String | 否 | 持仓方向  
 在单向持仓模式下，默认 `net`  
