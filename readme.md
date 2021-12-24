@@ -79,11 +79,13 @@ Java Python Go C++
       * 获取计息记录 
       * 获取用户当前杠杆借币利率 
       * 期权希腊字母PA/BS切换 
+      * 逐仓交易设置 
       * 查看账户最大可转余额 
       * 查看账户特定风险状态 
       * 尊享借币还币 
       * 获取尊享借币还币历史 
       * 获取借币利率与限额 
+      * 组合保证金的虚拟持仓保证金计算 
     * 子账户 
       * 查看子账户列表 
       * 创建子账户的APIKey 
@@ -3884,6 +3886,7 @@ instId | String | 否 | 交易产品ID，如：`BTC-USD-190927-5000-C`
 posId | String | 否 | 持仓ID  
 支持多个`posId`查询（不超过20个），半角逗号分割  
 如果该instId拥有过的仓位，将返回持仓信息，不管持仓量是否为0；否则不返回
+逐仓交易设置中，如果设置为自主划转模式，逐仓转入保证金后，会生成一个持仓量为0的仓位
 
 > 返回结果
     
@@ -3926,6 +3929,8 @@ posId | String | 否 | 持仓ID
             "thetaBS":"",
             "thetaPA":"",
             "tradeId":"109844",
+            "quoteBal": "0",
+            "baseBal": "0",
             "uTime":"1619507761462",
             "upl":"-0.0000009932766034",
             "uplRatio":"-0.0025490556801078",
@@ -3948,7 +3953,9 @@ posSide | String | 持仓方向
 `long`：双向持仓多头  
 `short`：双向持仓空头  
 `net`：单向持仓（`交割/永续/期权`：`pos`为正代表多头，`pos`为负代表空头。`币币杠杆`：`posCcy`为交易货币时，代表多头；`posCcy`为计价货币时，代表空头。）  
-pos | String | 持仓数量  
+pos | String | 持仓数量，逐仓自主划转模式下，转入保证金后会产生pos为`0`的仓位  
+baseBal | String | 交易币余额，适用于 `币币杠杆`（逐仓自主划转模式）  
+quoteBal | String | 计价币余额 ，适用于 `币币杠杆`（逐仓自主划转模式）  
 posCcy | String | 仓位资产币种，仅适用于`币币杠杆`仓位  
 availPos | String | 可平仓数量，适用于 `币币杠杆`,`交割/永续`（开平仓模式），`期权`（交易账户及保证金账户逐仓）。  
 avgPx | String | 开仓平均价  
@@ -4040,16 +4047,18 @@ instType | String | 否 | 产品类型
                 ],
                 "posData":[
                     {
-                        "ccy":"USDT",
-                        "instId":"BTC-USDT-210507",
-                        "instType":"FUTURES",
-                        "mgnMode":"cross",
-                        "notionalCcy":"0.98",
-                        "notionalUsd":"55806.8814912",
-                        "pos":"98",
-                        "posCcy":"",
-                        "posId":"310423695953113090",
-                        "posSide":"net"
+                        "baseBal": "0.4",
+                        "ccy": "",
+                        "instId": "BTC-USDT",
+                        "instType": "MARGIN",
+                        "mgnMode": "isolated",
+                        "notionalCcy": "0",
+                        "notionalUsd": "0",
+                        "pos": "0",
+                        "posCcy": "",
+                        "posId": "310388685292318723",
+                        "posSide": "net",
+                        "quoteBal": "0"
                     }
                 ],
                 "ts":"1620282889345"
@@ -4077,7 +4086,9 @@ posData | Array | 持仓详细信息
 `isolated`：逐仓  
 > posId | String | 持仓ID  
 > instId | String | 产品ID，如 `BTC-USD-180216`  
-> pos | String | 以`张`为单位的持仓数量  
+> pos | String | 以`张`为单位的持仓数量，逐仓自主划转模式下，转入保证金后会产生pos为`0`的仓位  
+> baseBal | String | 交易币余额，适用于 `币币杠杆`（逐仓自主划转模式）  
+> quoteBal | String | 计价币余额 ，适用于 `币币杠杆`（逐仓自主划转模式）  
 > posSide | String | 持仓方向  
 `long`：双向持仓多头  
 `short`：双向持仓空头  
@@ -4354,16 +4365,20 @@ notes | String | 备注
     
     {
         "code": "0",
-        "msg": "",
-        "data": [{
-            "uid": "43812",
-            "acctLv": "2",
-            "posMode": "long_short_mode",
-            "autoLoan": true,
-            "greeksType": "BS",
-            "level": "lv1",
-            "levelTmp": ""
-        }]
+        "data": [
+            {
+                "acctLv": "3",
+                "autoLoan": true,
+                "ctIsoMode": "automatic",
+                "greeksType": "PA",
+                "level": "Lv3",
+                "levelTmp": "",
+                "mgnIsoMode": "autonomy",
+                "posMode": "net_mode",
+                "uid": "781767883763712"
+            }
+        ],
+        "msg": ""
     }
     
 
@@ -4383,6 +4398,10 @@ greeksType | String | 当前希腊字母展示方式
 `PA`：币本位 `BS`：美元本位  
 level | String | 当前在平台上真实交易量的用户等级，例如 `lv1`  
 levelTmp | String | 特约用户的临时体验用户等级，例如 `lv3`  
+ctIsoMode | String | 衍生品的逐仓保证金划转模式  
+`automatic`：开仓划转 `autonomy`：自主划转  
+mgnIsoMode | String | 币币杠杆的逐仓保证金划转模式  
+`automatic`：开仓划转 `autonomy`：自主划转  
   
 ### 设置持仓模式
 
@@ -4640,6 +4659,9 @@ tdMode | String | 是 | 交易模式
 `cross`：全仓 `isolated`：逐仓 `cash`：非保证金  
 ccy | String | 可选 | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
 reduceOnly | Boolean | 否 | 是否为只减仓模式，仅适用于`币币杠杆`  
+px | String | 否 | 委托价格  
+当不填委托价时会按当前最新成交价计算  
+当指定多个产品ID查询时，忽略该参数，按当前最新成交价计算  
   
 > 返回结果
     
@@ -4704,22 +4726,29 @@ type | String | 是 | 增加/减少保证金
 `add`：增加  
 `reduce`：减少  
 amt | String | 是 | 增加或减少的保证金数量  
+ccy | String | 否 | 增加或减少的保证金的币种，  
+仅适用于逐仓自主划转保证金模式下的币币杠杆  
+auto | Boolean | 否 | 是否自动借币转 true 或 false，默认false  
+仅适用于逐仓自主划转保证金模式下的币币杠杆  
 loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`下的借币转入/转出  
-默认为`false`。  
+true 或 false，默认false  
   
 > 返回结果
     
     
     {
         "code": "0",
-        "msg": "",
-        "data": [{
-            "instId": "BTC-USDT-200626",
-            "posSide": "short",
-            "amt": "1",
-            "type": "add",
-            "leverage": "100"
-        }]
+        "data": [
+            {
+                "amt": "0.3",
+                "ccy": "BTC",
+                "instId": "BTC-USDT",
+                "leverage": "",
+                "posSide": "net",
+                "type": "add"
+            }
+        ],
+        "msg": ""
     }
     
 
@@ -4732,7 +4761,10 @@ posSide | String | 持仓方向
 amt | String | 已增加/减少的保证金数量  
 type | String | 增加/减少保证金  
 leverage | String | 调整保证金后的实际杠杆倍数  
-  
+ccy | String | 增加或减少的保证金的币种  
+自主划转模式  
+初始划入逐仓仓位的保证金价值必须大于等于1万USDT,账户上会产生一个仓位。
+
 ### 获取杠杆倍数
 
 #### 限速：20次/2s
@@ -5124,6 +5156,61 @@ greeksType | String | 是 | 希腊字母展示方式
 ---|---|---  
 greeksType | String | 当前希腊字母展示方式  
   
+### 逐仓交易设置
+
+可以通过该接口设置币币杠杆和交割、永续的逐仓仓位保证金的划转模式
+
+#### 限速：5次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/account/set-isolated-mode`
+
+> 请求示例 `wiki POST /api/v5/account/set-isolated-mode body {
+> "isoMode":"automatic", "type":"MARGIN" } `
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+isoMode | String | 是 | 逐仓保证金划转模式  
+automatic:开仓自动划转  
+autonomy:自主划转  
+type | String | 是 | 业务线类型  
+  
+MARGIN:币币杠杆  
+CONTRACTS:合约  
+当前账户内有持仓和挂单时，不能调整逐仓保证金划转模式。
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "isoMode": "autonomy"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+isoMode | String | 逐仓保证金划转模式  
+automatic:开仓自动划转  
+autonomy:自主划转  
+衍生品  
+开仓划转：在开仓和平仓时自动占用和释放保证金
+自主划转：需要手动给仓位划入保证金然后开始交易。该选项主要供专业用户使用，会有初次划入仓位资金≥10000USDT的限制。  杠杆  
+开仓划转：在开仓和平仓时自动借币和还币
+自主划转：需要手动给仓位划入保证金然后交易，同时也支持手动转出借币。该选项主要供专业用户使用，会有初次划入仓位资金≥10000USDT的限制。
+
 ### 查看账户最大可转余额
 
 当指定币种时会返回该币种的最大可划转数量，不指定币种会返回所有拥有的币种资产可划转数量。
@@ -5433,6 +5520,85 @@ records | Array | 各币种详细信息
 仅适用于`尊享借币`  
 > usedLoan | String | 当前账户已借额度  
 仅适用于`尊享借币`  
+  
+### 组合保证金的虚拟持仓保证金计算
+
+计算用户的模拟头寸或当前头寸的投资组合保证金信息，一次请求最多添加200个虚拟仓位
+
+#### 限速：2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/account/simulated_margin`
+
+> 请求示例 `wiki POST /api/v5/account/simulated_margin body { "instType":"SWAP",
+> "inclRealPos":"true", "simPos":[ { "pos":"10", "instId":"BTC-USDT-SWAP" }, {
+> "pos":"10", "instId":"LTC-USDT-SWAP" } ] } `
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 否 | 产品类型  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+inclRealPos | Boolean | 否 | 是否代入已有仓位  
+`true`：调整被代入的已有仓位信息  
+`false`：不代入已有仓位，仅使用simPos里新增的模拟仓位进行计算,默认为True  
+simPos | Array | 否 | 调整持仓列表  
+> instId | String | 否 | 交易产品ID  
+> pos | String | 否 | 持仓量  
+代入的仅是单币种账户、跨币种账户、PM账户里的衍生品买卖模式下的全仓仓位，不包含杠杆仓位。
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "imr": "0.0023756004761011",
+                "mmr": "0.0018273849816162",
+                "posData": [
+                    {
+                        "delta": "0.0103544686676885",
+                        "gamma": "",
+                        "instId": "BTC-USD-211224",
+                        "instType": "FUTURES",
+                        "notionalUsd": "500",
+                        "pos": "5",
+                        "theta": "",
+                        "vega": ""
+                    }
+                ],
+                "riskUnit": "BTC-USD",
+                "ts": "1640255589638"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+riskUnit | String | 账户内所有持仓的riskUnit  
+ts | String | 账户信息的更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+mmr | String | riskUnit维度的初始保证金  
+imr | String | riskUnit维度的占用保证金  
+PosData | Array | 持仓列表  
+> instId | String | 产品ID，如 `BTC-USD-180216`  
+> instType | String | 产品类型  
+> pos | String | 持仓量  
+> notionalUsd | String | 以美金价值为单位的持仓数量  
+> delta | String | 期权价格对uly价格的敏感度  
+> gamma | String | delta对uly价格的敏感度  
+> vega | String | 权价格对隐含波动率的敏感度  
+> theta | String | 期权价格对剩余期限的敏感度  
   
 ## 子账户
 
@@ -10379,7 +10545,9 @@ data | Array | 订阅的数据
 `long`：双向持仓多头  
 `short`：双向持仓空头  
 `net`：单向持仓（`交割/永续/期权`：`pos`为正代表多头，`pos`为负代表空头。`币币杠杆`：`posCcy`为交易货币时，代表多头；`posCcy`为计价货币时，代表空头。）  
-> pos | String | 持仓数量  
+> pos | String | 持仓数量，逐仓自主划转模式下，转入保证金后会产生pos为`0`的仓位  
+> baseBal | String | 交易币余额，适用于 `币币杠杆`（逐仓自主划转模式）  
+> quoteBal | String | 计价币余额 ，适用于 `币币杠杆`（逐仓自主划转模式）  
 > posCcy | String | 持仓数量币种，仅适用于`币币杠杆`  
 > availPos | String | 可平仓数量  
 适用于 `币币杠杆`,`交割/永续`（开平仓模式），`期权`（交易账户及保证金账户逐仓）。  
@@ -10421,9 +10589,11 @@ data | Array | 订阅的数据
 
 PM账户下，持仓的 IMR MMR的数据是后端服务以ristUnit为最小粒度重新计算，相同riskUnit全仓仓位的imr和mmr返回值相同。
 
-首次推送，只推用户持有的仓位。用户持仓仓位定义：pos=0，即用户不持有仓位，pos>0或者pos<0都认为持有仓位。
+逐仓交易设置里是自主划转模式，转入保证金后会推送持仓量为0的仓位
 
-定时推送，只推用户持有的仓位。用户持仓仓位定义：pos=0，即用户不持有仓位，pos>0或者pos<0都认为持有仓位。
+首次推送，只推用户持有的仓位。用户持仓仓位定义：持逐仓自主划转模式下的逐仓仓位pos=0，pos>0或者pos<0都认为持有仓位。
+
+定时推送，只推用户持有的仓位。用户持仓仓位定义：持逐仓自主划转模式下的逐仓仓位pos=0，pos>0或者pos<0都认为持有仓位。
 
 例：按underlying订阅且该underlying下有20个持仓，首次和定时推全部20个；持仓下有一个成交改变其中的一个持仓，那么持仓变更只推这一个。
 
@@ -10542,7 +10712,9 @@ data | Array | 订阅的数据
 >> avgPx | String | 开仓平均价  
 >> ccy | String | 占用保证金的币种  
 >> posSide | String | 持仓方向：`long`, `short`, `net`  
->> pos | String | 持仓数量  
+>> pos | String | 持仓数量，逐仓自主划转模式下，转入保证金后会产生pos为`0`的仓位  
+>> baseBal | String | 交易币余额，适用于 `币币杠杆`（逐仓自主划转模式）  
+>> quoteBal | String | 计价币余额 ，适用于 `币币杠杆`（逐仓自主划转模式）  
 >> posCcy | String | 持仓数量币种，只适用于币币杠杆仓位。当是交割、永续、期权持仓时，该字段返回“”  
 >> uTime | String | 仓位信息的更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
@@ -13796,6 +13968,7 @@ PM账户仅支持买卖模式 | 200 | 51041
 您的开仓价格已触发限价，最高买入价格为{0} | 200 | 51137  
 您的开仓价格已触发限价，最低卖出价格为{0} | 200 | 51138  
 交易账户下币币不支持只减仓功能 | 200 | 51139  
+逐仓自主划转保证金模式不支持提前挂单 | 200 | 51145  
 交易账户资产总价值需要大于5万美元来交易期权 | 200 | 51147  
 只减仓委托仅允许减少仓位数量，确保你的仓位不会增加 | 200 | 51148  
 市价委托单笔价值不能超过 1,000,000 USDT | 200 | 51201  
@@ -13861,6 +14034,7 @@ PM账户不支持ordType为{0}的策略委托单 | 200 | 51295
 逐仓自主划转保证金模式不支持ordType为iceberg、twap的策略委托单 | 200 | 51310  
 移动止盈止损委托失败，回调幅度限制为{0}<x<={1} | 200 | 51311  
 移动止盈止损委托失败，委托数量范围{0}<x<={1} | 200 | 51312  
+逐仓自主划转模式不支持策略部分 | 200 | 51313  
 当前账户风险状态，仅支持降低账户风险方向的IOC订单 | 200 | 51037  
 当前风险模块下已经存在降低账户风险方向的IOC类型订单 | 200 | 51038  
 PM账户下交割和永续的全仓不能调整杠杆倍数 | 200 | 51039  
@@ -13988,6 +14162,7 @@ invoice无效 | 200 | 58352
 挂单或持仓存在，无法设置 | 200 | 59000  
 当前存在借币，暂不可切换 | 200 | 59001  
 只支持同一业务线下交易产品ID | 200 | 59004  
+逐仓自主划转保证金模式，初次划入仓位的资产价值需大于10000USDT | 200 | 59005  
 当前存在持仓，请撤销所有挂单后进行杠杆倍数修改 | 200 | 59100  
 当前业务存在逐仓挂单，请撤销所有挂单后进行杠杆倍数修改 | 200 | 59101  
 杠杆倍数超过最大杠杆倍数，请重新调整杠杆倍数 | 200 | 59102  
@@ -14069,6 +14244,7 @@ APIKey 不存在 | 200 | 59506
 无效的url path | 60017  
 频道不存在 | 60018  
 无效的op{0} | 60019  
+passphrase不正确 | 60024  
 内部系统错误 | 63999  
   
 # 创建我的APIKey
