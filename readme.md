@@ -1837,6 +1837,7 @@ ordType | String | 是 | 订单类型
 `conditional`：单向止盈止损  
 `oco`：双向止盈止损  
 `trigger`：计划委托  
+`move_order_stop`：移动止盈止损  
 `iceberg`：冰山委托  
 `twap`：时间加权委托  
 sz | String | 是 | 委托数量  
@@ -1875,6 +1876,15 @@ orderPx | String | 否 | 委托价格
 委托价格为-1时，执行市价委托  
 交割、永续合约的买卖模式下，不支持计划委托
 
+移动止盈止损
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+callbackRatio | String | 可选 | 回调幅度的比例，如 `0.05`  
+`callbackRatio`和`callbackSpread`只能传入一个  
+callbackSpread | String | 可选 | 回调幅度的价距  
+activePx | String | 否 | 激活价格  
+  
 冰山委托
 
 参数名 | 类型 | 是否必须 | 描述  
@@ -1927,7 +1937,7 @@ sMsg | String | 事件执行失败时的msg
 
 ### 撤销策略委托订单
 
-撤销策略委托订单（不包含冰山委托、时间加权等高级策略订单），每次最多可以撤销10个策略委托单
+撤销策略委托订单（不包含冰山委托、时间加权、移动止盈止损等高级策略订单），每次最多可以撤销10个策略委托单
 
 #### 限速： 20次/2s
 
@@ -1990,7 +2000,7 @@ sMsg | String | 事件执行失败时的msg
   
 ### 撤销高级策略委托订单
 
-撤销冰山委托、时间加权等高级策略委托订单，每次最多可以撤销10个策略委托单
+撤销冰山委托、时间加权、移动止盈止损委托订单，每次最多可以撤销10个策略委托单
 
 #### 限速： 20次/2s
 
@@ -2085,6 +2095,7 @@ ordType | String | 是 | 订单类型
 `conditional`：单向止盈止损  
 `oco`：双向止盈止损  
 `trigger`：计划委托  
+`move_order_stop`：移动止盈止损  
 `iceberg`：冰山委托  
 `twap`：时间加权委托  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
@@ -2128,6 +2139,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "szLimit":"",
                 "timeInterval":"",
                 "triggerTime":"1597026383085",
+                "callbackRatio":"",
+                "callbackSpread":"",
+                "activePx":"",
+                "moveTriggerPx":"",
                 "cTime":"1597026383000"
             },
             {
@@ -2160,6 +2175,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "szLimit":"",
                 "timeInterval":"",
                 "triggerTime":"1597026383085",
+                "callbackRatio":"",
+                "callbackSpread":"",
+                "activePx":"",
+                "moveTriggerPx":"",
                 "cTime":"1597026383000"
             }
         ]
@@ -2212,6 +2231,14 @@ pxLimit | String | 挂单限制价
 仅适用于`冰山委托`和`时间加权委托`  
 timeInterval | String | 下单间隔  
 仅适用于`时间加权委托`  
+callbackRatio | String | 回调幅度的比例  
+仅适用于`移动止盈止损`  
+callbackSpread | String | 回调幅度的价距  
+仅适用于`移动止盈止损`  
+activePx | String | 移动止盈止损激活价格  
+仅适用于`移动止盈止损`  
+moveTriggerPx | String | 移动止盈止损触发价格  
+仅适用于`移动止盈止损`  
 cTime | String | 订单创建时间， Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 获取历史策略委托单列表
@@ -2241,6 +2268,7 @@ ordType | String | 是 | 订单类型
 `conditional`：单向止盈止损  
 `oco`：双向止盈止损  
 `trigger`：计划委托  
+`move_order_stop`：移动止盈止损  
 `iceberg`：冰山委托  
 `twap`：时间加权委托  
 state | String | 可选 | 订单状态  
@@ -2296,6 +2324,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "pxLimit":"",
                 "szLimit":"",
                 "timeInterval":"",
+                "callbackRatio":"",
+                "callbackSpread":"",
+                "activePx":"",
+                "moveTriggerPx":"",
                 "triggerTime":"1597026383085",
                 "cTime":"1597026383000"
             },
@@ -2328,6 +2360,10 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "pxLimit":"",
                 "szLimit":"",
                 "timeInterval":"",
+                "callbackRatio":"",
+                "callbackSpread":"",
+                "activePx":"",
+                "moveTriggerPx":"",
                 "triggerTime":"1597026383085",
                 "cTime":"1597026383000"
             }
@@ -2384,6 +2420,14 @@ pxLimit | String | 挂单限制价
 仅适用于`冰山委托`和`时间加权委托`  
 timeInterval | String | 下单间隔  
 仅适用于`时间加权委托`  
+callbackRatio | String | 回调幅度的比例  
+仅适用于`移动止盈止损`  
+callbackSpread | String | 回调幅度的价距  
+仅适用于`移动止盈止损`  
+activePx | String | 移动止盈止损激活价格  
+仅适用于`移动止盈止损`  
+moveTriggerPx | String | 移动止盈止损触发价格  
+仅适用于`移动止盈止损`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ## 资金
@@ -3318,12 +3362,12 @@ wdId | String | 提币申请 ID
 
 #### HTTP请求
 
-`GET /api/v5/asset/piggy-balance`
+`GET /api/v5/asset/saving-balance`
 
 > 请求示例
     
     
-    GET /api/v5/asset/piggy-balance?ccy=BTC
+    GET /api/v5/asset/saving-balance?ccy=BTC
     
     
 
@@ -4624,8 +4668,10 @@ leverage | String | 否 | 开仓杠杆倍数
 instId | String | 产品ID  
 ccy | String | 保证金币种  
 maxBuy | String | `币币/币币杠杆`：最大可买的交易币数量  
+单币种保证金模式下的全仓杠杆订单，为指定的保证金币种数量  
 `交割`/`永续`/`期权`：最大可开多的合约张数  
 maxSell | String | `币币/币币杠杆`：最大可卖的计价币数量  
+单币种保证金模式下的全仓杠杆订单，为指定的保证金币种数量  
 `交割`/`永续`/`期权`：最大可开空的合约张数  
   
 ### 获取最大可用数量
@@ -5590,7 +5636,7 @@ riskUnit | String | 账户内所有持仓的riskUnit
 ts | String | 账户信息的更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 mmr | String | riskUnit维度的初始保证金  
 imr | String | riskUnit维度的占用保证金  
-PosData | Array | 持仓列表  
+posData | Array | 持仓列表  
 > instId | String | 产品ID，如 `BTC-USD-180216`  
 > instType | String | 产品类型  
 > pos | String | 持仓量  
@@ -11180,7 +11226,7 @@ data | Array | 订阅的数据
   
 ### 高级策略委托订单频道
 
-获取高级策略委托订单（冰山、时间加权），首次订阅推送，当下单、撤单等事件触发时，推送数据
+获取高级策略委托订单（冰山、时间加权、移动止盈止损），首次订阅推送，当下单、撤单等事件触发时，推送数据
 
 > 请求示例：单个
     
@@ -11316,7 +11362,11 @@ msg | String | 否 | 错误消息
                 "tpOrdPx":"",
                 "tpTriggerPx":"",
                 "triggerPx":"",
-                "triggerTime":""
+                "triggerTime":"",
+                "callbackRatio":"",
+                "callbackSpread":"",
+                "activePx":"",
+                "moveTriggerPx":""
             }
         ]
     }
@@ -11341,6 +11391,7 @@ data | Array | 订阅的数据
 > ordType | String | 订单类型  
 `iceberg`：冰山委托  
 `twap`：时间加权委托  
+`move_order_stop`：移动止盈止损  
 > side | String | 订单方向，`buy` `sell`  
 > posSide | String | 持仓方向  
 `long`：双向持仓多头  
@@ -11369,9 +11420,9 @@ data | Array | 订阅的数据
 > actualSide | String | 实际触发方向，`sl`：止损 `tp`：止盈  
 > triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-> pxVar | String | 价距  
+> pxVar | String | 价格比例  
 仅适用于`冰山委托`和`时间加权委托`  
-> pxSpread | String | 价格比例  
+> pxSpread | String | 价距  
 仅适用于`冰山委托`和`时间加权委托`  
 > szLimit | String | 单笔数量  
 仅适用于`冰山委托`和`时间加权委托`  
@@ -11381,6 +11432,14 @@ data | Array | 订阅的数据
 仅适用于`时间加权委托`  
 > count | String | 策略订单计数  
 仅适用于`冰山委托`和`时间加权委托`  
+> callbackRatio | String | 回调幅度的比例  
+仅适用于`移动止盈止损`  
+> callbackSpread | String | 回调幅度的价距  
+仅适用于`移动止盈止损`  
+> activePx | String | 移动止盈止损激活价格  
+仅适用于`移动止盈止损`  
+> moveTriggerPx | String | 移动止盈止损触发价格  
+仅适用于`移动止盈止损`  
 > pTime | String | 订单信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 爆仓风险预警推送频道
