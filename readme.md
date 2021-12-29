@@ -191,6 +191,13 @@ Java Python Go C++
       * 获取子账户获取充值记录 
       * 获取子账户返佣记录 
       * 爆仓预警推送 
+    * OAuth经纪商 
+      * 简介 
+      * 接入前的准备 
+      * 授权模式介绍 
+      * 令牌的使用 
+      * 权限 
+      * 错误码 
   * 错误码 
     * REST 
       * 公共 
@@ -13885,6 +13892,113 @@ details | Array | 子账户返佣记录列表
 此推送频道仅作为风险提示，不建议作为策略交易的风险判断  
 在行情剧烈不动的情况下，可能会出现此消息推送的同时仓位已经被强平的可能性。  
 
+## OAuth经纪商
+
+### 简介
+
+通过欧易OAuth 2.0用户仅需要在第三方应用内一键授权，即可进行交易。无需用户提供账户API Key或者登录密码。  
+欧易OAuth 2.0支持WEB和APP应用，基于OAuth 2.0协议（RFC 6749）和 OAuth 2.1草案协议中的一些新特征开发。
+
+### 接入前的准备
+
+#### 1.官网注册账户申请经纪商
+
+您需求先申请成为OAuth经纪商，审核通过后您可以获取到`client_id`，`client_secret`信息。  
+**接入步骤：**  
+1) 经纪商申请OKEX的账户  
+2) 经纪商进入OKEX经纪商官网申请OAuth经纪商，填写申请表，红色星为必填  
+3) OKEx收到申请表后2天内会进行审核  
+4) 申请表在OKEx的后台审核通过后，经纪商会收到邮件通知，邮件内容包括`client_id`和`client_secret`
+
+#### 2.OAuth返佣设置  
+
+当前接入的OAuth经济商的返佣需要设置标签，下单时需要将BrokerCode标识填写到Tag字段里，作为返佣订单统计的标识。
+
+### 授权模式介绍
+
+欧易OAuth 2.0提供的授权模式：授权码模式、PKCE模式。
+
+授权模式 | 描述 | 使用场景  
+---|---|---  
+授权码模式 | 用户授权，第三方应用提供`client_secret`获取授权码。通过授权码获取`访问令牌`和`刷新令牌`。 |
+应用有服务器，可存储应用密钥，与欧易OAuth服务器进行密钥交互。  
+PKCE模式 | 用户授权，第三方应用提供临时密钥`code_verifier`获取授权码。通过授权码获取`访问令牌`和`刷新令牌` |
+应用无服务器（或不愿意后端服务器介入授权过程），无法存储应用密钥，通过随机字符串与欧易OAuth服务器进行交互。  
+  
+#### 授权码模式
+
+同时支持App与Web应用的接入，呈现授权页面给用户，第三方应用在获取用户的授权码后，可以凭借此授权码换取访问令牌，调用OKEx
+OpenAPI，访问用户授权的数据资源。
+
+#### PKCE模式
+
+若第三方应用无服务端或者不希望服务端参与授权过程，无法存储第三方应用密钥（client_secret），则推荐此模式，通过应用客户端接入获取令牌，有效提升开发者应用的安全防护。
+
+### 令牌的使用
+
+#### 令牌的区别
+
+第三方应用通过授权码调用换取令牌接口后，会得到两种令牌。
+
+  * 访问令牌(access token): 用于第三方应用调用OKEx OpenAPI接口。
+  * 刷新令牌(refresh token): 当访问令牌失效后，用户获取新的访问令牌。
+
+#### 如何使用
+
+> 请求示例
+    
+    
+    curl -H "Content-Type:application/json" \
+    -H "Authorization:Bearer eyJhbGciOiJIUzUxMiIsImNpZCI6ImFhIn0.eyJqdGkiOiJleDExMDE2Mzg4NDM3ODg1MzIxMzMzNUVGMkVGRTNGOUM2Y1BJWiIsInVpZCI6IlEybEZxMnY2N0VybnVMZ0o1cFYzdUE9PSIsIm1pZCI6InFGbG5lVEc4dnlJeDNMSnNSa29qZ0E9PSIsImlhdCI6MTYzODg0Mzc4OCwiZXhwIjoxNjM4ODQ3Mzg4LCJzdWIiOiIxMC4yNTQuMjcuMTIwIiwiYW95IjoiOSIsInZlciI6IjEiLCJkZXYiOiIzMmNmOWM2My02NzM3LTRhYjUtYjFhYi04ODU4YWU2NTkxODUiLCJndHkiOiJhdXRob3JpemUifQ.bWXsgN7hTszxmdFB9xhr0Qh67HQWIp2zoxoqMCUzw2y1MBFPm38nNJJY9coljkivgAQPso81YUnHoLsFOLjxGg"  \
+    -H "TERMID:32cf9c63-6737-4ab5-b1ab-8858ae659185" \
+    https://www.okex.com/api/v5/asset/currencies
+    
+    
+
+第三方应用完成授权并获取到令牌后，就可以通过访问令牌调用OKEx OpenAPI接口了。 请求时需要在请求头中携带如下信息：
+
+请求头字段 | 是否必须 | 描述  
+---|---|---  
+Authorization | 是 | 将`访问令牌`以Bearer的方式填写到此字段  
+TERMID | 可选 | 用于校验请求合法性的设备号信息  
+如果请求是由第三方应用客户端应用发起的（如选择了PKCE模式），则客户端应将客户端设备号再请求时带上  
+如果请求是由第三方应用服务端发起的（如选择了授权码模式），则无需填写此字段  
+  
+#### 令牌的有效期
+
+  * 访问令牌(access token)：有效期为1个小时。
+  * 刷新令牌(refresh token)：有效期为3天。
+
+超过了访问令牌的有效期，接口会调用失败，如果刷新令牌还在有效期内，第三方应用需要调用刷新令牌接口，获取新的一对访问令牌和刷新令牌。新的访问令牌可以继续使用。需要注意的是，一旦刷新了令牌，无论原来的令牌有没有过期，都不再有效。  
+当您撤销令牌后，原令牌将不再有效。
+
+### 权限
+
+权限 | 描述  
+---|---  
+read_only | 拥有只读功能的权限（不包含子账户模块）  
+trade | 拥有交易功能的权限（不包含子账户模块）  
+  
+### 错误码
+
+错误提示 | HTTP 状态码 | 错误码  
+---|---|---  
+53000 | 400 | 无效的token  
+53001 | 400 | 无效的授权，用户已取消授权  
+53002 | 400 | token已过期  
+53003 | 400 | token已撤销  
+53004 | 400 | 用户已被冻结  
+53005 | 400 | 刷新令牌不正确  
+53006 | 401 | 无效的设备  
+53009 | 400 | 授权失败  
+53010 | 400 | 参数{0}错误  
+53011 | 400 | 必填参数{0}不能为空  
+53012 | 400 | 授权码已过期  
+53013 | 400 | 接口权限不足  
+53014 | 401 | 无效的IP  
+53015 | 400 | 参数{参数名}长度超过最大限制{长度}  
+53016 | 400 | 无效的redirect_uri  
+  
 # 错误码
 
 ## REST
