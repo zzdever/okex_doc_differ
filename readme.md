@@ -3853,7 +3853,7 @@ details | Array | 各币种资产详细信息
 适用于`跨币种保证金模式`和`组合保证金模式`  
 > twap | String | 当前负债币种触发系统自动换币的风险  
 0、1、2、3、4、5其中之一，数字越大代表您的负债币种触发自动换币概率越高  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > maxLoan | String | 币种最大可借  
 适用于`跨币种保证金模式`和`组合保证金模式`  
 > eqUsd | String | 币种权益美金价值  
@@ -5741,6 +5741,14 @@ ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `15
     
     
     POST /api/v5/users/subaccount/apikey
+    body
+    {
+        "pwd":"888888",
+        "subAcct":"panpanBroker2",
+        "label":"broker3",
+        "passphrase":"123456",
+        "perm":"trade"
+    }
     
 
 #### 请求参数
@@ -5801,7 +5809,7 @@ ts | String | 创建时间
 > 请求示例
     
     
-    GET /api/v5/users/subaccount/apikey
+    GET /api/v5/users/subaccount/apikey?subAcct=panpanBroker2
     
 
 #### 请求参数
@@ -5861,6 +5869,14 @@ ts | String | 创建时间
     
     
     POST /api/v5/users/subaccount/modify-apikey
+    body
+    {
+        "pwd":"1234567890",
+        "subAcct":"yongxu",
+        "perm":"read_only",
+        "label":"test7",
+        "apiKey":"49e1b84b-6dee-4894-80ee-ce9eb7ad614f"
+    }
     
 
 #### 请求参数
@@ -5922,6 +5938,12 @@ ts | String | 创建时间
     
     
     POST /api/v5/users/subaccount/delete-apikey
+    body
+    {
+        "pwd":"123456",
+        "subAcct":"test00001",
+        "apiKey":"b521e11c-b4ed-4c80-9624-346d69749a85"
+    }
     
 
 #### 请求参数
@@ -10058,7 +10080,7 @@ data | Array | 请求成功后返回的数据
 
 ### 账户频道
 
-获取账户信息，首次订阅按照订阅维度推送数据，此外，当下单、撤单等事件触发时，推送数据以及按照订阅维度定时推送数据
+获取账户信息，首次订阅按照订阅维度推送数据，此外，当下单、撤单、成交等事件触发时，推送数据以及按照订阅维度定时推送数据
 
 > 请求示例：单个
     
@@ -10272,59 +10294,59 @@ data | Array | 订阅的数据
 uTime | String | 获取账户信息的最新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 totalEq | String | 美金层面权益  
 isoEq | String | 美金层面逐仓仓位权益  
-适用于`单币种保证金模式`和`跨币种保证金模式`  
+适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
 adjEq | String | 美金层面有效保证金  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 ordFroz | String | 美金层面全仓挂单占用保证金  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 imr | String | 美金层面占用保证金  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 mmr | String | 美金层面维持保证金  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 mgnRatio | String | 美金层面保证金率  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 notionalUsd | String | 以美金价值为单位的持仓数量，即仓位美金价值  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 details | Array | 各币种资产详细信息  
 > ccy | String | 币种  
 > eq | String | 币种总权益  
 > cashBal | String | 币种余额  
 > uTime | String | 币种余额信息的更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > isoEq | String | 币种逐仓仓位权益  
-适用于`单币种保证金模式`和`跨币种保证金模式`  
+适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
 > availEq | String | 可用保证金  
-适用于`单币种保证金模式`和`跨币种保证金模式`  
+适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
 > disEq | String | 美金层面币种折算权益  
 > availBal | String | 可用余额  
 适用于`简单交易模式`  
 > frozenBal | String | 币种占用金额  
 > ordFrozen | String | 挂单冻结数量  
 > liab | String | 币种负债额  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > upl | String | 未实现盈亏  
-适用于`单币种保证金模式`和`跨币种保证金模式`  
+适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
 > uplLiab | String | 由于仓位未实现亏损导致的负债  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > crossLiab | String | 币种全仓负债额  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > isoLiab | String | 币种逐仓负债额  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > mgnRatio | String | 保证金率  
 适用于`单币种保证金模式`  
 > interest | String | 计息  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > twap | String | 当前负债币种触发系统自动换币的风险  
 0、1、2、3、4、5其中之一，数字越大代表您的负债币种触发自动换币概率越高  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > maxLoan | String | 币种最大可借  
-适用于`跨币种保证金模式`  
+适用于`跨币种保证金模式`和`组合保证金模式`  
 > eqUsd | String | 币种权益美金价值  
 > notionalLever | String | 币种杠杆倍数  
 适用于`单币种保证金模式`  
 > coinUsdPrice | String | 币种美元指数  
 > stgyEq | String | 策略权益  
 > isoUpl | String | 逐仓未实现盈亏  
-适用于`单币种保证金模式`和`跨币种保证金模式`  
+适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
   
 如果同时成交多个订单，那么将对账户频道的推送尽量进行聚合。
 
@@ -13278,7 +13300,24 @@ data | Array | 订阅的数据
 
 ## 独立经纪商
 
-`独立经纪商`功能模块下的API接口需要身份验证。
+`独立经纪商`(Non-disclosed Broker)
+是一种非披露经纪商。如果您有一定的研发运营能力，想要搭建独有的交易平台和自主管理您的用户，独立经纪商服务是最好的选择。您则负责前端开发和用户运营，而欧易为您提供后端技术和市场的流动性，赋能您的交易增值服务。  
+
+  * 经纪商在欧易OKEx申请开户 [申请页面](/broker/)。  
+
+  * 独立经纪商模块是为经纪商提供管理Broker子账户的功能，包括创建子账户、删除子账户、子账户手续费费率加点、返佣记录查询等。经纪商的账户可以为子账户[创建APIkey](/docs-v5/zh/#rest-api-subaccount-create-an-apikey-for-a-sub-account)，使用子账户的APIkey进行[下单](/docs-v5/zh/#rest-api-trade-place-order)、 [查看账户余额接口](/docs-v5/zh/#rest-api-account-get-balance)、[查看持仓信息](/docs-v5/zh/#rest-api-account-get-positions)等操作
+
+`独立经纪商`的优势如下  
+
+  * 丰厚的交易佣金
+
+    * 欧易OKEx为经纪商提供最高百分之60的交易佣金返利和灵活的费率加点方案，支持固定加点和百分比加点，实现经纪商最大收益。
+  * 全产品线共享流动性
+
+    * 成为欧易OKEx经纪商可以赋予您的产品最佳的流动性，将与OKEx共享现货市场和衍生品市场的深度和流动性。
+  * 24/7 专业的客服支持
+
+    * 欧易OKEx团队将为经纪商提供全天候的专业客服支持。
 
 ### 获取独立经纪商账户信息
 
@@ -13558,6 +13597,14 @@ acctLv | String | 账户模式
     
     
     POST /api/v5/broker/nd/set-subaccount-fee-rate
+    body
+    {
+        "subAcct":"broker4",
+        "chgType":"absolute",
+        "chgTaker":"90",
+        "chgMaker":"90",
+        "effDate":"20211219"
+    }
     
 
 #### 请求参数
@@ -13754,7 +13801,7 @@ ctAddr | String | 合约地址后6位
     
     
     查询最近的充值记录
-    GET /api/v5/asset/broker/nd/subaccount-deposit-history
+    GET /api/v5/asset/broker/nd/subaccount-deposit-history?subAcct=brokerTest1&state=1
     
 
 #### 请求参数
@@ -13930,9 +13977,13 @@ PKCE模式 | 用户授权，第三方应用提供临时密钥`code_verifier`获�
 同时支持App与Web应用的接入，呈现授权页面给用户，第三方应用在获取用户的授权码后，可以凭借此授权码换取访问令牌，调用OKEx
 OpenAPI，访问用户授权的数据资源。
 
+![](https://static.okex.com/cdn/assets/academy/oauth-pic/code-zh.png)
+
 #### PKCE模式
 
 若第三方应用无服务端或者不希望服务端参与授权过程，无法存储第三方应用密钥（client_secret），则推荐此模式，通过应用客户端接入获取令牌，有效提升开发者应用的安全防护。
+
+![](https://static.okex.com/cdn/assets/academy/oauth-pic/pkce-zh.png)
 
 ### 令牌的使用
 
