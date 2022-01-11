@@ -3,10 +3,11 @@
 [ ![](images/logo-fe50f81e.png) ](/)
 
   * [API接口](javascript:void\(0\);)
+  * [Broker接入](javascript:void\(0\);)
   * [最佳实践](javascript:void\(0\);)
   * [更新日志](javascript:void\(0\);)
 
-API接口 最佳实践 更新日志
+API接口 Broker接入 最佳实践 更新日志
 
 [English](javascript:void\(0\);)
 
@@ -178,26 +179,6 @@ Java Python Go C++
       * 指数K线频道 
       * 指数行情频道 
       * Status 频道 
-  * Broker API 
-    * 独立经纪商 
-      * 获取独立经纪商账户信息 
-      * 创建子账户 
-      * 删除子账户 
-      * 获取子账户列表 
-      * 设置子账户的账户等级 
-      * 设置子账户的交易手续费费率 
-      * 创建子账户充值地址 
-      * 获取充值地址 
-      * 获取子账户获取充值记录 
-      * 获取子账户返佣记录 
-      * 爆仓预警推送 
-    * OAuth经纪商 
-      * 简介 
-      * 接入前的准备 
-      * 授权模式介绍 
-      * 令牌的使用 
-      * 权限 
-      * 错误码 
   * 错误码 
     * REST 
       * 公共 
@@ -1021,6 +1002,7 @@ clOrdId | String | 可选 | 用户自定义ID
                 "tradeId":"0",
                 "fillSz":"0",
                 "fillTime":"0",
+                "source": "",
                 "state":"live",
                 "avgPx":"0",
                 "lever":"20",
@@ -1100,6 +1082,8 @@ slOrdPx | String | 止损委托价
 feeCcy | String | 交易手续费币种  
 fee | String | 订单交易手续费，平台向用户收取的交易手续费，手续费扣除为`负数`。如： `-0.01`  
 rebateCcy | String | 返佣金币种  
+source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
 rebate | String |
 返佣金额，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
 category | String | 订单种类  
@@ -1191,6 +1175,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "slOrdPx": "",
                 "slTriggerPx": "",
                 "slTriggerPxType": "last",
+                "source": "",
                 "state": "live",
                 "sz": "1",
                 "tag": "",
@@ -1256,6 +1241,8 @@ slOrdPx | String | 止损委托价
 feeCcy | String | 交易手续费币种  
 fee | String | 订单交易手续费，平台向用户收取的交易手续费，手续费扣除为`负数`。如： `-0.01`  
 rebateCcy | String | 返佣金币种  
+source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
 rebate | String |
 返佣金额，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
 category | String | 订单种类  
@@ -1340,6 +1327,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "tradeId":"0",
                 "fillSz":"0",
                 "fillTime":"0",
+                "source": "",
                 "state":"filled",
                 "avgPx":"0",
                 "lever":"20",
@@ -1412,6 +1400,8 @@ slOrdPx | String | 止损委托价
 feeCcy | String | 交易手续费币种  
 fee | String | 订单交易手续费，平台向用户收取的交易手续费，手续费扣除为`负数`。如： `-0.01`  
 rebateCcy | String | 返佣金币种  
+source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
 rebate | String |
 返佣金额，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
 pnl | String | 收益  
@@ -1503,6 +1493,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "tradeId":"0",
                 "fillSz":"0",
                 "fillTime":"0",
+                "source": "",
                 "state":"filled",
                 "avgPx":"0",
                 "lever":"20",
@@ -1578,6 +1569,8 @@ rebateCcy | String | 返佣金币种
 rebate | String |
 返佣金额，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
 pnl | String | 收益  
+source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
 category | String | 订单种类  
 `normal`：普通委托  
 `twap`：TWAP自动换币  
@@ -2687,9 +2680,9 @@ details | Array | 各个账户的资产估值
 ccy | String | 是 | 币种，如 `USDT`  
 amt | String | 是 | 划转数量  
 from | String | 是 | 转出账户  
-`1`：币币账户 `3`：交割合约 `5`：币币杠杆账户 `6`：资金账户 `9`：永续合约账户 `12`：期权合约 `18`：统一账户  
+`6`：资金账户 `18`：统一账户  
 to | String | 是 | 转入账户  
-`1`：币币账户 `3`：交割合约 `5`：币币杠杆账户 `6`：资金账户 `9`：永续合约账户 `12`：期权合约 `18`：统一账户  
+`6`：资金账户 `18`：统一账户  
 subAcct | String | 可选 | 子账户名称，type 为`1`或`2`：subAcct 为必填项  
 instId | String | 可选 | 币币杠杆转出币对（如 `BTC-USDT`）或者转出合约的 underlying（如 `BTC-USD`）  
 toInstId | String | 可选 | 币币杠杆转入币对（如 `BTC-USDT`）或者转入合约的 underlying（如 `BTC-USD`）  
@@ -5221,8 +5214,16 @@ greeksType | String | 当前希腊字母展示方式
 
 `POST /api/v5/account/set-isolated-mode`
 
-> 请求示例 `wiki POST /api/v5/account/set-isolated-mode body {
-> "isoMode":"automatic", "type":"MARGIN" } `
+> 请求示例
+    
+    
+    POST /api/v5/account/set-isolated-mode
+    body
+    {
+        "isoMode":"automatic",
+        "type":"MARGIN"
+    }
+    
 
 #### 请求参数
 
@@ -5586,9 +5587,27 @@ records | Array | 各币种详细信息
 
 `POST /api/v5/account/simulated_margin`
 
-> 请求示例 `wiki POST /api/v5/account/simulated_margin body { "instType":"SWAP",
-> "inclRealPos":"true", "simPos":[ { "pos":"10", "instId":"BTC-USDT-SWAP" }, {
-> "pos":"10", "instId":"LTC-USDT-SWAP" } ] } `
+> 请求示例
+    
+    
+    POST /api/v5/account/simulated_margin
+    body
+    {
+       "instType":"SWAP",
+       "inclRealPos":"true",
+       "simPos":[
+         {
+              "pos":"10",
+              "instId":"BTC-USDT-SWAP"
+         },
+         {
+              "pos":"10",
+              "instId":"LTC-USDT-SWAP"
+         }
+       ]
+    }
+    
+    
 
 #### 请求参数
 
@@ -10936,6 +10955,7 @@ msg | String | 否 | 错误消息
             "fillFee": "0.0001",
             "fillFeeCcy": "BTC",
             "execType": "T",
+            "source": "",
             "state": "canceled",
             "avgPx": "0",
             "lever": "20",
@@ -11033,6 +11053,8 @@ data | Array | 订阅的数据
 > rebateCcy | String | 返佣金币种 ，如果没有返佣金，该字段为“”  
 > rebate | String | 返佣金额，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”  
 > pnl | String | 收益  
+> source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
 > category | String | 订单种类分类  
 `normal`：普通委托订单种类  
 `twap`：TWAP订单种类  
@@ -12258,6 +12280,7 @@ args | Array | 是 | 请求订阅的频道列表
 > instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
+`SWAP`：永续  
 > uly | String | 可选 | 标的指数  
 `uly`和`instId`必须指定一个  
 > instId | String | 可选 | 产品ID  
@@ -12295,6 +12318,7 @@ arg | Object | 否 | 订阅的频道
 > instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
+`SWAP`：永续  
 > uly | String | 否 | 标的指数  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
@@ -12327,6 +12351,7 @@ arg | Object | 订阅成功的频道
 > instType | String | 产品类型  
 `OPTION`：期权  
 `FUTURES`：交割  
+`SWAP`：永续  
 > uly | String | 标的指数  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
@@ -13296,760 +13321,6 @@ data | Array | 订阅的数据
 > 2021-01-28T16:30:00.000Z`  
 > ts | String | 推送时间，Unix时间戳的毫秒数格式，如：`1617788463867`  
   
-# Broker API
-
-## 独立经纪商
-
-`独立经纪商`(Non-disclosed Broker)
-是一种非披露经纪商。如果您有一定的研发运营能力，想要搭建独有的交易平台和自主管理您的用户，独立经纪商服务是最好的选择。您则负责前端开发和用户运营，而欧易为您提供后端技术和市场的流动性，赋能您的交易增值服务。  
-
-  * 经纪商在欧易OKEx申请开户 [申请页面](/broker/)。  
-
-  * 独立经纪商模块是为经纪商提供管理Broker子账户的功能，包括创建子账户、删除子账户、子账户手续费费率加点、返佣记录查询等。经纪商的账户可以为子账户[创建APIkey](/docs-v5/zh/#rest-api-subaccount-create-an-apikey-for-a-sub-account)，使用子账户的APIkey进行[下单](/docs-v5/zh/#rest-api-trade-place-order)、 [查看账户余额接口](/docs-v5/zh/#rest-api-account-get-balance)、[查看持仓信息](/docs-v5/zh/#rest-api-account-get-positions)等操作
-
-`独立经纪商`的优势如下  
-
-  * 丰厚的交易佣金
-
-    * 欧易OKEx为经纪商提供最高百分之60的交易佣金返利和灵活的费率加点方案，支持固定加点和百分比加点，实现经纪商最大收益。
-  * 全产品线共享流动性
-
-    * 成为欧易OKEx经纪商可以赋予您的产品最佳的流动性，将与OKEx共享现货市场和衍生品市场的深度和流动性。
-  * 24/7 专业的客服支持
-
-    * 欧易OKEx团队将为经纪商提供全天候的专业客服支持。
-
-### 获取独立经纪商账户信息
-
-查看独立经纪商母账户的账户信息
-
-#### 限速：1次/s
-
-#### HTTP请求
-
-`GET /api/v5/broker/nd/info`
-
-> 请求示例
-    
-    
-    GET /api/v5/broker/nd/info
-    
-
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "level": "lv1",
-                "maxSubAcctQty": "1000",
-                "subAcctQty": "6",
-                "ts": "1637301641775"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-subAcctQty | String | 已创建子账户的数量  
-maxSubAcctQty | String | 最多可以创建子账户数量  
-level | String | 交易等级，例如 `lv1`  
-ts | String | 数据返回时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
-  
-### 创建子账户
-
-独立经纪商母账户创建子账户
-
-#### 限速：1次/s
-
-#### HTTP请求
-
-`POST /api/v5/broker/nd/create-subaccount`
-
-> 请求示例
-    
-    
-    POST /api/v5/broker/nd/create-subaccount
-    body
-    {
-        "pwd":"1234567890",
-        "subAcct":"brokerTest5",
-        "acctLv":"3",
-        "label":"5566"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-pwd | String | 是 | 母账户的资金密码  
-subAcct | String | 是 | 子账户名称  
-label | String | 否 | 子账户的备注  
-acctLv | String | 是 | 账户模式  
-`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "acctLv": "3",
-                "label": "5566",
-                "subAcct": "brokerTest5",
-                "ts": "1637141950450"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-subAcct | String | 子账户名称  
-label | String | APIKey的备注  
-acctLv | String | 账户模式  
-ts | String | 创建时间  
-  
-### 删除子账户
-
-独立经纪商母账户删除子账户，该子账户被删除前，需将子账户的资金全部划转出去。
-
-#### 限速：1次/s
-
-#### HTTP请求
-
-`POST /api/v5/broker/nd/delete-subaccount`
-
-> 请求示例
-    
-    
-    POST /api/v5/broker/nd/delete-subaccount
-    body
-    {
-        "pwd":"1234567890",
-        "subAcct":"yonxws"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-pwd | String | 是 | 母账户的资金密码  
-subAcct | String | 是 | 子账户名称  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "msg": "",
-        "data": [{
-            "subAcct": "test-1"
-        }]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-subAcct | String | 子账户名称  
-  
-### 获取子账户列表
-
-独立经纪商母账户查询子账户列表
-
-#### 限速：1次/s
-
-#### HTTP请求
-
-`GET /api/v5/broker/nd/subaccount-info`
-
-> 请求示例
-    
-    
-    GET /api/v5/broker/nd/subaccount-info
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-subAcct | String | 否 | 子账户名称  
-page | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳的毫秒数格式  
-limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "details": [
-                    {
-                        "acctLv": "1",
-                        "label": "11122",
-                        "subAcct": "yonxws",
-                        "ts": "1637052976000"
-                    },
-                    {
-                        "acctLv": "1",
-                        "label": "11122",
-                        "subAcct": "brokerTest1",
-                        "ts": "1637056638000"
-                    }
-                ],
-                "page": "1",
-                "totalPage": "1"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-totalPage | String | 总的页数  
-page | String | 当前页数  
-details | Array | 子账户列表  
-> subAcct | String | 子账户名称  
-> label | String | 子账户的备注  
-> acctLv | String | 账户模式  
-`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
-> ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
-  
-### 设置子账户的账户等级
-
-独立经纪商母账户调整子账户的账户等级
-
-#### 限速：5次/2s
-
-#### HTTP请求
-
-`POST /api/v5/broker/nd/set-subaccount-level`
-
-> 请求示例
-    
-    
-    POST /api/v5/broker/nd/set-subaccount-level
-    body
-    {
-        "acctLv":"3",
-        "subAcct":"brokerTest3"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-subAcct | String | 是 | 子账户名称  
-acctLv | String | 是 | 账户模式  
-`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "acctLv": "3"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-acctLv | String | 账户模式  
-`1`：简单交易模式，`2`：单币种保证金模式 ，`3`：跨币种保证金模式 ，`4`：组合保证金模式  
-  
-### 设置子账户的交易手续费费率
-
-子账户交易费率是当前层级的基础费率加上绝对或百分比的变化。设置子账户手续费费率后，生效日期为T+1的0点。
-例如今天调整子账户的手续费率，明天的0点生效。生效时间可能存在15分钟左右的延迟。
-
-#### 限速：1次/s
-
-#### HTTP请求
-
-`POST /api/v5/broker/nd/set-subaccount-fee-rate`
-
-> 请求示例
-    
-    
-    POST /api/v5/broker/nd/set-subaccount-fee-rate
-    body
-    {
-        "subAcct":"broker4",
-        "chgType":"absolute",
-        "chgTaker":"90",
-        "chgMaker":"90",
-        "effDate":"20211219"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-subAcct | String | 否 | 子账户名称  
-instType | String | 否 | 产品类型  
-`SPOT`：币币  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`OPTION`：期权  
-chgType | String | 是 | 手续费加点类型  
-`absolute`:固定加点  
-`percentage`:百分比加点  
-chgTaker | String | 可选 | Taker手续费加点  
-`固定加点`：单位`bp`(1bp = 0.01%)，范围【0.1bp，1,000bp】，即【0.001%，10%】，精度为`0.1bp`  
-`百分比加点`：单位`%`范围【1%，1,0000%】，精度为`1%`  
-chgMaker | String | 可选 | Maker手续费加点  
-`固定加点`：单位`bp`(1bp = 0.01%)，范围【0.1bp，1,000bp】，即【0.001%，10%】，精度为`0.1bp`  
-`百分比加点`：单位`%`范围【1%，1,0000%】，精度为`1%`  
-chgTaker和chgMaker必须填写一个  
-effDate | String | 否 | 手续费加点的生效日期  
-格式：YYYYMMdd ，例如：`20210623`  
-如果不填写，就是第二天0点生效（T+1生效）  
-如果填写，就在指定日期0点生效  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "subAcct": "brokerTest4",
-                "effTs": "20211119"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-subAcct | String | 子账户名称  
-effDate | String | 手续费加点的生效日期  
-格式：YYYYMMdd ，例如：`20210623`  
-  
-### 创建子账户充值地址
-
-独立经纪商母账户创建子账户的充值地址，每个币种最多20个充值地址
-
-#### 限速：5次/2s
-
-#### HTTP请求
-
-`POST /api/v5/asset/broker/nd/subaccount-deposit-address`
-
-> 请求示例
-    
-    
-    POST /api/v5/asset/broker/nd/subaccount-deposit-address
-    body
-    {
-        "ccy":"BTC",
-        "subAcct":"brokerTest5"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-subAcct | String | 是 | 子账户名称  
-ccy | String | 是 | 币种名称，仅支持大写，如 BTC  
-chain | String | 否 | 币种链信息  
-有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
-addrType | String | 否 | 充值地址类型  
-`1`:普通地址  
-`2`:隔离验证地址  
-默认为普通地址，仅适用于btc和ltc  
-to | String | 否 | 充值到账账户  
-`6`：资金账户 `18`：统一账户  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "chain": "EOS-EOS",
-                "ccy": "EOS",
-                "memo": "10810086",
-                "addr": "okbtothemoon",
-                "ts": "1637141950450"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-ccy | String | 充值币种  
-addr | String | 充值地址  
-chain | String | 币种链信息  
-pmtId | String | 部分币种提币需要此字段，如果不需要此字段的币种吗，返回”“ ，如 `xmr`  
-tag | String | 部分币种提币需要此字段，如果不需要此字段的币种吗，返回”“ ， 如`XRP`  
-memo | String | 部分币种充值需要标签，若不需要则不返回此字段，返回”“，如`eos`  
-ts | String | 创建时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
-  
-### 获取充值地址
-
-根据币种，充值状态，时间范围获取充值记录，按照时间倒序排列，默认返回 100 条数据。
-
-#### 限速：6次/s
-
-#### HTTP请求
-
-`GET /api/v5/asset/broker/nd/subaccount-deposit-address`
-
-> 请求示例
-    
-    
-    GET /api/v5/asset/broker/nd/subaccount-deposit-address?ccy=BTC
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-subAcct | String | 是 | 子账户名称  
-ccy | String | 是 | 币种，仅支持大写：如 `BTC`  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "chain": "XMR-Monero",
-                "ctAddr": "",
-                "ccy": "XMR",
-                "to": "6",
-                "addr": "884ifkSCavs9X759FZhfmrNmEbimqnXdofsd5kqXwuxfJMKZPKCfSAubrnwanuUf2JJi6hwskfcYzAUGodkJj3RsHAVFoDm",
-                "selected": false
-            },
-            {
-                "chain": "XMR-Monero",
-                "ctAddr": "",
-                "ccy": "XMR",
-                "to": "6",
-                "addr": "88aCNpJgfX1DGZ2HPd5i9DaAmyuRiQbnFGVbc8AFXgAhi4i7eX6sRm75m1UuJNZxwfMh4xBwV5fv6h4A5v1qQET5LHnXqgn",
-                "selected": false
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 描述  
----|---|---  
-addr | String | 充值地址  
-tag | String | 部分币种充值需要标签，若不需要则不返回此字段  
-memo | String | 部分币种充值需要标签，若不需要则不返回此字段  
-pmtId | String | 部分币种充值需要此字段（payment_id），若不需要则不返回此字段  
-ccy | String | 币种，如`BTC`  
-chain | String | 币种链信息  
-有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
-to | String | 转入账户  
-`6`：资金账户 `18`：统一账户  
-selected | Boolean | 该地址是否为页面选中的地址  
-ctAddr | String | 合约地址后6位  
-  
-### 获取子账户获取充值记录
-
-根据币种，充值状态，时间范围获取充值记录，按照时间倒序排列，默认返回 100 条数据。
-
-#### 限速： 5 次/2s
-
-#### HTTP 请求
-
-`GET /api/v5/asset/broker/nd/subaccount-deposit-history`
-
-> 请求示例
-    
-    
-    查询最近的充值记录
-    GET /api/v5/asset/broker/nd/subaccount-deposit-history?subAcct=brokerTest1&state=1
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-subAcct | String | 是 | 子账户名称  
-ccy | String | 否 | 币种名称，如 `BTC`  
-txId | String | 否 | 区块转账哈希记录  
-state | String | 否 | 充值状态  
-`0`：等待确认 `1`：确认到账 `2`：充值成功  
-after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-limit | string | 否 | 返回的结果集数量，默认为 100，最大为 100  
-  
-> 返回结果
-    
-    
-    {
-      "code": "0",
-      "msg": "",
-      "data": [
-        {
-          "amt": "0.01044408",
-          "txId": "1915737_3_0_0_asset",
-          "ccy": "BTC",
-          "chain":"BTC-Bitcoin",
-          "from": "13801825426",
-          "to": "",
-          "ts": "1597026383085",
-          "state": "2",
-          "depId": "4703879"
-        }
-      ]
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 描述  
----|---|---  
-ccy | String | 币种名称，如 `BTC`  
-chain | String | 币种链信息  
-有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
-amt | String | 充值数量  
-from | String | 充值地址，只显示内部账户转账地址，不显示区块链充值地址  
-to | String | 到账地址  
-txId | String | 区块转账哈希记录  
-ts | String | 充值到账时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
-state | String | 充值状态  
-`0`：等待确认 `1`：确认到账 `2`：充值成功 `8`：因该币种暂停充值而未到账，恢复充值后自动到账  
-depId | String | 充值记录 ID  
-等待确认是没有达到充币确认数。 确认到账是够充币确认数，且币已经到账户中，但是不可提。 充值成功是当前账户完成到提币确认，可以提出。
-
-### 获取子账户返佣记录
-
-独立经纪商账户查看子账户的返佣记录
-
-#### 限速：1次/10s
-
-#### HTTP请求
-
-`GET /api/v5/broker/nd/rebate-daily`
-
-> 请求示例
-    
-    
-    GET /api/v5/broker/nd/rebate-daily
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-subAcct | String | 否 | 子账户名称  
-begin | String | 否 | 获取历史记录的时间区间  
-格式: YYYYMMdd，例如：`20210623`  
-end | String | 否 | 获取历史记录的时间区间  
-格式: YYYYMMdd，例如：`20210627`  
-page | String | 否 | 页码  
-例如：`1`第一页  
-limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "details": [
-                    {
-                        "income": "1.9050116363636365",
-                        "rebateDate": "20211119",
-                        "subAcct": "brokerTest2"
-                    },
-                    {
-                        "income": "3.5728228419999565",
-                        "rebateDate": "20211119",
-                        "subAcct": "brokerTest1"
-                    },
-                    {
-                        "income": "10.6047378063846898",
-                        "rebateDate": "20211119",
-                        "subAcct": "brokerTest2"
-                    }
-                ],
-                "page": "",
-                "totIncome": "16.0630733992516302",
-                "totPage": "1",
-                "ts": "1637303853605"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-ts | String | 接口数据时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
-totIncome | String | 所有子账户总返佣金额  
-totPage | String | 总的页数  
-page | String | 当前页数  
-details | Array | 子账户返佣记录列表  
-> subAcct | String | 子账户名称  
-> income | String | 返佣金额 ，单位usdt  
-> rebateDate | String | 子账户返佣金额的更新时间  
-  
-### 爆仓预警推送
-
-推送：[爆仓预警通知](/docs-v5/zh/#websocket-api-private-channel-position-risk-warning)  
-频道名：`liquidation-warning`  
-此推送频道仅作为风险提示，不建议作为策略交易的风险判断  
-在行情剧烈不动的情况下，可能会出现此消息推送的同时仓位已经被强平的可能性。  
-
-## OAuth经纪商
-
-### 简介
-
-通过欧易OAuth 2.0用户仅需要在第三方应用内一键授权，即可进行交易。无需用户提供账户API Key或者登录密码。  
-欧易OAuth 2.0支持WEB和APP应用，基于OAuth 2.0协议（RFC 6749）和 OAuth 2.1草案协议中的一些新特征开发。
-
-### 接入前的准备
-
-#### 1.官网注册账户申请经纪商
-
-您需求先申请成为OAuth经纪商，审核通过后您可以获取到`client_id`，`client_secret`信息。  
-**接入步骤：**  
-1) 经纪商申请OKEX的账户  
-2) 经纪商进入OKEX经纪商官网申请OAuth经纪商，填写申请表，红色星为必填  
-3) OKEx收到申请表后2天内会进行审核  
-4) 申请表在OKEx的后台审核通过后，经纪商会收到邮件通知，邮件内容包括`client_id`和`client_secret`
-
-#### 2.OAuth返佣设置  
-
-当前接入的OAuth经济商的返佣需要设置标签，下单时需要将BrokerCode标识填写到Tag字段里，作为返佣订单统计的标识。
-
-### 授权模式介绍
-
-欧易OAuth 2.0提供的授权模式：授权码模式、PKCE模式。
-
-授权模式 | 描述 | 使用场景  
----|---|---  
-授权码模式 | 用户授权，第三方应用提供`client_secret`获取授权码。通过授权码获取`访问令牌`和`刷新令牌`。 |
-应用有服务器，可存储应用密钥，与欧易OAuth服务器进行密钥交互。  
-PKCE模式 | 用户授权，第三方应用提供临时密钥`code_verifier`获取授权码。通过授权码获取`访问令牌`和`刷新令牌` |
-应用无服务器（或不愿意后端服务器介入授权过程），无法存储应用密钥，通过随机字符串与欧易OAuth服务器进行交互。  
-  
-#### 授权码模式
-
-同时支持App与Web应用的接入，呈现授权页面给用户，第三方应用在获取用户的授权码后，可以凭借此授权码换取访问令牌，调用OKEx
-OpenAPI，访问用户授权的数据资源。
-
-![](https://static.okex.com/cdn/assets/academy/oauth-pic/code-zh.png)
-
-#### PKCE模式
-
-若第三方应用无服务端或者不希望服务端参与授权过程，无法存储第三方应用密钥（client_secret），则推荐此模式，通过应用客户端接入获取令牌，有效提升开发者应用的安全防护。
-
-![](https://static.okex.com/cdn/assets/academy/oauth-pic/pkce-zh.png)
-
-### 令牌的使用
-
-#### 令牌的区别
-
-第三方应用通过授权码调用换取令牌接口后，会得到两种令牌。
-
-  * 访问令牌(access token): 用于第三方应用调用OKEx OpenAPI接口。
-  * 刷新令牌(refresh token): 当访问令牌失效后，用户获取新的访问令牌。
-
-#### 如何使用
-
-> 请求示例
-    
-    
-    curl -H "Content-Type:application/json" \
-    -H "Authorization:Bearer eyJhbGciOiJIUzUxMiIsImNpZCI6ImFhIn0.eyJqdGkiOiJleDExMDE2Mzg4NDM3ODg1MzIxMzMzNUVGMkVGRTNGOUM2Y1BJWiIsInVpZCI6IlEybEZxMnY2N0VybnVMZ0o1cFYzdUE9PSIsIm1pZCI6InFGbG5lVEc4dnlJeDNMSnNSa29qZ0E9PSIsImlhdCI6MTYzODg0Mzc4OCwiZXhwIjoxNjM4ODQ3Mzg4LCJzdWIiOiIxMC4yNTQuMjcuMTIwIiwiYW95IjoiOSIsInZlciI6IjEiLCJkZXYiOiIzMmNmOWM2My02NzM3LTRhYjUtYjFhYi04ODU4YWU2NTkxODUiLCJndHkiOiJhdXRob3JpemUifQ.bWXsgN7hTszxmdFB9xhr0Qh67HQWIp2zoxoqMCUzw2y1MBFPm38nNJJY9coljkivgAQPso81YUnHoLsFOLjxGg"  \
-    -H "TERMID:32cf9c63-6737-4ab5-b1ab-8858ae659185" \
-    https://www.okex.com/api/v5/asset/currencies
-    
-    
-
-第三方应用完成授权并获取到令牌后，就可以通过访问令牌调用OKEx OpenAPI接口了。 请求时需要在请求头中携带如下信息：
-
-请求头字段 | 是否必须 | 描述  
----|---|---  
-Authorization | 是 | 将`访问令牌`以Bearer的方式填写到此字段  
-TERMID | 可选 | 用于校验请求合法性的设备号信息  
-如果请求是由第三方应用客户端应用发起的（如选择了PKCE模式），则客户端应将客户端设备号再请求时带上  
-如果请求是由第三方应用服务端发起的（如选择了授权码模式），则无需填写此字段  
-  
-#### 令牌的有效期
-
-  * 访问令牌(access token)：有效期为1个小时。
-  * 刷新令牌(refresh token)：有效期为3天。
-
-超过了访问令牌的有效期，接口会调用失败，如果刷新令牌还在有效期内，第三方应用需要调用刷新令牌接口，获取新的一对访问令牌和刷新令牌。新的访问令牌可以继续使用。需要注意的是，一旦刷新了令牌，无论原来的令牌有没有过期，都不再有效。  
-当您撤销令牌后，原令牌将不再有效。
-
-### 权限
-
-权限 | 描述  
----|---  
-read_only | 拥有只读功能的权限（不包含子账户模块）  
-trade | 拥有交易功能的权限（不包含子账户模块）  
-  
-### 错误码
-
-错误提示 | HTTP 状态码 | 错误码  
----|---|---  
-53000 | 400 | 无效的token  
-53001 | 400 | 无效的授权，用户已取消授权  
-53002 | 400 | token已过期  
-53003 | 400 | token已撤销  
-53004 | 400 | 用户已被冻结  
-53005 | 400 | 刷新令牌不正确  
-53006 | 401 | 无效的设备  
-53009 | 400 | 授权失败  
-53010 | 400 | 参数{0}错误  
-53011 | 400 | 必填参数{0}不能为空  
-53012 | 400 | 授权码已过期  
-53013 | 400 | 接口权限不足  
-53014 | 401 | 无效的IP  
-53015 | 400 | 参数{参数名}长度超过最大限制{长度}  
-53016 | 400 | 无效的redirect_uri  
-  
 # 错误码
 
 ## REST
@@ -14097,6 +13368,9 @@ body不能为空 | 400 | 50000
 账户异常无法下单 | 200 | 50028  
 你的账户已经触发风控体系，禁止该标的{0}交易，请联系客服进行处理 | 200 | 50029  
 用户没有使用此API接口的权限 | 200 | 50030  
+设置币种数量不能大于100个 | 200 | 50031  
+您的账户已设置禁止该币种交易，请确认后重试 | 200 | 50032  
+您的账户已设置禁止该业务线交易，请确认后重试 | 200 | 50033  
   
 #### API 类
 
