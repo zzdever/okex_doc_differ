@@ -87,6 +87,7 @@ Java Python Go C++
       * 获取尊享借币还币历史 
       * 获取借币利率与限额 
       * 组合保证金的虚拟持仓保证金计算 
+      * 查看账户Greeks 
     * 子账户 
       * 查看子账户列表 
       * 创建子账户的APIKey 
@@ -163,6 +164,7 @@ Java Python Go C++
       * 策略委托订单频道 
       * 高级策略委托订单频道 
       * 爆仓风险预警推送频道 
+      * 账户greeks频道 
     * 公共频道 
       * 产品频道 
       * 行情频道 
@@ -921,8 +923,10 @@ posSide | String | 可选 | 持仓方向
 单向持仓模式下：可不填写此参数，默认值net，如果填写，仅可以填写net  
 双向持仓模式下： 必须填写此参数，且仅可以填写 `long`：平多 ，`short`：平空  
 mgnMode | String | 是 | 保证金模式  
-全仓：`cross` ； 逐仓： `isolated`  
+`cross`：全仓 ； `isolated`：逐仓  
 ccy | String | 可选 | 保证金币种，单币种保证金模式的全仓币币杠杆平仓必填  
+autoCxl | Boolean | 否 | 当市价全平时，平仓单是否需要自动撤销,默认为false.  
+`false`：不自动撤单 `true`：自动撤单  
   
 > 返回结果
     
@@ -945,7 +949,7 @@ ccy | String | 可选 | 保证金币种，单币种保证金模式的全仓币�
 ---|---|---  
 instId | String | 产品ID  
 posSide | String | 持仓方向  
-有任何平仓挂单的情况下，会返回错误码信息，提示用户先撤销平仓挂单  
+如果不自动撤单，那有任何平仓挂单的情况下，市价全平会返回错误码信息，提示用户先撤销平仓挂单  
 
 ### 获取订单信息
 
@@ -5671,6 +5675,73 @@ posData | Array | 持仓列表
 > gamma | String | delta对uly价格的敏感度  
 > vega | String | 权价格对隐含波动率的敏感度  
 > theta | String | 期权价格对剩余期限的敏感度  
+  
+### 查看账户Greeks
+
+获取账户资产的greeks信息。
+
+#### 限速： 10次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/account/greeks`
+
+> 请求示例
+    
+    
+    获取账户中所有资产的greeks
+    GET /api/v5/account/greeks
+    
+    获取账户中BTC的greeks
+    GET /api/v5/account/greeks?ccy=BTC
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | String | 否 | 币种，如 `BTC`  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "data":[
+            {            
+               "thetaBS": "",
+               "thetaPA":"",
+               "deltaBS":"",
+               "deltaPA":"",
+               "gammaBS":"",
+               "gammaPA":"",
+               "vegaBS":"",    
+               "vegaPA":"",
+               "ccy":"BTC"，
+               "ts":"1620282889345"
+            }
+        ],
+        "msg":""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+deltaBS | String | 美金本位账户资产delta  
+deltaPA | String | 币本位账户资产delta  
+gammaBS | String | 美金本位账户资产gamma，仅适用于`期权`  
+gammaPA | String | 币本位账户资产gamma，仅适用于`期权`  
+thetaBS | String | 美金本位账户资产theta，仅适用于`期权`  
+thetaPA | String | 币本位账户资产theta，仅适用于`期权`  
+vegaBS | String | 美金本位账户资产vega，仅适用于`期权`  
+vegaPA | String | 币本位账户资产vega，仅适用于`期权`  
+ccy | String | 币种  
+ts | String | 获取greeks的时间，Unix时间戳的毫秒数格式，如 1597026383085  
   
 ## 子账户
 
@@ -11677,6 +11748,169 @@ data | Array | 订阅的数据
   
 触发推送逻辑：爆仓预警和爆仓短信的触发逻辑一致
 
+### 账户greeks频道
+
+获取账户资产的greeks信息，首次订阅按照订阅维度推送数据，此外，当增加或者减少币种余额、持仓数量等事件触发时，推送数据以及按照订阅维度定时推送数据
+
+> 请求示例：单个
+    
+    
+    {
+        "op": "subscribe",
+        "args": [{
+            "channel": "account-greeks",
+            "ccy": "BTC"
+        }]
+    }
+    
+
+> 请求示例
+    
+    
+    {
+        "op": "subscribe",
+        "args": [{
+            "channel": "account-greeks"
+        }]
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+op | String | 是 | 操作，`subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名，`account-greeks`  
+> ccy | String | 否 | 币种  
+  
+> 成功返回示例：单个
+    
+    
+    {
+        "event": "subscribe",
+        "arg": {
+            "channel": "account-greeks",
+            "ccy": "BTC"
+        }
+    }
+    
+
+> 成功返回示例
+    
+    
+    {
+        "event": "subscribe",
+        "arg": {
+            "channel": "account-greeks"
+        }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+        "event": "error",
+        "code": "60012",
+        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"account-greeks\", \"ccy\" : \"BTC\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+event | String | 是 | 操作，`subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名，`account-greeks`  
+> ccy | String | 否 | 币种  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例：单个
+    
+    
+    {
+      "arg": {
+        "channel": "account-greeks",
+        "ccy": "BTC"
+      },
+      "data": [
+        {           
+          "thetaBS": "",
+          "thetaPA":"",
+          "deltaBS":"",
+          "deltaPA":"",
+          "gammaBS":"",
+          "gammaPA":"",
+          "vegaBS":"",    
+          "vegaPA":"",
+          "ccy":"BTC"，
+          "ts":"1620282889345"
+        }
+      ]
+    }
+    
+
+> 推送示例
+    
+    
+    {
+      "arg": {
+        "channel": "account-greeks",
+        "ccy": "BTC"
+      },
+      "data": [
+        {           
+          "thetaBS": "",
+          "thetaPA":"",
+          "deltaBS":"",
+          "deltaPA":"",
+          "gammaBS":"",
+          "gammaPA":"",
+          "vegaBS":"",    
+          "vegaPA":"",
+          "ccy":"BTC"，
+          "ts":"1620282889345"
+        },
+        {           
+          "thetaBS": "",
+          "thetaPA":"",
+          "deltaBS":"",
+          "deltaPA":"",
+          "gammaBS":"",
+          "gammaPA":"",
+          "vegaBS":"",    
+          "vegaPA":"",
+          "ccy":"USDT"，
+          "ts":"1620282889345"
+        }
+      ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+deltaBS | String | 美金本位账户资产delta  
+deltaPA | String | 币本位账户资产delta  
+gammaBS | String | 美金本位账户资产gamma，仅适用于`期权`  
+gammaPA | String | 币本位账户资产gamma，仅适用于`期权`  
+thetaBS | String | 美金本位账户资产theta，仅适用于`期权`  
+thetaPA | String | 币本位账户资产theta，仅适用于`期权`  
+vegaBS | String | 美金本位账户资产vega，仅适用于`期权`  
+vegaPA | String | 币本位账户资产vega，仅适用于`期权`  
+ccy | String | 币种  
+ts | String | 获取greeks的时间，Unix时间戳的毫秒数格式，如 1597026383085  
+  
+首次推送，只推账户资产不为0的greeks数据。
+
+定时推送，只推账户资产不为0的greeks数据。
+
+例：按照所有币种订阅且有5个币种资产都不为0，首次和定时推全部5个；账户的某个币种资产改变，那么账户greeks变更的触发只推这一个。
+
 ## 公共频道
 
 ### 产品频道
@@ -13429,6 +13663,15 @@ clOrdId重复 | 200 | 51016
 资金费结算中 | 200 | 51030  
 委托价格不在平仓限价范围内 | 200 | 51031  
 PM账户仅支持买卖模式 | 200 | 51041  
+当前订单类型{0}, {1}不支持设置止盈和止损 | 200 | 51044  
+止盈触发价格应该大于委托价格 | 200 | 51046  
+止损触发价格应该小于委托价格 | 200 | 51047  
+止盈触发价格应该小于委托价格 | 200 | 51048  
+止损触发价格应该大于委托价格 | 200 | 51049  
+止盈触发价格应该大于卖一价 | 200 | 51050  
+止损触发价格应该小于卖一价 | 200 | 51051  
+止盈触发价格应该小于买一价 | 200 | 51052  
+止损触发价格应该大于买一价 | 200 | 51053  
 币交易金额小于最小可交易金额 | 200 | 51100  
 超出单笔最大挂单张数 | 200 | 51101  
 超出合约最大挂单数量 | 200 | 51102  
