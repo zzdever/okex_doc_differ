@@ -1,6 +1,6 @@
 导航 ![](images/navbar-cad8cdcb.png)
 
-[ ![](images/logo-fe50f81e.png) ](/)
+[ ![](images/logo-6cc61484.png) ](/)
 
   * [API接口](javascript:void\(0\);)
   * [Broker接入](javascript:void\(0\);)
@@ -1845,6 +1845,8 @@ ordType | String | 是 | 订单类型
 `iceberg`：冰山委托  
 `twap`：时间加权委托  
 sz | String | 是 | 委托数量  
+tag | String | 否 | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 tgtCcy | String | 否 | 委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`单向止盈止损买单  
@@ -1876,6 +1878,11 @@ slOrdPx | String | 否 | 止损委托价，如果填写此参数，必须填写 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 triggerPx | String | 否 | 计划委托触发价格  
+triggerPxType | String | 否 | 计划委托触发价格类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
 orderPx | String | 否 | 委托价格  
 委托价格为-1时，执行市价委托  
 交割、永续合约的买卖模式下，不支持计划委托
@@ -2133,6 +2140,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "slTriggerPx":"",
                 "slTriggerPxType":"",
                 "triggerPx":"99",
+                "triggerPxType": "last",
                 "ordPx":"12",
                 "actualSz":"",
                 "actualPx":"",
@@ -2141,6 +2149,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "pxSpread":"",
                 "pxLimit":"",
                 "szLimit":"",
+                "tag": "adadadadad",
                 "timeInterval":"",
                 "triggerTime":"1597026383085",
                 "callbackRatio":"",
@@ -2169,6 +2178,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "slTriggerPx":"",
                 "slTriggerPxType":"",
                 "triggerPx":"99",
+                "triggerPxType": "last",
                 "ordPx":"12",
                 "actualSz":"",
                 "actualPx":"",
@@ -2177,6 +2187,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "pxSpread":"",
                 "pxLimit":"",
                 "szLimit":"",
+                "tag": "adadadadad",
                 "timeInterval":"",
                 "triggerTime":"1597026383085",
                 "callbackRatio":"",
@@ -2220,6 +2231,10 @@ slTriggerPxType | String | 止损触发价类型
 `mark`：标记价格  
 slOrdPx | String | 止损委托价  
 triggerPx | String | 计划委托触发价格  
+triggerPxType | String | 计划委托触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 ordPx | String | 计划委托委托价格  
 actualSz | String | 实际委托量  
 actualPx | String | 实际委托价  
@@ -2231,6 +2246,8 @@ pxSpread | String | 价距
 仅适用于`冰山委托`和`时间加权委托`  
 szLimit | String | 单笔数量  
 仅适用于`冰山委托`和`时间加权委托`  
+tag | String | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 pxLimit | String | 挂单限制价  
 仅适用于`冰山委托`和`时间加权委托`  
 timeInterval | String | 下单间隔  
@@ -2319,6 +2336,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "slTriggerPx":"",
                 "slTriggerPxType":"",
                 "triggerPx":"99",
+                "triggerPxType":"last",
                 "ordPx":"12",
                 "actualSz":"",
                 "actualPx":"",
@@ -2327,6 +2345,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "pxSpread":"",
                 "pxLimit":"",
                 "szLimit":"",
+                "tag": "adadadadad",
                 "timeInterval":"",
                 "callbackRatio":"",
                 "callbackSpread":"",
@@ -2355,6 +2374,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "slTriggerPx":"",
                 "slTriggerPxType":"",
                 "triggerPx":"99",
+                "triggerPxType":"last",
                 "ordPx":"12",
                 "actualSz":"",
                 "actualPx":"",
@@ -2363,6 +2383,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "pxSpread":"",
                 "pxLimit":"",
                 "szLimit":"",
+                "tag": "adadadadad",
                 "timeInterval":"",
                 "callbackRatio":"",
                 "callbackSpread":"",
@@ -2409,7 +2430,11 @@ slTriggerPxType | String | 止损触发价类型
 `mark`：标记价格  
 slOrdPx | String | 止损委托价  
 triggerPx | String | 计划委托触发价格  
-ordPx | String | 计划委托委托价格  
+triggerPxType | String | 计划委托触发价格  
+ordPx | String | 计划委托委托价格类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 actualSz | String | 实际委托量  
 actualPx | String | 实际委托价  
 actualSide | String | 实际触发方向 `tp`：止盈 `sl`： 止损  
@@ -2422,6 +2447,8 @@ szLimit | String | 单笔数量
 仅适用于`冰山委托`和`时间加权委托`  
 pxLimit | String | 挂单限制价  
 仅适用于`冰山委托`和`时间加权委托`  
+tag | String | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 timeInterval | String | 下单间隔  
 仅适用于`时间加权委托`  
 callbackRatio | String | 回调幅度的比例  
@@ -11279,7 +11306,9 @@ msg | String | 否 | 错误消息
             "slTriggerPx": "",
             "slTriggerPxType": "",
             "triggerPx": "99",
+            "triggerPxType": "last",
             "ordPx": "12",
+            "tag": "adadadadad",
             "actualSz": "",
             "actualPx": "",
             "actualSide": "",
@@ -11338,9 +11367,15 @@ data | Array | 订阅的数据
 `mark`：标记价格  
 > slOrdPx | String | 止损委托价委托价格为`-1`时，执行市价止损  
 > triggerPx | String | 计划委托单的触发价格  
+> triggerPxType | String | 计划委托单的触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
 > ordPx | String | 计划委托单的委托价格  
 > actualSz | String | 实际委托量  
 > actualPx | String | 实际委价  
+> tag | String | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 > notionalUsd | String | 委托单预估美元价值  
 > actualSide | String | 实际触发方向，`sl`：止损 `tp`：止盈  
 > triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -11479,6 +11514,7 @@ msg | String | 否 | 错误消息
                 "state":"pause",
                 "sz":"0.1",
                 "szLimit":"0.1",
+                "tag": "adadadadad",
                 "tdMode":"cash",
                 "timeInterval":"",
                 "tpOrdPx":"",
@@ -11538,6 +11574,8 @@ data | Array | 订阅的数据
 > ordPx | String | 计划委托单的委托价格  
 > actualSz | String | 实际委托量  
 > actualPx | String | 实际委价  
+> tag | String | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 > notionalUsd | String | 委托单预估美元价值  
 > actualSide | String | 实际触发方向，`sl`：止损 `tp`：止盈  
 > triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -12287,7 +12325,7 @@ data | Array | 订阅的数据
   
 ### K线频道
 
-获取产品的K线数据，每500ms推送一次数据。
+获取指数的K线数据，推送频率最快是间隔500ms推送一次数据。
 
 > 请求示例
     
@@ -13249,7 +13287,7 @@ data | Array | 订阅的数据
   
 ### 指数K线频道
 
-获取指数的K线数据，每500ms推送一次数据。
+获取指数的K线数据，推送频率最快是间隔500ms推送一次数据。
 
 > 请求示例
     
@@ -13365,7 +13403,7 @@ data | Array | 订阅的数据
 
 ### 指数行情频道
 
-获取指数的行情数据
+获取指数的行情数据。每100ms有变化就推送一次数据，否则一分钟推一次。
 
 > 请求示例
     
@@ -13878,7 +13916,7 @@ NEO最小提现数量为1，且提现数量必须为整数 | 200 | 58202
 提现金额小于最小提现金额（最小提现金额提现接口，提现金额输入有误） | 200 | 58206  
 提现失败，认证地址错误 | 200 | 58207  
 提现失败，邮箱未绑定 | 200 | 58208  
-提现失败，子账号不允许 | 200 | 58209  
+子账户不能充值或提现 | 200 | 58209  
 提现手续费大于最大值（提现接口，提现手续费输入有误） | 200 | 58210  
 提现手续费小于最小值（提现接口，手续费输入有误） | 200 | 58211  
 提现手续费应填写为提币数量的{0}% | 200 | 58212  
