@@ -221,19 +221,39 @@ Java Python Go C++
 # 概览
 
 欢迎查看 V5 API文档。我们提供完整的REST和WebSocket API以满足您的交易需求。  
-V5 API只适用于[统一账户](/support/hc/zh-cn/sections/360011507312)。
+V5 API只适用于[统一账户](/support/hc/zh-cn/sections/360011507312)。  
+
+感谢您使用欧易OKEx的V5 API服务，为了更好的提高V5 API的接口服务用户体验，希望您将使用V5
+API过程中的感受和建议告诉我们，我们非常重视每一位用户的反馈，期待您的参与！  
+点击这里给出您的评分 [V5 API满意度调研](https://www.wjx.cn/vj/wFoyR0w.aspx)
 
 ## 实盘交易
 
 实盘API交易地址如下：
 
-  * REST：`https://www.okex.com/`  
+  * REST：`https://www.okx.com/`  
 
-  * WebSocket公共频道：`wss://ws.okex.com:8443/ws/v5/public`  
+  * WebSocket公共频道：`wss://ws.okx.com:8443/ws/v5/public`  
 
-  * WebSocket私有频道：`wss://ws.okex.com:8443/ws/v5/private`
+  * WebSocket私有频道：`wss://ws.okx.com:8443/ws/v5/private`
 
 AWS 地址如下：
+
+  * REST：`https://aws.okx.com`  
+
+  * WebSocket公共频道：`wss://wsaws.okx.com:8443/ws/v5/public`  
+
+  * WebSocket私有频道：`wss://wsaws.okx.com:8443/ws/v5/private`  
+
+新的域名已启用，旧的域名将择期下线，请您尽快切换到新的域名。
+
+  * `旧的REST`：`https://www.okex.com/`  
+
+  * `旧的WebSocket公共频道`：`wss://ws.okex.com:8443/ws/v5/public`  
+
+  * `旧的WebSocket私有频道`：`wss://ws.okex.com:8443/ws/v5/private`
+
+`旧的AWS` 地址如下：
 
   * REST：`https://aws.okex.com`  
 
@@ -247,10 +267,19 @@ AWS 地址如下：
 
 模拟盘API交易地址如下：
 
+  * REST：`https://www.okx.com`
+  * WebSocket公共频道：`wss://wspap.okx.com:8443/ws/v5/public?brokerId=9999`  
+
+  * WebSocket私有频道：`wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999`  
+
+新的域名已启用，旧的域名将择期下线，请您尽快切换到新的域名。
+
+`旧的模拟盘API交易地址如下`：
+
   * REST：`https://www.okex.com`
   * WebSocket公共频道：`wss://wspap.okex.com:8443/ws/v5/public?brokerId=9999`  
 
-  * WebSocket私有频道：`wss://wspap.okex.com:8443/ws/v5/private?brokerId=9999`  
+  * WebSocket私有频道：`wss://wspap.okex.com:8443/ws/v5/private?brokerId=9999`
 
 模拟盘的账户与欧易的账户是互通的，如果您已经有欧易账户，可以直接登录。
 
@@ -7326,7 +7355,7 @@ listTime | String | 上线日期
 Unix时间戳的毫秒数格式，如 `1597026383085`  
 expTime | String | 交割/行权日期，仅适用于`交割` 和 `期权`  
 Unix时间戳的毫秒数格式，如 `1597026383085`  
-lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币、期权`  
+lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`  
 tickSz | String | 下单价格精度，如 `0.0001`  
   
 lotSz | String | 下单数量精度，如 BTC-USDT-SWAP：`1`  
@@ -12095,7 +12124,7 @@ data | Array | 订阅的数据
 > stk | String | 行权价格， 仅适用于`期权`  
 > listTime | String | 上线日期， 仅适用于 `交割/永续/期权`  
 > expTime | String | 交割日期， 仅适用于 `交割/期权`  
-> lever | String | 杠杆倍数， 不适用于`币币`  
+> lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`  
 > tickSz | String | 下单价格精度，如 `0.0001`  
 > lotSz | String | 下单数量精度，如 `1`：BTC-USDT-200925 `0.001`：BTC-USDT  
 > minSz | String | 最小下单数量  
