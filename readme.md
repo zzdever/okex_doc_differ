@@ -1,6 +1,7 @@
 导航 ![](images/navbar-cad8cdcb.png)
 
-[ ![](images/logo-6cc61484.png) ](/)
+[ ![](https://static.coinall.ltd/cdn/assets/imgs/221/02D05B5ABB57940A.png)
+](/)
 
   * [API接口](javascript:void\(0\);)
   * [Broker接入](javascript:void\(0\);)
@@ -78,7 +79,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取当前账户交易手续费费率 
       * 获取计息记录 
       * 获取用户当前杠杆借币利率 
-      * 期权希腊字母PA/BS切换 
+      * 期权greeks的PA/BS切换 
       * 逐仓交易设置 
       * 查看账户最大可转余额 
       * 查看账户特定风险状态 
@@ -96,6 +97,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取子账户资产余额 
       * 查询子账户转账记录 
       * 子账户间资金划转 
+      * 查看被托管的子账户列表 
     * 行情数据 
       * 获取所有产品行情信息 
       * 获取单个产品行情信息 
@@ -202,7 +204,7 @@ API接口 Broker接入 最佳实践 更新日志
 
   * 其他交易所达标做市商（需审核）  
 
-提供以下信息发送邮件至：`lpservice@okex.com`或咨询大客户经理
+提供以下信息发送邮件至：`lpservice@okx.com`或咨询大客户经理
 
   * 账户信息  
 
@@ -623,7 +625,8 @@ clOrdId | String | 客户自定义订单ID
 tag | String | 订单标签  
 sCode | String | 事件执行结果的code，0代表成功  
 sMsg | String | 事件执行失败时的msg  
-  
+在组合保证金账户模式下，或者全部成功，或者全部失败。
+
 ### 撤单
 
 撤销之前下的未完成订单。
@@ -3243,7 +3246,7 @@ depId | String | 充值记录 ID
 ccy | String | 是 | 币种，如 `USDT`  
 amt | String | 是 | 数量  
 dest | String | 是 | 提币到  
-`3`：OKEx  
+`3`：OKX  
 `4`：数字货币地址  
 toAddr | String | 是 | 认证过的数字货币地址、邮箱或手机号。  
 某些数字货币地址格式为:地址+标签，如 `ARDOR-7JF3-8F2E-QUWZ-CAN7F:123456`  
@@ -3402,7 +3405,7 @@ chain | String | 币种链信息
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 amt | String | 数量  
 ts | String | 提币申请时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
-from | String | 提币地址（如果收币地址是 OKEx 平台地址，则此处将显示用户账户）  
+from | String | 提币地址（如果收币地址是 OKX 平台地址，则此处将显示用户账户）  
 to | String | 收币地址  
 tag | String | 部分币种提币需要标签，若不需要则不返回此字段  
 pmtId | String | 部分币种提币需要此字段（payment_id），若不需要则不返回此字段  
@@ -5215,9 +5218,9 @@ ccy | String | 否 | 币种
 interestRate | String | 杠杆借币利率  
 ccy | String | 币种  
   
-### 期权希腊字母PA/BS切换
+### 期权greeks的PA/BS切换
 
-设置希腊字母的展示方式。
+设置greeks的展示方式。
 
 #### 限速：5次/2s
 
@@ -5843,6 +5846,7 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
                        {
                           "enable":true,
                           "subAcct":"test-1",
+                          "type":"1",
                           "label":"trade futures",
                           "mobile":"1818181",
                           "gAuth":true,
@@ -5851,6 +5855,7 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
                        {
                           "enable":false,
                           "subAcct":"test-2",
+                          "type":"1",
                           "label":"trade spot",
                           "mobile":"1818199",
                           "gAuth":true,
@@ -5865,7 +5870,8 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-enable | String | 子账户状态  
+type | String | 子账户类型，`1`:普通子账户 `2`:托管子账户  
+enable | Boolean | 子账户状态，`true`：正常使用 `false`：冻结  
 subAcct | String | 子账户名称  
 label | String | 子账户备注  
 mobile | String | 子账户绑定手机号  
@@ -6389,6 +6395,55 @@ loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`下的借币�
 ---|---|---  
 transId | String | 划转ID  
   
+### 查看被托管的子账户列表
+
+交易团队使用该接口查看当前托管中的子账户列表
+
+#### 限速：1次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/users/entrust-subaccount-list`
+
+> 请求示例
+    
+    
+    GET /api/v5/users/entrust-subaccount-list
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 否 | 子账户名称  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+                       {
+                          "subAcct":"test-1"
+                       },
+                       {
+                          "subAcct":"test-2"
+                       }
+    
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subAcct | String | 子账户名称  
+  
 ## 行情数据
 
 `行情数据`功能模块下的API接口不需要身份验证。
@@ -6697,8 +6752,10 @@ sz | String | 否 | 深度档位数量，最大值可传400，即买卖深度共
 asks | Array | 卖方深度  
 bids | Array | 买方深度  
 ts | String | 深度产生的时间  
-asks和bids值数组举例说明： ["411.8","10", "1","4"]
-411.8为深度价格，10为此价格的合约张数，1为此价格的强平单数量，4为此价格的订单数量
+合约的asks和bids值数组举例说明： ["411.8","10", "1","4"]
+411.8为深度价格，10为此价格的合约张数，1为此价格的强平单数量，4为此价格的订单数量  
+现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "1","4"]
+411.8为深度价格，10为此价格的币的数量，1为此价格的强平单数量，4为此价格的订单数量
 
 ### 获取交易产品K线数据
 
@@ -9716,7 +9773,8 @@ data | Array | 请求成功后返回的数据
 > tag | String | 订单标签  
 > sCode | String | 订单状态码，0 代表成功  
 > sMsg | String | 订单状态消息  
-  
+在组合保证金账户模式下，或者全部成功，或者全部失败。
+
 ### 撤单
 
 撤销当前未完成订单
@@ -13108,8 +13166,10 @@ data | Array | 订阅的数据
 > bids | Array | 买方深度  
 > ts | String | 数据更新时间戳，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > checksum | Integer | 检验和  
-asks和bids值数组举例说明： ["411.8", "10", "1", "4"]
-411.8为深度价格，10为此价格的合约张数，1为此价格的强平单个数，4为此价格的订单个数
+合约的asks和bids值数组举例说明： ["411.8","10", "1","4"]
+411.8为深度价格，10为此价格的合约张数，1为此价格的强平单数量，4为此价格的订单数量  
+现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "1","4"]
+411.8为深度价格，10为此价格的币的数量，1为此价格的强平单数量，4为此价格的订单数量
 
 ### 期权定价频道
 
