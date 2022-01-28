@@ -3128,6 +3128,8 @@ addr | String | 充值地址
 tag | String | 部分币种充值需要标签，若不需要则不返回此字段  
 memo | String | 部分币种充值需要标签，若不需要则不返回此字段  
 pmtId | String | 部分币种充值需要此字段（payment_id），若不需要则不返回此字段  
+addrEx | Object | 充值地址备注，部分币种充值需要，若不需要则不返回此字段  
+如币种`TONCOIN`的充值地址备注标签名为`comment`,则该字段返回：{'comment':'123456'}  
 ccy | String | 币种，如`BTC`  
 chain | String | 币种链信息  
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
@@ -14122,8 +14124,6 @@ passphrase不正确 | 60024
 
 # API问题反馈
 
-如果您在使用V5 API的过程当中，遇到任何问题或者建议，[请点此链接反馈](/account/support)：请标明是V5
-OpenAPI,我们客服人员会及时处理您的问题。  
 添加官方API技术支持QQ社群，QQ号：1905481750 备注：API+姓名+账号，与专业量化人员交流。  
 添加官方Telegram社群：https://t.me/OKExAPI ，及时了解平台最新资讯。
 
