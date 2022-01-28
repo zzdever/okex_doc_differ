@@ -270,9 +270,9 @@ AWS 地址如下：
 模拟盘API交易地址如下：
 
   * REST：`https://www.okx.com`
-  * WebSocket公共频道：`wss://wspap.okx.com:8443/ws/v5/public`  
+  * WebSocket公共频道：`wss://wspap.okx.com:8443/ws/v5/public?brokerId=9999`  
 
-  * WebSocket私有频道：`wss://wspap.okx.com:8443/ws/v5/private`  
+  * WebSocket私有频道：`wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999`  
 
 新的域名已启用，旧的域名将择期下线，请您尽快切换到新的域名。
 
