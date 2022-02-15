@@ -14125,5 +14125,4 @@ passphrase不正确 | 60024
 # API问题反馈
 
 添加官方API技术支持QQ社群，QQ号：1905481750 备注：API+姓名+账号，与专业量化人员交流。  
-添加官方Telegram社群：https://t.me/OKExAPI ，及时了解平台最新资讯。
 
