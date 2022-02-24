@@ -2728,8 +2728,8 @@ type | String | 否 | `0`：账户内划转
 `1`：母账户转子账户  
 `2`：子账户转母账户  
 默认为`0`。  
-loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`下的借币转出  
-默认为`false`。  
+loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`或`组合保证金模式`下的借币转入/转出  
+true 或 false，默认false  
   
 > 返回结果
     
@@ -3424,13 +3424,13 @@ ccy | String | 否 | 币种，如 `BTC`
         "msg":"",
         "data": [
             {
-                "earnings": "0.0000000000000000",
+                "earnings": "0.0010737388791526",
+                "redemptAmt": "0.0000000000000000",
+                "rate": "0.0100000000000000",
                 "ccy": "USDT",
-                "amt": "1.0000000064666295",
-                "rate": "0.01",
-                "loanAmt":"300",
-                "pendingAmt":"100",
-                "redemptAmt":"0"
+                "amt": "11.0010737453457821",
+                "loanAmt": "11.0010630707982819",
+                "pendingAmt": "0.0000106745475002"
             }
         ]
     }
@@ -4622,7 +4622,8 @@ posSide | String | 可选 | 持仓方向
 `long`：双向持仓多头  
 `short`：双向持仓空头  
 `net`：单向持仓  
-在双向持仓且保证金模式为逐仓条件下必填，且仅可选择 `long`或`short`，其他情况下非必填，默认`net`；仅适用于`交割`/`永续`  
+仅适用于逐仓`交割`/`永续`  
+在双向持仓且保证金模式为逐仓条件下必填，且仅可选择 `long`或`short`，默认`net`  
   
 > 返回结果
     
@@ -4815,7 +4816,7 @@ ccy | String | 否 | 增加或减少的保证金的币种，
 仅适用于逐仓自主划转保证金模式下的币币杠杆  
 auto | Boolean | 否 | 是否自动借币转 true 或 false，默认false  
 仅适用于逐仓自主划转保证金模式下的币币杠杆  
-loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`下的借币转入/转出  
+loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`或`组合保证金模式`下的借币转入/转出  
 true 或 false，默认false  
   
 > 返回结果
@@ -5884,7 +5885,7 @@ ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `15
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 pwd | String | 是 | 母账户的资金密码  
-subAcct | String | 是 | 子账户名称  
+subAcct | String | 是 | 子账户名称，支持6-20位字母和数字组合（区分大小写，不支持空格符号）  
 label | String | 是 | APIKey的备注  
 passphrase | String | 是 | APIKey的密码，支持6-32位字母和数字组合（区分大小写，不支持空格符号）  
 perm | String | 否 | APIKey权限 `read_only`：只读 ；`trade` ：交易  
@@ -6347,8 +6348,8 @@ from | String | 是 | `6`：资金账户 `18`：统一账户
 to | String | 是 | `6`：资金账户 `18`：统一账户  
 fromSubAccount | String | 是 | 转出子账户的子账户名称  
 toSubAccount | String | 是 | 转入子账户的子账户名称  
-loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`下的借币转出  
-默认为`false`。  
+loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`或`组合保证金模式`下的借币转入/转出  
+true 或 false，默认false  
   
 > 返回结果
     
@@ -12487,10 +12488,10 @@ data | Array | 订阅的数据
 > h | String | 最高价格  
 > l | String | 最低价格  
 > c | String | 收盘价格  
-vol | String | 交易量，以`张`为单位  
+> vol | String | 交易量，以`张`为单位  
 如果是`衍生品`合约，数值为合约的张数。  
 如果是`币币/币币杠杆`，数值为交易货币的数量。  
-volCcy | String | 交易量，以`币`为单位  
+> volCcy | String | 交易量，以`币`为单位  
 如果是`衍生品`合约，数值为交易货币的数量。  
 如果是`币币/币币杠杆`，数值为计价货币的数量。  
   
