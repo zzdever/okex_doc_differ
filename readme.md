@@ -62,6 +62,12 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取余币宝出借明细 
       * 获取市场借贷信息（公共）
       * 获取市场借贷历史（公共） 
+    * 闪兑 
+      * 获取闪兑币种列表 
+      * 获取闪兑币对信息 
+      * 闪兑预估询价 
+      * 闪兑交易 
+      * 获取闪兑交易历史 
     * 账户 
       * 查看账户余额 
       * 查看持仓信息 
@@ -185,6 +191,7 @@ API接口 Broker接入 最佳实践 更新日志
   * 错误码 
     * REST 
       * 公共 
+      * 大宗交易 
       * 币币/币币杠杆类 
       * 交割合约类 
       * 永续合约类 
@@ -936,7 +943,7 @@ sMsg | String | 事件执行失败时的msg
   
 ### 市价仓位全平
 
-市价平掉某个合约下的全部持仓
+市价平掉指定交易产品的持仓
 
 #### 限速： 20次/2s
 
@@ -2874,10 +2881,6 @@ type | String | 否 | 账单类型
 `20`：转出至子账户  
 `21`：从子账户转入  
 `28`：领取  
-`33`：转出至币币杠杆账户  
-`34`：从币币杠杆账户转入  
-`37`：转出至币币账户  
-`38`：从币币账户转入  
 `41`：点卡抵扣手续费  
 `42`：购买点卡  
 `47`：系统冲正  
@@ -2888,13 +2891,9 @@ type | String | 否 | 账单类型
 `52`：发红包  
 `53`：抢红包  
 `54`：红包退还  
-`55`：转出至永续合约账户  
-`56`：从永续合约账户转入  
 `59`：从套保账户转入  
 `60`：转出至套保账户  
 `61`：兑换  
-`63`：转出至期权合约账户  
-`62`：从期权合约账户转入  
 `68`：领取卡券权益  
 `69`：发送卡券权益  
 `72`：收币  
@@ -3737,6 +3736,348 @@ ccy | String | 币种，如 `BTC`
 amt | String | 市场总出借数量  
 rate | String | 出借年利率  
 ts | String | 时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+## 闪兑
+
+`闪兑`功能模块下的API接口需要身份验证。
+
+### 获取闪兑币种列表
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/asset/convert/currencies`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/convert/currencies
+    
+    
+
+#### 请求参数
+
+无
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "min": 0.0001,
+                "max": 0.5,
+                "ccy": "BTC"
+            },
+            {
+                "min": 0.001,
+                "max": 10.0,
+                "ccy": "ETH"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ccy | String | 币种名称，如 `BTC`  
+min | String | 支持闪兑的最小值  
+max | String | 支持闪兑的最大值  
+  
+### 获取闪兑币对信息
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/asset/convert/currency-pair`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/convert/currency-pair?fromCcy=USDT&toCcy=BTC
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+fromCcy | String | 否 | 消耗币种，如 `USDT`  
+toCcy | String | 否 | 获取币种，如 `BTC`  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "baseCcy": "BTC",
+                "baseCcyMax": "0.5",
+                "baseCcyMin": "0.0001",
+                "instId": "BTC-USDT",
+                "quoteCcy": "USDT",
+                "quoteCcyMax": "10000",
+                "quoteCcyMin": "1"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+instId | String | 币对，如 `BTC-USDT`  
+baseCcy | String | 交易货币币种，如 `BTC-USDT`中的`BTC`  
+baseCcyMax | String | 交易货币支持闪兑的最大值  
+baseCcyMin | String | 交易货币支持闪兑的最小值  
+quoteCcy | String | 计价货币币种，如 `BTC-USDT`中的`USDT`  
+quoteCcyMax | String | 计价货币支持闪兑的最大值  
+quoteCcyMin | String | 计价货币支持闪兑的最小值  
+  
+### 闪兑预估询价
+
+#### 限速： 2次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/asset/convert/estimate-quote`
+
+> 请求示例
+    
+    
+    POST /api/v5/asset/convert/estimate-quote
+    body
+    {
+        "baseCcy": "ETH",
+        "quoteCcy": "USDT",
+        "side": "buy",
+        "rfqSz": "30",
+        "rfqSzCcy": "USDT"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+baseCcy | String | 是 | 交易货币币种，如 `BTC-USDT`中的`BTC`  
+quoteCcy | String | 是 | 计价货币币种，如 `BTC-USDT`中的`USDT`  
+side | String | 是 | 交易方向  
+买：`buy` 卖：`sell`  
+描述的是对于baseCcy的交易方向  
+rfqSz | String | 是 | 询价数量  
+rfqSzCcy | String | 是 | 询价币种  
+clQReqId | String | 否 | 客户端自定义的订单标识  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "baseCcy": "ETH",
+                "baseSz": "0.01023052",
+                "clQReqId": "",
+                "cnvtPx": "2932.40104429",
+                "origRfqSz": "30",
+                "quoteCcy": "USDT",
+                "quoteId": "quoterETH-USDT16461885104612381",
+                "quoteSz": "30",
+                "quoteTime": "1646188510461",
+                "rfqSz": "30",
+                "rfqSzCcy": "USDT",
+                "side": "buy",
+                "ttlMs": "10000"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+quoteTime | String | 生成报价时间，Unix时间戳的毫秒数格式  
+ttlMs | String | 报价有效期，单位为毫秒  
+clQReqId | String | 客户端自定义的订单标识  
+quoteId | String | 报价ID  
+baseCcy | String | 交易货币币种，如 BTC-USDT 中BTC  
+quoteCcy | String | 计价货币币种，如 BTC-USDT 中USDT  
+side | String | 交易方向  
+买：`buy` 卖：`sell`  
+origRfqSz | String | 原始报价的数量  
+rfqSz | String | 实际报价的数量  
+rfqSzCcy | String | 报价的币种  
+cnvtPx | String | 闪兑价格，单位为计价币  
+baseSz | String | 闪兑交易币数量  
+quoteSz | String | 闪兑计价币数量  
+  
+### 闪兑交易
+
+#### 限速： 2次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/asset/convert/trade`
+
+> 请求示例
+    
+    
+    POST /api/v5/asset/convert/trade
+    body
+    {
+        "baseCcy": "ETH",
+        "quoteCcy": "USDT",
+        "side": "buy",
+        "sz": "30",
+        "szCcy": "USDT",
+        "quoteId": "quoterETH-USDT16461885104612381"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+quoteId | String | 是 | 报价ID  
+baseCcy | String | 是 | 交易货币币种，如 `BTC-USDT`中的`BTC`  
+quoteCcy | String | 是 | 计价货币币种，如 `BTC-USDT`中的`USDT`  
+side | String | 是 | 交易方向  
+买：`buy` 卖：`sell`  
+描述的是对于baseCcy的交易方向  
+sz | String | 是 | 用户报价数量  
+szCcy | String | 是 | 用户报价币种  
+clTReqId | String | 否 | 用户自定义的订单标识  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "baseCcy": "ETH",
+                "clTReqId": "",
+                "fillBaseSz": "0.01023052",
+                "fillPx": "2932.40104429",
+                "fillQuoteSz": "30",
+                "instId": "ETH-USDT",
+                "quoteCcy": "USDT",
+                "quoteId": "quoterETH-USDT16461885104612381",
+                "side": "buy",
+                "state": "fullyFilled",
+                "tradeId": "trader16461885203381437",
+                "ts": "1646188520338"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+tradeId | String | 成交ID  
+quoteId | String | 报价ID  
+clTReqId | String | 用户自定义的订单标识  
+state | String | `fullyFilled`：交易成功  
+`rejected`：交易失败  
+instId | String | 币对，如 `BTC-USDT`  
+baseCcy | String | 交易货币币种，如 `BTC-USDT`中`BTC`  
+quoteCcy | String | 计价货币币种，如 `BTC-USDT`中`USDT`  
+side | String | 交易方向  
+买：`buy` 卖：`sell`  
+fillPx | String | 成交价格，单位为计价币  
+fillBaseSz | String | 成交的交易币数量  
+fillQuoteSz | String | 成交的计价币数量  
+ts | String | 闪兑交易时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
+  
+### 获取闪兑交易历史
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/asset/convert/history`
+
+> 请求示例
+    
+    
+    GET /api/v5/asset/convert/history
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
+limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "instId": "ETH-USDT",
+                "side": "buy",
+                "fillPx": "2932.401044",
+                "baseCcy": "ETH",
+                "quoteCcy": "USDT",
+                "fillBaseSz": "0.01023052",
+                "state": "fullyFilled",
+                "tradeId": "trader16461885203381437",
+                "fillQuoteSz": "30",
+                "ts": "1646188520000"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+tradeId | String | 成交ID  
+state | String | `fullyFilled`：交易成功  
+`rejected`：交易失败  
+instId | String | 币对，如 `BTC-USDT`  
+baseCcy | String | 交易货币币种，如 `BTC-USDT`中的`BTC`  
+quoteCcy | String | 计价货币币种，如 `BTC-USDT`中的`USDT`  
+side | String | 交易方向  
+买：`buy` 卖：`sell`  
+fillPx | String | 成交价格，单位为计价币  
+fillBaseSz | String | 成交的交易币数量  
+fillQuoteSz | String | 成交的计价币数量  
+ts | String | 闪兑交易时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
   
 ## 账户
 
@@ -13971,6 +14312,29 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 
 暂无
 
+### 大宗交易
+
+错误码从 52900 到 52900
+
+错误提示 | HTTP 状态码 | 错误码  
+---|---|---  
+General Invalid request | 200 | 52900  
+Invalid BaseAsset | 200 | 52901  
+Invalid QuoteAsset | 200 | 52902  
+Invalid Qty | 200 | 52903  
+Invalid Side | 200 | 52904  
+Invalid Price | 200 | 52905  
+Invalid Channel | 200 | 52906  
+Order Not Found | 200 | 52907  
+Invalid Order Id | 200 | 52908  
+Duplicated Client Order Id | 400 | 52909  
+Service not available | 500 | 52910  
+Service not available | 500 | 52911  
+Server timeout | 500 | 52912  
+Trade Rejected | 200 | 52913  
+Rfq Qty is out of valid range | 200 | 52914  
+No Quote | 200 | 52915  
+  
 ### 币币/币币杠杆类
 
 错误码从 54000 到 54999
@@ -14010,6 +14374,8 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 申购/赎回额度不可超过{0} | 200 | 58005  
 币种{0}不支持当前操作 | 200 | 58006  
 资金接口服务异常，请稍后再试。 | 200 | 58007  
+您没有该币种资产 | 200 | 58008  
+币对不存在 | 200 | 58009  
 行权或结算中，暂无法转入或转出 | 200 | 58100  
 划转冻结 | 200 | 58101  
 划转过于频繁，请降低划转频率 | 429 | 58102  
@@ -14051,6 +14417,7 @@ invoice无效 | 200 | 58352
 用户没有使用此API接口的权限 | 200 | 58355  
 同节点账户不支持闪电网络充币或提币 | 200 | 58356  
 币种{0}不允许创建充值地址 | 200 | 58357  
+fromCcy与toCcy不可相同 | 200 | 58358  
   
 ### 账户类
 
