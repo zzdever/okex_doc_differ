@@ -96,10 +96,6 @@ API接口 Broker接入 最佳实践 更新日志
       * 查看账户Greeks 
     * 子账户 
       * 查看子账户列表 
-      * 创建子账户的APIKey 
-      * 查询子账户的APIKey 
-      * 重置子账户的APIKey 
-      * 删除子账户的APIKey 
       * 获取子账户资产余额 
       * 查询子账户转账记录 
       * 子账户间资金划转 
@@ -135,6 +131,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取市场借币杠杆利率和借币限额 
       * 获取尊享借币杠杆利率和借币限额 
       * 获取衍生品标的指数 
+      * 获取风险准备金余额 
     * 交易大数据 
       * 获取交易大数据支持币种 
       * 获取主动买入/卖出情况 
@@ -1849,7 +1846,7 @@ tradeId
 
 ### 策略委托下单
 
-提供单向止盈止损委托 、双向止盈止损委托、计划委托、冰山委托、时间加权委托
+提供单向止盈止损委托、双向止盈止损委托、计划委托、冰山委托、时间加权委托、移动止盈止损委托
 
 #### 限速： 20次/2s
 
@@ -2990,7 +2987,7 @@ ts | String | 账单创建时间，Unix 时间戳的毫秒数格式，如 `15970
   
 ### 闪电网络充币
 
-一个用户在最近24小时内可以生成不超过100个不同的invoice。
+一个用户在最近24小时内可以生成不超过10000个不同的invoice。
 
 #### 限速： 2次/s
 
@@ -3215,7 +3212,6 @@ depId | String | 充值记录 ID
     {
         "amt":"1",
         "fee":"0.0005",
-        "pwd":"123456",
         "dest":"4",
         "ccy":"BTC",
         "chain":"BTC-Bitcoin",
@@ -3235,7 +3231,6 @@ dest | String | 是 | 提币到
 `4`：数字货币地址  
 toAddr | String | 是 | 认证过的数字货币地址、邮箱或手机号。  
 某些数字货币地址格式为:地址+标签，如 `ARDOR-7JF3-8F2E-QUWZ-CAN7F:123456`  
-pwd | String | 是 | 资金密码  
 fee | String | 是 | 网络手续费≥`0`，提币到数字货币地址所需网络手续费可通过获取币种列表接口查询  
 chain | String | 可选 | 币种链信息  
 如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
@@ -3286,7 +3281,6 @@ wdId | String | 提币申请ID
     body
     {
         "ccy":"BTC",
-        "pwd":"123456",
         "invoice":"lnbc100u1psnnvhtpp5yq2x3q5hhrzsuxpwx7ptphwzc4k4wk0j3stp0099968m44cyjg9sdqqcqzpgxqzjcsp5hz"
     }
     
@@ -3298,7 +3292,7 @@ wdId | String | 提币申请ID
 ---|---|---|---  
 ccy | String | 是 | 币种，如 `BTC`  
 invoice | String | 是 | invoice 号码  
-pwd | String | 是 | 资金密码  
+memo | String | 否 | 闪电网络提币的备注  
   
 > 返回结果
     
@@ -3810,8 +3804,8 @@ max | String | 支持闪兑的最大值
 
 参数 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-fromCcy | String | 否 | 消耗币种，如 `USDT`  
-toCcy | String | 否 | 获取币种，如 `BTC`  
+fromCcy | String | 是 | 消耗币种，如 `USDT`  
+toCcy | String | 是 | 获取币种，如 `BTC`  
   
 > 返回结果
     
@@ -6050,22 +6044,29 @@ simPos | Array | 否 | 调整持仓列表
         "code": "0",
         "data": [
             {
-                "imr": "0.0023756004761011",
-                "mmr": "0.0018273849816162",
+                "imr": "0.005432310199023",
+                "mmr": "0.0041787001530946",
+                "mr1": "0.0041787001530946",
+                "mr2": "0.0000734347499275",
+                "mr3": "0",
+                "mr4": "0",
+                "mr5": "0",
+                "mr6": "0.0028031968471",
+                "mr7": "0.0022",
                 "posData": [
                     {
-                        "delta": "0.0103544686676885",
-                        "gamma": "",
-                        "instId": "BTC-USD-211224",
-                        "instType": "FUTURES",
-                        "notionalUsd": "500",
-                        "pos": "5",
-                        "theta": "",
-                        "vega": ""
+                        "delta": "-0.008926024905498",
+                        "gamma": "-0.0707804093543001",
+                        "instId": "BTC-USD-220325-50000-C",
+                        "instType": "OPTION",
+                        "notionalUsd": "3782.9800000000005",
+                        "pos": "-1",
+                        "theta": "0.000093015207115",
+                        "vega": "-0.0000382697346669"
                     }
                 ],
                 "riskUnit": "BTC-USD",
-                "ts": "1640255589638"
+                "ts": "1646639497536"
             }
         ],
         "msg": ""
@@ -6080,6 +6081,13 @@ riskUnit | String | 账户内所有持仓的riskUnit
 ts | String | 账户信息的更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 mmr | String | riskUnit维度的初始保证金  
 imr | String | riskUnit维度的占用保证金  
+mr1 | String | 现货&波动率压力测试值  
+mr2 | String | 时间价值压力测试值  
+mr3 | String | 波动率跨期压力测试值  
+mr4 | String | 基差压力测试值  
+mr5 | String | 利率风险压力测试值  
+mr6 | String | 极端市场波动压力测试值  
+mr7 | String | 减仓成本压力测试值  
 posData | Array | 持仓列表  
 > instId | String | 产品ID，如 `BTC-USD-180216`  
 > instType | String | 产品类型  
@@ -6089,7 +6097,8 @@ posData | Array | 持仓列表
 > gamma | String | delta对uly价格的敏感度  
 > vega | String | 权价格对隐含波动率的敏感度  
 > theta | String | 期权价格对剩余期限的敏感度  
-  
+希腊值单位与账户设置一致，您可通过"config"接口查看。
+
 ### 查看账户Greeks
 
 获取账户资产的greeks信息。
@@ -6231,253 +6240,6 @@ label | String | 子账户备注
 mobile | String | 子账户绑定手机号  
 gAuth | String | 子账户是否开启的登录时的谷歌验证 `true`：已开启 `false`：未开启  
 ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
-  
-### 创建子账户的APIKey
-
-仅适用于母账户
-
-#### 限速：1次/s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`POST /api/v5/users/subaccount/apikey`
-
-> 请求示例
-    
-    
-    POST /api/v5/users/subaccount/apikey
-    body
-    {
-        "pwd":"888888",
-        "subAcct":"panpanBroker2",
-        "label":"broker3",
-        "passphrase":"123456",
-        "perm":"trade"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-pwd | String | 是 | 母账户的资金密码  
-subAcct | String | 是 | 子账户名称，支持6-20位字母和数字组合（区分大小写，不支持空格符号）  
-label | String | 是 | APIKey的备注  
-passphrase | String | 是 | APIKey的密码，支持6-32位字母和数字组合（区分大小写，不支持空格符号）  
-perm | String | 否 | APIKey权限 `read_only`：只读 ；`trade` ：交易  
-ip | String | 否 | 绑定ip地址，多个ip用半角逗号隔开，最多支持20个ip  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "msg": "",
-        "data": [{
-            "subAcct": "test-1",
-            "label": "v5",
-            "apiKey": "arg13sdfgs",
-            "secretKey": "arg13sdfgs",
-            "passphrase": "123678",
-            "perm": "read_only,trade",
-            "ip": "1.1.1.1,2.2.2.2",
-            "ts": "1597026383085"
-        }]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-subAcct | String | 子账户名称  
-label | String | APIKey的备注  
-apiKey | String | API公钥  
-secretKey | String | API的私钥  
-passphrase | String | APIKey的密码  
-perm | String | APIKey权限  
-ip | String | APIKey绑定的ip地址  
-ts | String | 创建时间  
-  
-### 查询子账户的APIKey
-
-仅适用于母账户
-
-#### 限速：1次/s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`GET /api/v5/users/subaccount/apikey`
-
-> 请求示例
-    
-    
-    GET /api/v5/users/subaccount/apikey?subAcct=panpanBroker2
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-subAcct | String | 是 | 子账户名称  
-apiKey | String | 否 | API的公钥  
-  
-> 返回结果
-    
-    
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "label":"v5",
-                "apiKey":"arg13sdfgs",
-                "perm":"read_only,trade",
-                "ip":"1.1.1.1,2.2.2.2",
-                "ts":"1597026383085"
-            },
-            {
-                "label":"v5.1",
-                "apiKey":"arg13sdfgs",
-                "perm":"read_only",
-                "ip":"1.1.1.1,2.2.2.2",
-                "ts":"1597026383085"
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-label | String | APIKey的备注  
-apiKey | String | API公钥  
-perm | String | APIKey权限 read_only：只读 ；trade ：交易  
-ip | String | APIKey绑定的ip地址  
-ts | String | 创建时间  
-  
-### 重置子账户的APIKey
-
-仅适用于母账户
-
-#### 限速：1次/s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`POST /api/v5/users/subaccount/modify-apikey`
-
-> 请求示例
-    
-    
-    POST /api/v5/users/subaccount/modify-apikey
-    body
-    {
-        "pwd":"1234567890",
-        "subAcct":"yongxu",
-        "perm":"read_only",
-        "label":"test7",
-        "apiKey":"49e1b84b-6dee-4894-80ee-ce9eb7ad614f"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-pwd | String | 是 | 母账户的资金密码  
-subAcct | String | 是 | 子账户名称  
-apiKey | String | 是 | API的公钥  
-label | String | 是 | APIKey的备注，如果填写该字段，那该字段会被重置  
-perm | String | 是 | APIKey权限 `read_only`：只读 ；`trade` ：交易  
-多个权限用半角逗号隔开。  
-如果填写该字段，那该字段会被重置  
-ip | String | 否 | 绑定ip地址，多个ip用半角逗号隔开，最多支持20个ip。  
-如果填写该字段，那该字段会被重置  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "msg": "",
-        "data": [{
-            "subAcct": "test-1",
-            "subUid": "99999",
-            "label": "v5",
-            "apiKey": "arg13sdfgs",
-            "perm": "read,trade",
-            "ip": "1.1.1.1,2.2.2.2",
-            "ts": "1597026383085"
-        }]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-subAcct | String | 子账户名称  
-label | String | APIKey的备注  
-apiKey | String | API公钥  
-perm | String | APIKey权限  
-ip | String | APIKey绑定的ip地址  
-ts | String | 创建时间  
-  
-### 删除子账户的APIKey
-
-仅适用于母账户
-
-#### 限速：1次/s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`POST /api/v5/users/subaccount/delete-apikey`
-
-> 请求示例
-    
-    
-    POST /api/v5/users/subaccount/delete-apikey
-    body
-    {
-        "pwd":"123456",
-        "subAcct":"test00001",
-        "apiKey":"b521e11c-b4ed-4c80-9624-346d69749a85"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-pwd | String | 是 | 母账户的资金密码  
-subAcct | String | 是 | 子账户名称  
-apiKey | String | 是 | API的公钥  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "msg": "",
-        "data": [{
-            "subAcct": "test-1"
-        }]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-subAcct | String | 子账户名称  
   
 ### 获取子账户资产余额
 
@@ -7106,10 +6868,10 @@ sz | String | 否 | 深度档位数量，最大值可传400，即买卖深度共
 asks | Array | 卖方深度  
 bids | Array | 买方深度  
 ts | String | 深度产生的时间  
-合约的asks和bids值数组举例说明： ["411.8","10", "1","4"]
-411.8为深度价格，10为此价格的合约张数，1为此价格的强平单数量，4为此价格的订单数量  
-现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "1","4"]
-411.8为深度价格，10为此价格的币的数量，1为此价格的强平单数量，4为此价格的订单数量
+合约的asks和bids值数组举例说明： ["411.8","10", "0","4"]
+411.8为深度价格，10为此价格的合约张数，0该字段已弃用(始终为0)，4为此价格的订单数量  
+现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "0","4"]
+411.8为深度价格，10为此价格的币的数量，0该字段已弃用(始终为0)，4为此价格的订单数量
 
 ### 获取交易产品K线数据
 
@@ -8133,43 +7895,45 @@ expTime | String | 否 | 合约到期日，格式为"YYMMDD"，如 "200527"
         "msg":"",
         "data":[
           {
-            "instType":"OPTION",
-            "instId":"BTC-USD-200103-5500-C",
-            "uly":"BTC-USD",
-            "delta":"0.7494223636",
-            "gamma":"-0.6765419039",
-            "theta":"-0.0000809873",
-            "vega":"0.0000077307",
-            "deltaBS":"0.7494223636",
-            "gammaBS":"-0.6765419039",
-            "thetaBS":"-0.0000809873",
-            "vegaBS":"0.0000077307",
-            "realVol":"0",
-            "bidVol":"",
-            "askVol":"1.5625",
-            "markVol":"0.9987",
-            "lever":"4.0342",
-            "ts":"1597026383085"
-        },
-        {
-            "instType":"OPTION",
-            "instId":"BTC-USD-200103-6500-C",
-            "uly":"BTC-USD",
-            "delta":"0.7494223636",
-            "gamma":"-0.6765419039",
-            "theta":"-0.0000809873",
-            "vega":"0.0000077307",
-            "deltaBS":"0.7494223636",
-            "gammaBS":"-0.6765419039",
-            "thetaBS":"-0.0000809873",
-            "vegaBS":"0.0000077307",
-            "realVol":"0",
-            "bidVol":"",
-            "askVol":"1.5625",
-            "markVol":"0.9987",
-            "lever":"4.0342",
-            "ts":"1597026383085"
-        }
+                "askVol": "3.7207056835937498",
+                "bidVol": "0",
+                "delta": "0.8310206676289528",
+                "deltaBS": "0.9857332101544538",
+                "fwdPx": "39016.8143629068452065",
+                "gamma": "-1.1965483553276135",
+                "gammaBS": "0.000011933182397798109",
+                "instId": "BTC-USD-220309-33000-C",
+                "instType": "OPTION",
+                "lever": "0",
+                "markVol": "1.5551965233045728",
+                "realVol": "0",
+                "theta": "-0.0014131955002093717",
+                "thetaBS": "-66.03526900575946",
+                "ts": "1646733631242",
+                "uly": "BTC-USD",
+                "vega": "0.000018173851073258973",
+                "vegaBS": "0.7089307622132419"
+            },
+            {
+                "askVol": "1.7968814062499998",
+                "bidVol": "0",
+                "delta": "-0.014668822072611904",
+                "deltaBS": "-0.01426678984554619",
+                "fwdPx": "39016.8143629068452065",
+                "gamma": "0.49483062407551576",
+                "gammaBS": "0.000011933182397798109",
+                "instId": "BTC-USD-220309-33000-P",
+                "instType": "OPTION",
+                "lever": "0",
+                "markVol": "1.5551965233045728",
+                "realVol": "0",
+                "theta": "-0.0014131955002093717",
+                "thetaBS": "-54.93377294845015",
+                "ts": "1646733631242",
+                "uly": "BTC-USD",
+                "vega": "0.000018173851073258973",
+                "vegaBS": "0.7089307622132419"
+            }
       ]
     }
     
@@ -8195,6 +7959,7 @@ markVol | String | 标记波动率
 bidVol | String | bid波动率  
 askVol | String | ask波动率  
 realVol | String | 已实现波动率（目前该字段暂未启用）  
+fwdPx | String | 远期价格  
 ts | String | 数据更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 获取预估交割/行权价格
@@ -8567,7 +8332,7 @@ instType | String | 是 | 产品类型
 `OPTION`：期权  
 tdMode | String | 是 | 保证金模式  
 `isolated`：逐仓 ；`cross`：全仓  
-uly | String | 可选 | 标的指数， 仅适用于`交割/永续/期权`，且必填写  
+uly | String | 可选 | 标的指数， 当产品类型是 `永续`、`交割`、`期权` 之一时必填，当产品类型是 `MARGIN` 时忽略  
 instId | String | 可选 | 产品ID， 仅适用`币币杠杆`，且必填写  
 tier | String | 否 | 查指定档位  
   
@@ -8801,6 +8566,77 @@ instType | String | 是 | 产品类型
 **参数名** | **类型** | **描述**  
 ---|---|---  
 uly | Array | 标的指数 如：BTC-USDT  
+  
+### 获取风险准备金余额
+
+通过该接口获取系统风险准备金余额信息
+
+#### 限速： 10次/2s
+
+#### 限速规则：IP
+
+#### HTTP请求
+
+`GET /api/v5/public/insurance-fund`
+
+> 请求示例
+    
+    
+    GET /api/v5/public/insurance-fund?instType=SWAP&uly=BTC-USD
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 是 | 产品类型  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+type | String | 否 | 风险准备金类型  
+`liquidation_balance_deposit`：强平注入 ；`bankruptcy_loss`：穿仓亏损
+；`platform_revenue`：平台收入注入  
+默认返回全部类型  
+uly | String | 否 | 标的指数， 仅适用于`交割/永续/期权`，且必填写  
+ccy | String | 否 | 币种， 仅适用`币币杠杆`，且必填写  
+before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
+after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，传的值为对应接口的`ts`  
+limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "details": [
+                    {
+                        "amt": "0.2465",
+                        "balance": "3228.0732",
+                        "ccy": "BTC",
+                        "ts": "1646726421082",
+                        "type": "liquidation_balance_deposit"
+                    }
+                ],
+                "total": "883110357.6581"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+total | String | 平台风险准备金总计，单位为USD  
+> balance | String | 风险准备金总量  
+> amt | String | 风险准备金更新数量  
+> ccy | String | 风险准备金总量对应的币种  
+> type | String | 风险准备金类型  
+> ts | String | 风险准备金更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ## 交易大数据
 
@@ -13390,7 +13226,8 @@ data | Array | 订阅的数据
 `books` 首次推400档快照数据，以后增量推送，即每100毫秒有深度变化推送一次变化的数据  
 `books5`首次推5档快照数据，以后定量推送，每200毫秒有深度变化推送一次5档数据，即每次都推送5档数据  
 `books-l2-tbt` 首次推400档快照数据，以后增量推送，即每10毫秒有深度有变化推送一次变化的数据  
-`books50-l2-tbt` 首次推50档快照数据，以后增量推送，即每10毫秒有深度有变化推送一次变化的数据
+`books50-l2-tbt`
+首次推50档快照数据，以后增量推送，即每10毫秒有深度有变化推送一次变化的数据，若买一卖一为空数组，那代表400档内有变化。
 
 > 请求示例
     
@@ -13533,10 +13370,10 @@ data | Array | 订阅的数据
 > bids | Array | 买方深度  
 > ts | String | 数据更新时间戳，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > checksum | Integer | 检验和  
-合约的asks和bids值数组举例说明： ["411.8","10", "1","4"]
-411.8为深度价格，10为此价格的合约张数，1为此价格的强平单数量，4为此价格的订单数量  
-现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "1","4"]
-411.8为深度价格，10为此价格的币的数量，1为此价格的强平单数量，4为此价格的订单数量
+合约的asks和bids值数组举例说明： ["411.8","10", "0","4"]
+411.8为深度价格，10为此价格的合约张数，0该字段已弃用(始终为0)，4为此价格的订单数量  
+现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "0","4"]
+411.8为深度价格，10为此价格的币的数量，0该字段已弃用(始终为0)，4为此价格的订单数量
 
 ### 期权定价频道
 
@@ -13621,6 +13458,7 @@ msg | String | 否 | 错误消息
             "askVol": "1.5625",
             "markVol": "0.9987",
             "lever": "4.0342",
+            "fwdPx": "4.0342",
             "ts": "1597026383085"
         }]
     }
@@ -13650,6 +13488,7 @@ data | Array | 订阅的数据
 > bidVol | String | bid波动率  
 > askVol | String | ask波动率  
 > realVol | String | 已实现波动率，目前该字段暂未启用  
+> fwdPx | String | 远期价格  
 > ts | String | 数据更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 资金费率频道
@@ -14100,6 +13939,8 @@ body不能为空 | 400 | 50000
 设置币种数量不能大于100个 | 200 | 50031  
 您的账户已设置禁止该币种交易，请确认后重试 | 200 | 50032  
 您的账户已设置禁止该业务线交易，请确认后重试 | 200 | 50033  
+您当前不在白名单列表，请联系客服 | 200 | 50033  
+该接口要求APIKey必须绑定IP | 403 | 50033  
   
 #### API 类
 
@@ -14157,6 +13998,8 @@ clOrdId重复 | 200 | 51016
 合约结算中 | 200 | 51029  
 资金费结算中 | 200 | 51030  
 委托价格不在平仓限价范围内 | 200 | 51031  
+市价全平中 | 200 | 51032  
+币对单笔交易已达限额 | 200 | 51033  
 PM账户仅支持买卖模式 | 200 | 51041  
 当前订单类型{0}, {1}不支持设置止盈和止损 | 200 | 51044  
 止盈触发价格应该大于委托价格 | 200 | 51046  
@@ -14411,7 +14254,7 @@ NEO最小提现数量为1，且提现数量必须为整数 | 200 | 58202
 invoice已经过期 | 200 | 58351  
 invoice无效 | 200 | 58352  
 充币数量需要在限额范围内 | 200 | 58353  
-单日达到生成invoice100个的上限 | 200 | 58354  
+单日达到生成invoice10000个的上限 | 200 | 58354  
 用户没有使用此API接口的权限 | 200 | 58355  
 同节点账户不支持闪电网络充币或提币 | 200 | 58356  
 币种{0}不允许创建充值地址 | 200 | 58357  
@@ -14473,7 +14316,6 @@ APIKey 不存在 | 200 | 59506
 仅母账APIkey有操作此接口的权限 | 200 | 59604  
 子账户的APIkey不存在 | 200 | 59605  
 删除失败，请将子账户中的余额划转到母账户 | 200 | 59606  
-母账交易密码错误 | 200 | 59607  
 仅Broker账户有操作此接口的权限 | 200 | 59608  
 经纪商已经存在 | 200 | 59609  
 经纪商不存在 | 200 | 59610  
@@ -14481,6 +14323,8 @@ APIKey 不存在 | 200 | 59506
 时间参数格式转换失败 | 200 | 59612  
 当前未与子账户建立托管关系 | 200 | 59613  
 托管子账户不支持此操作 | 200 | 59614  
+起始日期和结束日期的时间间隔不能超过180天。 | 200 | 59615  
+起始日期不能大于结束日期 | 200 | 59616  
   
 ## WebSocket
 
