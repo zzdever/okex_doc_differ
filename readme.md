@@ -9311,6 +9311,9 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了用户端与服�
 
 ## 登录
 
+限速: 1次/1s `适用于单账户登录`  
+限速: 1次/15s `适用于多账户批量登录`
+
 > 请求格式说明
     
     
@@ -9340,12 +9343,29 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了用户端与服�
            "passphrase" :"123456"    ,
            "timestamp" :"1538054050"    ,
            "sign" :"7L+zFQ+CEgGu5rzCj4+BdV2/uUHGqddA9pI6ztsRRPs=" 
+          },
+          {
+           "apiKey"    : "86126n98-57ce-40fb-b714-afc0b9787083",
+           "passphrase" :"123456"    ,
+           "timestamp" :"1538054050"    ,
+           "sign" :"7L+zFQ+CEgGu5rzCj4+BdV2/uUHGqddA9pI6ztsRRPs=" 
           }
        ]
     }
     
 
-> 成功返回示例
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+op | String | 是 | 操作，`login`  
+args | Array | 是 | 账户列表，最多100组  
+> apiKey | String | 是 | APIKey  
+> passphrase | String | 是 | APIKey 的密码  
+> timestamp | String | 是 | 时间戳，Unix Epoch时间，单位是秒  
+> sign | String | 是 | 签名字符串  
+  
+> 全部成功返回示例
     
     
     {
@@ -9355,21 +9375,40 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了用户端与服�
     }
     
 
-> 失败返回示例
+> 全部失败返回示例
     
     
     {
     "event": "error",
-    "code": "60008",
-    "msg": "Login is not supported for public channels."
+    "code": "60009",
+    "msg": "Login failed."
     }
     
 
-**api_key** : 用于调用API的用户身份唯一标示，需要用户申请
+> 部分成功返回示例
+    
+    
+    {
+        "event": "login",
+        "code": "60022",
+        "msg": "Bulk login partially succeeded",
+        "data":[
+            {"apiKey": "86126n98-57ce-40fb-b714-afc0b9787083"}
+        ]
+    }
+    
 
-**passphrase** : APIKey 的密码
+#### 返回参数
 
-**timestamp** : 时间戳 ，是Unix Epoch时间，单位是秒
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+event | String | 是 | 操作，`login` `error`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+data | Object | 否 | 登陆失败后返回的数据  
+> apiKey | String | 是 | 登陆失败后返回的APIKey  
+  
+多账户批量登录的用户只能订阅 WebSocket 频道，不能使用 WebSocket 交易
 
 **sign** :签名字符串，签名算法如下：
 
@@ -10622,7 +10661,8 @@ msg | String | 否 | 错误消息
     
     {
       "arg": {
-        "channel": "account"
+        "channel": "account",
+        "uid": "77982378738415879",
       },
       "data": [
         {
@@ -10697,6 +10737,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 请求订阅的频道  
 > channel | String | 频道名  
+> uid | String | 用户标识  
 > ccy | String | 币种  
 data | Array | 订阅的数据  
 uTime | String | 获取账户信息的最新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -10925,6 +10966,7 @@ msg | String | 否 | 错误消息
     {
         "arg": {
             "channel": "positions",
+            "uid": "77982378738415879",
             "instType": "ANY"
         },
         "data": [{
@@ -11017,6 +11059,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
+> uid | String | 用户标识  
 > instType | String | 产品类型  
 > uly | String | 标的指数  
 > instId | String | 产品ID  
@@ -11141,7 +11184,8 @@ msg | String | 否 | 错误消息
     
     {
         "arg": {
-            "channel": "balance_and_position"
+            "channel": "balance_and_position",
+            "uid": "77982378738415879"
         },
         "data": [{
             "pTime": "1597026383085",
@@ -11174,6 +11218,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 请求订阅的频道  
 > channel | String | 频道名  
+> uid | String | 用户标识  
 data | Array | 订阅的数据  
 > pTime | String | 推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > eventType | String | 事件类型，枚举值：`snapshot`：首推快照  
@@ -11318,6 +11363,7 @@ msg | String | 否 | 错误消息
     {
         "arg": {
             "channel": "orders",
+            "uid": "77982378738415879",
             "instType": "FUTURES",
             "instId": "BTC-USD-200329"
         },
@@ -11377,8 +11423,9 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
-> uly | String | 标的指数  
+> uid | String | 用户标识  
 > instType | String | 产品类型  
+> uly | String | 标的指数  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -11572,6 +11619,7 @@ msg | String | 否 | 错误消息
     {
         "arg": {
             "channel": "orders-algo",
+            "uid": "77982378738415879",
             "instType": "FUTURES",
             "instId": "BTC-USD-200329"
         },
@@ -11615,6 +11663,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
+> uid | String | 用户标识  
 > instType | String | 产品类型  
 > uly | String | 标的指数  
 > instId | String | 产品ID  
@@ -11776,6 +11825,7 @@ msg | String | 否 | 错误消息
     {
         "arg":{
             "channel":"algo-advance",
+            "uid": "77982378738415879",
             "instType":"SPOT",
             "instId":"BTC-USDT"
         },
@@ -11827,6 +11877,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
+> uid | String | 用户标识  
 > instType | String | 产品类型  
 > instId | String | 产品ID  
 > algoId | String | 策略ID  
@@ -11974,6 +12025,7 @@ msg | String | 否 | 错误消息
     {
         "arg":{
             "channel":"liquidation-warning",
+            "uid": "77982378738415879",
             "instType":"FUTURES"
         },
         "data":[
@@ -12027,6 +12079,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
+> uly | String | 用户标识  
 > instType | String | 产品类型  
 > uly | String | 标的指数  
 > instId | String | 产品ID  
@@ -12163,6 +12216,7 @@ msg | String | 否 | 错误消息
     {
       "arg": {
         "channel": "account-greeks",
+        "uid": "77982378738415879",
         "ccy": "BTC"
       },
       "data": [
@@ -12188,6 +12242,7 @@ msg | String | 否 | 错误消息
     {
       "arg": {
         "channel": "account-greeks",
+        "uid": "77982378738415879",
         "ccy": "BTC"
       },
       "data": [
@@ -12223,16 +12278,20 @@ msg | String | 否 | 错误消息
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-deltaBS | String | 美金本位账户资产delta  
-deltaPA | String | 币本位账户资产delta  
-gammaBS | String | 美金本位账户资产gamma，仅适用于`期权`  
-gammaPA | String | 币本位账户资产gamma，仅适用于`期权`  
-thetaBS | String | 美金本位账户资产theta，仅适用于`期权`  
-thetaPA | String | 币本位账户资产theta，仅适用于`期权`  
-vegaBS | String | 美金本位账户资产vega，仅适用于`期权`  
-vegaPA | String | 币本位账户资产vega，仅适用于`期权`  
-ccy | String | 币种  
-ts | String | 获取greeks的时间，Unix时间戳的毫秒数格式，如 1597026383085  
+arg | Object | 请求订阅的频道  
+> channel | String | 频道名  
+> uid | String | 用户标识  
+data | Array | 订阅的数据  
+> deltaBS | String | 美金本位账户资产delta  
+> deltaPA | String | 币本位账户资产delta  
+> gammaBS | String | 美金本位账户资产gamma，仅适用于`期权`  
+> gammaPA | String | 币本位账户资产gamma，仅适用于`期权`  
+> thetaBS | String | 美金本位账户资产theta，仅适用于`期权`  
+> thetaPA | String | 币本位账户资产theta，仅适用于`期权`  
+> vegaBS | String | 美金本位账户资产vega，仅适用于`期权`  
+> vegaPA | String | 币本位账户资产vega，仅适用于`期权`  
+> ccy | String | 币种  
+> ts | String | 获取greeks的时间，Unix时间戳的毫秒数格式，如 1597026383085  
   
 首次推送，只推账户资产不为0的greeks数据。
 
@@ -14354,6 +14413,10 @@ APIKey 不存在 | 200 | 59506
 无效的url path | 60017  
 频道不存在 | 60018  
 无效的op{0} | 60019  
+超出最大允许订阅的APIKey数量{0} | 60020  
+该功能不支持多账户登录使用 | 60021  
+批量登录部分成功 | 60022  
+批量登录请求过于频繁 | 60023  
 passphrase不正确 | 60024  
 内部系统错误 | 63999  
   
