@@ -3036,7 +3036,7 @@ to | String | 否 | 资金充值到账账户
 ---|---|---  
 invoice | String | invoice 号码  
 cTime | String | 生成invoice时间  
-仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`wallace.yan@okg.com`申请
+仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`liz.jensen@okg.com`申请
 
 ### 获取充值地址信息
 
@@ -3313,7 +3313,7 @@ memo | String | 否 | 闪电网络提币的备注
 ---|---|---  
 wdId | String | 提币申请ID  
 cTime | String | 提币ID生成时间  
-仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`wallace.yan@okg.com`申请
+仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`liz.jensen@okg.com`申请
 
 ### 获取提币记录
 
