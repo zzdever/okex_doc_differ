@@ -3080,7 +3080,7 @@ ccy | String | 是 | 币种，如`BTC`
                 "selected": true
             },
             {
-                "chain": "BTC-OEC",
+                "chain": "BTC-OKC",
                 "ctAddr": "",
                 "ccy": "BTC",
                 "to": "6",
