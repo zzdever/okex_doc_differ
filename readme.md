@@ -11480,6 +11480,7 @@ data | Array | 订阅的数据
 `adl`：ADL订单种类  
 `full_liquidation`：爆仓订单种类  
 `partial_liquidation`：减仓订单种类  
+`delivery`：交割  
 `ddh`：对冲减仓类型订单  
 > uTime | String | 订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
