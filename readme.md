@@ -55,7 +55,9 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取充值记录 
       * 提币 
       * 闪电网络提币 
+      * 撤销提币 
       * 获取提币记录 
+      * 小额资产兑换 
       * 获取余币宝余额 
       * 余币宝申购/赎回 
       * 设置余币宝借贷利率 
@@ -2544,16 +2546,20 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
       "msg": "",
       "data": [
         {
+          "canDep": true,
+          "canInternal": true,
+          "canWd": true,
           "ccy": "USDT",
           "chain": "USDT-ERC20",
-          "name": "",
-          "canDep": true,
-          "canWd": true,
-          "canInternal": true,
-          "minWd": "0.1",
-          "maxFee": "0.2",
-          "minFee": "0.01",
-          "mainNet": false
+          "mainNet": false,
+          "maxFee": "18.6742688",
+          "maxWd": "21720100",
+          "minFee": "9.3371344",
+          "minWd": "2",
+          "name": "Tether",
+          "usedWdQuota": "0",
+          "wdQuota": "500",
+          "wdTickSz": "3"
         }
       ]
     }
@@ -2570,7 +2576,11 @@ chain | String | 币种链信息
 canDep | Boolean | 是否可充值，`false`表示不可链上充值，`true`表示可以链上充值  
 canWd | Boolean | 是否可提币，`false`表示不可链上提币，`true`表示可以链上提币  
 canInternal | Boolean | 是否可内部转账，`false`表示不可内部转账，`true`表示可以内部转账  
-minWd | String | 币种最小提币量  
+minWd | String | 币种单笔最小提币量  
+maxWd | String | 币种单笔最大提币量  
+wdTickSz | String | 提币精度,表示小数点后的位数  
+wdQuota | String | 过去24小时内提币额度，单位为`BTC`  
+usedWdQuota | String | 过去24小时内已用提币额度，单位为`BTC`  
 minFee | String | 最小提币手续费数量  
 maxFee | String | 最大提币手续费数量  
 mainNet | Boolean | 当前链是否为主链  
@@ -3146,6 +3156,7 @@ ctAddr | String | 合约地址后6位
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 ccy | String | 否 | 币种名称，如 `BTC`  
+depId | String | 否 | 充值记录 ID  
 txId | String | 否 | 区块转账哈希记录  
 state | String | 否 | 充值状态  
 `0`：等待确认 `1`：确认到账 `2`：充值成功  
@@ -3315,6 +3326,54 @@ wdId | String | 提币申请ID
 cTime | String | 提币ID生成时间  
 仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`liz.jensen@okg.com`申请
 
+### 撤销提币
+
+撤销用户提币。
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/asset/cancel-withdrawal`
+
+> 请求示例
+    
+    
+    POST /api/v5/asset/cancel-withdrawal
+    body {
+       "wdId":"1123456"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+wdId | String | 是 | 提币申请ID  
+  
+> 返回结果
+    
+    
+    {
+      "code": "0",
+      "msg": "",
+      "data": [
+        {
+          "wdId": "1123456"   
+        }
+      ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+wdId | String | 提币申请ID  
+接口返回code等于0不能严格认为提币已经被撤销，只表示您的请求被系统服务器所接受，实际结果以获取提币记录中的状态为准。
+
 ### 获取提币记录
 
 根据币种，提币状态，时间范围获取提币记录，按照时间倒序排列，默认返回100条数据。
@@ -3343,6 +3402,7 @@ cTime | String | 提币ID生成时间
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 ccy | String | 否 | 币种名称，如 `BTC`  
+wdId | String | 否 | 提币申请ID  
 txId | String | 否 | 区块转账哈希记录  
 state | String | 否 | 提币状态  
 `-3`：撤销中 `-2`：已撤销 `-1`：失败  
@@ -3395,7 +3455,67 @@ state | String | 提币状态
 `-3`：撤销中 `-2`：已撤销 `-1`：失败  
 `0`：等待提现 `1`：提现中 `2`：已汇出  
 `3`：邮箱确认 `4`：人工审核中 `5`：等待身份认证  
-wdId | String | 提币申请 ID  
+wdId | String | 提币申请ID  
+  
+### 小额资产兑换
+
+将资金账户中的小额资产转化为`OKB`。24小时之内只能兑换一次。
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/asset/convert-dust-assets`
+
+> 请求示例
+    
+    
+    POST /api/v5/asset/convert-dust-assets
+    body {
+       "ccy":["BTC","USDT"]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ccy | Array | 是 | 需要转换的币种资产  
+  
+> 返回结果
+    
+    
+    {
+      "code": "0",
+      "data": [
+        {
+          "details": [
+            {
+                "amt": "1",
+                "ccy": "USDT",
+                "cnvAmt": "0.04771642808422",
+                "fee": "0.00097380465478"
+            }
+          ],
+          "totalCnvAmt": "0.04771642"
+        }
+      ],
+      "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+totalCnvAmt | String | 兑换后总`OKB`数量  
+details | Array | 各币种资产转换详情  
+> ccy | String | 币种资产,如 `BTC`  
+> amt | String | 转换前币种资产数量  
+> cnvAmt | String | 转换后的`OKB`数量  
+> fee | String | 兑换手续费，单位为`OKB`  
   
 ### 获取余币宝余额
 
@@ -3876,6 +3996,7 @@ rfqSz | String | 是 | 询价数量
 rfqSzCcy | String | 是 | 询价币种  
 clQReqId | String | 否 | 客户端自定义的订单标识  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+tag | String | 否 | 订单标签  
   
 > 返回结果
     
@@ -3961,6 +4082,7 @@ sz | String | 是 | 用户报价数量
 szCcy | String | 是 | 用户报价币种  
 clTReqId | String | 否 | 用户自定义的订单标识  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+tag | String | 否 | 订单标签  
   
 > 返回结果
     
@@ -4030,6 +4152,7 @@ ts | String | 闪兑交易时间，值为时间戳，Unix时间戳为毫秒数�
 after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
 before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
 limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
+tag | String | 否 | 订单标签  
   
 > 返回结果
     
@@ -12659,7 +12782,7 @@ data | Array | 订阅的数据
   
 ### K线频道
 
-获取指数的K线数据，推送频率最快是间隔500ms推送一次数据。
+获取K线数据，推送频率最快是间隔500ms推送一次数据。
 
 > 请求示例
     
@@ -14294,6 +14417,8 @@ NEO最小提现数量为1，且提现数量必须为整数 | 200 | 58202
 提现手续费应填写为提币数量的{0}% | 200 | 58212  
 提现前请先设置交易密码 | 200 | 58213  
 {chainName}维护中，暂停提币 | 200 | 58214  
+提币申请ID不存在 | 200 | 58215  
+不允许执行该操作 | 200 | 58216  
 创建充值地址超过上限 | 200 | 58300  
 您的余额不足 | 200 | 58350  
 invoice已经过期 | 200 | 58351  
@@ -14304,6 +14429,9 @@ invoice无效 | 200 | 58352
 同节点账户不支持闪电网络充币或提币 | 200 | 58356  
 币种{0}不允许创建充值地址 | 200 | 58357  
 fromCcy与toCcy不可相同 | 200 | 58358  
+小额兑换功能每日使用次数超限 | 200 | 58370  
+小额资产超过最大限制 | 200 | 58371  
+小额资产不足 | 200 | 58372  
   
 ### 账户类
 
