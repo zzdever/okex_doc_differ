@@ -6887,7 +6887,7 @@ ts | String | ticker数据产生时间，Unix时间戳的毫秒数格式，如 `
 > 请求示例
     
     
-    GET /api/v5/market/index-tickers?quoteCcy=BTC
+    GET /api/v5/market/index-tickers?instId=BTC-USDT
     
 
 #### 请求参数
@@ -6902,20 +6902,20 @@ instId | String | 可选 | 指数，如 `BTC-USD`
     
     
     {
-        "code":"0",
-        "msg":"",
-        "data":[
-        {
-            "instId":"BTC-USDT",
-            "idxPx":"0.1",
-            "high24h":"0.5",
-            "low24h":"0.1",
-            "open24h":"0.1",
-            "sodUtc0":"0.1",
-            "sodUtc8":"0.1",
-            "ts":"1597026383085"
-        }
-      ]
+        "code": "0",
+        "msg": "",
+        "data": [
+            {
+                "instId": "BTC-USDT",
+                "idxPx": "43350",
+                "high24h": "43649.7",
+                "sodUtc0": "43444.1",
+                "open24h": "43640.8",
+                "low24h": "43261.9",
+                "sodUtc8": "43328.7",
+                "ts": "1649419644492"
+            }
+        ]
     }
     
 
