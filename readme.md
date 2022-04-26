@@ -2551,6 +2551,7 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
           "canWd": true,
           "ccy": "USDT",
           "chain": "USDT-ERC20",
+          "logoLink": "https://static.coinall.ltd/cdn/announce/20200522/159014965610216037408-525c-4143-8eef-003e2edf6859.png",
           "mainNet": false,
           "maxFee": "18.6742688",
           "maxWd": "21720100",
@@ -2571,6 +2572,7 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
 ---|---|---  
 ccy | String | 币种名称，如 `BTC`  
 name | String | 币种中文名称，不显示则无对应名称  
+logoLink | String | 币种Logo链接  
 chain | String | 币种链信息  
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 canDep | Boolean | 是否可充值，`false`表示不可链上充值，`true`表示可以链上充值  
