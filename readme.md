@@ -17,6 +17,7 @@ API接口 Broker接入 最佳实践 更新日志
     * 满意度调研 
     * 实盘交易 
     * 模拟盘交易 
+    * 基本信息 
   * 交互式浏览器 
     * 使用说明 
   * REST API
@@ -267,7 +268,7 @@ AWS 地址如下：
 
   * WebSocket公共频道：`wss://wsaws.okex.com:8443/ws/v5/public`  
 
-  * WebSocket私有频道：`wss://wsaws.okex.com:8443/ws/v5/private`  
+  * WebSocket私有频道：`wss://wsaws.okex.com:8443/ws/v5/private`
 
 ## 模拟盘交易
 
@@ -312,6 +313,22 @@ AWS 地址如下：
     
     x-simulated-trading: 1
     
+
+## 基本信息
+
+交易所层面的下单规则如下：
+
+限价（包括高级限价）和市价单的最大挂单数：4000个
+
+策略策略委托订单最大挂单数：
+
+  * 计划委托：5000个  
+
+  * 移动止盈止损：50个  
+
+  * 冰山委托：100个  
+
+  * 时间加权委托：20个  
 
 # 交互式浏览器
 
@@ -7027,8 +7044,8 @@ ts | String | 深度产生的时间
 instId | String | 是 | 产品ID，如`BTC-USD-190927-5000-C`  
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
-香港时间开盘价k线：[6H/12H/1D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[/6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+香港时间开盘价k线：[6H/12H/1D/2D/3D/1W/1M/3M/6M/1Y]  
+UTC时间开盘价k线：[/6Hutc/12Hutc/1Dutc/2Dutc/3Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
 after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，传的值为对应接口的`ts`  
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 limit | String | 否 | 分页返回的结果集数量，最大为300，不填默认返回100条  
@@ -7106,8 +7123,8 @@ after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
-香港时间开盘价k线：[6H/12H/1D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+香港时间开盘价k线：[6H/12H/1D/2D/3D/1W/1M/3M/6M/1Y]  
+UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/2Dutc/3Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -14537,6 +14554,11 @@ APIKey 不存在 | 200 | 59506
 批量登录部分成功 | 60022  
 批量登录请求过于频繁 | 60023  
 passphrase不正确 | 60024  
+超出最大允许订阅的token数量{0} | 60025  
+不支持APIKey和token同时登录 | 60026  
+参数{0}不可为空 | 60027  
+TBT深度频道仅支持手续费等级为VIP5及以上的用户订阅使用 | 60029  
+TBT深度频道仅支持手续费等级为VIP4及以上的用户订阅使用 | 60030  
 内部系统错误 | 63999  
   
 # 创建我的APIKey
