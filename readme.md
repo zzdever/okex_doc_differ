@@ -318,7 +318,7 @@ AWS 地址如下：
 
 交易所层面的下单规则如下：
 
-限价（包括高级限价）和市价单的最大挂单数：4000个
+限价单（包括高级限价单）的最大挂单数：4000个
 
 策略策略委托订单最大挂单数：
 
@@ -8383,7 +8383,7 @@ details | Array | 详细内容
 `long`：多  
 `short`：空  
 `side`和`posSide`组合方式，sell/long：强平多 ; buy/short:强平空  
->bkPx | String | 破产价格  
+>bkPx | String | 破产价格，将所有保证金亏光的价格  
 >sz | String | 强平数量  
 >bkLoss | String | 穿仓亏损数量  
 >ccy | String | 强平币种，仅适用于`币币杠杆`  
