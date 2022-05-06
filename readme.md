@@ -6685,12 +6685,12 @@ transId | String | 划转ID
 
 #### HTTP请求
 
-`POST /api/v5/asset/subaccount/set-transfer-out`
+`POST /api/v5/users/subaccount/set-transfer-out`
 
 > 请求示例
     
     
-    POST /api/v5/asset/subaccount/set-transfer-out
+    POST /api/v5/users/subaccount/set-transfer-out
     body
     {
         "subAcct":"test-1",
