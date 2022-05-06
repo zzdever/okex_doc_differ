@@ -102,6 +102,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取子账户资产余额 
       * 查询子账户转账记录 
       * 子账户间资金划转 
+      * 设置子账户主动转出权限 
       * 查看被托管的子账户列表 
     * 行情数据 
       * 获取所有产品行情信息 
@@ -2722,7 +2723,9 @@ details | Array | 各个账户的资产估值
   
 ### 资金划转
 
-支持母账户的资金账户划转到交易账户，母账户到子账户的资金账户和交易账户划转。不支持子账户和子账户之间直接划转。
+支持母账户的资金账户划转到交易账户，母账户到子账户的资金账户和交易账户划转；
+
+子账户默认可转出至母账户，划转到同一母账户下的其他子账户，需要先调用“设置子账户转出权限”接口进行授权。
 
 #### 限速： 1 次/s
 
@@ -2757,6 +2760,17 @@ details | Array | 各个账户的资产估值
         "subAcct":"mini"
     }
     
+    子账户从资金账户划转1.5USDT到另一子账户的资金账户
+    POST /api/v5/asset/transfer
+    body 
+    {
+        "ccy":"USDT",
+        "type":"4",
+        "amt":"1.5",
+        "from":"6",
+        "to":"6",
+        "subAcct":"mini"
+    }
     
 
 #### 请求参数
@@ -2773,7 +2787,8 @@ subAcct | String | 可选 | 子账户名称，type 为`1`或`2`：subAcct 为必
 type | String | 否 | `0`：账户内划转  
 `1`：母账户转子账户(仅适用于母账户APIKey)  
 `2`：子账户转母账户(仅适用于母账户APIKey)  
-默认为`0`。  
+`3`：子账户转母账户(仅适用于子账户APIKey)  
+`4`：子账户转子账户(仅适用于子账户APIKey，且目标账户需要是同一母账户下的其他子账户)  
 loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`或`组合保证金模式`下的借币转入/转出  
 true 或 false，默认false  
   
@@ -6352,24 +6367,26 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
         "code":"0",
         "msg":"",
         "data":[
-                       {
-                          "enable":true,
-                          "subAcct":"test-1",
-                          "type":"1",
-                          "label":"trade futures",
-                          "mobile":"1818181",
-                          "gAuth":true,
-                          "ts":"1597026383085"
-                       },
-                       {
-                          "enable":false,
-                          "subAcct":"test-2",
-                          "type":"1",
-                          "label":"trade spot",
-                          "mobile":"1818199",
-                          "gAuth":true,
-                          "ts":"1597026383082"
-                       }
+           {
+              "enable":true,
+              "subAcct":"test-1",
+              "type":"1",
+              "label":"trade futures",
+              "mobile":"1818181",
+              "gAuth":true,
+              "canTransOut": true,
+              "ts":"1597026383085"
+           },
+           {
+              "enable":false,
+              "subAcct":"test-2",
+              "type":"1",
+              "label":"trade spot",
+              "mobile":"1818199",
+              "gAuth":true,
+              "canTransOut": false,
+              "ts":"1597026383082"
+           }
     
         ]
     }
@@ -6385,6 +6402,7 @@ subAcct | String | 子账户名称
 label | String | 子账户备注  
 mobile | String | 子账户绑定手机号  
 gAuth | String | 子账户是否开启的登录时的谷歌验证 `true`：已开启 `false`：未开启  
+canTransOut | Boolean | 是否可以主动转出，`false`：不可转出，`true`：可以转出  
 ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
   
 ### 获取子账户资产余额
@@ -6656,6 +6674,59 @@ true 或 false，默认false
 **参数名** | **类型** | **描述**  
 ---|---|---  
 transId | String | 划转ID  
+  
+### 设置子账户主动转出权限
+
+设置子账户转出权限（仅适用于母账户），默认可转出至母账户。
+
+#### 限速：1次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/asset/subaccount/set-transfer-out`
+
+> 请求示例
+    
+    
+    POST /api/v5/asset/subaccount/set-transfer-out
+    body
+    {
+        "subAcct":"test-1",
+        "canTransOut":true
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 是 | 子账户名称，支持设置多个（不超过20个），子账户名称之间半角逗号分隔  
+canTransOut | Boolean | 否 | 是否可以主动转出，`false`：不可转出，`true`：可以转出，默认为`true`  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "subAcct": "test-1",
+                "canTransOut": true
+            }
+        ],
+        "msg": ""
+    }
+    
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subAcct | String | 子账户名称  
+canTransOut | Boolean | 是否可以主动转出，`false`：不可转出，`true`：可以转出  
   
 ### 查看被托管的子账户列表
 
@@ -7649,7 +7720,13 @@ instId | String | 否 | 产品ID
             "minSz":"1",
             "ctType":"inverse",
             "alias":"this_week",
-            "state":"live"
+            "state":"live",
+            "maxLmtSz":"10000",
+            "maxMktSz":"99999",
+            "maxTwapSz":"99999",
+            "maxIcebergSz":"99999",
+            "maxTriggerSz":"9999",
+            "maxStopSz":"9999"
         }
       ]
     }
@@ -7694,6 +7771,12 @@ state | String | 产品状态
 `suspend`：暂停中  
 `preopen`：预上线  
 `settlement`：资金费结算  
+maxLmtSz | String | 合约或现货限价单的单笔最大委托数量  
+maxMktSz | String | 合约或现货市价单的单笔最大委托数量  
+maxTwapSz | String | 合约或现货时间加权单的单笔最大委托数量  
+maxIcebergSz | String | 合约或现货冰山委托的单笔最大委托数量  
+maxTriggerSz | String | 合约或现货计划委托委托的单笔最大委托数量  
+maxStopSz | String | 合约或现货止盈止损委托的单笔最大委托数量  
 当有系统升级，或者产品升级，或者故障问题时，产品的状态变更为暂停中；
 当恢复时，状态变更为交易中；当合约预上线时，状态变更为预上线（即新生成一个合约，新合约会处于预上线状态）；
 当产品下线的时候（如交割合约被交割的时候，期权合约被行权的时候），查询不到该产品
@@ -12458,6 +12541,7 @@ args | Array | 是 | 请求订阅的频道列表
 > channel | String | 是 | 频道名，`instruments`  
 > instType | String | 是 | 产品类型  
 `SPOT`：币币  
+`MARGIN`：币币杠杆  
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
@@ -12493,6 +12577,7 @@ arg | Object | 否 | 订阅的频道
 > channel | String | 是 | 频道名  
 > instType | String | 是 | 产品类型  
 `SPOT`：币币  
+`MARGIN`：币币杠杆  
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
@@ -12527,7 +12612,13 @@ msg | String | 否 | 错误消息
             "minSz": "1",
             "ctType": "linear",
             "alias": "this_week",
-            "state": "live"
+            "state": "live",
+            "maxLmtSz":"10000",
+            "maxMktSz":"99999",
+            "maxTwapSz":"99999",
+            "maxIcebergSz":"99999",
+            "maxTriggerSz":"9999",
+            "maxStopSz":"9999"
         }, {
             "instType": "FUTURES",
             "instId": "BTC-USD-201115",
@@ -12548,7 +12639,13 @@ msg | String | 否 | 错误消息
             "minSz": "1",
             "ctType": "linear",
             "alias": "this_week",
-            "state": "live"
+            "state": "live",
+            "maxLmtSz":"10000",
+            "maxMktSz":"99999",
+            "maxTwapSz":"99999",
+            "maxIcebergSz":"99999",
+            "maxTriggerSz":"9999",
+            "maxStopSz":"9999"
         }]
     }
     
@@ -12593,6 +12690,12 @@ data | Array | 订阅的数据
 `expired`：已过期  
 `preopen`：预上线  
 `settlement`：资金费结算  
+> maxLmtSz | String | 合约或现货限价单的单笔最大委托数量  
+> maxMktSz | String | 合约或现货市价单的单笔最大委托数量  
+> maxTwapSz | String | 合约或现货时间加权单的单笔最大委托数量  
+> maxIcebergSz | String | 合约或现货冰山委托的单笔最大委托数量  
+> maxTriggerSz | String | 合约或现货计划委托委托的单笔最大委托数量  
+> maxStopSz | String | 合约或现货止盈止损委托的单笔最大委托数量  
 产品状态变更，是触发instrument接口推送条件： 当有系统升级，或者产品升级，或者故障问题时，产品的状态变更为暂停中；
 当恢复时，状态变更为交易中；当合约预上线时，状态变更为预上线（即新生成一个合约，新合约会处于预上线状态）；
 当产品下线的时候（如交割合约被交割的时候，期权合约被行权的时候），状态变更为已过期
@@ -13410,13 +13513,20 @@ data | Array | 订阅的数据
   
 ### 深度频道
 
-获取深度数据，`books`是400档频道，`books5`是5档频道，`books-l2-tbt`是先400档后实时推送的频道，`books50-l2-tbt`是先50档后实时推的频道；
+获取深度数据，`books`是400档频道，`books5`是5档频道， `bbo-
+tbt`是先1档后实时推送的频道，`books-l2-tbt`是先400档后实时推送的频道，`books50-l2-tbt`是先50档后实时推的频道；
 
 `books` 首次推400档快照数据，以后增量推送，即每100毫秒有深度变化推送一次变化的数据  
 `books5`首次推5档快照数据，以后定量推送，每200毫秒有深度变化推送一次5档数据，即每次都推送5档数据  
+`bbo-tbt` 首次推1档快照数据，以后增量推送，即每10毫秒有深度有变化推送一次变化的数据  
 `books-l2-tbt` 首次推400档快照数据，以后增量推送，即每10毫秒有深度有变化推送一次变化的数据  
 `books50-l2-tbt` 首次推50档快照数据，以后增量推送，即每10毫秒有深度有变化推送一次变化的数据。若`asks` 和 `bids`
 为空数组，那说明50档没有变化，仅代表400档内有变化，若您在本地维护深度数据，请您忽略这样的数据。
+
+books-l2-tbt400档深度频道，只允许交易手续费等级VIP5及以上的API用户订阅。  
+books50-l2-tbt50档深度频道，只允许交易手续费等级VIP4及以上的API用户订阅.  
+
+身份认证参考[登录](/docs-v5/zh/#websocket-api-login)功能
 
 > 请求示例
     
@@ -14424,6 +14534,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 子账户不存在 | 200 | 58115  
 转出数量大于最大可转数量 | 200 | 58116  
 账户资产异常，请先处理负资产后再划转 | 200 | 58117  
+{0} 子账户没有转出权限，请先设置 | 200 | 58119  
 该币种暂不支持从{0}提现至{1}，敬请谅解 | 200 | 58200  
 今日提现金额累计超过每日限额 | 200 | 58201  
 NEO最小提现数量为1，且提现数量必须为整数 | 200 | 58202  
