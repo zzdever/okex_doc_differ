@@ -257,7 +257,7 @@ AWS 地址如下：
 
 新的域名已启用，旧的域名将择期下线，请您尽快切换到新的域名。
 
-  * `旧的`REST：`www.okex.com`  
+  * `旧的`REST：`https://www.okex.com`  
 
   * `旧的`WebSocket公共频道：`wss://ws.okex.com:8443/ws/v5/public`  
 
@@ -5507,10 +5507,6 @@ side | String | 订单方向
     获取币币BTC-USDT交易手续费率  
     GET /api/v5/account/trade-fee?instType=SPOT&instId=BTC-USDT
     
-    获取第一类币种费率
-    GET /api/v5/account/trade-fee?instType=SWAP&category=1
-    
-    
 
 #### 请求参数
 
@@ -5522,14 +5518,11 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-instId | String | 可选 | 产品ID，如 `BTC-USDT`  
+instId | String | 否 | 产品ID，如 `BTC-USDT`  
 仅适用于instType为`币币/币币杠杆`  
-uly | String | 可选 | 标的指数  
+uly | String | 否 | 标的指数  
 仅适用于instType为`交割/永续/期权`，如 `BTC-USD`  
-category | String | 可选 | 币种手续费类别  
-`1`：第一类币种费率 `2`：第二类币种费率 `3`：第三类币种费率 `4`：第四类币种费率  
-instId，uly，category必须且只允许传其中一个参数
-
+  
 > 返回结果
     
     
@@ -5542,8 +5535,10 @@ instId，uly，category必须且只允许传其中一个参数
                 "exercise": "",
                 "instType": "SPOT",
                 "level": "lv1",
-                "maker": "-0.001",
-                "taker": "-0.0015",
+                "maker": "-0.0008",
+                "makerU": "",
+                "taker": "-0.001",
+                "takerU": "",
                 "ts": "1608623351857"
             }
         ]
@@ -5555,8 +5550,10 @@ instId，uly，category必须且只允许传其中一个参数
 **参数名** | **类型** | **描述**  
 ---|---|---  
 category | String | 币种手续费类别  
-taker | String | 吃单手续费率  
-maker | String | 挂单手续费率  
+taker | String | 吃单手续费率，永续和交割合约时，为币本位合约费率  
+maker | String | 挂单手续费率，永续和交割合约时，为币本位合约费率  
+takerU | String | U本位合约吃单手续费率，仅适用于`交割/永续`  
+makerU | String | U本位合约挂单手续费率，仅适用于`交割/永续`  
 delivery | String | 交割手续费率  
 exercise | String | 行权手续费率  
 level | String | 手续费等级  
