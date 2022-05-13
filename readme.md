@@ -1920,6 +1920,7 @@ tag | String | 否 | 订单标签
 tgtCcy | String | 否 | 委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`单向止盈止损买单  
+默认买为`计价货币`，卖为`交易货币`  
 reduceOnly | Boolean | 否 | 是否只减仓 `true` 或 `false`  
   
 止盈止损
@@ -2792,6 +2793,8 @@ type | String | 否 | `0`：账户内划转
 `4`：子账户转子账户(仅适用于子账户APIKey，且目标账户需要是同一母账户下的其他子账户)  
 loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`或`组合保证金模式`下的借币转入/转出  
 true 或 false，默认false  
+clientId | String | 否 | 客户自定义ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
   
 > 返回结果
     
@@ -2803,6 +2806,7 @@ true 或 false，默认false
         {
           "transId": "754147",
           "ccy": "USDT",
+          "clientId": "",
           "from": "6",
           "amt": "0.1",
           "to": "18"
@@ -2820,6 +2824,7 @@ ccy | String | 划转币种
 from | String | 转出账户  
 amt | String | 划转量  
 to | String | 转入账户  
+clientId | String | 客户自定义ID  
   
 ### 获取资金划转状态
 
@@ -2841,7 +2846,9 @@ to | String | 转入账户
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-transId | String | 是 | 划转ID  
+transId | String | 可选 | 划转ID  
+transId和clientId必须传一个，若传两个，以transId为主  
+clientId | String | 可选 | 客户自定义ID  
 type | String | 否 | `0`：账户内划转  
 `1`：母账户转子账户  
 `2`：子账户转母账户  
@@ -2856,6 +2863,7 @@ type | String | 否 | `0`：账户内划转
             {
                 "amt": "1.5",
                 "ccy": "USDT",
+                "clientId": "",
                 "from": "18",
                 "instId": "",
                 "state": "success",
@@ -2878,6 +2886,7 @@ type | String | `0`：账户内划转
 `1`：母账户转子账户  
 `2`：子账户转母账户  
 transId | String | 划转 ID  
+clientId | String | 客户自定义ID  
 ccy | String | 划转币种  
 from | String | 转出账户  
 amt | String | 划转量  
@@ -2998,6 +3007,8 @@ type | String | 否 | 账单类型
 `151`：邀请奖励  
 `198`：无效资产减少  
 `199`：有效资产增加  
+clientId | String | 否 | 客户自定义ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 limit | String | 否 | 分页返回的结果集数量，最大为 100，不填默认返回 100 条  
@@ -3012,6 +3023,7 @@ limit | String | 否 | 分页返回的结果集数量，最大为 100，不填�
         {
           "billId": "12344",
           "ccy": "BTC",
+          "clientId": "",
           "balChg": "2",
           "bal": "12",
           "type": "1",
@@ -3027,6 +3039,7 @@ limit | String | 否 | 分页返回的结果集数量，最大为 100，不填�
 ---|---|---  
 billId | String | 账单 ID  
 ccy | String | 账户余额币种  
+clientId | String | 客户自定义ID  
 balChg | String | 账户层面的余额变动数量  
 bal | String | 账户层面的余额数量  
 type | String | 账单类型  
@@ -3287,6 +3300,8 @@ fee | String | 是 | 网络手续费≥`0`，提币到数字货币地址所需�
 chain | String | 可选 | 币种链信息  
 如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 如果没有不填此参数，则默认为主链  
+clientId | String | 否 | 客户自定义ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 关于标签：某些币种如XRP充币时同时需要一个充值地址和标签（又名memo/payment_id），标签是一种保证您的充币地址唯一性的数字串，与充币地址成对出现并一一对应。请您务必遵守正确的充值步骤，在提币时输入完整信息，否则将面临丢失币的风险！
 
 > 返回结果
@@ -3299,6 +3314,7 @@ chain | String | 可选 | 币种链信息
             "amt": "0.1",
             "wdId": "67485",
             "ccy": "BTC",
+            "clientId": "",
             "chain": "BTC-Bitcoin"
         }]
     }
@@ -3313,6 +3329,7 @@ chain | String | 币种链信息
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 amt | String | 提币数量  
 wdId | String | 提币申请ID  
+clientId | String | 客户自定义ID  
   
 ### 闪电网络提币
 
@@ -3444,6 +3461,8 @@ wdId | String | 提币申请ID
 ---|---|---|---  
 ccy | String | 否 | 币种名称，如 `BTC`  
 wdId | String | 否 | 提币申请ID  
+clientId | String | 否 | 客户自定义ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 txId | String | 否 | 区块转账哈希记录  
 state | String | 否 | 提币状态  
 `-3`：撤销中 `-2`：已撤销 `-1`：失败  
@@ -3464,6 +3483,7 @@ limit | string | 否 | 返回的结果集数量，默认为100，最大为100，
           "chain": "ETH-Ethereum",
           "fee": "0.007",
           "ccy": "ETH",
+          "clientId": "",
           "amt": "0.029809",
           "txId": "0x35c******b360a174d",
           "from": "156****359",
@@ -3497,6 +3517,7 @@ state | String | 提币状态
 `0`：等待提现 `1`：提现中 `2`：已汇出  
 `3`：邮箱确认 `4`：人工审核中 `5`：等待身份认证  
 wdId | String | 提币申请ID  
+clientId | String | 客户自定义ID  
   
 ### 小额资产兑换
 
