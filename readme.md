@@ -1691,6 +1691,8 @@ instId | String | 否 | 产品 ID，如`BTC-USD-190927`
 ordId | String | 否 | 订单 ID  
 after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
 before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
 limit | String | 否 | 返回结果的数量，默认 100 条  
   
 > 返回结果
@@ -1795,6 +1797,8 @@ instId | String | 否 | 产品 ID，如`BTC-USD-190927`
 ordId | String | 否 | 订单 ID  
 after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
 before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
 limit | String | 否 | 返回结果的数量，默认 100 条  
   
 > 返回结果
@@ -4766,6 +4770,8 @@ subType | String | 否 | 账单子类型
 `203`:手动转出  
 after | String | 否 | 请求此id之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
 before | String | 否 | 请求此id之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -4885,6 +4891,8 @@ subType | String | 否 | 账单子类型
 `203`:手动转出  
 after | String | 否 | 请求此id之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
 before | String | 否 | 请求此id之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
