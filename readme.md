@@ -44,6 +44,21 @@ API接口 Broker接入 最佳实践 更新日志
       * 撤销高级策略委托订单 
       * 获取未完成策略委托单列表 
       * 获取历史策略委托单列表 
+    * 大宗交易 
+      * 获取报价方信息 
+      * 询价 
+      * 取消询价单 
+      * 批量取消询价单 
+      * 取消所有询价单 
+      * 执行报价
+      * 报价 
+      * 取消报价单 
+      * 批量取消报价单 
+      * 取消所有报价单 
+      * 获取询价单信息 
+      * 获取报价单信息 
+      * 获取大宗交易信息 
+      * 获取大宗交易公共成交数据 
     * 资金 
       * 获取币种列表 
       * 获取资金账户余额 
@@ -129,6 +144,9 @@ API接口 Broker接入 最佳实践 更新日志
       * Oracle 上链交易数据 
       * 获取法币汇率 
       * 获取指数成分数据 
+      * 获取大宗交易所有产品行情信息 
+      * 获取大宗交易单个产品行情信息 
+      * 获取大宗交易公共成交数据 
     * 公共数据 
       * 获取交易产品基础信息 
       * 获取交割和行权记录 
@@ -184,6 +202,9 @@ API接口 Broker接入 最佳实践 更新日志
       * 高级策略委托订单频道 
       * 爆仓风险预警推送频道 
       * 账户greeks频道 
+      * 询价频道 
+      * 报价频道 
+      * 大宗交易频道 
       * 现货网格策略委托订单频道 
       * 合约网格策略委托订单频道 
       * 合约网格持仓频道 
@@ -204,16 +225,19 @@ API接口 Broker接入 最佳实践 更新日志
       * 指数K线频道 
       * 指数行情频道 
       * Status 频道 
+      * 公共大宗交易频道 
+      * 大宗交易行情频道 
   * 错误码 
     * REST 
       * 公共 
-      * 大宗交易 
+      * 闪兑 
       * 币币/币币杠杆类 
       * 交割合约类 
       * 永续合约类 
       * 期权合约类 
       * 资金类 
       * 账户类 
+      * 大宗交易
     * WebSocket 
       * 公共 
   * 创建我的APIKey 
@@ -2553,6 +2577,1260 @@ activePx | String | 移动止盈止损激活价格
 moveTriggerPx | String | 移动止盈止损触发价格  
 仅适用于`移动止盈止损`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+## 大宗交易
+
+已上线模拟盘，实盘敬请期待。
+
+### 获取报价方信息
+
+查询可以参与交易的对手方信息。
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`GET /api/v5/rfq/counterparties`
+
+> 请求示例
+    
+    
+    GET /api/v5/rfq/counterparties
+    
+    
+
+#### 请求参数
+
+无
+
+> 响应示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "traderName" : "Satoshi Nakamoto",
+                "traderCode" : "SATOSHI",
+                "type" : "" //Currently not live
+            }
+        ]
+    }
+    
+
+#### 响应参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+traderName | String | 报价方名称  
+traderCode | String | 报价方Code，具有唯一性，在询价和报价时使用  
+type | String | 报价方类型（当前未生效，将返回 "" ）  
+  
+### 询价
+
+创建一个询价单。
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/create-rfq/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/create-rfq/
+    
+    {
+        "anonymous": true,
+        "counterparties":[
+            "Trader1",
+            "Trader2"
+        ],
+        "clRfqId":"rfq01",
+        "legs":[
+            {
+                "sz":"25",
+                "side":"buy",
+                "instId":"BTCUSD-221208-100000-C"
+            },
+            {
+                "sz":"150",
+                "side":"buy",
+                "instId":"ETH-USDT",
+                "tgtCcy":"base_ccy"
+            }
+        ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+counterparties | Array of strings | 是 | 报价方标识码，具有唯一性。  
+anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示具名询价，默认值为
+`false`，为`true`时，即使在交易执行之后，身份也不会透露给报价方。  
+clRfqId | String | 否 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+legs | Array of Objects | 是 | 询价时的腿，可包含多条腿  
+> instId | String | 是 | 产品ID  
+> sz | String | 是 | 委托数量  
+> side | String | 是 | 询价单方向  
+> tgtCcy | String | 否 | 委托数量的类型  
+`base_ccy`: 交易货币 `quote_ccy`: 计价货币  
+默认为`base_ccy`，仅适用于`币币`。  
+  
+> 返回示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "cTime":"1611033737572",
+                "uTime":"1611033737572",
+                "traderCode":"SATOSHI",
+                "rfqId":"22534",
+                "clRfqId":"rfq01",
+                "state":"active",
+                "validUntil":"1611033857557",
+                "counterparties":[
+                    "Trader1",
+                    "Trader2"
+                ],
+                "legs":[
+                    {
+                        "instId":"BTCUSD-221208-100000-C",
+                        "sz":"25",
+                        "side":"buy",
+                        "tgtCcy":""
+                    },
+                    {
+                        "instId":"ETH-USDT",
+                        "sz":"150",
+                        "side":"buy",
+                        "tgtCcy":"base_ccy"     
+                    }
+                ]
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 询价单结果  
+> cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
+> uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
+> state | String | 询价单状态  
+`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
+`failed`, `traded_away`  
+仅适用于 Maker  
+> counterparties | Array of strings | 报价方列表  
+> validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
+> clRfqId | String | 询价单自定义ID，为客户端敏感信息，不会公开，对报价方返回""。  
+> traderCode | String | 报价方Code。 匿名模式为下返回""  
+> rfqId | String | 询价单ID  
+> legs | Array of Objects | 询价单的腿  
+>> instId | String | 产品ID  
+>> sz | String | 委托数量  
+>> side | String | 询价单方向  
+>> tgtCcy | String | 委托数量的类型  
+  
+### 取消询价单
+
+取消一个询价单。
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/cancel-rfq/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/cancel-rfq/
+    {
+        "rfqId":"22535",
+        "clRfqId":"rfq001"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+rfqId | String | 可选 | 询价单ID  
+clRfqId | String | 可选 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当
+clRfqId 和 rfqId 都传时，以 rfqId 为准。  
+  
+> 返回示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "rfqId":"22535",
+                "clRfqId":"rfq001",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> rfqId | String | RFQ ID  
+> clRfqId | String | 由用户设置的 RFQ ID  
+> sCode | String | 事件执行结果的code，0代表成功  
+> sMsg | String | 事件执行失败时的msg  
+  
+### 批量取消询价单
+
+取消一个或多个询价单
+
+#### 限速: 2次/2s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/cancel-batch-rfqs/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/cancel-batch-rfqs/
+    {
+        "rfqIds":[
+            "2201",
+            "2202",
+            "2203"
+        ],
+        "clRfqIds":[
+            "r1",
+            "r2",
+            "r3"
+        ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+rfqIds | Array of string | 可选 | 询价单IDs  
+clRfqIds | Array of string | 可选 |
+询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当 clRfqId 和 rfqId 都传时，以 rfqId
+为准。  
+  
+> 全部成功示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "rfqId":"2201",
+                "clRfqId":"r1",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "rfqId":"2202",
+                "clRfqId":"r2",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "rfqId":"2203",
+                "clRfqId":"r3",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+    
+
+> 部分成功示例
+    
+    
+    {
+        "code":"2",
+        "msg":"Bulk operation partially ",
+        "data":[
+            {
+                "rfqId":"2201",
+                "clRfqId":"r1",
+                "sCode":"70000",
+                "sMsg":"RFQ does not exist."
+            },
+            {
+                "rfqId":"2202",
+                "clRfqId":"r2",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "rfqId":"2203",
+                "clRfqId":"r3",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+    
+
+> 失败示例
+    
+    
+    {
+        "code":"1",
+        "msg":"Operation failed.",
+        "data":[
+            {
+                "rfqId":"2201",
+                "clRfqId":"r1",
+                "sCode":"70000",
+                "sMsg":"RFQ does not exist."
+            },
+            {
+                "rfqId":"2202",
+                "clRfqId":"r2",
+                "sCode":"70000",
+                "sMsg":"RFQ does not exist."
+            },
+            {
+                "rfqId":"2203",
+                "clRfqId":"r3",
+                "sCode":"70000",
+                "sMsg":"RFQ does not exist."
+            }
+        ]
+    }
+    
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> rfqId | String | 询价单ID  
+> clRfqId | String | 询价单自定义ID.  
+> sCode | String | 事件执行结果的code，0代表成功  
+> sMsg | String | 事件执行失败时的msg  
+  
+### 取消所有询价单
+
+取消所有询价单
+
+#### 限速: 2次/2s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/cancel-all-rfqs/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/cancel-all-rfqs/
+    
+    
+
+#### 请求参数
+
+无
+
+> 返回示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "ts":"1697026383085"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> ts | String | 成功取消时间，Unix时间戳的毫秒数格式，例如 1597026383085。  
+  
+### 执行报价
+
+执行报价，仅限询价的创建者使用
+
+#### 限速: 2次/3s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/execute-quote/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/execute-quote/
+    {
+        "rfqId":"22540",
+        "quoteId":"84073"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+rfqId | String | 是 | 询价单ID  
+quoteId | String | 是 | 报价单ID  
+  
+> 响应示例
+    
+    
+    {  
+       "code":"0",
+       "msg":"",
+       "data":[
+           {
+                "blockTdId":"180184",
+                "rfqId":"1419",
+                "clRfqId":"r0001",
+                "quoteId":"1046",
+                "clQuoteId":"q0001",
+                "tTraderCode":"Trader1",
+                "mTraderCode":"Trader2",
+                "cTime":"1649670009",
+                "strategy":"Custom",
+                "legs":[
+                    {
+                        "px":"43000",
+                        "sz":"25",
+                        "instId":"BTC-USD-20220114-13250-C",
+                        "side":"sell",
+                        "fee":"-1.001",
+                        "feeCcy":"BTC",
+                        "tradeId":"10211"
+                    },
+                    {
+                        "px":"42800",
+                        "sz":"25",
+                        "instId":"BTC-USDT",
+                        "side":"buy",
+                        "fee":"-1.001",
+                        "feeCcy":"BTC",
+                        "tradeId":"10212"
+                    }
+                ]
+            }
+       ]
+    }
+    
+
+#### 响应参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
+> rfqId | String | 询价单ID  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> quoteId | String | 报价单ID  
+> clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> blockTdId | String | 大宗交易ID  
+> tTraderCode | String | 询价方Code，具有唯一性，询价时，Anonymous 为 `False` 时可见，为 `True`
+> 时不可见  
+> mTraderCode | String | 报价方Code，具有唯一性。  
+> legs | Array of Objects | 成交的腿  
+>> instId | String | 产品ID  
+>> px | String | 成交价格  
+>> sz | String | 成交数量  
+>> side | String | 询价单方向，`buy` 或者 `sell`。  
+>> fee | String | 每条腿的费用。 正数代表平台返佣 ，负数代表平台扣除  
+>> feeCcy | String | 手续费币种  
+>> tradeId | String | 最新的成交Id.  
+  
+### 报价
+
+允许询价单指定的报价方进行报价，需要对整个询价单报价，不允许部分报价或部分成交。
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/create-quote/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/create-quote/
+    {
+        "rfqId":"22539",
+        "clQuoteId":"q001",
+        "quoteSide":"buy",
+        "legs":[
+            {
+                "px":"39450.0",
+                "sz":"200000",
+                "instId":"BTC-USDT-SWAP",
+                "side":"buy"
+            }
+        ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+rfqId | String | 是 | 询价单ID  
+clQuoteId | String | 否 | 报价单自定义ID  
+quoteSide | String | 是 | 询价单方向， `buy` 或者 `sell`  
+legs | Array of Objects | 是 | 报价单的腿  
+> instId | String | 是 | 产品ID  
+> sz | String | 是 | 委托数量  
+> px | String | 是 | 委托价格  
+> side | String | 是 | 报价单方向  
+> tgtCcy | String | 否 | 委托数量的类型  
+`base_ccy`: 交易货币 `quote_ccy`: 计价货币  
+默认为`base_ccy`，仅适用于`币币`。  
+  
+> 返回示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "cTime":"1611038342698",
+                "uTime":"1611038342698",
+                "quoteId":"84069", 
+                "clQuoteId":"q002",
+                "rfqId":"22537",
+                "quoteSide":"buy",
+                "state":"active",
+                "validUntil":"1611038442838",
+                "legs":[
+                    {
+                        "px":"39450.0",
+                        "sz":"200000",
+                        "instId":"BTC-USDT-SWAP",
+                        "side":"buy",
+                        "tgtCcy":""
+                    }            
+                ]
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0表示成功。  
+msg | String | 错误信息，如果代码不为0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
+> uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
+> state | String | 询价单状态  
+`active`, `canceled`, `pending_fill`, `filled`, `expired`, `failed`  
+> validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
+> rfqId | String | 询价单ID  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> quoteId | String | 报价单ID  
+> clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> traderCode | String | 报价方Code，公开可见。  
+> quoteSide | String | 报价单方向，`buy` 或者 `sell`。  
+> legs | Array of Objects | 报价的腿  
+>> instId | String | 产品ID  
+>> sz | String | 委托数量  
+>> px | String | 委托价格  
+>> side | String | 报价单方向  
+>> tgtCcy | String | 委托数量的类型  
+  
+### 取消报价单
+
+取消一个报价单。
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/cancel-quote/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/cancel-quote/
+    {
+        "quoteId": "007",
+        "clQuoteId":"Bond007"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+quoteId | String | 可选 | 报价单ID  
+clQuoteId | String | 可选 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当
+clRfqId 和 rfqId 都传时，以 rfqId 为准。  
+  
+> 返回示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "quoteId":"007",
+                "clQuoteId":"Bond007",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> quoteId | String | 报价单ID  
+> clQuoteId | String | 询价单自定义ID  
+> sCode | String | 事件执行结果的code，0代表成功  
+> sMsg | String | 事件执行失败时的msg  
+  
+### 批量取消报价单
+
+取消一个或多个报价单
+
+#### 限速: 2次/2s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/cancel-batch-quotes/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/cancel-batch-quotes/
+    {
+        "quoteIds":["1150","1151","1152"],
+        "clQuoteIds":["q1","q2","q3"]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+quoteIds | Array of string | 可选 | 报价单ID  
+clQuoteIds | Array of string | 可选 |
+报价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当 clQuoteIds 和 quoteIds 都传时，以
+quoteIds 为准。  
+  
+> 全部成功的示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "quoteId":"1150",
+                "clQuoteId":"q1",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "quoteId":"1151",
+                "clQuoteId":"q2",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "quoteId":"1152",
+                "clQuoteId":"q3",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+    
+
+> 部分成功的示例
+    
+    
+    {
+        "code":"2",
+        "msg":"Bulk operation partially ",
+        "data":[
+            {
+                "quoteId":"1150",
+                "clQuoteId":"q1",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "quoteId":"1151",
+                "clQuoteId":"q2",
+                "sCode":"70001",
+                "sMsg":"Quote does not exist."
+            },
+            {
+                "quoteId":"1152",
+                "clQuoteId":"q3",
+                "sCode":"70001",
+                "sMsg":"Quote does not exist."
+            }
+        ]
+    }
+    
+    
+
+> 失败示例
+    
+    
+    {
+        "code":"1",
+        "msg":"Operation failed.",
+        "data":[
+            {
+                "quoteId":"1150",
+                "clQuoteId":"q1",
+                "sCode":"70001",
+                "sMsg":"Quote does not exist."
+            },
+            {
+                "quoteId":"1151",
+                "clQuoteId":"q2",
+                "sCode":"70001",
+                "sMsg":"Quote does not exist."
+            },
+            {
+                "quoteId":"1151",
+                "clQuoteId":"q3",
+                "sCode":"70001",
+                "sMsg":"Quote does not exist."
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> quoteId | String | 报价单ID  
+> clQuoteId | String | 报价单自定义ID  
+> sCode | String | 事件执行结果的code，0代表成功  
+> sMsg | String | 事件执行失败时的msg  
+  
+### 取消所有报价单
+
+取消所有报价单
+
+#### 限速: 2次/2s
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/cancel-all-quotes/`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/cancel-all-quotes/
+    
+    
+
+#### 请求参数
+
+无
+
+> 响应示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "ts":"1697026383085"
+            }
+        ]
+    }
+    
+
+#### 响应参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> ts | String | 成功取消时间，Unix时间戳的毫秒数格式，例如 1597026383085。  
+  
+### 获取询价单信息
+
+获取询价单信息
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`GET /api/v5/rfq/rfqs`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/rfqs/
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+rfqId | String | 否 | 询价单ID .  
+clRfqId | String | 否 | 客户询价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准  
+state | String | 否 | 询价单的状态  
+`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
+`failed`, `traded_away`。 `traded_away` 仅适用于 Maker  
+beginId | String | 否 | 请求的起始询价单ID，  
+请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
+limit | String | 否 | 返回结果的数量，默认100条  
+  
+> 返回示例
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [
+            {
+                "rfqId": "123456",
+                "clRfqId": "",
+                "traderCode": "VITALIK",
+                "validUntil": "1650969031817",
+                "state": "filled",
+                "counterparties": [
+                    "SATOSHI"
+                ],
+                "legs": [
+                    {
+                        "instId": "BTC-USDT",
+                        "side": "buy",
+                        "sz": "25",
+                        "tgtCcy": "base_ccy"
+                    }
+                ],
+                "cTime": "1650968131817",
+                "uTime": "1650968164944"
+            },
+            {
+                "rfqId": "1234567",
+                "clRfqId": "",
+                "traderCode": "VITALIK",
+                "validUntil": "1650967623729",
+                "state": "filled",
+                "counterparties": [
+                    "SATOSHI"
+                ],
+                "legs": [
+                    {
+                        "instId": "BTC-USDT",
+                        "side": "buy",
+                        "sz": "1500000",
+                        "tgtCcy": "quote_ccy"
+                    }
+                ],
+                "cTime": "1650966723729",
+                "uTime": "1650966816577"
+            }
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组of the RFQ creation.  
+> cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
+> uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
+> state | String | 询价单的状态  
+`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
+`failed`, `traded_away`。 `traded_away` 仅适用于 Maker  
+> counterparties | Array of srings | 报价方列表  
+> validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> traderCode | String | 询价方Code，具有唯一性，询价时 Anonymous 设置为 `True` 时不可见  
+> rfqId | String | 询价单ID  
+> legs | Array of Objects | 询价时的腿，可包含多条腿  
+>> instId | String | 产品ID  
+>> sz | String | 委托数量  
+>> side | String | 询价单方向  
+>> tgtCcy | String | 委托数量的类型  
+  
+### 获取报价单信息
+
+获取报价单信息
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`GET /api/v5/rfq/quotes`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/quotes/
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+rfqId | String | 否 | 询价单ID  
+clRfqId | String | 否 | 询价单自定义ID， 当 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
+quoteId | String | 否 | 报价单ID  
+clQuoteId | String | 否 | 报价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
+state | String | 否 | 询价单的状态  
+`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
+`failed`, `traded_away`。 `traded_away` 仅适用于 Maker  
+beginId | String | 否 | 请求的起始询价单ID，  
+请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
+limit | String | 否 | 返回结果的数量，默认100条  
+  
+> 返回示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "validUntil":"1608997227834",
+                "uTime":"1608267227834",
+                "cTime":"1608267227834",
+                "legs":[
+                    {
+                        "px":"46000",
+                        "sz":"25",
+                        "instId":"BTC-USD-220114-25000-C",
+                        "side":"sell",
+                        "tgtCcy":""
+                    },
+                    {
+                        "px":"45000",
+                        "sz":"25",
+                        "instId":"BTC-USDT",
+                        "side":"buy",
+                        "tgtCcy":"base_ccy"
+                    }
+                ],
+                "quoteId":"25092",
+                "rfqId":"18753",
+                "quoteSide":"sell",
+                "state":"canceled",
+                "clQuoteId":"cq001",
+                "clRfqId":"cr001",
+                "traderCode":"Trader1"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的数组  
+> cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式  
+> uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
+> state | String | 报价的状态。 有效值可以是
+> `active`、`canceled`、`pending_fill`、`filled`、`expired` 或 `failed`。  
+> validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
+> rfqId | String | 询价单ID  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> quoteId | String | 报价单ID  
+> clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> traderCode | String | 报价方Code，公开可见。  
+> quoteSide | String | 询价单方向， `buy` 或者 `sell`  
+> legs | Array of Objects | 报价的腿  
+>> instId | String | 产品ID  
+>> sz | String | 委托数量  
+>> px | String | 委托价格.  
+>> side | String | 报价单方向  
+>> tgtCcy | String | 委托数量的类型  
+  
+### 获取大宗交易信息
+
+获取询价单或报价单信息
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`GET /api/v5/rfq/trades`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/trades/
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+rfqId | String | 否 | 询价单ID  
+clRfqId | String | 否 | 由用户设置的 RFQ ID. 如果 `clRfqId` 和 `rfqId` 都通过了，rfqId 将被视为主要  
+quoteId | String | 否 | Quote ID  
+clQuoteId | String | 否 | 由用户设置的 Quote ID。如果同时传递了 `clQuoteId` 和 `quoteId`，则
+quoteId 将被视为主要标识符  
+state | String | 否 | 询价的状态。
+有效值可以是`active`、`canceled`、`pending_fill`、`filled`、`expired`、`traded_away`、`failed`。
+`traded_away` 仅适用于 Maker  
+beginId | String | 否 | 请求的起始 大宗交易id。 数据分页以返回早于请求的 blockTdId 的记录，不包括 endId  
+endId | String | 否 | 请求的结束 大宗交易id。 数据分页以返回早于请求的 blockTdId 的记录，不包括 endId  
+limit | String | 否 | 每个请求的结果数。 最大值为 100，这也是默认值。  
+  
+> 返回示例
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [
+            {
+                "rfqId": "123456",
+                "clRfqId": "",
+                "quoteId": "0T5342O",
+                "clQuoteId": "",
+                "blockTdId": "439127542058958848",
+                "legs": [
+                    {
+                        "instId": "BTC-USDT",
+                        "side": "sell",
+                        "sz": "0.666",
+                        "px": "100",
+                        "tradeId": "439127542058958850",
+                        "fee": "-0.0333",
+                        "feeCcy": "USDT"
+                    }
+                ],
+                "cTime": "1650968164900",
+                "tTraderCode": "SATS",
+                "mTraderCode": "MIKE"
+            },
+            {
+                "rfqId": "1234567",
+                "clRfqId": "",
+                "quoteId": "0T533T0",
+                "clQuoteId": "",
+                "blockTdId": "439121886014849024",
+                "legs": [
+                    {
+                        "instId": "BTC-USDT",
+                        "side": "sell",
+                        "sz": "0.532",
+                        "px": "100",
+                        "tradeId": "439121886014849026",
+                        "fee": "-0.0266",
+                        "feeCcy": "USDT"
+                    }
+                ],
+                "cTime": "1650966816550",
+                "tTraderCode": "SATS",
+                "mTraderCode": "MIKE"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组  
+> cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
+> rfqId | String | 询价单ID  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> quoteId | String | 报价单ID  
+> clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> blockTdId | String | 大宗交易ID  
+> tTraderCode | String | 询价方Code，具有唯一性，询价时，Anonymous 为 False 时可见，为 True 时不可见  
+> mTraderCode | String | 报价方Code，具有唯一性。  
+> legs | Array of Objects | Legs of trade  
+>> instId | String | 产品ID  
+>> px | String | 成交价格  
+>> sz | String | 成交数量  
+>> side | String | 询价单方向，buy 或者 sell。  
+>> fee | String | 手续费，正数代表平台返佣 ，负数代表平台扣除  
+>> feeCcy | String | 手续费币种  
+>> tradeId | String | 最新的成交Id  
+  
+### 获取大宗交易公共成交数据
+
+获取最近执行的大宗交易。
+
+#### 限速: 5次/2s
+
+#### HTTP Requests
+
+`GET /api/v5/rfq/public-trades`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/public-trades/
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+beginId | String | 否 | Start rfq id the request to begin with. Pagination of
+data to return records newer than the requested blockTdId, not including
+beginId  
+endId | String | 否 | End rfq id the request to end with. Pagination of data to
+return records earlier than the requested blockTdId, not including endId  
+limit | String | 否 | 每个请求的结果数。 最大值为 100，这也是默认值。  
+  
+> 返回示例
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [
+            {
+                "blockTdId": "439161457415012352",
+                "legs": [
+                    {
+                        "instId": "BTC-USD-210826",
+                        "side": "sell",
+                        "sz": "100",
+                        "px": "11000",
+                        "tradeId": "439161457415012354"
+                    },
+                    {
+                        "instId": "BTC-USD-SWAP",
+                        "side": "sell",
+                        "sz": "100",
+                        "px": "50",
+                        "tradeId": "439161457415012355"
+                    },
+                    {
+                        "instId": "BTC-USDT",
+                        "side": "buy",
+                        "sz": "0.1", //for public feed, spot "sz" is in baseccy
+                        "px": "10.1",
+                        "tradeId": "439161457415012356"
+                    },
+                    {
+                        "instId": "BTC-USD-210326-60000-C",
+                        "side": "buy",
+                        "sz": "200",
+                        "px": "0.008",
+                        "tradeId": "439161457415012357"
+                    },
+                    {
+                        "instId": "BTC-USD-220930-5000-P",
+                        "side": "sell",
+                        "sz": "200",
+                        "px": "0.008",
+                        "tradeId": "439161457415012360"
+                    },
+                    {
+                        "instId": "BTC-USD-220930-10000-C",
+                        "side": "sell",
+                        "sz": "200",
+                        "px": "0.008",
+                        "tradeId": "439161457415012361"
+                    },
+                    {
+                        "instId": "BTC-USD-220930-10000-P",
+                        "side": "sell",
+                        "sz": "200",
+                        "px": "0.008",
+                        "tradeId": "439161457415012362"
+                    },
+                    {
+                        "instId": "ETH-USD-220624-100100-C",
+                        "side": "sell",
+                        "sz": "100",
+                        "px": "0.008",
+                        "tradeId": "439161457415012363"
+                    }
+                ],
+                "cTime": "1650976251241"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，0 表示成功。  
+msg | String | 错误信息，如果代码不为 0，则不为空。  
+data | Array of Objects | 包含结果的对象数组.  
+> cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
+> blockTdId | String | 大宗交易ID.  
+> legs | Array of Objects | 成交的腿  
+>> instId | String | 产品ID  
+>> px | String | 成交价格  
+>> sz | String | 成交数量  
+>> side | String | 询价单方向  
+>> tradeId | String | 最新成交ID  
   
 ## 资金
 
@@ -8398,7 +9676,7 @@ ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`159702638308
 
 ### 获取交易产品公共历史成交数据
 
-查询市场上的成交信息数据，，可以分页获取最近3个月的数据。
+查询市场上的成交信息数据，可以分页获取最近3个月的数据。
 
 #### 限速： 10次/2s
 
@@ -8676,6 +9954,189 @@ components | String | 成分
 > wgt | String | 权重  
 > cnvPx | String | 换算成指数后的价格  
   
+### 获取大宗交易所有产品行情信息
+
+获取最近24小时大宗交易量
+
+#### 限速： 20次/2s
+
+#### 限速规则：IP
+
+#### HTTP请求
+
+`GET /api/v5/market/block-tickers`
+
+> 请求示例
+    
+    
+    GET /api/v5/market/block-tickers?instId=BTC-USD-SWAP
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 是 | 产品类型  
+`SPOT`：币币  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+uly | String | 否 | 标的指数，仅适用于`交割/永续/期权` ，如 `BTC-USD`  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+         {
+            "instType":"SWAP",
+            "instId":"LTC-USD-SWAP",
+            "volCcy24h":"2222",
+            "vol24h":"2222",
+            "ts":"1597026383085"
+         },
+         {
+            "instType":"SWAP",
+            "instId":"BTC-USD-SWAP",
+            "volCcy24h":"2222",
+            "vol24h":"2222",
+            "ts":"1597026383085"
+        }
+      ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+instType | String | 产品类型  
+volCcy24h | String | 24小时成交量，以`币`为单位  
+如果是`衍生品`合约，数值为交易货币的数量。  
+如果是`币币/币币杠杆`，数值为计价货币的数量。  
+vol24h | String | 24小时成交量，以`张`为单位  
+如果是`衍生品`合约，数值为合约的张数。  
+如果是`币币/币币杠杆`，数值为交易货币的数量。  
+ts | String | 数据产生时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取大宗交易单个产品行情信息
+
+获取最近24小时大宗交易量
+
+#### 限速： 20次/2s
+
+#### 限速规则：IP
+
+#### HTTP请求
+
+`GET /api/v5/market/block-ticker`
+
+> 请求示例
+    
+    
+    GET /api/v5/market/block-ticker?instId=BTC-USD-SWAP
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如 `BTC-USD-SWAP`  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+         {
+            "instType":"SWAP",
+            "instId":"LTC-USD-SWAP",
+            "volCcy24h":"2222",
+            "vol24h":"2222",
+            "ts":"1597026383085"
+         }
+      ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+instType | String | 产品类型  
+volCcy24h | String | 24小时成交量，以`币`为单位  
+如果是`衍生品`合约，数值为交易货币的数量。  
+如果是`币币/币币杠杆`，数值为计价货币的数量。  
+vol24h | String | 24小时成交量，以`张`为单位  
+如果是`衍生品`合约，数值为合约的张数。  
+如果是`币币/币币杠杆`，数值为交易货币的数量。  
+ts | String | 数据产生时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取大宗交易公共成交数据
+
+查询市场上的成交信息数据，根据 tradeId 倒序排序。
+
+#### 限速： 20次/2s
+
+#### 限速规则：IP
+
+#### HTTP请求
+
+`GET /api/v5/market/trades`
+
+> 请求示例
+    
+    
+    GET /api/v5/market/trades?instId=BTC-USDT
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如 `BTC-USDT`  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "instId":"BTC-USDT-SWAP",
+                "tradeId":"90167",
+                "px":"42000",
+                "sz":"100",
+                "side":"sell",
+                "ts":"1642670926504"
+            }     
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+tradeId | String | 成交ID  
+px | String | 成交价格  
+sz | String | 成交数量  
+side | String | 成交方向  
+`buy`：买  
+`sell`：卖  
+ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`1597026383085`  
+最多获取最近500条历史公共成交数据
+
 ## 公共数据
 
 `公共数据`功能模块下的API接口不需要身份验证。
@@ -10950,7 +12411,7 @@ args | Array | 是 | 请求参数
 > tgtCcy | String | 否 | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`订单  
-banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
+> banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时会下单失败，仅适用于币币市价单  
   
 > 成功返回示例
@@ -11149,7 +12610,7 @@ args | Array | 是 | 请求参数
 > tgtCcy | String | 否 | 市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`订单  
-banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
+> banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时会下单失败，仅适用于币币市价单  
   
 > 全部成功返回示例
@@ -13535,6 +14996,376 @@ data | Array | 订阅的数据
 
 例：按照所有币种订阅且有5个币种资产都不为0，首次和定时推全部5个；账户的某个币种资产改变，那么账户greeks变更的触发只推这一个。
 
+### 询价频道
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "rfqs"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `rfqs`  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "rfqs"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"rfqs\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `rfqs`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg":{
+            "channel":"rfqs",
+            "uid": "77982378738415879"
+        },
+        "data":[
+            {
+                "cTime":"1611033737572",
+                "uTime":"1611033737572",
+                "traderCode":"DSK2",
+                "rfqId":"22534",
+                "clRfqId":"",
+                "state":"active",
+                "validUntil":"1611033857557",
+                "strategy":"",
+                "counterparties":[
+                    "DSK4",
+                    "DSK5"
+                ],
+                "legs":[
+                    {
+                        "instId":"BTCUSD-211208-36000-C",
+                        "sz":"25.0",
+                        "side":"buy",
+                        "tgtCcy":""
+                    },
+                    {
+                        "instId":"ETHUSD-211208-45000-C",
+                        "sz":"25.0",
+                        "side":"sell",
+                        "tgtCcy":""
+                    }
+                ]
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 用户标识  
+data | Array | 订阅的数据  
+> cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
+> uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
+> state | String | 询价单的状态  
+`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
+`failed`, `traded_away`。 `traded_away` 仅适用于 Maker  
+> counterparties | Array of Strings | 报价方列表  
+> validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> traderCode | String | 询价方Code，具有唯一性，询价时 Anonymous 设置为 `True` 时不可见  
+> rfqId | String | 询价单ID  
+> legs | Array of Objects | 询价时的腿，可包含多条腿  
+>> instId | String | 产品ID  
+>> sz | String | 委托数量  
+>> side | String | 询价单方向  
+>> tgtCcy | String | 委托数量的类型  
+  
+### 报价频道
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "quotes"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `quotes`  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "account"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"quotes\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `quotes`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg":{
+            "channel":"quotes"
+        },
+        "data":[
+            {
+                "validUntil":"1608997227854",
+                "uTime":"1608267227834",
+                "cTime":"1608267227834",
+                "legs":[
+                    {
+                        "px":"0.0023",
+                        "sz":"25.0",
+                        "instId":"BTC-USD-220114-25000-C",
+                        "side":"sell",
+                        "tgtCcy":""
+    
+                    },
+                    {
+                        "px":"0.0045",
+                        "sz":"25",
+                        "instId":"BTC-USD-220114-35000-C",
+                        "side":"buy",
+                        "tgtCcy":""
+    
+                    }
+                ],
+                "quoteId":"25092",
+                "rfqId":"18753",
+                "traderCode":"SATS",
+                "quoteSide":"sell",
+                "state":"canceled",
+                "clQuoteId":""
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 账户ID，账户uid和app上的一致  
+data | Array | 订阅的数据  
+> cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
+> uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
+> state | String | 报价的状态。 有效值可以是
+> `active`、`canceled`、`pending_fill`、`filled`、`expired` 或 `failed`。  
+> validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
+> rfqId | String | 询价单ID  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> quoteId | String | 报价单ID  
+> clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> traderCode | String | 报价方Code，公开可见。  
+> quoteSide | String | 询价单方向， `buy` 或者 `sell`  
+> legs | Array of Objects | 询价的腿  
+>> instId | String | 产品ID  
+>> sz | String | 委托数量  
+>> px | String | 委托价格  
+>> side | String | 报价单方向  
+>> tgtCcy | String | 委托数量的类型  
+  
+### 大宗交易频道
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "struc-block-trades"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `struc-block-trades`  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "struc-block-trades"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"struc-block-trades\""}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `struc-block-trades`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg":{
+            "channel":"struc-block-trades"
+        },
+        "data":[
+            {
+                "cTime":"1608267227834",
+                "rfqId":"18753",
+                "clRfqId":"",
+                "quoteId":"25092",
+                "clQuoteId":"",
+                "blockTdId":"180184",
+                "tTraderCode":"ANAND",
+                "mTraderCode":"WAGMI",
+                "strategy":"CallSpread",
+                "legs":[
+                    {
+                        "px":"0.0023",
+                        "sz":"25.0",
+                        "instId":"BTC-USD-20220630-60000-C",
+                        "side":"sell",
+                        "fee":"0.1001",
+                        "feeCcy":"BTC",
+                        "tradeId":"10211",
+                        "tgtCcy":""
+    
+                    },
+                    {
+                        "px":"0.0033",
+                        "sz":"25",
+                        "instId":"BTC-USD-20220630-50000-C",
+                        "side":"buy",
+                        "fee":"0.1001",
+                        "feeCcy":"BTC",
+                        "tradeId":"10212",
+                        "tgtCcy":""
+    
+                    }
+                ]
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 用户标识  
+data | Array | 订阅的数据  
+> cTime | String | 执行创建的时间戳，Unix 时间戳格式，以毫秒为单位。  
+> rfqId | String | RFQ ID.  
+> clRfqId | String | 由用户设置的 RFQ ID。 此属性被视为客户端敏感信息。 不会暴露给 Maker，只返回空字符串“”给
+> Maker。  
+> quoteId | String | Quote ID.  
+> clQuoteId | String | 由用户设置的 Quote ID。 此属性被视为客户端敏感信息。 不会暴露给 Taker，只为 Taker
+> 返回空字符串“”。  
+> blockTdId | String | 大宗交易ID  
+> tTraderCode | String | Taker 的唯一标识。 只有 anonymous = false 才能在执行后可见。 对于
+> anonymous = ture，交易者身份不会被披露。  
+> mTraderCode | String | Maker 的唯一标识  
+> legs | Array of Objects | 成交的腿  
+>> instId | String | 每条腿的产品名称  
+>> px | String | 每条腿的成交价格  
+>> sz | String | 每条腿的成交数量  
+>> side | String | 从 Taker 角度看，每条腿的方向  
+>> tgtCcy | String | 每条腿的成交数量类型  
+>> fee | String | 每条腿的费用。负数代表平台收取的用户交易费用。 正数代表返佣。  
+>> feeCcy | String | 手续费币种  
+>> tradeId | String | 最新成交Id  
+  
 ### 现货网格策略委托订单频道
 
 支持现货网格策略订单的首次订阅推送，定时推送和事件推送
@@ -15879,6 +17710,210 @@ data | Array | 订阅的数据
 > 2021-01-28T16:30:00.000Z`  
 > ts | String | 推送时间，Unix时间戳的毫秒数格式，如：`1617788463867`  
   
+### 公共大宗交易频道
+
+当有大宗交易时就会推送
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "public-struc-block-trades"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `public-struc-block-trades`  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "public-struc-block-trades"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"public-struc-block-trades\""}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `public-struc-block-trades`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg":{
+            "channel":"public-struc-block-trades"
+        },
+        "data":[
+            {
+    
+                "cTime":"1608267227834",
+                "blockTdId":"1802896",
+                "legs":[
+                    {
+                        "px":"0.323",
+                        "sz":"25.0",
+                        "instId":"BTC-USD-20220114-13250-C",
+                        "side":"sell",
+                        "tradeId":"15102"
+                    },
+                    {
+                        "px":"0.666",
+                        "sz":"25",
+                        "instId":"BTC-USD-20220114-21125-C",
+                        "side":"buy",
+                        "tradeId":"15103"
+                    }
+                ]
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 用户标识  
+data | Array | 订阅的数据  
+> cTime | String | 执行创建的时间戳，Unix 时间戳格式，以毫秒为单位。  
+> blockTdId | String | 大宗交易ID  
+> legs | Array of Objects | 成交的腿  
+>> instId | String | 每条腿的产品名称  
+>> px | String | 每条腿的成交价格  
+>> sz | String | 每条腿的成交数量  
+>> side | String | 从 Taker 角度看，每条腿的方向  
+>> tgtCcy | String | 每条腿的成交数量类型  
+>> tradeId | String | 最新成交Id  
+  
+### 大宗交易行情频道
+
+获取最近24小时大宗交易量
+
+当发生成交事件时触发推送，此外，也会根据订阅维度每隔5分钟推送一次
+
+> 请求示例
+    
+    
+    {
+        "op": "subscribe",
+        "args": [{
+            "channel": "block-tickers",
+            "instId": "BTC-USDT"
+        }]
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+op | String | 是 | 操作，`subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名，`block-tickers`  
+> instId | String | 是 | 产品ID  
+  
+> 成功返回示例
+    
+    
+    {
+        "event": "subscribe",
+        "arg": {
+            "channel": "block-tickers",
+            "instId": "LTC-USD-200327"
+        }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+        "event": "error",
+        "code": "60012",
+        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"block-tickers\", \"instId\" : \"LTC-USD-200327\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+event | String | 是 | 事件，`subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名 `block-tickers`  
+> instId | String | 是 | 产品ID  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg": {
+            "channel": "block-tickers"
+        },
+        "data": [
+            {
+                "instType": "SWAP",
+                "instId": "LTC-USD-SWAP",
+                "volCcy24h": "0",
+                "vol24h": "0",
+                "ts": "1597026383085"
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> instId | String | 产品ID  
+data | Array | 订阅的数据  
+instId | String | 产品ID  
+instType | String | 产品类型  
+volCcy24h | String | 24小时成交量，以`币`为单位  
+如果是`衍生品`合约，数值为交易货币的数量。  
+如果是`币币/币币杠杆`，数值为计价货币的数量。  
+vol24h | String | 24小时成交量，以`张`为单位  
+如果是`衍生品`合约，数值为合约的张数。  
+如果是`币币/币币杠杆`，数值为交易货币的数量。  
+ts | String | 数据产生时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
 # 错误码
 
 ## REST
@@ -16160,7 +18195,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 ---|---|---  
 没有最新行情信息 | 200 | 52000  
   
-### 大宗交易
+### 闪兑
 
 错误码从 52900 到 52900
 
@@ -16343,6 +18378,50 @@ APIKey 不存在 | 200 | 59506
 起始日期不能大于结束日期 | 200 | 59616  
 子账户创建成功，账户等级设置失败 | 200 | 59617  
 创建子账户失败 | 200 | 59618  
+  
+### 大宗交易
+
+Error Code from 70000
+
+Error Message | HTTP Status Code | Error Code  
+---|---|---  
+RFQ does not exist. | 200 | 70000  
+Quote does not exist. | 200 | 70001  
+Invalid instrument | 200 | 70004  
+The number of legs in RFQ cannot exceed maximum value. | 200 | 70005  
+Does not meet the minimum asset requirement. | 200 | 70006  
+Duplicate instruments in legs array. | 200 | 70100  
+Duplicate clRfqId | 200 | 70101  
+No counterparties specified | 200 | 70102  
+Invalid counterparty | 200 | 70103  
+The total value should be greater than the min notional value {0} | 200 |
+70105  
+The trading amount does not meet the min tradable amount requirement | 200 |
+70106  
+The number of counterparties cannot exceed maximum value. | 200 | 70107  
+The RFQ with {0} status cannot be canceled | 200 | 70200  
+Cancellation failed as rfq count exceeds the limit {0}. | 200 | 70203  
+Cancellation failed as you do not have any active RFQs. | 200 | 70207  
+Cancellation failed as service is unavailable now, please try again later. |
+200 | 70208  
+Duplicate clQuoteId. | 200 | 70301  
+Invalid instrument | 200 | 70302  
+The RFQ with {0} status cannot be quoted. | 200 | 70303  
+Price should be an integer multiple of the tick size. | 200 | 70304  
+The legs of quote do not match the legs of {0} | 200 | 70306  
+Quote to your own RFQ is not allowed. | 200 | 70308  
+Quote to the same RFQ with the same side is not allowed. | 200 | 70309  
+Bid price cannot be higher than offer price | 200 | 70305  
+Size should be in integral multiples of the lot size. | 200 | 70307  
+The Quote with {0} status cannot be canceled | 200 | 70400  
+Cancellation failed as quote count exceeds the limit {0}. | 200 | 70408  
+Cancellation failed as you do not have any active Quotes. | 200 | 70409  
+RFQ {0} is not quoted by {1} | 200 | 70501  
+The legs do not match the legs of {0} | 200 | 70502  
+The legs of execution do not match the legs of {0} | 200 | 70503  
+Execution failed as the RFQ status is {0}. | 200 | 70504  
+Execution failed as the Quote status is {0}. | 200 | 70505  
+Execution is being processed | 200 | 70511  
   
 ## WebSocket
 
