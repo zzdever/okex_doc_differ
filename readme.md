@@ -2635,12 +2635,12 @@ type | String | 报价方类型（当前未生效，将返回 "" ）
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/create-rfq/`
+`POST /api/v5/rfq/create-rfq`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/create-rfq/
+    POST /api/v5/rfq/create-rfq
     
     {
         "anonymous": true,
@@ -2673,7 +2673,7 @@ counterparties | Array of strings | 是 | 报价方标识码，具有唯一性�
 anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示具名询价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给报价方。  
 clRfqId | String | 否 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-legs | Array of Objects | 是 | 询价时的腿，可包含多条腿  
+legs | Array of Objects | 是 | 组合交易  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
 > side | String | 是 | 询价单方向  
@@ -2728,16 +2728,16 @@ msg | String | 错误信息，如果代码不为 0，则不为空。
 data | Array of Objects | 询价单结果  
 > cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
-> state | String | 询价单状态  
-`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
-`failed`, `traded_away`  
-仅适用于 Maker  
+> state | String | 询价单的状态  
+`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
+`traded_away`  
+`traded_away` 仅适用于报价方  
 > counterparties | Array of strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户端敏感信息，不会公开，对报价方返回""。  
 > traderCode | String | 报价方Code。 匿名模式为下返回""  
 > rfqId | String | 询价单ID  
-> legs | Array of Objects | 询价单的腿  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
@@ -2751,12 +2751,12 @@ data | Array of Objects | 询价单结果
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/cancel-rfq/`
+`POST /api/v5/rfq/cancel-rfq`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/cancel-rfq/
+    POST /api/v5/rfq/cancel-rfq
     {
         "rfqId":"22535",
         "clRfqId":"rfq001"
@@ -2808,12 +2808,12 @@ data | Array of Objects | 包含结果的对象数组
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/cancel-batch-rfqs/`
+`POST /api/v5/rfq/cancel-batch-rfqs`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/cancel-batch-rfqs/
+    POST /api/v5/rfq/cancel-batch-rfqs
     {
         "rfqIds":[
             "2201",
@@ -2947,12 +2947,12 @@ data | Array of Objects | 包含结果的对象数组
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/cancel-all-rfqs/`
+`POST /api/v5/rfq/cancel-all-rfqs`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/cancel-all-rfqs/
+    POST /api/v5/rfq/cancel-all-rfqs
     
     
 
@@ -2991,12 +2991,12 @@ data | Array of Objects | 包含结果的对象数组
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/execute-quote/`
+`POST /api/v5/rfq/execute-quote`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/execute-quote/
+    POST /api/v5/rfq/execute-quote
     {
         "rfqId":"22540",
         "quoteId":"84073"
@@ -3068,12 +3068,12 @@ data | Array of Objects | 包含结果的对象数组
 > tTraderCode | String | 询价方Code，具有唯一性，询价时，Anonymous 为 `False` 时可见，为 `True`
 > 时不可见  
 > mTraderCode | String | 报价方Code，具有唯一性。  
-> legs | Array of Objects | 成交的腿  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
 >> side | String | 询价单方向，`buy` 或者 `sell`。  
->> fee | String | 每条腿的费用。 正数代表平台返佣 ，负数代表平台扣除  
+>> fee | String | 手续费，正数代表平台返佣 ，负数代表平台扣除  
 >> feeCcy | String | 手续费币种  
 >> tradeId | String | 最新的成交Id.  
   
@@ -3085,12 +3085,12 @@ data | Array of Objects | 包含结果的对象数组
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/create-quote/`
+`POST /api/v5/rfq/create-quote`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/create-quote/
+    POST /api/v5/rfq/create-quote
     {
         "rfqId":"22539",
         "clQuoteId":"q001",
@@ -3113,7 +3113,7 @@ data | Array of Objects | 包含结果的对象数组
 rfqId | String | 是 | 询价单ID  
 clQuoteId | String | 否 | 报价单自定义ID  
 quoteSide | String | 是 | 询价单方向， `buy` 或者 `sell`  
-legs | Array of Objects | 是 | 报价单的腿  
+legs | Array of Objects | 是 | 组合交易  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
 > px | String | 是 | 委托价格  
@@ -3161,8 +3161,8 @@ msg | String | 错误信息，如果代码不为0，则不为空。
 data | Array of Objects | 包含结果的对象数组  
 > cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
-> state | String | 询价单状态  
-`active`, `canceled`, `pending_fill`, `filled`, `expired`, `failed`  
+> state | String | 报价单的状态  
+`active` `canceled` `pending_fill` `filled` `expired` `failed`  
 > validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -3170,7 +3170,7 @@ data | Array of Objects | 包含结果的对象数组
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方Code，公开可见。  
 > quoteSide | String | 报价单方向，`buy` 或者 `sell`。  
-> legs | Array of Objects | 报价的腿  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格  
@@ -3185,12 +3185,12 @@ data | Array of Objects | 包含结果的对象数组
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/cancel-quote/`
+`POST /api/v5/rfq/cancel-quote`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/cancel-quote/
+    POST /api/v5/rfq/cancel-quote
     {
         "quoteId": "007",
         "clQuoteId":"Bond007"
@@ -3242,12 +3242,12 @@ data | Array of Objects | 包含结果的对象数组
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/cancel-batch-quotes/`
+`POST /api/v5/rfq/cancel-batch-quotes`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/cancel-batch-quotes/
+    POST /api/v5/rfq/cancel-batch-quotes
     {
         "quoteIds":["1150","1151","1152"],
         "clQuoteIds":["q1","q2","q3"]
@@ -3372,12 +3372,12 @@ data | Array of Objects | 包含结果的对象数组
 
 #### HTTP Requests
 
-`POST /api/v5/rfq/cancel-all-quotes/`
+`POST /api/v5/rfq/cancel-all-quotes`
 
 > 请求示例
     
     
-    POST /api/v5/rfq/cancel-all-quotes/
+    POST /api/v5/rfq/cancel-all-quotes
     
     
 
@@ -3421,7 +3421,7 @@ data | Array of Objects | 包含结果的对象数组
 > 请求示例
     
     
-    POST /api/v5/rfq/rfqs/
+    POST /api/v5/rfq/rfqs
     
 
 #### 请求参数
@@ -3431,10 +3431,10 @@ data | Array of Objects | 包含结果的对象数组
 rfqId | String | 否 | 询价单ID .  
 clRfqId | String | 否 | 客户询价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准  
 state | String | 否 | 询价单的状态  
-`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
-`failed`, `traded_away`。 `traded_away` 仅适用于 Maker  
-beginId | String | 否 | 请求的起始询价单ID，  
-请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
+`traded_away`  
+`traded_away` 仅适用于报价方  
+beginId | String | 否 | 请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
 limit | String | 否 | 返回结果的数量，默认100条  
   
@@ -3494,18 +3494,19 @@ limit | String | 否 | 返回结果的数量，默认100条
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组of the RFQ creation.  
+data | Array of Objects | 包含结果的对象数组  
 > cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 询价单的状态  
-`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
-`failed`, `traded_away`。 `traded_away` 仅适用于 Maker  
+`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
+`traded_away`  
+`traded_away` 仅适用于报价方  
 > counterparties | Array of srings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > traderCode | String | 询价方Code，具有唯一性，询价时 Anonymous 设置为 `True` 时不可见  
 > rfqId | String | 询价单ID  
-> legs | Array of Objects | 询价时的腿，可包含多条腿  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
@@ -3524,7 +3525,7 @@ data | Array of Objects | 包含结果的对象数组of the RFQ creation.
 > 请求示例
     
     
-    POST /api/v5/rfq/quotes/
+    POST /api/v5/rfq/quotes
     
 
 #### 请求参数
@@ -3536,10 +3537,10 @@ clRfqId | String | 否 | 询价单自定义ID， 当 clRfqId 和 rfqId 都传时
 quoteId | String | 否 | 报价单ID  
 clQuoteId | String | 否 | 报价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
 state | String | 否 | 询价单的状态  
-`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
-`failed`, `traded_away`。 `traded_away` 仅适用于 Maker  
-beginId | String | 否 | 请求的起始询价单ID，  
-请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
+`traded_away`  
+`traded_away` 仅适用于报价方  
+beginId | String | 否 | 请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
 limit | String | 否 | 返回结果的数量，默认100条  
   
@@ -3591,8 +3592,8 @@ msg | String | 错误信息，如果代码不为 0，则不为空。
 data | Array of Objects | 包含结果的数组  
 > cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式  
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
-> state | String | 报价的状态。 有效值可以是
-> `active`、`canceled`、`pending_fill`、`filled`、`expired` 或 `failed`。  
+> state | String | 报价单的状态  
+`active` `canceled` `pending_fill` `filled` `expired` `failed`  
 > validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -3600,7 +3601,7 @@ data | Array of Objects | 包含结果的数组
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方Code，公开可见。  
 > quoteSide | String | 询价单方向， `buy` 或者 `sell`  
-> legs | Array of Objects | 报价的腿  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格.  
@@ -3620,7 +3621,7 @@ data | Array of Objects | 包含结果的数组
 > 请求示例
     
     
-    POST /api/v5/rfq/trades/
+    POST /api/v5/rfq/trades
     
 
 #### 请求参数
@@ -3632,12 +3633,13 @@ clRfqId | String | 否 | 由用户设置的 RFQ ID. 如果 `clRfqId` 和 `rfqId`
 quoteId | String | 否 | Quote ID  
 clQuoteId | String | 否 | 由用户设置的 Quote ID。如果同时传递了 `clQuoteId` 和 `quoteId`，则
 quoteId 将被视为主要标识符  
-state | String | 否 | 询价的状态。
-有效值可以是`active`、`canceled`、`pending_fill`、`filled`、`expired`、`traded_away`、`failed`。
-`traded_away` 仅适用于 Maker  
-beginId | String | 否 | 请求的起始 大宗交易id。 数据分页以返回早于请求的 blockTdId 的记录，不包括 endId  
-endId | String | 否 | 请求的结束 大宗交易id。 数据分页以返回早于请求的 blockTdId 的记录，不包括 endId  
-limit | String | 否 | 每个请求的结果数。 最大值为 100，这也是默认值。  
+state | String | 否 | 询价单的状态  
+`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
+`traded_away`  
+`traded_away` 仅适用于报价方  
+beginId | String | 否 | 请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
+limit | String | 否 | 返回结果的数量，默认100条。  
   
 > 返回示例
     
@@ -3707,7 +3709,7 @@ data | Array of Objects | 包含结果的对象数组
 > blockTdId | String | 大宗交易ID  
 > tTraderCode | String | 询价方Code，具有唯一性，询价时，Anonymous 为 False 时可见，为 True 时不可见  
 > mTraderCode | String | 报价方Code，具有唯一性。  
-> legs | Array of Objects | Legs of trade  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
@@ -3729,19 +3731,16 @@ data | Array of Objects | 包含结果的对象数组
 > 请求示例
     
     
-    POST /api/v5/rfq/public-trades/
+    POST /api/v5/rfq/public-trades
     
 
 #### 请求参数
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-beginId | String | 否 | Start rfq id the request to begin with. Pagination of
-data to return records newer than the requested blockTdId, not including
-beginId  
-endId | String | 否 | End rfq id the request to end with. Pagination of data to
-return records earlier than the requested blockTdId, not including endId  
-limit | String | 否 | 每个请求的结果数。 最大值为 100，这也是默认值。  
+beginId | String | 否 | 请求的起始ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+endId | String | 否 | 请求的结束ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
+limit | String | 否 | 返回结果的数量，默认100条。  
   
 > 返回示例
     
@@ -3825,7 +3824,7 @@ msg | String | 错误信息，如果代码不为 0，则不为空。
 data | Array of Objects | 包含结果的对象数组.  
 > cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
 > blockTdId | String | 大宗交易ID.  
-> legs | Array of Objects | 成交的腿  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
@@ -15102,14 +15101,15 @@ data | Array | 订阅的数据
 > cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 询价单的状态  
-`active`, `canceled`, `pending_fill`, `filled`, `expired`, `traded_away`,
-`failed`, `traded_away`。 `traded_away` 仅适用于 Maker  
+`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
+`traded_away`  
+`traded_away` 仅适用于报价方  
 > counterparties | Array of Strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > traderCode | String | 询价方Code，具有唯一性，询价时 Anonymous 设置为 `True` 时不可见  
 > rfqId | String | 询价单ID  
-> legs | Array of Objects | 询价时的腿，可包含多条腿  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
@@ -15220,8 +15220,8 @@ arg | Object | 订阅成功的频道
 data | Array | 订阅的数据  
 > cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
-> state | String | 报价的状态。 有效值可以是
-> `active`、`canceled`、`pending_fill`、`filled`、`expired` 或 `failed`。  
+> state | String | 报价单的状态  
+`active` `canceled` `pending_fill` `filled` `expired` `failed`  
 > validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -15229,7 +15229,7 @@ data | Array | 订阅的数据
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方Code，公开可见。  
 > quoteSide | String | 询价单方向， `buy` 或者 `sell`  
-> legs | Array of Objects | 询价的腿  
+> legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格  
@@ -15356,13 +15356,13 @@ data | Array | 订阅的数据
 > tTraderCode | String | Taker 的唯一标识。 只有 anonymous = false 才能在执行后可见。 对于
 > anonymous = ture，交易者身份不会被披露。  
 > mTraderCode | String | Maker 的唯一标识  
-> legs | Array of Objects | 成交的腿  
->> instId | String | 每条腿的产品名称  
->> px | String | 每条腿的成交价格  
->> sz | String | 每条腿的成交数量  
->> side | String | 从 Taker 角度看，每条腿的方向  
->> tgtCcy | String | 每条腿的成交数量类型  
->> fee | String | 每条腿的费用。负数代表平台收取的用户交易费用。 正数代表返佣。  
+> legs | Array of Objects | 组合交易  
+>> instId | String | 产品ID  
+>> px | String | 成交价格  
+>> sz | String | 成交数量  
+>> side | String | 询价单方向  
+>> tgtCcy | String | 委托数量的类型  
+>> fee | String | 手续费，正数代表平台返佣 ，负数代表平台扣除。  
 >> feeCcy | String | 手续费币种  
 >> tradeId | String | 最新成交Id  
   
@@ -17809,12 +17809,11 @@ arg | Object | 订阅成功的频道
 data | Array | 订阅的数据  
 > cTime | String | 执行创建的时间戳，Unix 时间戳格式，以毫秒为单位。  
 > blockTdId | String | 大宗交易ID  
-> legs | Array of Objects | 成交的腿  
->> instId | String | 每条腿的产品名称  
->> px | String | 每条腿的成交价格  
->> sz | String | 每条腿的成交数量  
->> side | String | 从 Taker 角度看，每条腿的方向  
->> tgtCcy | String | 每条腿的成交数量类型  
+> legs | Array of Objects | 组合交易  
+>> instId | String | 产品名Id  
+>> px | String | 成交价格  
+>> sz | String | 成交数量  
+>> side | String | 询价单方向  
 >> tradeId | String | 最新成交Id  
   
 ### 大宗交易行情频道
@@ -18381,47 +18380,44 @@ APIKey 不存在 | 200 | 59506
   
 ### 大宗交易
 
-Error Code from 70000
+错误码从 70000 开始
 
 Error Message | HTTP Status Code | Error Code  
 ---|---|---  
-RFQ does not exist. | 200 | 70000  
-Quote does not exist. | 200 | 70001  
-Invalid instrument | 200 | 70004  
-The number of legs in RFQ cannot exceed maximum value. | 200 | 70005  
-Does not meet the minimum asset requirement. | 200 | 70006  
-Duplicate instruments in legs array. | 200 | 70100  
-Duplicate clRfqId | 200 | 70101  
-No counterparties specified | 200 | 70102  
-Invalid counterparty | 200 | 70103  
-The total value should be greater than the min notional value {0} | 200 |
-70105  
-The trading amount does not meet the min tradable amount requirement | 200 |
-70106  
-The number of counterparties cannot exceed maximum value. | 200 | 70107  
-The RFQ with {0} status cannot be canceled | 200 | 70200  
-Cancellation failed as rfq count exceeds the limit {0}. | 200 | 70203  
-Cancellation failed as you do not have any active RFQs. | 200 | 70207  
-Cancellation failed as service is unavailable now, please try again later. |
-200 | 70208  
-Duplicate clQuoteId. | 200 | 70301  
-Invalid instrument | 200 | 70302  
-The RFQ with {0} status cannot be quoted. | 200 | 70303  
-Price should be an integer multiple of the tick size. | 200 | 70304  
-The legs of quote do not match the legs of {0} | 200 | 70306  
-Quote to your own RFQ is not allowed. | 200 | 70308  
-Quote to the same RFQ with the same side is not allowed. | 200 | 70309  
-Bid price cannot be higher than offer price | 200 | 70305  
-Size should be in integral multiples of the lot size. | 200 | 70307  
-The Quote with {0} status cannot be canceled | 200 | 70400  
-Cancellation failed as quote count exceeds the limit {0}. | 200 | 70408  
-Cancellation failed as you do not have any active Quotes. | 200 | 70409  
-RFQ {0} is not quoted by {1} | 200 | 70501  
-The legs do not match the legs of {0} | 200 | 70502  
-The legs of execution do not match the legs of {0} | 200 | 70503  
-Execution failed as the RFQ status is {0}. | 200 | 70504  
-Execution failed as the Quote status is {0}. | 200 | 70505  
-Execution is being processed | 200 | 70511  
+询价单不存在 | 200 | 70000  
+报价单不存在 | 200 | 70001  
+无效的产品ID | 200 | 70004  
+组合交易的数量不能超过最大值 | 200 | 70005  
+不满足最小资产要求 | 200 | 70006  
+组合交易中的产品ID重复 | 200 | 70100  
+clRfqId重复 | 200 | 70101  
+未指定对手方 | 200 | 70102  
+无效的对手方 | 200 | 70103  
+总价值应该大于最小值{0} | 200 | 70105  
+下单数量小于最小交易数量 | 200 | 70106  
+对手方的数量不能超过最大值 | 200 | 70107  
+不能取消处于{0}状态的询价单 | 200 | 70200  
+取消失败，由于询价单数量超过限制数量{0} | 200 | 70203  
+取消失败，由于您没有询价挂单 | 200 | 70207  
+取消失败，由于服务暂时不可用，请稍后重试 | 200 | 70208  
+clQuoteId重复 | 200 | 70301  
+无效的产品ID | 200 | 70302  
+不能对处于{0}状态的询价单报价 | 200 | 70303  
+价格应该是下单价格精度的整数倍 | 200 | 70304  
+报价的组合交易没有匹配{0}的组合交易 | 200 | 70306  
+不允许对自己的询价单报价 | 200 | 70308  
+不允许对相同询价单进行同一方向的报价 | 200 | 70309  
+买入价格不能高于报价 | 200 | 70305  
+数量应该是下单数量精度的整数倍 | 200 | 70307  
+不能取消处于{0}状态的报价单 | 200 | 70400  
+取消失败，由于报价单数量超过限制数量{0} | 200 | 70408  
+取消失败，由于您没有报价挂单 | 200 | 70409  
+询价单{0}没有被{1}报价 | 200 | 70501  
+组合交易没有匹配{0}的组合交易 | 200 | 70502  
+执行的组合交易没有匹配{0}的组合交易 | 200 | 70503  
+执行失败，因为询价单的状态是{0} | 200 | 70504  
+执行失败，因为报价单的状态是{0} | 200 | 70505  
+正在执行报价 | 200 | 70511  
   
 ## WebSocket
 
