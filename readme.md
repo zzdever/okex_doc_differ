@@ -2584,7 +2584,7 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
 
 ### 获取报价方信息
 
-查询可以参与交易的对手方信息。
+查询可以参与交易的报价方信息。
 
 #### 限速: 5次/2s
 
@@ -2624,7 +2624,7 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
 参数名 | 类型 | 描述  
 ---|---|---  
 traderName | String | 报价方名称  
-traderCode | String | 报价方Code，具有唯一性，在询价和报价时使用  
+traderCode | String | 报价方唯一标识代码，公开可见；报价和询价的相关接口都使用该代码代表报价方。  
 type | String | 报价方类型（当前未生效，将返回 "" ）  
   
 ### 询价
@@ -2669,7 +2669,7 @@ type | String | 报价方类型（当前未生效，将返回 "" ）
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-counterparties | Array of strings | 是 | 报价方标识码，具有唯一性。  
+counterparties | Array of strings | 是 | 报价方列表。  
 anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示具名询价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给报价方。  
 clRfqId | String | 否 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
@@ -2735,7 +2735,7 @@ data | Array of Objects | 询价单结果
 > counterparties | Array of strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户端敏感信息，不会公开，对报价方返回""。  
-> traderCode | String | 报价方Code。 匿名模式为下返回""  
+> traderCode | String | 询价方唯一标识代码。 匿名模式为下返回""  
 > rfqId | String | 询价单ID  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
@@ -3065,9 +3065,8 @@ data | Array of Objects | 包含结果的对象数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > blockTdId | String | 大宗交易ID  
-> tTraderCode | String | 询价方Code，具有唯一性，询价时，Anonymous 为 `False` 时可见，为 `True`
-> 时不可见  
-> mTraderCode | String | 报价方Code，具有唯一性。  
+> tTraderCode | String | 询价价方唯一标识代码，询价时，Anonymous 为 `False` 时可见，为 `True` 时不可见  
+> mTraderCode | String | 报价方唯一标识代码。  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
@@ -3168,7 +3167,7 @@ data | Array of Objects | 包含结果的对象数组
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
-> traderCode | String | 报价方Code，公开可见。  
+> traderCode | String | 报价方唯一标识代码，公开可见。  
 > quoteSide | String | 报价单方向，`buy` 或者 `sell`。  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
@@ -3504,7 +3503,7 @@ data | Array of Objects | 包含结果的对象数组
 > counterparties | Array of srings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
-> traderCode | String | 询价方Code，具有唯一性，询价时 Anonymous 设置为 `True` 时不可见  
+> traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
 > rfqId | String | 询价单ID  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
@@ -3536,10 +3535,8 @@ rfqId | String | 否 | 询价单ID
 clRfqId | String | 否 | 询价单自定义ID， 当 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
 quoteId | String | 否 | 报价单ID  
 clQuoteId | String | 否 | 报价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
-state | String | 否 | 询价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
-`traded_away`  
-`traded_away` 仅适用于报价方  
+state | String | 否 | 报价单的状态  
+`active` `canceled` `pending_fill` `filled` `expired` `failed`  
 beginId | String | 否 | 请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
 limit | String | 否 | 返回结果的数量，默认100条  
@@ -3599,7 +3596,7 @@ data | Array of Objects | 包含结果的数组
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
-> traderCode | String | 报价方Code，公开可见。  
+> traderCode | String | 报价方唯一标识代码，公开可见。  
 > quoteSide | String | 询价单方向， `buy` 或者 `sell`  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
@@ -3707,8 +3704,8 @@ data | Array of Objects | 包含结果的对象数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > blockTdId | String | 大宗交易ID  
-> tTraderCode | String | 询价方Code，具有唯一性，询价时，Anonymous 为 False 时可见，为 True 时不可见  
-> mTraderCode | String | 报价方Code，具有唯一性。  
+> tTraderCode | String | 询价方唯一标识代码，询价时，Anonymous 为 False 时可见，为 True 时不可见  
+> mTraderCode | String | 报价方唯一标识代码。  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
@@ -5801,8 +5798,7 @@ instId | String | 否 | 交易产品ID，如：`BTC-USD-190927-5000-C`
 支持多个`instId`查询（不超过10个），半角逗号分隔  
 posId | String | 否 | 持仓ID  
 支持多个`posId`查询（不超过20个），半角逗号分割  
-如果该instId拥有过的仓位，将返回持仓信息，不管持仓量是否为0；否则不返回
-逐仓交易设置中，如果设置为自主划转模式，逐仓转入保证金后，会生成一个持仓量为0的仓位
+如果该 instId持仓量是否为0；将不返回持仓信息，即使有过持仓。  逐仓交易设置中，如果设置为自主划转模式，逐仓转入保证金后，会生成一个持仓量为0的仓位
 
 > 返回结果
     
@@ -6860,7 +6856,7 @@ uly | String | 否 | 标的指数
         "code": "0",
         "msg": "",
         "data": [{
-                "category": "1",
+                "category": "1", // 已废弃
                 "delivery": "",
                 "exercise": "",
                 "instType": "SPOT",
@@ -6879,14 +6875,13 @@ uly | String | 否 | 标的指数
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-category | String | 币种手续费类别  
+level | String | 手续费等级  
 taker | String | 吃单手续费率，永续和交割合约时，为币本位合约费率  
 maker | String | 挂单手续费率，永续和交割合约时，为币本位合约费率  
 takerU | String | U本位合约吃单手续费率，仅适用于`交割/永续`  
 makerU | String | U本位合约挂单手续费率，仅适用于`交割/永续`  
 delivery | String | 交割手续费率  
 exercise | String | 行权手续费率  
-level | String | 手续费等级  
 instType | String | 产品类型  
 ts | String | 数据返回时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 备注：  
@@ -8409,7 +8404,8 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "tag": "",
                 "totalPnl": "-1.3320201165712",
                 "tpTriggerPx": "",
-                "uTime": "1653347949862"
+                "uTime": "1653347949862",
+                "uly": ""
             }
         ],
         "msg": ""
@@ -8473,6 +8469,8 @@ lever | String | 杠杆倍数
 actualLever | String | 实际杠杆倍数  
 仅适用于`合约网格`  
 liqPx | String | 预估强平价格  
+仅适用于`合约网格`  
+uly | String | 标的指数  
 仅适用于`合约网格`  
 tag | String | 订单标签  
   
@@ -8545,7 +8543,8 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "tag": "",
                 "totalPnl": "-1.3320201165712",
                 "tpTriggerPx": "",
-                "uTime": "1653347949862"
+                "uTime": "1653347949862",
+                "uly": ""
             }
         ],
         "msg": ""
@@ -8606,6 +8605,8 @@ lever | String | 杠杆倍数
 actualLever | String | 实际杠杆倍数  
 仅适用于`合约网格`  
 liqPx | String | 预估强平价格  
+仅适用于`合约网格`  
+uly | String | 标的指数  
 仅适用于`合约网格`  
 tag | String | 订单标签  
   
@@ -8681,7 +8682,8 @@ algoId | String | 是 | 策略订单ID
                 "totalPnl": "-1.1021682922796",
                 "tpTriggerPx": "",
                 "tradeNum": "3",
-                "uTime": "1653347949862"
+                "uTime": "1653347949862",
+                "uly": ""
             }
         ],
         "msg": ""
@@ -8762,6 +8764,8 @@ lever | String | 杠杆倍数
 actualLever | String | 实际杠杆倍数  
 仅适用于`合约网格`  
 liqPx | String | 预估强平价格  
+仅适用于`合约网格`  
+uly | String | 标的指数  
 仅适用于`合约网格`  
 eq | String | 策略账户总权益  
 仅适用于`合约网格`  
@@ -11975,6 +11979,7 @@ title | String | 系统维护说明的标题
 state | String | 系统维护的状态  
 begin | String | 系统维护的开始时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
 end | String | 系统维护的结束时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
+在维护完成前，是预期结束时间；维护完成后，会变更为实际结束时间。  
 href | String | 系统维护详情的超级链接,若无返回值，默认值为空，如： “”  
 serviceType | String | 服务类型， `0`：WebSocket ; `1`：币币 ; `2`：交割 ; `3`：永续 ; `4`：期权
 `5`：交易服务  
@@ -14058,57 +14063,60 @@ msg | String | 否 | 错误消息
     {
         "arg": {
             "channel": "orders",
-            "uid": "77982378738415879",
-            "instType": "FUTURES",
-            "instId": "BTC-USD-200329"
+            "instType": "SPOT",
+            "instId": "BTC-USDT",
+            "uid": "614488474791936"
         },
-        "data": [{
-            "instType": "FUTURES",
-            "instId": "BTC-USD-200329",
-            "ordId": "312269865356374016",
-            "clOrdId": "b1",
-            "tag": "",
-            "px": "999",
-            "sz": "333",
-            "notionalUsd": "",
-            "ordType": "limit",
-            "side": "buy",
-            "posSide": "long",
-            "tdMode": "cross",
-            "tgtCcy": "",
-            "fillSz": "0",
-            "fillPx": "long",
-            "tradeId": "0",
-            "accFillSz": "323",
-            "fillNotionalUsd": "",
-            "fillTime": "0",
-            "fillFee": "0.0001",
-            "fillFeeCcy": "BTC",
-            "execType": "T",
-            "source": "",
-            "state": "canceled",
-            "avgPx": "0",
-            "lever": "20",
-            "tpTriggerPx": "0",
-            "tpTriggerPxType": "last",
-            "tpOrdPx": "20",
-            "slTriggerPx": "0",
-            "slTriggerPxType": "last",
-            "slOrdPx": "20",
-            "feeCcy": "",
-            "fee": "",
-            "rebateCcy": "",
-            "rebate": "",
-            "tgtCcy":"",
-            "pnl": "",
-            "category": "",
-            "uTime": "1597026383085",
-            "cTime": "1597026383085",
-            "reqId": "",
-            "amendResult": "",
-            "code": "0",
-            "msg": ""
-        }]
+        "data": [
+            {
+                "accFillSz": "0.001",
+                "amendResult": "",
+                "avgPx": "31527.1",
+                "cTime": "1654084334977",
+                "category": "normal",
+                "ccy": "",
+                "clOrdId": "",
+                "code": "0",
+                "execType": "M",
+                "fee": "-0.02522168",
+                "feeCcy": "USDT",
+                "fillFee": "-0.02522168",
+                "fillFeeCcy": "USDT",
+                "fillNotionalUsd": "31.50818374",
+                "fillPx": "31527.1",
+                "fillSz": "0.001",
+                "fillTime": "1654084353263",
+                "instId": "BTC-USDT",
+                "instType": "SPOT",
+                "lever": "0",
+                "msg": "",
+                "notionalUsd": "31.50818374",
+                "ordId": "452197707845865472",
+                "ordType": "limit",
+                "pnl": "0",
+                "posSide": "",
+                "px": "31527.1",
+                "rebate": "0",
+                "rebateCcy": "BTC",
+                "reduceOnly": "false",
+                "reqId": "",
+                "side": "sell",
+                "slOrdPx": "",
+                "slTriggerPx": "",
+                "slTriggerPxType": "last",
+                "source": "",
+                "state": "filled",
+                "sz": "0.001",
+                "tag": "",
+                "tdMode": "cash",
+                "tgtCcy": "",
+                "tpOrdPx": "",
+                "tpTriggerPx": "",
+                "tpTriggerPxType": "last",
+                "tradeId": "242589207",
+                "uTime": "1654084353264"
+            }
+        ]
     }
     
 
@@ -14153,7 +14161,9 @@ data | Array | 订阅的数据
 > tradeId | String | 最新成交ID  
 > fillSz | String | 最新成交数量  
 > fillTime | String | 最新成交时间  
-> fillFee | String | 最新一笔成交的手续费  
+> fillFee | String | 最新一笔成交的手续费金额或者返佣金额：  
+手续费扣除 为 ‘负数’，如 -0.01 ；  
+手续费返佣 为 ‘正数’，如 0.01  
 > fillFeeCcy | String | 最新一笔成交的手续费币种  
 > execType | String | 最新一笔成交的流动性方向 T：taker M：maker  
 > accFillSz | String | 累计成交数量  
@@ -14180,9 +14190,9 @@ data | Array | 订阅的数据
 > feeCcy | String | 交易手续费币种  
 `币币/币币杠杆`：如果是买的话，收取的就是BTC；如果是卖的话，收取的就是USDT  
 `交割/永续/期权` 收取的就是保证金  
-> fee | String | 订单交易手续费，平台向用户收取的交易手续费  
+> fee | String | 订单交易累计的手续费，平台向用户收取的交易手续费  
 > rebateCcy | String | 返佣金币种 ，如果没有返佣金，该字段为“”  
-> rebate | String | 返佣金额，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”  
+> rebate | String | 返佣累计金额，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”  
 > pnl | String | 收益  
 > source | String | 订单来源  
 `13`:策略委托单触发后的生成的限价单  
@@ -15107,7 +15117,7 @@ data | Array | 订阅的数据
 > counterparties | Array of Strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
-> traderCode | String | 询价方Code，具有唯一性，询价时 Anonymous 设置为 `True` 时不可见  
+> traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
 > rfqId | String | 询价单ID  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
@@ -15227,7 +15237,7 @@ data | Array | 订阅的数据
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
-> traderCode | String | 报价方Code，公开可见。  
+> traderCode | String | 报价方唯一标识代码，公开可见。  
 > quoteSide | String | 询价单方向， `buy` 或者 `sell`  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
@@ -15353,9 +15363,9 @@ data | Array | 订阅的数据
 > clQuoteId | String | 由用户设置的 Quote ID。 此属性被视为客户端敏感信息。 不会暴露给 Taker，只为 Taker
 > 返回空字符串“”。  
 > blockTdId | String | 大宗交易ID  
-> tTraderCode | String | Taker 的唯一标识。 只有 anonymous = false 才能在执行后可见。 对于
+> tTraderCode | String | 报价方唯一标识代码。 只有 anonymous = false 才能在执行后可见。 对于
 > anonymous = ture，交易者身份不会被披露。  
-> mTraderCode | String | Maker 的唯一标识  
+> mTraderCode | String | 询价方唯一标识代码  
 > legs | Array of Objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
@@ -15645,7 +15655,6 @@ msg | String | 否 | 错误消息
             "perMaxProfitRate": "995.7080916791230692",
             "perMinProfitRate": "0.0946277854875634",
             "pnlRatio": "0.0129419829834853",
-            "riskRatio": "217.68248250933217",
             "runPx": "29216.3",
             "runType": "1",
             "singleAmt": "1",
@@ -15732,8 +15741,6 @@ data | Array | 订阅的数据
 > liqPx | String | 预估强平价格  
 仅适用于`合约网格`  
 > eq | String | 策略账户总权益  
-仅适用于`合约网格`  
-> riskRatio | String | 风险率  
 仅适用于`合约网格`  
 > uly | String | 标的指数  
 > tag | String | 订单标签  
@@ -15976,62 +15983,35 @@ data | Array | 订阅的数据
 > algoId | String | 策略订单ID  
 > instType | String | 产品类型  
 > instId | String | 产品ID  
-> cTime | String | 策略订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-> uTime | String | 策略订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-> triggerTime | String | 策略订单触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > algoOrdType | String | 策略订单类型  
 `grid`：现货网格  
-> state | String | 订单状态  
-`starting`：启动中  
-`running`：运行中  
-`stopping`：终止中  
-`no_close_position`：已停止未平仓（仅适用于合约网格）  
-`stopped`：已停止  
-> maxPx | String | 区间最高价格  
-> minPx | String | 区间最低价格  
-> gridNum | String | 网格数量  
-> runType | String | 网格类型  
-`1`：等差，`2`：等比  
-> tpTriggerPx | String | 止盈触发价  
-> slTriggerPx | String | 止损触发价  
-> tradeNum | String | 挂单成交次数  
-> arbitrageNum | String | 网格套利次数  
-> singleAmt | String | 单网格买卖量  
-> perMinProfitRate | String | 预期单网格最低利润率  
-> perMaxProfitRate | String | 预期单网格最高利润率  
-> runPx | String | 启动时价格  
-> totalPnl | String | 总收益  
-> pnlRatio | String | 收益率  
-> investment | String | 投入金额  
-现货网格如果投入了交易币则折算为计价币  
-> gridProfit | String | 网格利润  
-> floatProfit | String | 浮动盈亏  
-> totalAnnualizedRate | String | 总年化  
-> annualizedRate | String | 网格年化  
-> cancelType | String | 网格策略停止原因  
-`0`：无  
-`1`：手动停止  
-`2`：止盈停止  
-`3`：止损停止  
-`4`：风控停止  
-`5`：交割停止  
-> stopType | String | 网格策略停止类型  
-现货网格 `1`：卖出计价币，`2`：不卖出计价币  
-合约网格 `1`：市价全平，`2`：停止不平仓  
-> quoteSz | String | 计价币投入数量  
-仅适用于`现货网格`  
-> baseSz | String | 交易币投入数量  
-仅适用于`现货网格`  
-> curQuoteSz | String | 当前持有的计价币资产  
-仅适用于`现货网格`  
-> curBaseSz | String | 当前持有的交易币资产  
-仅适用于`现货网格`  
-> profit | String | 当前可提取利润,单位是计价币  
-仅适用于`现货网格`  
-> stopResult | String | 现货网格策略停止结果  
-`0`：默认，`1`：市价卖币成功 `-1`：市价卖币失败  
-仅适用于`现货网格`  
-> tag | String | 订单标签  
+`contract_grid`：合约网格  
+> groupId | String | 组ID  
+> ordId | String | 子订单ID  
+> cTime | String | 子订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+> uTime | String | 子订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+> tdMode | String | 子订单交易模式  
+`cross`：全仓 `isolated`：逐仓 `cash`：非保证金  
+> ordType | String | 子订单类型  
+`market`：市价单 `limit`：限价单  
+> sz | String | 子订单委托数量  
+> state | String | 子订单状态  
+`canceled`：撤单成功 `live`：等待成交 `partially_filled`：部分成交 `filled`：完全成交
+`cancelling`：撤单中  
+> side | String | 子订单订单方向  
+`buy`：买 `sell`：卖  
+> px | String | 子订单委托价格  
+> fee | String | 子订单手续费数量  
+> feeCcy | String | 子订单手续费币种  
+> avgPx | String | 子订单平均成交价格  
+> accFillSz | String | 子订单累计成交数量  
+> posSide | String | 子订单持仓方向  
+`long`：双向持仓多头  
+`short`：双向持仓空头  
+`net`：单向持仓  
+> pnl | String | 子订单收益  
+> ctVal | String | 合约面值  
+> lever | String | 杠杆倍数  
 > pTime | String | 订单信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ## 公共频道
@@ -17702,6 +17682,7 @@ data | Array | 订阅的数据
 > `canceled`：已取消  
 > begin | String | 系统维护的开始时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
 > end | String | 系统维护的结束时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
+在维护完成前，是预期结束时间；维护完成后，会变更为实际结束时间。  
 > href | String | 系统维护详情的超级链接,若无返回值，默认值为空，如：“”  
 > serviceType | String | 服务类型， `0`：WebSocket ; `1`：币币 ; `2`：交割 ; `3`：永续 ;
 > `4`：期权 `5`：交易服务  
@@ -18187,6 +18168,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 订单状态和订单id不能同时存在 | 200 | 51601  
 订单状态或订单id必须存在一个 | 200 | 51602  
 查询订单不存在 | 200 | 51603  
+文件正在生成中 | 200 | 51607  
   
 #### 数据类
 
@@ -18465,5 +18447,5 @@ TBT深度频道仅支持手续费等级为VIP4及以上的用户订阅使用 | 6
 
 # API问题反馈
 
-添加官方API技术支持QQ社群，QQ号：1905481750，180731406 备注：API+姓名+账号，与专业量化人员交流。  
+添加官方API技术支持QQ社群，QQ号：2356571147，3431422133 备注：API+姓名+账号，与专业量化人员交流。  
 
