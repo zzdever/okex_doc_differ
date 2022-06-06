@@ -2673,7 +2673,7 @@ counterparties | Array of strings | 是 | 报价方列表。
 anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示具名询价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给报价方。  
 clRfqId | String | 否 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-legs | Array of Objects | 是 | 组合交易  
+legs | Array of Objects | 是 | 组合交易，每次最多可以提交15组交易信息  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
 > side | String | 是 | 询价单方向  
@@ -2802,7 +2802,7 @@ data | Array of Objects | 包含结果的对象数组
   
 ### 批量取消询价单
 
-取消一个或多个询价单
+取消一个或多个询价单，每次最多可以撤销100个询价单。
 
 #### 限速: 2次/2s
 
@@ -3080,7 +3080,7 @@ data | Array of Objects | 包含结果的对象数组
 
 允许询价单指定的报价方进行报价，需要对整个询价单报价，不允许部分报价或部分成交。
 
-#### 限速: 5次/2s
+#### 限速: 50次/2s
 
 #### HTTP Requests
 
@@ -3180,7 +3180,7 @@ data | Array of Objects | 包含结果的对象数组
 
 取消一个报价单。
 
-#### 限速: 5次/2s
+#### 限速: 50次/2s
 
 #### HTTP Requests
 
@@ -3235,7 +3235,7 @@ data | Array of Objects | 包含结果的对象数组
   
 ### 批量取消报价单
 
-取消一个或多个报价单
+取消一个或多个报价单，每次最多可以撤销100个订单。
 
 #### 限速: 2次/2s
 
@@ -3411,7 +3411,7 @@ data | Array of Objects | 包含结果的对象数组
 
 获取询价单信息
 
-#### 限速: 5次/2s
+#### 限速: 2次/2s
 
 #### HTTP Requests
 
@@ -3515,7 +3515,7 @@ data | Array of Objects | 包含结果的对象数组
 
 获取报价单信息
 
-#### 限速: 5次/2s
+#### 限速: 2次/2s
 
 #### HTTP Requests
 
@@ -3537,8 +3537,8 @@ quoteId | String | 否 | 报价单ID
 clQuoteId | String | 否 | 报价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
 state | String | 否 | 报价单的状态  
 `active` `canceled` `pending_fill` `filled` `expired` `failed`  
-beginId | String | 否 | 请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
-endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
+beginId | String | 否 | 请求的起始报价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+endId | String | 否 | 请求的结束报价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
 limit | String | 否 | 返回结果的数量，默认100条  
   
 > 返回示例
@@ -3634,8 +3634,8 @@ state | String | 否 | 询价单的状态
 `active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
 `traded_away`  
 `traded_away` 仅适用于报价方  
-beginId | String | 否 | 请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
-endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
+beginId | String | 否 | 请求的起始大宗交易ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+endId | String | 否 | 请求的结束大宗交易ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
 limit | String | 否 | 返回结果的数量，默认100条。  
   
 > 返回示例
@@ -3735,8 +3735,8 @@ data | Array of Objects | 包含结果的对象数组
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-beginId | String | 否 | 请求的起始ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
-endId | String | 否 | 请求的结束ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
+beginId | String | 否 | 请求的起始大宗交易ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
+endId | String | 否 | 请求的结束大宗交易ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
 limit | String | 否 | 返回结果的数量，默认100条。  
   
 > 返回示例
@@ -5798,7 +5798,7 @@ instId | String | 否 | 交易产品ID，如：`BTC-USD-190927-5000-C`
 支持多个`instId`查询（不超过10个），半角逗号分隔  
 posId | String | 否 | 持仓ID  
 支持多个`posId`查询（不超过20个），半角逗号分割  
-如果该 instId持仓量是否为0；将不返回持仓信息，即使有过持仓。  逐仓交易设置中，如果设置为自主划转模式，逐仓转入保证金后，会生成一个持仓量为0的仓位
+如果 instId 的持仓量为0；将不返回持仓信息，即使有过持仓。  逐仓交易设置中，如果设置为自主划转模式，逐仓转入保证金后，会生成一个持仓量为0的仓位
 
 > 返回结果
     
@@ -9640,26 +9640,26 @@ limit | String | 否 | 分页返回的结果集数量，最大为500，不填默
     
     
     {
-        "code":"0",
-        "msg":"",
-        "data":[
-         {
-            "instId":"BTC-USDT",
-            "tradeId":"9",
-            "px":"0.016",
-            "sz":"50",
-            "side":"buy",
-            "ts":"1597026383085"
-        },
-        {
-            "instId":"BTC-USDT",
-            "tradeId":"9",
-            "px":"0.016",
-            "sz":"50",
-            "side":"buy",
-            "ts":"1597026383085"
-        }
-      ]
+        "code": "0",
+        "msg": "",
+        "data": [
+            {
+                "instId": "BTC-USDT",
+                "side": "sell",
+                "sz": "0.00001",
+                "px": "29963.2",
+                "tradeId": "242720720",
+                "ts": "1654161646974"
+            },
+            {
+                "instId": "BTC-USDT",
+                "side": "sell",
+                "sz": "0.00001",
+                "px": "29964.1",
+                "tradeId": "242720719",
+                "ts": "1654161641568"
+            }
+        ]
     }
     
 
@@ -9708,26 +9708,26 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
     
     
     {
-        "code":"0",
-        "msg":"",
-        "data":[
-         {
-            "instId":"BTC-USDT",
-            "tradeId":"9",
-            "px":"0.016",
-            "sz":"50",
-            "side":"buy",
-            "ts":"1597026383085"
-        },
-        {
-            "instId":"BTC-USDT",
-            "tradeId":"9",
-            "px":"0.016",
-            "sz":"50",
-            "side":"buy",
-            "ts":"1597026383085"
-        }
-      ]
+        "code": "0",
+        "msg": "",
+        "data": [
+            {
+                "instId": "BTC-USDT",
+                "side": "sell",
+                "sz": "0.00001",
+                "px": "29963.2",
+                "tradeId": "242720720",
+                "ts": "1654161646974"
+            },
+            {
+                "instId": "BTC-USDT",
+                "side": "sell",
+                "sz": "0.00001",
+                "px": "29964.1",
+                "tradeId": "242720719",
+                "ts": "1654161641568"
+            }
+        ]
     }
     
 
