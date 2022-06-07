@@ -237,7 +237,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 期权合约类 
       * 资金类 
       * 账户类 
-      * 大宗交易
+      * 大宗交易 
     * WebSocket 
       * 公共 
   * 创建我的APIKey 
@@ -3626,10 +3626,11 @@ data | Array of Objects | 包含结果的数组
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 rfqId | String | 否 | 询价单ID  
-clRfqId | String | 否 | 由用户设置的 RFQ ID. 如果 `clRfqId` 和 `rfqId` 都通过了，rfqId 将被视为主要  
-quoteId | String | 否 | Quote ID  
-clQuoteId | String | 否 | 由用户设置的 Quote ID。如果同时传递了 `clQuoteId` 和 `quoteId`，则
-quoteId 将被视为主要标识符  
+clRfqId | String | 否 | 由用户设置的询价单ID. 如果 `clRfqId` 和 `rfqId` 都通过了，rfqId 将被视为主要  
+quoteId | String | 否 | 报价单ID  
+blockTdId | String | 否 | 大宗交易ID  
+clQuoteId | String | 否 | 由用户设置的报价单ID。如果同时传递了 `clQuoteId` 和 `quoteId`，则 quoteId
+将被视为主要标识符  
 state | String | 否 | 询价单的状态  
 `active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
 `traded_away`  
@@ -18368,7 +18369,7 @@ Error Message | HTTP Status Code | Error Code
 ---|---|---  
 询价单不存在 | 200 | 70000  
 报价单不存在 | 200 | 70001  
-无效的产品ID | 200 | 70004  
+无效的产品ID {0} | 200 | 70004  
 组合交易的数量不能超过最大值 | 200 | 70005  
 不满足最小资产要求 | 200 | 70006  
 组合交易中的产品ID重复 | 200 | 70100  
@@ -18400,6 +18401,15 @@ clQuoteId重复 | 200 | 70301
 执行失败，因为询价单的状态是{0} | 200 | 70504  
 执行失败，因为报价单的状态是{0} | 200 | 70505  
 正在执行报价 | 200 | 70511  
+大宗交易不存在 | 200 | 56000  
+多腿的数量不能超过 {0} | 200 | 56001  
+执行和验证的多腿数量不匹配 | 200 | 56002  
+重复的clBlockTdId | 200 | 56003  
+不允许自成交 | 200 | 56004  
+执行和验证的clBlockTdId 不匹配 | 200 | 56005  
+执行和验证的角色不能相同 | 200 | 56006  
+执行和验证的第{0}条腿不匹配 | 200 | 56007  
+重复的产品名称 | 200 | 56008  
   
 ## WebSocket
 
