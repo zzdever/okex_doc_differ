@@ -3028,7 +3028,6 @@ quoteId | String | 是 | 报价单ID
                 "tTraderCode":"Trader1",
                 "mTraderCode":"Trader2",
                 "cTime":"1649670009",
-                "strategy":"",
                 "legs":[
                     {
                         "px":"43000",
@@ -4563,7 +4562,7 @@ depId | String | 充值记录 ID
 
 ### 提币
 
-用户提币。
+用户提币。子账户不支持提币。
 
 #### 限速： 6次/s
 
@@ -5804,7 +5803,8 @@ instId | String | 否 | 交易产品ID，如：`BTC-USD-190927-5000-C`
 支持多个`instId`查询（不超过10个），半角逗号分隔  
 posId | String | 否 | 持仓ID  
 支持多个`posId`查询（不超过20个），半角逗号分割  
-如果 instId 的持仓量为0；将不返回持仓信息，即使有过持仓。  逐仓交易设置中，如果设置为自主划转模式，逐仓转入保证金后，会生成一个持仓量为0的仓位
+如果该 instId 拥有过仓位且当前持仓量为0，传 instId 时，会返回仓位信息；不传 instId 时，仓位信息不返回。
+逐仓交易设置中，如果设置为自主划转模式，逐仓转入保证金后，会生成一个持仓量为0的仓位
 
 > 返回结果
     
@@ -6000,7 +6000,8 @@ closePos | String | 累计平仓量
 pnl | String | 平仓收益额  
 pnlRatio | String | 平仓收益率  
 lever | String | 杠杆倍数  
-direction | String | 持仓方向 `long`：多 `short`：空  
+posSide | String | 持仓方向 `long`：多 `short`：空  
+仅适用于 `币币杠杆/交割/永续/期权`  
 triggerPx | String | 触发标记价格  
 liqPx | String | 强平价  
 uly | String | 标的指数  
@@ -9800,8 +9801,8 @@ ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`159702638308
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 instId | String | 是 | 产品ID，如 `BTC-USDT`  
-after | String | 是 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的 tradeId  
-before | String | 是 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的 tradeId  
+after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的 tradeId  
+before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的 tradeId  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -12147,9 +12148,8 @@ begin | String | 系统维护的开始时间,Unix时间戳的毫秒数格式 如
 end | String | 系统维护的结束时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
 在维护完成前，是预期结束时间；维护完成后，会变更为实际结束时间。  
 href | String | 系统维护详情的超级链接,若无返回值，默认值为空，如： “”  
-serviceType | String | 服务类型， `0`：WebSocket ; `1`：币币 ; `2`：交割 ; `3`：永续 ; `4`：期权
-`5`：交易服务  
-system | String | 系统，`classic`：经典账户， `unified`：交易账户  
+serviceType | String | 服务类型， `0`：WebSocket ; `5`：交易服务  
+system | String | 系统，`unified`：交易账户  
 scheDesc | String | 改期进度说明，如： `由 2021-01-26T16:30:00.000Z 改期到
 2021-01-28T16:30:00.000Z`  
   
@@ -15242,7 +15242,6 @@ msg | String | 否 | 错误消息
                 "clRfqId":"",
                 "state":"active",
                 "validUntil":"1611033857557",
-                "strategy":"",
                 "counterparties":[
                     "DSK4",
                     "DSK5"
@@ -15483,7 +15482,6 @@ msg | String | 否 | 错误消息
                 "blockTdId":"180184",
                 "tTraderCode":"ANAND",
                 "mTraderCode":"WAGMI",
-                "strategy":"",
                 "legs":[
                     {
                         "px":"0.0023",
@@ -17850,9 +17848,8 @@ data | Array | 订阅的数据
 > end | String | 系统维护的结束时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
 在维护完成前，是预期结束时间；维护完成后，会变更为实际结束时间。  
 > href | String | 系统维护详情的超级链接,若无返回值，默认值为空，如：“”  
-> serviceType | String | 服务类型， `0`：WebSocket ; `1`：币币 ; `2`：交割 ; `3`：永续 ;
-> `4`：期权 `5`：交易服务  
-> system | String | 系统，`classic`：经典账户， `unified`：交易账户  
+> serviceType | String | 服务类型， `0`：WebSocket ; `5`：交易服务  
+> system | String | 系统，`unified`：交易账户  
 > scheDesc | String | 改期进度说明，如： `由 2021-01-26T16:30:00.000Z 改期到
 > 2021-01-28T16:30:00.000Z`  
 > ts | String | 推送时间，Unix时间戳的毫秒数格式，如：`1617788463867`  
