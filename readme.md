@@ -2582,8 +2582,6 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
   
 ## 大宗交易
 
-已上线模拟盘，实盘敬请期待。
-
 ### 获取报价方信息
 
 查询可以参与交易的报价方信息。
@@ -5798,7 +5796,7 @@ instType | String | 否 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-`instType`和`instId`同时传入的时候会校验`instId`与`instType`是否一致，结果返回`instId`的持仓信息  
+`instType`和`instId`同时传入的时候会校验`instId`与`instType`是否一致。  
 instId | String | 否 | 交易产品ID，如：`BTC-USD-190927-5000-C`  
 支持多个`instId`查询（不超过10个），半角逗号分隔  
 posId | String | 否 | 持仓ID  
@@ -5996,7 +5994,7 @@ openAvgPx | String | 开仓均价
 closeAvgPx | String | 平仓均价  
 posId | String | 仓位ID  
 openMaxPos | String | 最大持仓量  
-closePos | String | 累计平仓量  
+closeTotalPos | String | 累计平仓量  
 pnl | String | 平仓收益额  
 pnlRatio | String | 平仓收益率  
 lever | String | 杠杆倍数  
