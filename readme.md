@@ -12113,9 +12113,10 @@ putBlockVol | String | 看跌大单
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-state | String | No | 系统的状态，`scheduled`:等待中 ; `ongoing`:进行中 ; `completed`:已完成
-`canceled`: 已取消  
-不填写此参数，默认返回 等待中和进行中 的数据  
+state | String | No | 系统的状态，`scheduled`:等待中 ; `ongoing`:进行中 ;
+`pre_open`:预开放；`completed`:已完成 `canceled`: 已取消  
+当维护时间过长，会存在预开放时间，一般持续10分钟左右。  
+不填写此参数，默认返回 等待中、进行中和预开放 的数据  
   
 > 返回结果
     
@@ -12143,10 +12144,11 @@ state | String | No | 系统的状态，`scheduled`:等待中 ; `ongoing`:进行
 title | String | 系统维护说明的标题  
 state | String | 系统维护的状态  
 begin | String | 系统维护的开始时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
-end | String | 系统维护的结束时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
+end | String | 交易全面开放的时间，Unix时间戳的毫秒数格式 如：`1617788463867`  
 在维护完成前，是预期结束时间；维护完成后，会变更为实际结束时间。  
+preOpenBegin | String | 预开放开始的时间，开放撤单、Post Only 下单和资金转入功能的时间  
 href | String | 系统维护详情的超级链接,若无返回值，默认值为空，如： “”  
-serviceType | String | 服务类型， `0`：WebSocket ; `5`：交易服务  
+serviceType | String | 服务类型， `0`：WebSocket ; `5`：交易服务；`99`：其他（如：停止部分产品交易）  
 system | String | 系统，`unified`：交易账户  
 scheDesc | String | 改期进度说明，如： `由 2021-01-26T16:30:00.000Z 改期到
 2021-01-28T16:30:00.000Z`  
@@ -17843,10 +17845,11 @@ data | Array | 订阅的数据
 > state | String | 系统维护的状态，`scheduled`：等待中 ; `ongoing`：进行中 ; `completed`：已完成 ;
 > `canceled`：已取消  
 > begin | String | 系统维护的开始时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
-> end | String | 系统维护的结束时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
+> end | String | 交易全面开放的时间，Unix时间戳的毫秒数格式 如：`1617788463867`  
 在维护完成前，是预期结束时间；维护完成后，会变更为实际结束时间。  
+> preOpenBegin | String | 预开放开始的时间，开放撤单、Post Only 下单和资金转入功能的时间  
 > href | String | 系统维护详情的超级链接,若无返回值，默认值为空，如：“”  
-> serviceType | String | 服务类型， `0`：WebSocket ; `5`：交易服务  
+> serviceType | String | 服务类型， `0`：WebSocket ; `5`：交易服务；`99`：其他（如：停止部分产品交易）  
 > system | String | 系统，`unified`：交易账户  
 > scheDesc | String | 改期进度说明，如： `由 2021-01-26T16:30:00.000Z 改期到
 > 2021-01-28T16:30:00.000Z`  
@@ -18137,7 +18140,7 @@ APIKey 与当前环境不匹配 | 401 | 50101
 交易产品ID不存在 | 200 | 51001  
 交易产品ID不匹配指数 | 200 | 51002  
 ordId或clOrdId至少填一个 | 200 | 51003  
-委托数量超过用户当前档位 | 200 | 51004  
+委托数量超过用户当前档位，请调低杠杆 | 200 | 51004  
 委托数量大于单笔上限 | 200 | 51005  
 委托价格不在限价范围内 | 200 | 51006  
 委托失败，委托数量不可小于 1 张（用户下单数量不足 1 张时） | 200 | 51007  
