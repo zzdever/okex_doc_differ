@@ -2588,6 +2588,8 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
 
 #### 限速: 5次/2s
 
+#### 限速规则：UserID
+
 #### HTTP Requests
 
 `GET /api/v5/rfq/counterparties`
@@ -2632,6 +2634,8 @@ type | String | 报价方类型（当前未生效，将返回 "" ）
 创建一个询价单。
 
 #### 限速: 5次/2s
+
+#### 限速规则：UserID
 
 #### HTTP Requests
 
@@ -2749,6 +2753,8 @@ data | Array of Objects | 询价单结果
 
 #### 限速: 5次/2s
 
+#### 限速规则：UserID
+
 #### HTTP Requests
 
 `POST /api/v5/rfq/cancel-rfq`
@@ -2805,6 +2811,8 @@ data | Array of Objects | 包含结果的对象数组
 取消一个或多个询价单，每次最多可以撤销100个询价单。
 
 #### 限速: 2次/2s
+
+#### 限速规则：UserID
 
 #### HTTP Requests
 
@@ -2945,6 +2953,8 @@ data | Array of Objects | 包含结果的对象数组
 
 #### 限速: 2次/2s
 
+#### 限速规则：UserID
+
 #### HTTP Requests
 
 `POST /api/v5/rfq/cancel-all-rfqs`
@@ -2988,6 +2998,8 @@ data | Array of Objects | 包含结果的对象数组
 执行报价，仅限询价的创建者使用
 
 #### 限速: 2次/3s
+
+#### 限速规则：UserID
 
 #### HTTP Requests
 
@@ -3080,6 +3092,8 @@ data | Array of Objects | 包含结果的对象数组
 允许询价单指定的报价方进行报价，需要对整个询价单报价，不允许部分报价或部分成交。
 
 #### 限速: 50次/2s
+
+#### 限速规则：UserID
 
 #### HTTP Requests
 
@@ -3181,6 +3195,8 @@ data | Array of Objects | 包含结果的对象数组
 
 #### 限速: 50次/2s
 
+#### 限速规则：UserID
+
 #### HTTP Requests
 
 `POST /api/v5/rfq/cancel-quote`
@@ -3237,6 +3253,8 @@ data | Array of Objects | 包含结果的对象数组
 取消一个或多个报价单，每次最多可以撤销100个订单。
 
 #### 限速: 2次/2s
+
+#### 限速规则：UserID
 
 #### HTTP Requests
 
@@ -3368,6 +3386,8 @@ data | Array of Objects | 包含结果的对象数组
 
 #### 限速: 2次/2s
 
+#### 限速规则：UserID
+
 #### HTTP Requests
 
 `POST /api/v5/rfq/cancel-all-quotes`
@@ -3411,6 +3431,8 @@ data | Array of Objects | 包含结果的对象数组
 获取询价单信息
 
 #### 限速: 2次/2s
+
+#### 限速规则：UserID
 
 #### HTTP Requests
 
@@ -3516,6 +3538,8 @@ data | Array of Objects | 包含结果的对象数组
 
 #### 限速: 2次/2s
 
+#### 限速规则：UserID
+
 #### HTTP Requests
 
 `GET /api/v5/rfq/quotes`
@@ -3609,6 +3633,8 @@ data | Array of Objects | 包含结果的数组
 获取询价单或报价单信息
 
 #### 限速: 5次/2s
+
+#### 限速规则：UserID
 
 #### HTTP Requests
 
@@ -3720,6 +3746,8 @@ data | Array of Objects | 包含结果的对象数组
 获取最近执行的大宗交易。
 
 #### 限速: 5次/2s
+
+#### 限速规则：IP
 
 #### HTTP Requests
 
@@ -4466,7 +4494,7 @@ ccy | String | 是 | 币种，如`BTC`
 ---|---|---  
 addr | String | 充值地址  
 tag | String | 部分币种充值需要标签，若不需要则不返回此字段  
-memo | String | 部分币种充值需要标签，若不需要则不返回此字段  
+memo | String | 部分币种充值需要 memo，若不需要则不返回此字段  
 pmtId | String | 部分币种充值需要此字段（payment_id），若不需要则不返回此字段  
 addrEx | Object | 充值地址备注，部分币种充值需要，若不需要则不返回此字段  
 如币种`TONCOIN`的充值地址备注标签名为`comment`,则该字段返回：{'comment':'123456'}  
@@ -7981,7 +8009,7 @@ details | Array | 各币种资产详细信息
 
 ### 查询子账户转账记录
 
-仅适用于母账户
+仅适用于母账户，可以获取最近3个月的的转账记录
 
 #### 限速：6次/s
 
@@ -18537,6 +18565,8 @@ Error Message | HTTP Status Code | Error Code
 ---|---|---  
 询价单不存在 | 200 | 70000  
 报价单不存在 | 200 | 70001  
+大宗交易不存在 | 200 | 70002  
+公共的大宗交易不存在 | 200 | 70003  
 无效的产品ID {0} | 200 | 70004  
 组合交易的数量不能超过最大值 | 200 | 70005  
 不满足最小资产要求 | 200 | 70006  
@@ -18552,14 +18582,13 @@ clRfqId重复 | 200 | 70101
 取消失败，由于您没有询价挂单 | 200 | 70207  
 取消失败，由于服务暂时不可用，请稍后重试 | 200 | 70208  
 clQuoteId重复 | 200 | 70301  
-无效的产品ID | 200 | 70302  
 不能对处于{0}状态的询价单报价 | 200 | 70303  
 价格应该是下单价格精度的整数倍 | 200 | 70304  
+买入价格不能高于报价 | 200 | 70305  
 报价的组合交易没有匹配{0}的组合交易 | 200 | 70306  
+数量应该是下单数量精度的整数倍 | 200 | 70307  
 不允许对自己的询价单报价 | 200 | 70308  
 不允许对相同询价单进行同一方向的报价 | 200 | 70309  
-买入价格不能高于报价 | 200 | 70305  
-数量应该是下单数量精度的整数倍 | 200 | 70307  
 不能取消处于{0}状态的报价单 | 200 | 70400  
 取消失败，由于报价单数量超过限制数量{0} | 200 | 70408  
 取消失败，由于您没有报价挂单 | 200 | 70409  
