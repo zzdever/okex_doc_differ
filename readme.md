@@ -6026,7 +6026,7 @@ closeTotalPos | String | 累计平仓量
 pnl | String | 平仓收益额  
 pnlRatio | String | 平仓收益率  
 lever | String | 杠杆倍数  
-posSide | String | 持仓方向 `long`：多 `short`：空  
+direction | String | 持仓方向 `long`：多 `short`：空  
 仅适用于 `币币杠杆/交割/永续/期权`  
 triggerPx | String | 触发标记价格  
 liqPx | String | 强平价  
@@ -8009,7 +8009,7 @@ details | Array | 各币种资产详细信息
 
 ### 查询子账户转账记录
 
-仅适用于母账户，可以获取最近3个月的的转账记录
+仅适用于母账户，可以获取最近3个月的转账记录
 
 #### 限速：6次/s
 
