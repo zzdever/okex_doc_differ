@@ -1806,8 +1806,8 @@ feeCcy | String | 交易手续费币种或者返佣金币种
 fee | String | 手续费金额或者返佣金额 ，手续费扣除 为 ‘负数’，如 -0.01 ； 手续费返佣 为 ‘正数’，如 0.01  
 ts | String | 成交明细产生时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
 tradeId  
-当成交明细所归属的订单种类（category）为 delivery：交割
-、partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"
+当成交明细所归属的订单种类（category）为
+partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"
 
 ### 获取成交明细（近三个月）
 
@@ -1912,8 +1912,8 @@ feeCcy | String | 交易手续费币种或者返佣金币种
 fee | String | 手续费金额或者返佣金额 ，手续费扣除 为 ‘负数’，如 -0.01 ； 手续费返佣 为 ‘正数’，如 0.01  
 ts | String | 成交明细产生时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
 tradeId  
-当成交明细所归属的订单种类（category）为 delivery：交割
-、partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"
+当成交明细所归属的订单种类（category）为
+partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"
 
 ### 策略委托下单
 
