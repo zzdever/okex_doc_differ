@@ -2678,7 +2678,7 @@ counterparties | Array of strings | 是 | 报价方列表。
 anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示具名询价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给报价方。  
 clRfqId | String | 否 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-legs | Array of Objects | 是 | 组合交易，每次最多可以提交15组交易信息  
+legs | Array of objects | 是 | 组合交易，每次最多可以提交15组交易信息  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
 > side | String | 是 | 询价单方向  
@@ -2730,7 +2730,7 @@ legs | Array of Objects | 是 | 组合交易，每次最多可以提交15组交�
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 询价单结果  
+data | Array of objects | 询价单结果  
 > cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 询价单的状态  
@@ -2742,7 +2742,7 @@ data | Array of Objects | 询价单结果
 > clRfqId | String | 询价单自定义ID，为客户端敏感信息，不会公开，对报价方返回""。  
 > traderCode | String | 询价方唯一标识代码。 匿名模式为下返回""  
 > rfqId | String | 询价单ID  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
@@ -2801,7 +2801,7 @@ clRfqId 和 rfqId 都传时，以 rfqId 为准。
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > rfqId | String | RFQ ID  
 > clRfqId | String | 由用户设置的 RFQ ID  
 > sCode | String | 事件执行结果的code，0代表成功  
@@ -2842,8 +2842,7 @@ data | Array of Objects | 包含结果的对象数组
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 rfqIds | Array of string | 可选 | 询价单IDs  
-clRfqIds | Array of string | 可选 |
-询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当 clRfqId 和 rfqId 都传时，以 rfqId
+clRfqIds | Array of string | 可选 | 询价单自定义ID，当 clRfqIds 和 rfqIds 都传时，以 rfqIds
 为准。  
   
 > 全部成功示例
@@ -2942,7 +2941,7 @@ clRfqIds | Array of string | 可选 |
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID.  
 > sCode | String | 事件执行结果的code，0代表成功  
@@ -2991,7 +2990,7 @@ data | Array of Objects | 包含结果的对象数组
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > ts | String | 成功取消时间，Unix时间戳的毫秒数格式，例如 1597026383085。  
   
 ### 执行报价
@@ -3070,7 +3069,7 @@ quoteId | String | 是 | 报价单ID
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -3079,7 +3078,7 @@ data | Array of Objects | 包含结果的对象数组
 > blockTdId | String | 大宗交易ID  
 > tTraderCode | String | 询价价方唯一标识代码，询价时，Anonymous 为 `False` 时可见，为 `True` 时不可见  
 > mTraderCode | String | 报价方唯一标识代码。  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
@@ -3126,7 +3125,7 @@ data | Array of Objects | 包含结果的对象数组
 rfqId | String | 是 | 询价单ID  
 clQuoteId | String | 否 | 报价单自定义ID  
 quoteSide | String | 是 | 询价单方向， `buy` 或者 `sell`  
-legs | Array of Objects | 是 | 组合交易  
+legs | Array of objects | 是 | 组合交易  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
 > px | String | 是 | 委托价格  
@@ -3171,7 +3170,7 @@ legs | Array of Objects | 是 | 组合交易
 ---|---|---  
 code | String | 结果代码，0表示成功。  
 msg | String | 错误信息，如果代码不为0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 报价单的状态  
@@ -3183,7 +3182,7 @@ data | Array of Objects | 包含结果的对象数组
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方唯一标识代码，公开可见。  
 > quoteSide | String | 报价单方向，`buy` 或者 `sell`。  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格  
@@ -3243,7 +3242,7 @@ clRfqId 和 rfqId 都传时，以 rfqId 为准。
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 询价单自定义ID  
 > sCode | String | 事件执行结果的code，0代表成功  
@@ -3276,8 +3275,7 @@ data | Array of Objects | 包含结果的对象数组
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 quoteIds | Array of string | 可选 | 报价单ID  
-clQuoteIds | Array of string | 可选 |
-报价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当 clQuoteIds 和 quoteIds 都传时，以
+clQuoteIds | Array of string | 可选 | 报价单自定义ID，当 clQuoteIds 和 quoteIds 都传时，以
 quoteIds 为准。  
   
 > 全部成功的示例
@@ -3375,7 +3373,7 @@ quoteIds 为准。
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID  
 > sCode | String | 事件执行结果的code，0代表成功  
@@ -3424,7 +3422,7 @@ data | Array of Objects | 包含结果的对象数组
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > ts | String | 成功取消时间，Unix时间戳的毫秒数格式，例如 1597026383085。  
   
 ### 获取询价单信息
@@ -3515,7 +3513,7 @@ limit | String | 否 | 返回结果的数量，默认100条
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 询价单的状态  
@@ -3527,7 +3525,7 @@ data | Array of Objects | 包含结果的对象数组
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
 > rfqId | String | 询价单ID  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
@@ -3610,7 +3608,7 @@ limit | String | 否 | 返回结果的数量，默认100条
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的数组  
+data | Array of objects | 包含结果的数组  
 > cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式  
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 报价单的状态  
@@ -3622,7 +3620,7 @@ data | Array of Objects | 包含结果的数组
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方唯一标识代码，公开可见。  
 > quoteSide | String | 询价单方向， `buy` 或者 `sell`  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格.  
@@ -3724,7 +3722,7 @@ limit | String | 否 | 返回结果的数量，默认100条。
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组  
+data | Array of objects | 包含结果的对象数组  
 > cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -3733,7 +3731,7 @@ data | Array of Objects | 包含结果的对象数组
 > blockTdId | String | 大宗交易ID  
 > tTraderCode | String | 询价方唯一标识代码，询价时，Anonymous 为 False 时可见，为 True 时不可见  
 > mTraderCode | String | 报价方唯一标识代码。  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
@@ -3847,10 +3845,10 @@ limit | String | 否 | 返回结果的数量，默认100条。
 ---|---|---  
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
-data | Array of Objects | 包含结果的对象数组.  
+data | Array of objects | 包含结果的对象数组.  
 > cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
 > blockTdId | String | 大宗交易ID.  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
@@ -8532,7 +8530,7 @@ sMsg | String | 事件执行失败时的msg
 > 请求示例
     
     
-    GET /api/v5/tradingBot/grid/orders-algo-pending?algoOrdType=gird
+    GET /api/v5/tradingBot/grid/orders-algo-pending?algoOrdType=grid
     
 
 #### 请求参数
@@ -8671,7 +8669,7 @@ tag | String | 订单标签
 > 请求示例
     
     
-    GET /api/v5/tradingBot/grid/orders-algo-history?algoOrdType=gird
+    GET /api/v5/tradingBot/grid/orders-algo-history?algoOrdType=grid
     
 
 #### 请求参数
@@ -9071,7 +9069,7 @@ lever | String | 杠杆倍数
 > 请求示例
     
     
-    GET /api/v5/tradingBot/grid/positions?algoId=448965992920907776&algoOrdType=grid
+    GET /api/v5/tradingBot/grid/positions?algoId=448965992920907776&algoOrdType=contract_grid
     
 
 #### 请求参数
@@ -11228,9 +11226,9 @@ instType | String | 是 | 产品类型
 `OPTION`：期权  
 tdMode | String | 是 | 保证金模式  
 `isolated`：逐仓 ；`cross`：全仓  
-uly | String | 可选 | 标的指数， 最多支持多uly，半角逗号分隔，最大不超过3个  
+uly | String | 可选 | 标的指数，支持多uly，半角逗号分隔，最大不超过3个  
 当产品类型是 `永续`、`交割`、`期权` 之一时必填，当产品类型是 `MARGIN` 时忽略  
-instId | String | 可选 | 产品ID， 最多支持多instId，半角逗号分隔，最大不超过5个  
+instId | String | 可选 | 产品ID，支持多instId，半角逗号分隔，最大不超过5个  
 仅适用`币币杠杆`，且必填写  
 tier | String | 否 | 查指定档位  
   
@@ -15371,7 +15369,7 @@ data | Array | 订阅的数据
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
 > rfqId | String | 询价单ID  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
@@ -15491,7 +15489,7 @@ data | Array | 订阅的数据
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方唯一标识代码，公开可见。  
 > quoteSide | String | 询价单方向， `buy` 或者 `sell`  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格  
@@ -15617,7 +15615,7 @@ data | Array | 订阅的数据
 > tTraderCode | String | 报价方唯一标识代码。 只有 anonymous = false 才能在执行后可见。 对于
 > anonymous = ture，交易者身份不会被披露。  
 > mTraderCode | String | 询价方唯一标识代码  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
@@ -18041,7 +18039,7 @@ arg | Object | 订阅成功的频道
 data | Array | 订阅的数据  
 > cTime | String | 执行创建的时间戳，Unix 时间戳格式，以毫秒为单位。  
 > blockTdId | String | 大宗交易ID  
-> legs | Array of Objects | 组合交易  
+> legs | Array of objects | 组合交易  
 >> instId | String | 产品名Id  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
@@ -18159,7 +18157,7 @@ REST API 错误码从 50000 到 59999
 
 错误提示 | HTTP 状态码 | 错误码  
 ---|---|---  
-操作成功 | 200 | 0  
+| 200 | 0  
 操作全部失败 | 200 | 1  
 批量操作部分成功 | 200 | 2  
 body不能为空 | 400 | 50000  
@@ -18387,7 +18385,9 @@ PM账户不支持ordType为{0}的策略委托单 | 200 | 51295
 暂无可提取利润 | 200 | 51347  
 止损价格需小于区间最低价格 | 200 | 51348  
 止盈价格需大于区间最高价格 | 200 | 51349  
+暂无可推荐参数 | 200 | 51350  
 单格收益必须大于0 | 200 | 51351  
+杠杆倍数范围{0}~{1} | 200 | 51370  
 当前账户风险状态，仅支持降低账户风险方向的IOC订单 | 200 | 51037  
 当前风险模块下已经存在降低账户风险方向的IOC类型订单 | 200 | 51038  
 PM账户下交割和永续的全仓不能调整杠杆倍数 | 200 | 51039  
