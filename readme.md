@@ -3899,17 +3899,21 @@ ccy | String | 否 | 币种，如 `BTC`
       "data": [
         {
           "canDep": true,
-          "canInternal": true,
+          "canInternal": false,
           "canWd": true,
           "ccy": "USDT",
-          "chain": "USDT-ERC20",
-          "logoLink": "https://static.coinall.ltd/cdn/announce/20200522/159014965610216037408-525c-4143-8eef-003e2edf6859.png",
+          "chain": "USDT-TRC20",
+          "logoLink": "https://static.coinall.ltd/cdn/assets/imgs/221/5F74EB20302D7761.png",
           "mainNet": false,
-          "maxFee": "18.6742688",
-          "maxWd": "21720100",
-          "minFee": "9.3371344",
+          "maxFee": "1.6",
+          "maxWd": "9608350",
+          "minDep": "0.00000001",
+          "minDepArrivalConfirm": "1",
+          "minFee": "0.8",
           "minWd": "2",
+          "minWdUnlockConfirm": "1",
           "name": "Tether",
+          "needTag": false,
           "usedWdQuota": "0",
           "wdQuota": "500",
           "wdTickSz": "3"
@@ -3930,6 +3934,7 @@ chain | String | 币种链信息
 canDep | Boolean | 是否可充值，`false`表示不可链上充值，`true`表示可以链上充值  
 canWd | Boolean | 是否可提币，`false`表示不可链上提币，`true`表示可以链上提币  
 canInternal | Boolean | 是否可内部转账，`false`表示不可内部转账，`true`表示可以内部转账  
+minDep | String | 币种单笔最小充值量  
 minWd | String | 币种单笔最小提币量  
 maxWd | String | 币种单笔最大提币量  
 wdTickSz | String | 提币精度,表示小数点后的位数  
@@ -3939,6 +3944,9 @@ minFee | String | 最小提币手续费数量
 maxFee | String | 最大提币手续费数量  
 mainNet | Boolean | 当前链是否为主链  
 如果是则返回`true`，否则返回`false`  
+needTag | Boolean | 当前链是否需要标签（tag/memo）信息  
+minDepArrivalConfirm | String | 充值到账最小网络确认数  
+minWdUnlockConfirm | String | 提现解锁最小网络确认数  
   
 ### 获取资金账户余额
 
@@ -4557,15 +4565,16 @@ limit | string | 否 | 返回的结果集数量，默认为100，最大为100，
       "msg": "",
       "data": [
         {
-          "amt": "0.01044408",
-          "txId": "1915737_3_0_0_asset",
-          "ccy": "BTC",
-          "chain":"BTC-Bitcoin",
-          "from": "13801825426",
-          "to": "",
-          "ts": "1597026383085",
+          "actualDepBlkConfirm": "17",
+          "amt": "135.705808",
+          "ccy": "USDT",
+          "chain": "USDT-TRC20",
+          "depId": "34579090",
+          "from": "",
           "state": "2",
-          "depId": "4703879"
+          "to": "TN4hxxxxxxxxxxxizqs",
+          "ts": "1639468288000",
+          "txId": "16f3638329xxxxxx42d988f97"
         }
       ]
     }
@@ -4591,6 +4600,7 @@ state | String | 充值状态
 `12`：账户或充值被冻结  
 `13`：子账户充值拦截  
 depId | String | 充值记录 ID  
+actualDepBlkConfirm | String | 最新的充币网络确认数  
 等待确认是没有达到充币确认数。 确认到账是够充币确认数，且币已经到账户中，但是不可提。 充值成功是当前账户完成到提币确认，可以提出。
 
 ### 提币
