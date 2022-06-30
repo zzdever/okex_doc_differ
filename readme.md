@@ -2675,7 +2675,7 @@ type | String | 报价方类型（当前未生效，将返回 "" ）
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 counterparties | Array of strings | 是 | 报价方列表。  
-anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示具名询价，默认值为
+anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示公开询价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给报价方。  
 clRfqId | String | 否 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 legs | Array of objects | 是 | 组合交易，每次最多可以提交15组交易信息  
@@ -3076,8 +3076,8 @@ data | Array of objects | 包含结果的对象数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > blockTdId | String | 大宗交易ID  
-> tTraderCode | String | 询价价方唯一标识代码，询价时，Anonymous 为 `False` 时可见，为 `True` 时不可见  
-> mTraderCode | String | 报价方唯一标识代码。  
+> tTraderCode | String | 询价价方唯一标识代码。询价时 Anonymous 设置为 `True` 时不可见。  
+> mTraderCode | String | 报价方唯一标识代码。 报价时 Anonymous 设置为 `True` 时不可见。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
@@ -3106,7 +3106,9 @@ data | Array of objects | 包含结果的对象数组
     {
         "rfqId":"22539",
         "clQuoteId":"q001",
+        "anonymous": true,
         "quoteSide":"buy",
+        "expiresIn":"30",
         "legs":[
             {
                 "px":"39450.0",
@@ -3124,7 +3126,10 @@ data | Array of objects | 包含结果的对象数组
 ---|---|---|---  
 rfqId | String | 是 | 询价单ID  
 clQuoteId | String | 否 | 报价单自定义ID  
+anonymous | Boolean | 否 | 是否匿名报价，`true`表示匿名报价，`false`表示公开报价，默认值为
+`false`，为`true`时，即使在交易执行之后，身份也不会透露给询价方。  
 quoteSide | String | 是 | 询价单方向， `buy` 或者 `sell`  
+expiresIn | String | 否 | 报价单的有效时长（以秒为单位）。 10到120 秒之间的任何整数。 默认值为 60 秒  
 legs | Array of objects | 是 | 组合交易  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
@@ -3180,7 +3185,7 @@ data | Array of objects | 包含结果的对象数组
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
-> traderCode | String | 报价方唯一标识代码，公开可见。  
+> traderCode | String | 报价方唯一标识代码。  
 > quoteSide | String | 报价单方向，`buy` 或者 `sell`。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
@@ -3618,7 +3623,7 @@ data | Array of objects | 包含结果的数组
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
-> traderCode | String | 报价方唯一标识代码，公开可见。  
+> traderCode | String | 报价方唯一标识代码，报价时 Anonymous 设置为 `True` 时不可见。  
 > quoteSide | String | 询价单方向， `buy` 或者 `sell`  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
@@ -3729,8 +3734,8 @@ data | Array of objects | 包含结果的对象数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > blockTdId | String | 大宗交易ID  
-> tTraderCode | String | 询价方唯一标识代码，询价时，Anonymous 为 False 时可见，为 True 时不可见  
-> mTraderCode | String | 报价方唯一标识代码。  
+> tTraderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
+> mTraderCode | String | 报价方唯一标识代码。报价时 Anonymous 设置为 `True` 时不可见  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
@@ -4119,6 +4124,7 @@ type | String | 否 | 划转类型
 `2`：子账户转母账户(仅适用于母账户APIKey)  
 `3`：子账户转母账户(仅适用于子账户APIKey)  
 `4`：子账户转子账户(仅适用于子账户APIKey，且目标账户需要是同一母账户下的其他子账户)  
+默认是`0`  
 loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`或`组合保证金模式`下的借币转入/转出  
 true 或 false，默认false  
 clientId | String | 否 | 客户自定义ID  
@@ -4181,8 +4187,7 @@ type | String | 否 | 划转类型
 `0`：账户内划转  
 `1`：母账户转子账户(仅适用于母账户APIKey)  
 `2`：子账户转母账户(仅适用于母账户APIKey)  
-`3`：子账户转母账户(仅适用于子账户APIKey)  
-`4`：子账户转子账户(仅适用于子账户APIKey，且目标账户需要是同一母账户下的其他子账户)  
+默认是`0`  
   
 > 返回结果
     
@@ -9509,7 +9514,7 @@ ts | String | 深度产生的时间
 
 获取K线数据。K线数据按请求的粒度分组返回，K线数据每个粒度最多可获取最近1440条。
 
-#### 限速： 20次/2s
+#### 限速： 40次/2s
 
 #### 限速规则：IP
 
@@ -10275,12 +10280,12 @@ ts | String | 数据产生时间，Unix时间戳的毫秒数格式，如 `159702
 
 #### HTTP请求
 
-`GET /api/v5/market/trades`
+`GET /api/v5/market/block-trades`
 
 > 请求示例
     
     
-    GET /api/v5/market/trades?instId=BTC-USDT
+    GET /api/v5/market/block-trades?instId=BTC-USDT
     
 
 #### 请求参数
@@ -15487,7 +15492,7 @@ data | Array | 订阅的数据
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
-> traderCode | String | 报价方唯一标识代码，公开可见。  
+> traderCode | String | 报价方唯一标识代码，报价时 Anonymous 设置为 `True` 时不可见。  
 > quoteSide | String | 询价单方向， `buy` 或者 `sell`  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
@@ -15612,9 +15617,8 @@ data | Array | 订阅的数据
 > clQuoteId | String | 由用户设置的 Quote ID。 此属性被视为客户端敏感信息。 不会暴露给 Taker，只为 Taker
 > 返回空字符串“”。  
 > blockTdId | String | 大宗交易ID  
-> tTraderCode | String | 报价方唯一标识代码。 只有 anonymous = false 才能在执行后可见。 对于
-> anonymous = ture，交易者身份不会被披露。  
-> mTraderCode | String | 询价方唯一标识代码  
+> tTraderCode | String | 报价方唯一标识代码。询价时 Anonymous 设置为 `True` 时不可见。  
+> mTraderCode | String | 询价方唯一标识代码。报价时 Anonymous 设置为 `True` 时不可见。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
