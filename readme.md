@@ -2740,7 +2740,7 @@ data | Array of objects | 询价单结果
 > counterparties | Array of strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户端敏感信息，不会公开，对报价方返回""。  
-> traderCode | String | 询价方唯一标识代码。 匿名模式为下返回""  
+> traderCode | String | 询价方唯一标识代码。  
 > rfqId | String | 询价单ID  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
@@ -3129,7 +3129,7 @@ clQuoteId | String | 否 | 报价单自定义ID
 anonymous | Boolean | 否 | 是否匿名报价，`true`表示匿名报价，`false`表示公开报价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给询价方。  
 quoteSide | String | 是 | 询价单方向， `buy` 或者 `sell`  
-expiresIn | String | 否 | 报价单的有效时长（以秒为单位）。 10到120 秒之间的任何整数。 默认值为 60 秒  
+expiresIn | String | 否 | 报价单的有效时长（以秒为单位）。 10到120之间的任何整数。 默认值为60  
 legs | Array of objects | 是 | 组合交易  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
