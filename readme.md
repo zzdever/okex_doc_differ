@@ -113,6 +113,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取借币利率与限额 
       * 组合保证金的虚拟持仓保证金计算 
       * 查看账户Greeks 
+      * 获取组合保证金模式全仓限制 
     * 子账户 
       * 查看子账户列表 
       * 获取子账户交易账户余额 
@@ -131,6 +132,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取网格策略委托子订单信息 
       * 获取网格策略委托持仓 
       * 现货网格提取利润 
+      * 网格策略智能回测（公共） 
     * 行情数据 
       * 获取所有产品行情信息 
       * 获取单个产品行情信息 
@@ -1971,7 +1973,9 @@ tgtCcy | String | 否 | 委托数量的类型
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`单向止盈止损买单  
 默认买为`计价货币`，卖为`交易货币`  
-reduceOnly | Boolean | 否 | 是否只减仓 `true` 或 `false`  
+reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
+仅适用于`单币种保证金模式`和`跨币种保证金模式`  
   
 止盈止损
 
@@ -7794,6 +7798,63 @@ vegaPA | String | 币本位账户资产vega，仅适用于`期权`
 ccy | String | 币种  
 ts | String | 获取greeks的时间，Unix时间戳的毫秒数格式，如 1597026383085  
   
+### 获取组合保证金模式全仓限制
+
+仅支持获取组合保证金模式下，交割、永续和期权的全仓限制。
+
+#### 限速：10次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/account/position-tiers`
+
+> 请求示例
+    
+    
+    查看BTC-USDT在组合保证金模式下的全仓限制
+    GET /api/v5/account/position-tiers?instType=SWAP&uly=BTC-USDT
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 是 | 产品类型  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+  
+uly | String | 是 | 标的指数， 如BTC-USDT，支持多个查询（不超过3个），uly之间半角逗号分隔  
+  
+> 返回结果
+    
+    
+    {
+      "code": "0",
+      "data": [
+        {
+          "maxSz": "10000",
+          "posType": "",
+          "uly": "BTC-USDT"
+        }
+      ],
+      "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+uly | String | 标的指数  
+maxSz | String | 最大持仓量  
+posType | String | "限仓类型，仅适用于组合保证金模式下的期权全仓。  
+`1`：所有合约挂单 + 持仓张数，`2`：所有合约总挂单张数，`3`：所有合约总挂单单数，`4`：同方向合约挂单 +
+持仓张数，`5`：单一合约总挂单单数，`6`：单一合约挂单 + 持仓张数，`7`：单笔挂单张数"  
+  
 ## 子账户
 
 `子账户`功能模块下的API接口需要身份验证。
@@ -9206,6 +9267,90 @@ algoId | String | 是 | 策略订单ID
 ---|---|---  
 algoId | String | 策略订单ID  
 profit | String | 提取的利润  
+  
+### 网格策略智能回测（公共）
+
+公共接口无须鉴权
+
+#### 限速：20次/2s
+
+#### 限速规则：IP
+
+#### HTTP请求
+
+`GET /api/v5/tradingBot/grid/ai-param`
+
+> 请求示例
+    
+    
+    GET /api/v5/tradingBot/grid/ai-param?instId=BTC-USDT&algoOrdType=grid
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+algoOrdType | String | 是 | 订单类型  
+`grid`：现货网格委托，`contract_grid`：合约网格委托  
+instId | String | 否 | 产品ID，如`BTC-USDT`  
+direction | String | 可选 | 合约网格类型  
+`long`：做多，`short`：做空，`neutral`：中性  
+合约网格必填  
+duration | String | 否 | 回测周期  
+`7D`：7天，`30D`：30天，`180D`：180天  
+默认为`7D`  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "algoOrdType": "grid",
+                "annualizedRate": "1.5849",
+                "ccy": "USDT",
+                "direction": "",
+                "duration": "7D",
+                "gridNum": "5",
+                "instId": "BTC-USDT",
+                "lever": "0",
+                "maxPx": "21373.3",
+                "minInvestment": "0.89557758",
+                "minPx": "15544.2",
+                "perMaxProfitRate": "0.0733865364573281",
+                "perMinProfitRate": "0.0561101403446263",
+                "runType": "1"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+algoOrdType | String | 策略订单类型  
+`grid`：现货网格  
+`contract_grid`：合约网格  
+duration | String | 回测周期  
+`7D`：7天，`30D`：30天，`180D`：180天  
+gridNum | String | 网格数量  
+maxPx | String | 区间最高价格  
+minPx | String | 区间最低价格  
+perMaxProfitRate | String | 单网格最高利润率  
+perMinProfitRate | String | 单网格最低利润率  
+annualizedRate | String | 网格年华收益率  
+minInvestment | String | 最小投资数量  
+ccy | String | 投资币种  
+runType | String | 网格类型  
+`1`：等差，`2`：等比  
+direction | String | 合约网格类型  
+仅适用于`合约网格`  
+lever | String | 杠杆倍数  
+仅适用于`合约网格`  
   
 ## 行情数据
 
@@ -18375,6 +18520,7 @@ PM账户仅支持买卖模式 | 200 | 51041
 该策略暂不能创建，请稍后再试 | 200 | 51294  
 PM账户不支持ordType为{0}的策略委托单 | 200 | 51295  
 交割、永续合约的买卖模式下，不支持计划委托 | 200 | 51298  
+策略委托失败，用户最多可持有{0}笔该类型委托 | 200 | 51299  
 止盈触发价格不能大于标记价格 | 200 | 51300  
 止损触发价格不能小于标记价格 | 200 | 51302  
 止盈触发价格不能小于标记价格 | 200 | 51303  
