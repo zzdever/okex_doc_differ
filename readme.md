@@ -2638,6 +2638,12 @@ type | String | 报价方类型（当前未生效，将返回 "" ）
 
 创建一个询价单。
 
+  
+在模拟交易中询价时，请选择交易机器人“WAGMI”作为交易对手。  
+交易机器人提供的报价仅供参考。
+
+了解更多，请访问[常见问题 > 模拟交易](/support/hc/en-us/articles/7111923703053)
+
 #### 限速: 5次/2s
 
 #### 限速规则：UserID
@@ -7851,7 +7857,7 @@ uly | String | 是 | 标的指数， 如BTC-USDT，支持多个查询（不超�
 ---|---|---  
 uly | String | 标的指数  
 maxSz | String | 最大持仓量  
-posType | String | "限仓类型，仅适用于组合保证金模式下的期权全仓。  
+posType | String | 限仓类型，仅适用于组合保证金模式下的期权全仓。  
 `1`：所有合约挂单 + 持仓张数，`2`：所有合约总挂单张数，`3`：所有合约总挂单单数，`4`：同方向合约挂单 +
 持仓张数，`5`：单一合约总挂单单数，`6`：单一合约挂单 + 持仓张数，`7`：单笔挂单张数"  
   
@@ -9292,7 +9298,7 @@ profit | String | 提取的利润
 ---|---|---|---  
 algoOrdType | String | 是 | 订单类型  
 `grid`：现货网格委托，`contract_grid`：合约网格委托  
-instId | String | 否 | 产品ID，如`BTC-USDT`  
+instId | String | 是 | 产品ID，如`BTC-USDT`  
 direction | String | 可选 | 合约网格类型  
 `long`：做多，`short`：做空，`neutral`：中性  
 合约网格必填  
@@ -9342,7 +9348,7 @@ maxPx | String | 区间最高价格
 minPx | String | 区间最低价格  
 perMaxProfitRate | String | 单网格最高利润率  
 perMinProfitRate | String | 单网格最低利润率  
-annualizedRate | String | 网格年华收益率  
+annualizedRate | String | 网格年化收益率  
 minInvestment | String | 最小投资数量  
 ccy | String | 投资币种  
 runType | String | 网格类型  
