@@ -10045,8 +10045,12 @@ ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`159702638308
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 instId | String | 是 | 产品ID，如 `BTC-USDT`  
-after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的 tradeId  
-before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的 tradeId  
+type | String | 否 | 分页类型  
+`1`：tradeId 分页 `2`：时间戳分页  
+默认为`1`：tradeId 分页  
+after | String | 否 | 请求此 ID 或 ts 之前的分页内容，传的值为对应接口的 tradeId 或 ts  
+before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的 tradeId。  
+不支持时间戳分页。  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -18089,8 +18093,9 @@ arg | Object | 订阅成功的频道
 > channel | String | 频道名  
 data | Array | 订阅的数据  
 > title | String | 系统维护说明的标题  
-> state | String | 系统维护的状态，`scheduled`：等待中 ; `ongoing`：进行中 ; `completed`：已完成 ;
-> `canceled`：已取消  
+> state | String | 系统的状态，`scheduled`:等待中 ; `ongoing`:进行中 ;
+> `pre_open`:预开放；`completed`:已完成 `canceled`: 已取消  
+当维护时间过长，会存在预开放时间，一般持续10分钟左右。  
 > begin | String | 系统维护的开始时间,Unix时间戳的毫秒数格式 如：`1617788463867`  
 > end | String | 交易全面开放的时间，Unix时间戳的毫秒数格式 如：`1617788463867`  
 在维护完成前，是预期结束时间；维护完成后，会变更为实际结束时间。  
