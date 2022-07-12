@@ -3867,7 +3867,7 @@ data | Array of objects | 包含结果的对象数组.
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
->> side | String | 询价单方向  
+>> side | String | 询价单方向，从 Taker的视角看  
 >> tradeId | String | 最新成交ID  
   
 ## 资金
@@ -18210,7 +18210,7 @@ data | Array | 订阅的数据
 >> instId | String | 产品名Id  
 >> px | String | 成交价格  
 >> sz | String | 成交数量  
->> side | String | 询价单方向  
+>> side | String | 询价单方向，从 Taker的视角看  
 >> tradeId | String | 最新成交Id  
   
 ### 大宗交易行情频道
