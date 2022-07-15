@@ -132,6 +132,8 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取网格策略委托子订单信息 
       * 获取网格策略委托持仓 
       * 现货网格提取利润 
+      * 调整保证金计算 
+      * 调整保证金 
       * 网格策略智能回测（公共） 
     * 行情数据 
       * 获取所有产品行情信息 
@@ -188,9 +190,6 @@ API接口 Broker接入 最佳实践 更新日志
     * 登录 
     * 订阅 
     * 取消订阅 
-    * Checksum机制 
-      * 深度合并 
-      * 计算校验和 
     * 交易 
       * 下单 
       * 批量下单 
@@ -489,8 +488,10 @@ clOrdId | String | 否 | 客户自定义订单ID
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 tag | String | 否 | 订单标签  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
-side | String | 是 | 订单方向 `buy`：买 `sell`：卖  
-posSide | String | 可选 | 持仓方向 在双向持仓模式下必填，且仅可选择 `long` 或 `short`  
+side | String | 是 | 订单方向  
+`buy`：买， `sell`：卖  
+posSide | String | 可选 | 持仓方向  
+在双向持仓模式下必填，且仅可选择 `long` 或 `short`。 仅适用交割、永续。  
 ordType | String | 是 | 订单类型  
 `market`：市价单  
 `limit`：限价单  
@@ -503,9 +504,9 @@ px | String | 可选 | 委托价格，仅适用于`limit`、`post_only`、`fok`�
 reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-tgtCcy | String | 否 | 市价单委托数量的类型  
+tgtCcy | String | 否 | 市价单委托数量的类型，仅适用于`币币`市价订单  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+买单默认`quote_ccy`， 卖单默认`base_ccy`  
 banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时会下单失败，仅适用于币币市价单  
   
@@ -557,7 +558,7 @@ tdMode
 \- 全仓交割/永续/期权：cross  
 \- 逐仓交割/永续/期权：isolated  
 clOrdId  
-clOrdId是用户自定义的唯一ID用来跟识别订单。如果在请求参数中传入了，那它一定会在返回参数内，并且可以用于查询订单，撤销订单，修改订单等接口。
+clOrdId是用户自定义的唯一ID用来识别订单。如果在请求参数中传入了，那它一定会在返回参数内，并且可以用于查询订单，撤销订单，修改订单等接口。
 clOrdId不能与当前所有的挂单的clOrdId重复  posSide  
 持仓方向，单向持仓模式下此参数非必填，如果填写仅可以选择net；在双向持仓模式下必填，且仅可选择 long 或 short。  
 双向持仓模式下，side和posSide需要进行组合  
@@ -652,13 +653,14 @@ instId | String | 是 | 产品ID，如 `BTC-USD-190927-5000-C`
 tdMode | String | 是 | 交易模式  
 保证金模式：`isolated`：逐仓 ；`cross`：全仓  
 非保证金模式：`cash`：非保证金  
-ccy | String | 否 | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
+ccy | String | 否 | 保证金币种，仅适用于`单币种保证金模式`下的`全仓杠杆`订单  
 clOrdId | String | 否 | 客户自定义订单ID  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 tag | String | 否 | 订单标签  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-16位之间。  
-side | String | 是 | 订单方向 `buy`：买 `sell`：卖  
-posSide | String | 可选 | 持仓方向 在双向持仓模式下必填，且仅可选择 `long` 或 `short`  
+side | String | 是 | 订单方向 `buy`：买， `sell`：卖  
+posSide | String | 可选 | 持仓方向  
+在双向持仓模式下必填，且仅可选择 `long` 或 `short`。 仅适用交割、永续。  
 ordType | String | 是 | 订单类型  
 `market`：市价单  
 `limit`：限价单  
@@ -671,10 +673,9 @@ px | String | 否 | 委托价格，仅适用于`limit`、`post_only`、`fok`、`
 reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-tgtCcy | String | 否 | 市价单委托数量的类型  
+tgtCcy | String | 否 | 市价单委托数量的类型，仅适用于`币币`市价订单  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
-默认买为`计价货币`，卖为`交易货币`  
+买单默认`quote_ccy`， 卖单默认`base_ccy`  
 banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时会下单失败，仅适用于币币市价单  
   
@@ -926,7 +927,7 @@ sMsg | String | 事件执行失败时的msg
 
 修改未完成的订单，一次最多可批量修改20个订单。请求参数应该按数组格式传递。
 
-#### 限速：300个/2s
+#### 限速：100个/2s
 
 #### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
@@ -1160,8 +1161,9 @@ instType | String | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 instId | String | 产品ID  
-tgtCcy | String | 市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
 clOrdId | String | 客户自定义订单ID  
@@ -1180,11 +1182,11 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
-avgPx | String | 成交均价  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
 state | String | 订单状态  
 `canceled`：撤单成功  
 `live`：等待成交  
@@ -1264,7 +1266,7 @@ state | String | 否 | 订单状态
 `partially_filled`：部分成交  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -1321,8 +1323,9 @@ limit | String | 否 | 返回结果的数量，默认100条
 ---|---|---  
 instType | String | 产品类型  
 instId | String | 产品ID  
-tgtCcy | String | 市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
 clOrdId | String | 客户自定义订单ID  
@@ -1341,11 +1344,11 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格  
+fillPx | String | 最新成交价格。如果还没成交，系统返回`0`。  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
-avgPx | String | 成交均价  
+avgPx | String | 成交均价。如果还没成交，系统返回`0`。  
 state | String | 订单状态  
 `live`：等待成交  
 `partially_filled`：部分成交  
@@ -1424,7 +1427,7 @@ category | String | 否 | 订单种类
 `ddh`：对冲减仓类型订单  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -1481,8 +1484,9 @@ limit | String | 否 | 返回结果的数量，默认100条
 ---|---|---  
 instType | String | 产品类型  
 instId | String | 产品ID  
-tgtCcy | String | 市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
 clOrdId | String | 客户自定义订单ID  
@@ -1500,11 +1504,11 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
-avgPx | String | 成交均价  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
 state | String | 订单状态  
 `canceled`：撤单成功  
 `filled`：完全成交  
@@ -1590,7 +1594,7 @@ category | String | 否 | 订单种类
 `ddh`：对冲减仓类型订单  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -1647,8 +1651,9 @@ limit | String | 否 | 返回结果的数量，默认100条
 ---|---|---  
 instType | String | 产品类型  
 instId | String | 产品ID  
-tgtCcy | String | 市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
 clOrdId | String | 客户自定义订单ID  
@@ -1666,11 +1671,11 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
-avgPx | String | 成交均价  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
 state | String | 订单状态  
 `canceled`：撤单成功  
 `filled`：完全成交  
@@ -1743,7 +1748,7 @@ after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容�
 before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
 begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
 end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
-limit | String | 否 | 返回结果的数量，默认 100 条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -1849,7 +1854,7 @@ after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容�
 before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
 begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
 end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
-limit | String | 否 | 返回结果的数量，默认 100 条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -2237,7 +2242,7 @@ ordType | String | 是 | 订单类型
 `twap`：时间加权委托  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -2340,10 +2345,11 @@ ordType | String | 订单类型
 side | String | 订单方向  
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
-tgtCcy | String | 市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
 state | String | 订单状态 ，`live`：待生效 `pause`：暂停生效 `partially_effective`:部分生效  
-lever | String | 杠杆倍数  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
 tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
@@ -2373,7 +2379,6 @@ pxSpread | String | 价距
 szLimit | String | 单笔数量  
 仅适用于`冰山委托`和`时间加权委托`  
 tag | String | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 pxLimit | String | 挂单限制价  
 仅适用于`冰山委托`和`时间加权委托`  
 timeInterval | String | 下单间隔  
@@ -2433,7 +2438,7 @@ instType | String | 否 | 产品类型
 instId | String | 否 | 产品ID，`BTC-USD-190927`  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -2536,13 +2541,14 @@ ordType | String | 订单类型
 side | String | 订单方向  
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
-tgtCcy | String | 市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
 state | String | 订单状态  
 `effective`： 已生效  
 `canceled`：已撤销  
 `order_failed`：委托失败  
-lever | String | 杠杆倍数  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
 tpTriggerPxType | String | 止盈触发价类型  
 `last`：最新价格  
@@ -2574,7 +2580,6 @@ szLimit | String | 单笔数量
 pxLimit | String | 挂单限制价  
 仅适用于`冰山委托`和`时间加权委托`  
 tag | String | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 timeInterval | String | 下单间隔  
 仅适用于`时间加权委托`  
 callbackRatio | String | 回调幅度的比例  
@@ -3472,7 +3477,7 @@ state | String | 否 | 询价单的状态
 `traded_away` 仅适用于报价方  
 beginId | String | 否 | 请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回示例
     
@@ -3578,7 +3583,7 @@ state | String | 否 | 报价单的状态
 `active` `canceled` `pending_fill` `filled` `expired` `failed`  
 beginId | String | 否 | 请求的起始报价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束报价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回示例
     
@@ -3678,7 +3683,7 @@ state | String | 否 | 询价单的状态
 `traded_away` 仅适用于报价方  
 beginId | String | 否 | 请求的起始大宗交易ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束大宗交易ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
-limit | String | 否 | 返回结果的数量，默认100条。  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回示例
     
@@ -3781,7 +3786,7 @@ data | Array of objects | 包含结果的对象数组
 ---|---|---|---  
 beginId | String | 否 | 请求的起始大宗交易ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束大宗交易ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
-limit | String | 否 | 返回结果的数量，默认100条。  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回示例
     
@@ -4072,10 +4077,12 @@ ts | String | 数据更新时间，Unix时间戳的毫秒数格式，如 1597026
 details | Array | 各个账户的资产估值  
 > funding | String | 资金账户  
 > trading | String | 交易账户  
-> classic | String | 经典账户  
+> classic | String | 经典账户 (已废弃)  
 > earn | String | 金融账户  
   
 ### 资金划转
+
+调用时，APIKey 需要有交易权限
 
 支持母账户的资金账户划转到交易账户，母账户到子账户的资金账户和交易账户划转；
 
@@ -4137,7 +4144,7 @@ from | String | 是 | 转出账户
 `6`：资金账户 `18`：交易账户  
 to | String | 是 | 转入账户  
 `6`：资金账户 `18`：交易账户  
-subAcct | String | 可选 | 子账户名称，type 为`1`或`2`：subAcct 为必填项  
+subAcct | String | 可选 | 子账户名称，type 为`1`，`2` 或 `4`：subAcct 为必填项  
 type | String | 否 | 划转类型  
 `0`：账户内划转  
 `1`：母账户转子账户(仅适用于母账户APIKey)  
@@ -4220,11 +4227,11 @@ type | String | 否 | 划转类型
                 "ccy": "USDT",
                 "clientId": "",
                 "from": "18",
-                "instId": "",
+                "instId": "", //已废弃
                 "state": "success",
                 "subAcct": "test",
                 "to": "6",
-                "toInstId": "",
+                "toInstId": "", //已废弃
                 "transId": "1",
                 "type": "1"
             }
@@ -4243,12 +4250,14 @@ type | String | `0`：账户内划转
 transId | String | 划转 ID  
 clientId | String | 客户自定义ID  
 ccy | String | 划转币种  
+`6`：资金账户 `18`：交易账户  
 from | String | 转出账户  
+`6`：资金账户 `18`：交易账户  
 amt | String | 划转量  
 to | String | 转入账户  
 subAcct | String | 子账户名称  
-instId | String | 币币杠杆转出币对（如 `BTC-USDT`）或者转出合约的 underlying（如 `BTC-USD`）  
-toInstId | String | 币币杠杆转入币对（如 `BTC-USDT`）或者转入合约的 underlying（如 `BTC-USD`）  
+instId | String | 已废弃  
+toInstId | String | 已废弃  
 state | String | 转账状态  
 成功：`success`，处理中：`pending`，失败：`failed`  
   
@@ -4285,8 +4294,6 @@ type | String | 否 | 账单类型
 `20`：转出至子账户  
 `21`：从子账户转入  
 `28`：领取  
-`41`：点卡抵扣手续费  
-`42`：购买点卡  
 `47`：系统冲正  
 `48`：活动得到  
 `49`：活动送出  
@@ -4462,7 +4469,7 @@ ts | String | 账单创建时间，Unix 时间戳的毫秒数格式，如 `15970
 > 请求示例
     
     
-    GET /api/v5/asset/deposit-lightning
+    GET /api/v5/asset/deposit-lightning?ccy=BTC&amt=0.01
     
     
 
@@ -4473,8 +4480,8 @@ ts | String | 账单创建时间，Unix 时间戳的毫秒数格式，如 `15970
 ccy | String | 是 | 币种，仅支持`BTC`  
 amt | String | 是 | 充值数量，推荐在0.000001〜0.1之间  
 to | String | 否 | 资金充值到账账户  
-6:资金账户  
-18:交易账户  
+`6`: 资金账户  
+`18`: 交易账户  
 不填写此参数，默认到账资金账户  
   
 > 返回结果
@@ -4596,8 +4603,8 @@ ctAddr | String | 合约地址后6位
     查询最近的充值记录
     GET /api/v5/asset/deposit-history
     
-    查询从2018年09月29日到2018年10月30日之间的BTC的充值记录
-    GET /api/v5/asset/deposit-history?ccy=BTC&after=1597026383085&before=1597026383085
+    查询从2022年06月01日到2022年07月01日之间的BTC的充值记录
+    GET /api/v5/asset/deposit-history?ccy=BTC&after=1654041600000&before=1656633600000
     
     
 
@@ -4610,8 +4617,8 @@ depId | String | 否 | 充值记录 ID
 txId | String | 否 | 区块转账哈希记录  
 state | String | 否 | 充值状态  
 `0`：等待确认 `1`：确认到账 `2`：充值成功  
-after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1654041600000`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1656633600000`  
 limit | string | 否 | 返回的结果集数量，默认为100，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -4630,7 +4637,7 @@ limit | string | 否 | 返回的结果集数量，默认为100，最大为100，
           "from": "",
           "state": "2",
           "to": "TN4hxxxxxxxxxxxizqs",
-          "ts": "1639468288000",
+          "ts": "1655251200000",
           "txId": "16f3638329xxxxxx42d988f97"
         }
       ]
@@ -4648,7 +4655,7 @@ amt | String | 充值数量
 from | String | 充值地址，只显示内部账户转账地址，不显示区块链充值地址  
 to | String | 到账地址  
 txId | String | 区块转账哈希记录  
-ts | String | 充值到账时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
+ts | String | 充值到账时间，Unix 时间戳的毫秒数格式，如 `1655251200000`  
 state | String | 充值状态  
 `0`：等待确认  
 `1`：确认到账  
@@ -4694,11 +4701,12 @@ actualDepBlkConfirm | String | 最新的充币网络确认数
 ---|---|---|---  
 ccy | String | 是 | 币种，如 `USDT`  
 amt | String | 是 | 数量  
-dest | String | 是 | 提币到  
-`3`：OKX  
-`4`：数字货币地址  
-toAddr | String | 是 | 认证过的数字货币地址、邮箱或手机号。  
-某些数字货币地址格式为:地址+标签，如 `ARDOR-7JF3-8F2E-QUWZ-CAN7F:123456`  
+dest | String | 是 | 提币方式  
+`3`：内部转账  
+`4`：链上提币  
+toAddr | String | 是 | 如果选择链上提币，`toAddr`必须是认证过的数字货币地址。某些数字货币地址格式为`地址:标签`，如
+`ARDOR-7JF3-8F2E-QUWZ-CAN7F:123456`  
+如果选择内部转账，`toAddr`必须是接收方地址，可以是邮箱、手机或者账户名。  
 fee | String | 是 | 网络手续费≥`0`，提币到数字货币地址所需网络手续费可通过获取币种列表接口查询  
 chain | String | 可选 | 币种链信息  
 如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
@@ -4853,8 +4861,8 @@ wdId | String | 提币申请ID
     查询最近的提币记录
     GET /api/v5/asset/withdrawal-history
     
-    查询从2018年09月29日到2018年10月30日之间的BTC的提币记录
-    GET /api/v5/asset/withdrawal-history?ccy=BTC&after=1597026383085&before=1597026383085
+    查询从2022年06月01日到2022年07月01日之间的BTC的提币记录
+    GET /api/v5/asset/withdrawal-history?ccy=BTC&after=1654041600000&before=1656633600000
     
     
 
@@ -4871,8 +4879,8 @@ state | String | 否 | 提币状态
 `-3`：撤销中 `-2`：已撤销 `-1`：失败  
 `0`：等待提现 `1`：提现中 `2`：已汇出  
 `3`：邮箱确认 `4`：人工审核中 `5`：等待身份认证  
-after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1654041600000`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1656633600000`  
 limit | string | 否 | 返回的结果集数量，默认为100，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -4892,7 +4900,7 @@ limit | string | 否 | 返回的结果集数量，默认为100，最大为100，
           "from": "156****359",
           "to": "0xa30d1fab********7CF18C7B6C579",
           "state": "2",
-          "ts": "1622******2000",
+          "ts": "1655251200000",
           "wdId": "15447421"
         }
       ]
@@ -4907,7 +4915,7 @@ ccy | String | 币种
 chain | String | 币种链信息  
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 amt | String | 数量  
-ts | String | 提币申请时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
+ts | String | 提币申请时间，Unix 时间戳的毫秒数格式，如 `1655251200000`  
 from | String | 提币地址（如果收币地址是 OKX 平台地址，则此处将显示用户账户）  
 to | String | 收币地址  
 tag | String | 部分币种提币需要标签，若不需要则不返回此字段  
@@ -6014,7 +6022,7 @@ PM账户下，持仓的 IMR MMR的数据是后端服务以ristUnit为最小粒�
 
 ### 查看历史持仓信息
 
-获取最近3个月有更新的仓位信息
+获取最近3个月有更新的仓位信息，按照仓位更新时间倒序排列。
 
 #### 限速：1次/10s
 
@@ -6047,7 +6055,7 @@ type | String | 否 | 平仓类型
 状态叠加时，以最新的平仓类型为准状态为准。  
 after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
-limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
+limit | String | 否 | 分页返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -7087,6 +7095,7 @@ delivery | String | 交割手续费率
 exercise | String | 行权手续费率  
 instType | String | 产品类型  
 ts | String | 数据返回时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+category | String | 币种类别，注意：此参数已废弃  
 备注：  
 maker的值：正数，代表是返佣的费率；负数，代表平台扣除的费率。
 
@@ -7766,7 +7775,7 @@ simPos | Array | 否 | 调整持仓列表
 riskUnit | String | 账户内所有持仓的riskUnit  
 ts | String | 账户信息的更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 mmr | String | riskUnit维度的维持保证金  
-imr | String | riskUnit维度的初始保证金  
+imr | String | riskUnit维度的最低初始保证金  
 mr1 | String | 现货&波动率压力测试值  
 mr2 | String | 时间价值压力测试值  
 mr3 | String | 波动率跨期压力测试值  
@@ -7983,7 +7992,7 @@ enable | Boolean | 子账户状态，`true`：正常使用 `false`：冻结
 subAcct | String | 子账户名称  
 label | String | 子账户备注  
 mobile | String | 子账户绑定手机号  
-gAuth | String | 子账户是否开启的登录时的谷歌验证 `true`：已开启 `false`：未开启  
+gAuth | Boolean | 子账户是否开启的登录时的谷歌验证 `true`：已开启 `false`：未开启  
 canTransOut | Boolean | 是否可以主动转出，`false`：不可转出，`true`：可以转出  
 ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
   
@@ -8529,8 +8538,6 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
-
 #### HTTP请求
 
 `POST /api/v5/tradingBot/grid/amend-order-algo`
@@ -8620,7 +8627,7 @@ instId | String | 是 | 产品ID，如`BTC-USDT`
 algoOrdType | String | 是 | 订单类型  
 `grid`：现货网格委托，`contract_grid`：合约网格委托  
 stopType | String | 是 | 网格策略停止类型  
-现货网格 `1`：卖出计价币，`2`：不卖出计价币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平  
   
 > 返回结果
@@ -8678,7 +8685,7 @@ instType | String | 否 | 产品类型
 `SWAP`：永续合约  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -8763,7 +8770,7 @@ cancelType | String | 网格策略停止原因
 `4`：风控停止  
 `5`：交割停止  
 stopType | String | 网格策略停止类型  
-现货网格 `1`：卖出计价币，`2`：不卖出计价币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平，`2`：停止不平仓  
 quoteSz | String | 计价币投入数量  
 仅适用于`现货网格`  
@@ -8817,7 +8824,7 @@ instType | String | 否 | 产品类型
 `SWAP`：永续合约  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -8850,6 +8857,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "runType": "1",
                 "slTriggerPx": "",
                 "state": "running",
+                "stopResult": "0",
                 "stopType": "",
                 "sz": "",
                 "tag": "",
@@ -8898,8 +8906,11 @@ cancelType | String | 网格策略停止原因
 `3`：止损停止  
 `4`：风控停止  
 `5`：交割停止  
+stopResult | String | 现货网格策略停止结果  
+`0`：默认，`1`：市价卖币成功 `-1`：市价卖币失败  
+仅适用于`现货网格`  
 stopType | String | 网格策略停止类型  
-现货网格 `1`：卖出计价币，`2`：不卖出计价币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平，`2`：停止不平仓  
 quoteSz | String | 计价币投入数量  
 仅适用于`现货网格`  
@@ -9049,7 +9060,7 @@ cancelType | String | 网格策略停止原因
 `4`：风控停止  
 `5`：交割停止  
 stopType | String | 网格策略停止类型  
-现货网格 `1`：卖出计价币，`2`：不卖出计价币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平，`2`：停止不平仓  
 quoteSz | String | 计价币投入数量  
 仅适用于`现货网格`  
@@ -9111,7 +9122,7 @@ type | String | 是 | 子定单状态
 groupId | String | 否 | 组ID  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
-limit | String | 否 | 返回结果的数量，默认100条  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
   
 > 返回结果
     
@@ -9141,6 +9152,7 @@ limit | String | 否 | 返回结果的数量，默认100条
                 "side": "sell",
                 "state": "live",    
                 "sz": "0.00059213",
+                "tag": "",
                 "tdMode": "cash",
                 "uTime": "1653347949831"
             }
@@ -9184,7 +9196,9 @@ posSide | String | 子订单持仓方向
 `net`：单向持仓  
 pnl | String | 子订单收益  
 ctVal | String | 合约面值  
+仅支持`FUTURES/SWAP`  
 lever | String | 杠杆倍数  
+tag | String | 订单标签  
   
 ### 获取网格策略委托持仓
 
@@ -9250,7 +9264,7 @@ algoId | String | 是 | 策略订单ID
 ---|---|---  
 algoId | String | 策略订单ID  
 instType | String | 产品类型  
-instId | String | 产品ID  
+instId | String | 产品ID，如"BTC-USDT-SWAP"  
 cTime | String | 策略订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 uTime | String | 策略订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 avgPx | String | 开仓均价  
@@ -9321,6 +9335,111 @@ algoId | String | 是 | 策略订单ID
 ---|---|---  
 algoId | String | 策略订单ID  
 profit | String | 提取的利润  
+  
+### 调整保证金计算
+
+#### 限速：20次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/tradingBot/grid/compute-margin-balance`
+
+> 请求示例
+    
+    
+    POST /api/v5/tradingBot/grid/compute-margin-balance
+    body {
+       "algoId":"123456",
+       "type":"add",
+       "amt":"10"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+algoId | String | 是 | 策略订单ID  
+type | String | 是 | 调整保证金类型  
+`add`：增加，`reduce`：减少  
+amt | String | 否 | 调整保证金数量  
+默认是0  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "lever": "0.3877200981166066",
+                "maxAmt": "1.8309562403342999"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+maxAmt | String | 最多可调整的保证金数量  
+lever | String | 调整保证金后的杠杠倍数  
+  
+### 调整保证金
+
+#### 限速：20次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/tradingBot/grid/margin-balance`
+
+> 请求示例
+    
+    
+    POST /api/v5/tradingBot/grid/margin-balance
+    body {
+       "algoId":"123456",
+       "type":"add",
+       "amt":"10"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+algoId | String | 是 | 策略订单ID  
+type | String | 是 | 调整保证金类型  
+`add`：增加，`reduce`：减少  
+amt | String | 可选 | 调整保证金数量  
+`amt`和`percent`必须传一个  
+percent | String | 可选 | 调整保证金百分比  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "algoId": "123456"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+algoId | String | 策略订单ID  
   
 ### 网格策略智能回测（公共）
 
@@ -9714,10 +9833,15 @@ sz | String | 否 | 深度档位数量，最大值可传400，即买卖深度共
 asks | Array | 卖方深度  
 bids | Array | 买方深度  
 ts | String | 深度产生的时间  
-合约的asks和bids值数组举例说明： ["411.8","10", "0","4"]
+<<<<<<< HEAD 合约的asks和bids值数组举例说明： ["411.8","10", "0","4"]
 411.8为深度价格，10为此价格的合约张数，0该字段已弃用(始终为0)，4为此价格的订单数量  
 现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "0","4"]
-411.8为深度价格，10为此价格的币的数量，0该字段已弃用(始终为0)，4为此价格的订单数量
+411.8为深度价格，10为此价格的交易币的数量，0该字段已弃用(始终为0)，4为此价格的订单数量 ======= asks和bids值数组举例说明：
+["411.8", "10", "0", "4"]  
+\- 411.8为深度价格  
+\- 10为此价格的数量 （合约交易为合约，现货/币币杠杆为交易币的数量）  
+\- 0该字段已弃用(始终为0)  
+\- 4为此价格的订单数量 >>>>>>> ced0091c81eb4feb6a366f2dbb8a341d4c52d2fc
 
 ### 获取交易产品K线数据
 
@@ -9794,7 +9918,8 @@ vol | String | 交易量，以`张`为单位
 volCcy | String | 交易量，以`币`为单位  
 如果是`衍生品`合约，数值为交易货币的数量。  
 如果是`币币/币币杠杆`，数值为计价货币的数量。  
-返回的第一条K线数据可能不是完整周期k线，返回值数组顺序分别为是：[ts,o,h,l,c,vol,volCcy]
+返回的第一条K线数据可能不是完整周期k线，返回值数组顺序分别为是：[ts,o,h,l,c,vol,volCcy]  
+对于当前周期的K线数据，没有成交时，开高收低默认都取上一周期的收盘价格。
 
 ### 获取交易产品历史K线数据
 
@@ -10171,9 +10296,11 @@ ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`159702638308
         "msg":"",
         "data":[
          {
-            "volUsd":"2222",
-            "volCny":"14220.8",
-            "ts": "1597026383085"
+             "volCny": "230900886396766",
+             "blockVolUsd": "209490",
+             "volUsd": "34462818865189",
+             "blockVolCny": "1403583",
+             "ts": "1657856040389"
          }
       ]
     }
@@ -10185,6 +10312,8 @@ ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`159702638308
 ---|---|---  
 volUsd | String | 24小时平台总成交量，以美元为单位  
 volCny | String | 24小时平台总成交量，以人民币为单位  
+blockVolUsd | String | 24小时平台场外交易总量，以美元为单位  
+blockVolCny | String | 24小时平台场外交易总量，以人民币为单位  
 ts | String | 接口返回数据时间  
   
 ### Oracle 上链交易数据
@@ -10234,7 +10363,7 @@ ts | String | 接口返回数据时间
 ---|---|---  
 messages | String | 数组包含对[
 kind，timestamp，key，value]进行ABI编码的值，其中kind恒等于`prices`，timestamp是获取价格的时间戳，key是加密资产（例如，`ETH`），value是资产价格  
-price | String | 价格  
+prices | String | 价格  
 signatures | String | 每个消息的以太坊兼容ECDSA签名的数组  
 timestamp | String | 获取最新数据点的时间,Unix时间戳,如 `1597026387`  
 欧易 Oracle公钥是 85615b076615317c80f14cbad6501eec031cd51c
@@ -11206,8 +11335,8 @@ discountLv | String | 折算率等级
 cn/articles/360054690531-%E5%9B%9B-%E8%B7%A8%E5%B8%81%E7%A7%8D%E4%BF%9D%E8%AF%81%E9%87%91%E6%A8%A1%E5%BC%8F-%E5%85%A8%E4%BB%93%E4%BA%A4%E6%98%93%E4%BB%8B%E7%BB%8D)  
 discountInfo | Array | 币种折算率详情  
 > discountRate | String | 折算率  
-> maxAmt | String | 梯度区间上限（美元），“” 表示正无穷  
-> minAmt | String | 梯度区间下限（美元），最小值是0  
+> maxAmt | String | 梯度区间上限（美元）， “”表示正无穷  
+> minAmt | String | 梯度区间下限（美元）， 最小值是0  
   
 ### 获取系统时间
 
@@ -12505,14 +12634,14 @@ WebSocket是HTML5一种新的协议（Protocol）。它实现了用户端与服�
       [
          {
            "apiKey"    : "985d5b66-57ce-40fb-b714-afc0b9787083",
-           "passphrase" :"123456"    ,
-           "timestamp" :"1538054050"    ,
+           "passphrase" :"123456",
+           "timestamp" :"1538054050",
            "sign" :"7L+zFQ+CEgGu5rzCj4+BdV2/uUHGqddA9pI6ztsRRPs=" 
           },
           {
            "apiKey"    : "86126n98-57ce-40fb-b714-afc0b9787083",
-           "passphrase" :"123456"    ,
-           "timestamp" :"1538054050"    ,
+           "passphrase" :"123456",
+           "timestamp" :"1538054050",
            "sign" :"7L+zFQ+CEgGu5rzCj4+BdV2/uUHGqddA9pI6ztsRRPs=" 
           }
        ]
@@ -12572,7 +12701,6 @@ code | String | 否 | 错误码
 msg | String | 否 | 错误消息  
 data | Object | 否 | 登陆失败后返回的数据  
 > apiKey | String | 是 | 登陆失败后返回的APIKey  
-  
 多账户批量登录的用户只能订阅 WebSocket 频道，不能使用 WebSocket 交易
 
 **sign** :签名字符串，签名算法如下：
@@ -12762,57 +12890,6 @@ arg | Object | 否 | 取消订阅的频道
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
   
-## Checksum机制
-
-此机制可以帮助用户校验深度数据的准确性。
-
-### 深度合并
-
-用户订阅增量推送（如：`books`400档）深度频道成功后，首先获取初始全量深度数据，当获取到增量推送数据后，更新本地全量深度数据。
-
-  1. 如果有相同价格，则比较数量；数量为0删除此深度，数量有变化则替换此数据。
-  2. 如果没有相同价格，则按照价格优劣排序（bid为价格降序，ask为价格升序），将深度信息插入到全量数据中
-
-### 计算校验和
-
-先用深度合并后前25档bids和asks组成一个字符串（其中ask和bid中的价格和数量以冒号连接），再计算其crc32值（32位有符号整型）。
-
-> 计算校验和
-    
-    
-    1.bid和ask超过25档
-    合并后全量深度数据（在此仅展示2档数据，实际应截取25档数据）：
-    "bids": [
-        [ 3366.1, 7, 0, 3 ],
-        [ 3366  , 6, 3, 4 ]
-    ]
-    "asks": [
-        [ 3366.8, 9, 10, 3 ],
-        [ 3368  , 8,  3, 4 ]
-    ]
-    校验字符串：
-    "3366.1:7:3366.8:9:3366:6:3368:8"
-    
-    2.bid或ask不足25档  
-    合并后全量深度数据：
-    "bids": [
-        [ 3366.1, 7, 0, 3]
-    ]
-    "asks": [
-        [ 3366.8, 9, 10, 3],
-        [ 3368  , 8, 3, 4 ],
-        [ 3372  , 8, 3, 4 ]
-    ]
-    校验字符串：
-    "3366.1:7:3366.8:9:3368:8:3372:8"
-    
-
-  1. 当bid和ask深度数据超过25档时，截取各自25档数据，要校验的字符串按照bid、ask深度数据交替方式连接。  
-如：`bid[价格:数量]`:`ask[价格:数量]`:`bid[价格:数量]`:`ask[价格:数量]`...  
-
-  2. bid或ask深度数据不足25档时，直接忽略缺失的深度。  
-如：`bid[价格:数量]`:`ask[价格:数量]`:`asks[价格:数量]`:`asks[价格:数量]`...  
-
 ## 交易
 
 `WebSocket交易`需要身份验证。
@@ -12827,7 +12904,7 @@ msg | String | 否 | 错误消息
 
 #### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
-#### 同restAPI共享限速
+同`下单` REST API 共享限速
 
 > 请求示例
     
@@ -12881,7 +12958,7 @@ args | Array | 是 | 请求参数
 > reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-> tgtCcy | String | 否 | 市价单委托数量的类型  
+> tgtCcy | String | 否 | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`订单  
 > banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
@@ -12965,7 +13042,7 @@ tdMode
 \- 全仓交割/永续/期权：cross  
 \- 逐仓交割/永续/期权：isolated  
 clOrdId  
-clOrdId是用户自定义的唯一ID用来跟识别订单。如果在请求参数中传入了，那它一定会在返回参数内，并且可以用于查询订单，撤销订单，修改订单等接口。
+clOrdId是用户自定义的唯一ID用来识别订单。如果在请求参数中传入了，那它一定会在返回参数内，并且可以用于查询订单，撤销订单，修改订单等接口。
 clOrdId不能与当前所有的挂单的clOrdId重复  持仓方向，单向持仓模式下此参数非必填，如果填写仅可以选择net；在双向持仓模式下必填，且仅可选择
 long 或 short。  
 双向持仓模式下，side和posSide需要进行组合  
@@ -13017,9 +13094,8 @@ USDT下单买入，最终成交 3000/400 = 7.5个 LTC。
 
 #### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
-与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。
-
-#### 同restAPI共享限速
+与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。  同`批量下单` REST API
+共享限速
 
 > 请求示例
     
@@ -13080,7 +13156,7 @@ args | Array | 是 | 请求参数
 > reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-> tgtCcy | String | 否 | 市价单委托数量的类型  
+> tgtCcy | String | 否 | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`订单  
 > banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
@@ -13196,7 +13272,7 @@ data | Array | 请求成功后返回的数据
 
 #### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
-#### 同restAPI共享限速
+同`撤单` REST API 共享限速
 
 > 请求示例
     
@@ -13297,7 +13373,8 @@ data | Array | 请求成功后返回的数据
 
 #### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
-与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。
+与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。  同`批量撤单` REST API
+共享限速
 
 #### 同restAPI共享限速
 
@@ -13434,7 +13511,7 @@ data | Array | 请求成功后返回的数据
 
 #### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
-#### 同restAPI共享限速
+同`改单` REST API 共享限速
 
 > 请求示例
     
@@ -13543,15 +13620,14 @@ newSz : 当修改已经部分成交的订单时，新的委托数量必须大于
 
 批量进行改单操作，每次可批量修改不同类型的产品，最多改20个
 
-#### 限速：300个/2s
+#### 限速：100个/2s
 
 #### 限速规则：衍生品：UserID +(instrumentType、underlying)
 
 #### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
 
-与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。
-
-#### 同restAPI共享限速
+与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。  同`批量改单` REST
+API 共享限速
 
 > 请求示例
     
@@ -14861,8 +14937,9 @@ data | Array | 订阅的数据
 > tdMode | String | 交易模式  
 保证金模式 `cross`：全仓 `isolated`：逐仓  
 非保证金模式 `cash`：现金  
-> tgtCcy | String | 市价单委托数量的类型  
+> tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
 > lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 > state | String | 订单状态  
 `live`：待生效  
@@ -15075,8 +15152,9 @@ data | Array | 订阅的数据
 > tdMode | String | 交易模式  
 保证金模式 `cross`：全仓 `isolated`：逐仓  
 非保证金模式 `cash`：现金  
-> tgtCcy | String | 市价单委托数量的类型  
+> tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`订单  
 > lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 > state | String | 订单状态  
 `live`：待生效  
@@ -16005,7 +16083,7 @@ data | Array | 订阅的数据
 `4`：风控停止  
 `5`：交割停止  
 > stopType | String | 网格策略停止类型  
-现货网格 `1`：卖出计价币，`2`：不卖出计价币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平，`2`：停止不平仓  
 > quoteSz | String | 计价币投入数量  
 仅适用于`现货网格`  
@@ -16191,7 +16269,7 @@ data | Array | 订阅的数据
 `4`：风控停止  
 `5`：交割停止  
 > stopType | String | 网格策略停止类型  
-现货网格 `1`：卖出计价币，`2`：不卖出计价币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平，`2`：停止不平仓  
 > direction | String | 合约网格类型  
 `long`：做多，`short`：做空，`neutral`：中性  
@@ -16431,6 +16509,7 @@ msg | String | 否 | 错误消息
             "side": "buy",
             "state": "live",
             "sz": "1",
+            "tag":"",
             "tdMode": "cross",
             "uTime": "1653445498674"
         }]
@@ -16456,6 +16535,7 @@ data | Array | 订阅的数据
 > ordId | String | 子订单ID  
 > cTime | String | 子订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > uTime | String | 子订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+> tag | String | 订单标签  
 > tdMode | String | 子订单交易模式  
 `cross`：全仓 `isolated`：逐仓 `cash`：非保证金  
 > ordType | String | 子订单类型  
@@ -16984,7 +17064,7 @@ data | Array | 订阅的数据
   
 ### 交易频道
 
-获取最近的成交数据，有成交数据就推送
+获取最近的成交数据，有成交数据就推送，每次推送仅包含一条成交数据。
 
 > 请求示例
     
@@ -17636,11 +17716,63 @@ data | Array | 订阅的数据
 > asks | Array | 卖方深度  
 > bids | Array | 买方深度  
 > ts | String | 数据更新时间戳，Unix时间戳的毫秒数格式，如 `1597026383085`  
-> checksum | Integer | 检验和  
-合约的asks和bids值数组举例说明： ["411.8","10", "0","4"]
-411.8为深度价格，10为此价格的合约张数，0该字段已弃用(始终为0)，4为此价格的订单数量  
-现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "0","4"]
-411.8为深度价格，10为此价格的币的数量，0该字段已弃用(始终为0)，4为此价格的订单数量
+> checksum | Integer | 检验和 （下方注解）  
+asks和bids值数组举例说明： ["411.8", "10", "0", "4"]  
+\- 411.8为深度价格  
+\- 10为此价格的数量 （合约交易为合约，现货/币币杠杆为交易币的数量  
+\- 0该字段已弃用(始终为0)  
+\- 4为此价格的订单数量
+
+#### Checksum机制
+
+此机制可以帮助用户校验深度数据的准确性。
+
+##### 深度合并
+
+用户订阅增量推送（如：`books`400档）深度频道成功后，首先获取初始全量深度数据，当获取到增量推送数据后，更新本地全量深度数据。
+
+  1. 如果有相同价格，则比较数量；数量为0删除此深度，数量有变化则替换此数据。
+  2. 如果没有相同价格，则按照价格优劣排序（bid为价格降序，ask为价格升序），将深度信息插入到全量数据中
+
+##### 计算校验和
+
+先用深度合并后前25档bids和asks组成一个字符串（其中ask和bid中的价格和数量以冒号连接），再计算其crc32值（32位有符号整型）。
+
+> 计算校验和
+    
+    
+    1.bid和ask超过25档
+    合并后全量深度数据（在此仅展示2档数据，实际应截取25档数据）：
+    "bids": [
+        ["3366.1", "7", "0", "3"],
+        ["3366", "6", "3", "4"]
+    ]
+    "asks": [
+        ["3366.8", "9", "10", "3"],
+        ["3368", "8", "3", "4"]
+    ]
+    校验字符串：
+    "3366.1:7:3366.8:9:3366:6:3368:8"
+    
+    2.bid或ask不足25档  
+    合并后全量深度数据：
+    "bids": [
+        ["3366.1", "7", "0", "3"]
+    ]
+    "asks": [
+        ["3366.8", "9", "10", "3"],
+        ["3368", "8", "3", "4"],
+        ["3372", "8", "3", "4"]
+    ]
+    校验字符串：
+    "3366.1:7:3366.8:9:3368:8:3372:8"
+    
+
+  1. 当bid和ask深度数据超过25档时，截取各自25档数据，要校验的字符串按照bid、ask深度数据交替方式连接。  
+如：`bid[价格:数量]`:`ask[价格:数量]`:`bid[价格:数量]`:`ask[价格:数量]`...  
+
+  2. bid或ask深度数据不足25档时，直接忽略缺失的深度。  
+如：`bid[价格:数量]`:`ask[价格:数量]`:`asks[价格:数量]`:`asks[价格:数量]`...  
 
 ### 期权定价频道
 
@@ -18533,6 +18665,7 @@ PM账户仅支持买卖模式 | 200 | 51041
 普通委托数量超出最大限制{0} | 200 | 51203  
 限价委托单价格不能为空 | 200 | 51204  
 不支持只减仓操作 | 200 | 51205  
+请先撤销当前下单产品{0}的只减仓挂单，避免反向开仓 | 200 | 51206  
 策略委托价格不在正确范围内 | 200 | 51250  
 策略委托类型错误 | 200 | 51251  
 策略委托数量不在正确范围内 | 200 | 51252  
