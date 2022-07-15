@@ -9365,7 +9365,7 @@ algoId | String | 是 | 策略订单ID
 type | String | 是 | 调整保证金类型  
 `add`：增加，`reduce`：减少  
 amt | String | 否 | 调整保证金数量  
-默认是0  
+  
   
 > 返回结果
     
