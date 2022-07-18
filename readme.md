@@ -17,6 +17,9 @@ API接口 Broker接入 最佳实践 更新日志
     * 实盘交易 
     * 模拟盘交易 
     * 基本信息 
+    * 交易时效性 
+      * REST 
+      * WebSocket 
   * 做市商申请
   * 交互式浏览器 
     * 使用说明 
@@ -350,6 +353,81 @@ AWS 地址如下：
   * 冰山委托：100个  
 
   * 时间加权委托：20个  
+
+## 交易时效性
+
+由于网络延时或者OKX服务器繁忙会导致订单无法及时处理。如果您对交易时效性有较高的要求，可以灵活设置请求有效截止时间`expTime`以达到你的要求。
+
+（批量）下单，（批量）改单接口请求中如果包含`expTime`，如果服务器当前系统时间超过`expTime`，则该请求不会被服务器处理。
+
+### REST
+
+请求头中设置如下参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+目前支持如下接口：
+
+  * [下单](/docs-v5/zh/#rest-api-trade-place-order)
+  * [批量下单](/docs-v5/zh/#rest-api-trade-place-multiple-orders)
+  * [修改订单](/docs-v5/zh/#rest-api-trade-amend-order)
+  * [批量修改订单](/docs-v5/zh/#rest-api-trade-amend-multiple-orders)
+
+> 请求示例
+    
+    
+    curl -X 'POST' \
+      'https://www.okx.com/api/v5/trade/order' \
+      -H 'accept: application/json' \
+      -H 'Content-Type: application/json' \
+      -H 'OK-ACCESS-KEY: *****' \
+      -H 'OK-ACCESS-SIGN: *****'' \
+      -H 'OK-ACCESS-TIMESTAMP: *****'' \
+      -H 'OK-ACCESS-PASSPHRASE: *****'' \
+      -H 'expTime: 1597026383085' \   // 有效截止时间
+      -d '{
+      "instId": "BTC-USDT",
+      "tdMode": "cash",
+      "side": "buy",
+      "ordType": "limit",
+      "px": "1000",
+      "sz": "0.01"
+    }'
+    
+
+### WebSocket
+
+请求中设置如下参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+目前支持如下接口：
+
+  * [下单](/docs-v5/zh/#websocket-api-trade-place-order)
+  * [批量下单](/docs-v5/zh/#websocket-api-trade-place-multiple-orders)
+  * [修改订单](/docs-v5/zh/#websocket-api-trade-amend-order)
+  * [批量修改订单](/docs-v5/zh/#websocket-api-trade-amend-multiple-orders)
+
+> 请求示例
+    
+    
+    {
+        "id": "1512",
+        "op": "order",
+        "expTime":"1597026383085",  // 有效截止时间
+        "args": [{
+            "side": "buy",
+            "instId": "BTC-USDT",
+            "tdMode": "isolated",
+            "ordType": "market",
+            "sz": "100"
+        }]
+    }
+    
 
 # 做市商申请
 
@@ -10782,7 +10860,6 @@ state | String | 产品状态
 `live`：交易中  
 `suspend`：暂停中  
 `preopen`：预上线  
-`settlement`：资金费结算  
 maxLmtSz | String | 合约或现货限价单的单笔最大委托数量  
 maxMktSz | String | 合约或现货市价单的单笔最大委托数量  
 maxTwapSz | String | 合约或现货时间加权单的单笔最大委托数量  
@@ -12963,6 +13040,7 @@ args | Array | 是 | 请求参数
 仅适用于`币币`订单  
 > banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时会下单失败，仅适用于币币市价单  
+expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 > 成功返回示例
     
@@ -13161,6 +13239,7 @@ args | Array | 是 | 请求参数
 仅适用于`币币`订单  
 > banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时会下单失败，仅适用于币币市价单  
+expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 > 全部成功返回示例
     
@@ -13547,6 +13626,7 @@ ordId和clOrdId必须传一个，若传两个，以 ordId 为主
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 > newSz | String | 可选 | 请求修改的新数量，`newSz`和`newPx`不可同时为空。对于部分成交订单，该数量应包含已成交数量。  
 > newPx | String | 可选 | 请求修改的新价格  
+expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 > 成功返回示例
     
@@ -13667,6 +13747,7 @@ ordId 和 clOrdId 必须传一个，若传两个，以order id 为主
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 > newSz | String | 可选 | 修改后的新数量，`newSz`和`newPx`不可同时为空。对于部分成交订单，该数量应包含已成交数量。  
 > newPx | String | 可选 | 修改后的新价格  
+expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 > 全部成功返回示例
     
@@ -16737,7 +16818,6 @@ data | Array | 订阅的数据
 `suspend`：暂停中  
 `expired`：已过期  
 `preopen`：预上线  
-`settlement`：资金费结算  
 > maxLmtSz | String | 合约或现货限价单的单笔最大委托数量  
 > maxMktSz | String | 合约或现货市价单的单笔最大委托数量  
 > maxTwapSz | String | 合约或现货时间加权单的单笔最大委托数量  
@@ -17743,27 +17823,43 @@ asks和bids值数组举例说明： ["411.8", "10", "0", "4"]
     
     1.bid和ask超过25档
     合并后全量深度数据（在此仅展示2档数据，实际应截取25档数据）：
-    "bids": [
-        ["3366.1", "7", "0", "3"],
-        ["3366", "6", "3", "4"]
-    ]
-    "asks": [
-        ["3366.8", "9", "10", "3"],
-        ["3368", "8", "3", "4"]
-    ]
+    
+    
+    
+    {
+        "bids": [
+            ["3366.1", "7", "0", "3"],
+            ["3366", "6", "3", "4"]
+        ],
+        "asks": [
+            ["3366.8", "9", "10", "3"],
+            ["3368", "8", "3", "4"]
+        ]
+    }
+    
+    
+    
     校验字符串：
     "3366.1:7:3366.8:9:3366:6:3368:8"
     
     2.bid或ask不足25档  
     合并后全量深度数据：
-    "bids": [
-        ["3366.1", "7", "0", "3"]
-    ]
-    "asks": [
-        ["3366.8", "9", "10", "3"],
-        ["3368", "8", "3", "4"],
-        ["3372", "8", "3", "4"]
-    ]
+    
+    
+    
+    {
+        "bids": [
+            ["3366.1", "7", "0", "3"]
+        ],
+        "asks": [
+            ["3366.8", "9", "10", "3"],
+            ["3368", "8", "3", "4"],
+            ["3372", "8", "3", "4"]
+        ]
+    }
+    
+    
+    
     校验字符串：
     "3366.1:7:3366.8:9:3368:8:3372:8"
     
@@ -18545,6 +18641,10 @@ body不能为空 | 400 | 50000
 您的账户已设置禁止该业务线交易，请确认后重试 | 200 | 50033  
 您当前不在白名单列表，请联系客服 | 200 | 50034  
 该接口要求APIKey必须绑定IP | 403 | 50035  
+无效的expTime | 200 | 50036  
+订单已过期 | 200 | 50037  
+该功能模拟盘暂不支持 | 200 | 50038  
+时间戳分页时，不支持使用before参数 | 200 | 50039  
   
 #### API 类
 
