@@ -119,6 +119,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取组合保证金模式全仓限制 
     * 子账户 
       * 查看子账户列表 
+      * 重置子账户的APIKey 
       * 获取子账户交易账户余额 
       * 获取子账户资金账户余额 
       * 查询子账户转账记录 
@@ -359,6 +360,9 @@ AWS 地址如下：
 由于网络延时或者OKX服务器繁忙会导致订单无法及时处理。如果您对交易时效性有较高的要求，可以灵活设置请求有效截止时间`expTime`以达到你的要求。
 
 （批量）下单，（批量）改单接口请求中如果包含`expTime`，如果服务器当前系统时间超过`expTime`，则该请求不会被服务器处理。
+
+你提供的`expTime`需要跟服务器系统时间一致。请用[获取系统时间](/docs-v5/zh/#rest-api-public-data-get-
+system-time)来获取系统时间。
 
 ### REST
 
@@ -2348,6 +2352,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "tpOrdPx":"",
                 "slTriggerPx":"",
                 "slTriggerPxType":"",
+                "slOrdPx": "",
                 "triggerPx":"99",
                 "triggerPxType": "last",
                 "ordPx":"12",
@@ -2386,6 +2391,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "tpOrdPx":"",
                 "slTriggerPx":"",
                 "slTriggerPxType":"",
+                "slOrdPx": "",
                 "triggerPx":"99",
                 "triggerPxType": "last",
                 "ordPx":"12",
@@ -8074,6 +8080,72 @@ gAuth | Boolean | 子账户是否开启的登录时的谷歌验证 `true`：已�
 canTransOut | Boolean | 是否可以主动转出，`false`：不可转出，`true`：可以转出  
 ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
   
+### 重置子账户的APIKey
+
+仅适用于母账户,且母账户APIKey必须绑定IP
+
+#### 限速：1次/s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/users/subaccount/modify-apikey`
+
+> 请求示例
+    
+    
+    POST /api/v5/users/subaccount/modify-apikey
+    body
+    {
+        "subAcct":"yongxu",
+        "apiKey":"49e1b84b-6dee-4894-80ee-ce9eb7ad614f",
+        "ip":"1.1.1.1"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subAcct | String | 是 | 子账户名称  
+apiKey | String | 是 | 子账户API的公钥  
+label | String | 否 | 子账户APIKey的备注，如果填写该字段，那该字段会被重置  
+perm | String | 否 | 子账户APIKey权限 `read_only`：只读 ；`trade` ：交易  
+多个权限用半角逗号隔开。  
+如果填写该字段，那该字段会被重置  
+ip | String | 否 | 子账户APIKey绑定ip地址，多个ip用半角逗号隔开，最多支持20个ip。  
+如果填写该字段，那该字段会被重置  
+如果ip传""，则表示解除IP绑定  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [{
+            "subAcct": "yongxu",
+            "label": "v5",
+            "apiKey": "arg13sdfgs",
+            "perm": "read,trade",
+            "ip": "1.1.1.1",
+            "ts": "1597026383085"
+        }]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subAcct | String | 子账户名称  
+label | String | APIKey的备注  
+apiKey | String | API公钥  
+perm | String | APIKey权限  
+ip | String | APIKey绑定的ip地址  
+ts | String | 创建时间  
+  
 ### 获取子账户交易账户余额
 
 获取子账户交易账户余额（适用于母账户）
@@ -9911,15 +9983,15 @@ sz | String | 否 | 深度档位数量，最大值可传400，即买卖深度共
 asks | Array | 卖方深度  
 bids | Array | 买方深度  
 ts | String | 深度产生的时间  
-<<<<<<< HEAD 合约的asks和bids值数组举例说明： ["411.8","10", "0","4"]
+合约的asks和bids值数组举例说明： ["411.8","10", "0","4"]
 411.8为深度价格，10为此价格的合约张数，0该字段已弃用(始终为0)，4为此价格的订单数量  
 现货/币币杠杆的asks和bids值数组举例说明： ["411.8","10", "0","4"]
-411.8为深度价格，10为此价格的交易币的数量，0该字段已弃用(始终为0)，4为此价格的订单数量 ======= asks和bids值数组举例说明：
-["411.8", "10", "0", "4"]  
+411.8为深度价格，10为此价格的交易币的数量，0该字段已弃用(始终为0)，4为此价格的订单数量 asks和bids值数组举例说明： ["411.8",
+"10", "0", "4"]  
 \- 411.8为深度价格  
 \- 10为此价格的数量 （合约交易为合约，现货/币币杠杆为交易币的数量）  
 \- 0该字段已弃用(始终为0)  
-\- 4为此价格的订单数量 >>>>>>> ced0091c81eb4feb6a366f2dbb8a341d4c52d2fc
+\- 4为此价格的订单数量
 
 ### 获取交易产品K线数据
 
@@ -12467,7 +12539,7 @@ period | String | 否 | 时间粒度，默认值`8H`。支持[`8H/1D`]
 **参数名** | **类型** | **描述**  
 ---|---|---  
 ts | String | 数据产生时间  
-expTime | String | 到期日（格式: YYYYMMdd，例如："20210623"）  
+expTime | String | 到期日（格式: YYYYMMDD，例如："20210623"）  
 callOI | String | 看涨持仓总量（以`币`为单位）  
 putOI | String | 看跌持仓总量（以`币`为单位）  
 callVolume | String | 看涨交易总量（以`币`为单位）  
@@ -18660,7 +18732,7 @@ APIKey 与当前环境不匹配 | 401 | 50101
 请求头"OK_ACCESS_TIMESTAMP"不能为空 | 401 | 50107  
 券商ID不存在 | 401 | 50108  
 券商域名不存在 | 401 | 50109  
-无效的ip | 401 | 50110  
+您的IP{0}不在APIKey绑定IP名单中 | 401 | 50110  
 无效的OK_ACCESS_KEY | 401 | 50111  
 无效的OK_ACCESS_TIMESTAMP | 401 | 50112  
 无效的签名 | 401 | 50113  
