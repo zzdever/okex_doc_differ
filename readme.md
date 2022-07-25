@@ -361,8 +361,8 @@ AWS 地址如下：
 
 （批量）下单，（批量）改单接口请求中如果包含`expTime`，如果服务器当前系统时间超过`expTime`，则该请求不会被服务器处理。
 
-你提供的`expTime`需要跟服务器系统时间一致。请用[获取系统时间](/docs-v5/zh/#rest-api-public-data-get-
-system-time)来获取系统时间。
+你应跟我们服务器系统时间同步。请用[获取系统时间](/docs-v5/zh/#rest-api-public-data-get-system-
+time)来获取系统时间。
 
 ### REST
 
@@ -4046,7 +4046,7 @@ maxFee | String | 最大提币手续费数量
 mainNet | Boolean | 当前链是否为主链  
 如果是则返回`true`，否则返回`false`  
 needTag | Boolean | 当前链是否需要标签（tag/memo）信息  
-minDepArrivalConfirm | String | 充值到账最小网络确认数  
+minDepArrivalConfirm | String | 充值到账最小网络确认数。币已到账但不可提。  
 minWdUnlockConfirm | String | 提现解锁最小网络确认数  
   
 ### 获取资金账户余额
@@ -4749,7 +4749,9 @@ state | String | 充值状态
 `13`：子账户充值拦截  
 depId | String | 充值记录 ID  
 actualDepBlkConfirm | String | 最新的充币网络确认数  
-等待确认是没有达到充币确认数。 确认到账是够充币确认数，且币已经到账户中，但是不可提。 充值成功是当前账户完成到提币确认，可以提出。
+等待确认是没有达到充币确认数。  
+确认到账是够充币确认数，且币已经到账户中，但是不可提。  
+充值成功是当前账户完成到提币确认，可以提出。
 
 ### 提币
 
@@ -6137,6 +6139,7 @@ mgnMode | String | 否 | 保证金模式
 type | String | 否 | 平仓类型  
 `1`：部分平仓;`2`：完全平仓;`3`：强平;`4`：强减; `5`：ADL自动减仓;  
 状态叠加时，以最新的平仓类型为准状态为准。  
+posId | String | 否 | 持仓ID  
 after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 before | String | 否 | 查询在此之后的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1597026383085`  
 limit | String | 否 | 分页返回结果的数量，最大为100，默认100条  
@@ -8110,10 +8113,10 @@ ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `15
 ---|---|---|---  
 subAcct | String | 是 | 子账户名称  
 apiKey | String | 是 | 子账户API的公钥  
-label | String | 否 | 子账户APIKey的备注，如果填写该字段，那该字段会被重置  
+label | String | 否 | 子账户APIKey的备注，如果填写该字段，则该字段会被重置  
 perm | String | 否 | 子账户APIKey权限 `read_only`：只读 ；`trade` ：交易  
 多个权限用半角逗号隔开。  
-如果填写该字段，那该字段会被重置  
+如果填写该字段，则该字段会被重置  
 ip | String | 否 | 子账户APIKey绑定ip地址，多个ip用半角逗号隔开，最多支持20个ip。  
 如果填写该字段，那该字段会被重置  
 如果ip传""，则表示解除IP绑定  
@@ -10057,7 +10060,7 @@ limit | String | 否 | 分页返回的结果集数量，最大为300，不填默
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-ts | String | 数据生成的时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+ts | String | 开始时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 o | String | 开盘价格  
 h | String | 最高价格  
 l | String | 最低价格  
@@ -10135,7 +10138,7 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-ts | String | 数据生成的时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+ts | String | 开始时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 o | String | 开盘价格  
 h | String | 最高价格  
 l | String | 最低价格  
