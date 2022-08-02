@@ -139,6 +139,13 @@ API接口 Broker接入 最佳实践 更新日志
       * 调整保证金计算 
       * 调整保证金 
       * 网格策略智能回测（公共） 
+    * 赚币 
+      * 查看项目 
+      * 申购项目 
+      * 赎回项目 
+      * 撤销项目申购/赎回 
+      * 查看活跃订单 
+      * 查看历史订单 
     * 行情数据 
       * 获取所有产品行情信息 
       * 获取单个产品行情信息 
@@ -9684,6 +9691,694 @@ direction | String | 合约网格类型
 仅适用于`合约网格`  
 lever | String | 杠杆倍数  
 仅适用于`合约网格`  
+  
+## 赚币
+
+`赚币`功能模块下的API接口需要身份验证。
+
+### 查看项目
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/finance/staking-defi/offers`
+
+> 请求示例
+    
+    
+    GET /api/v5/finance/staking-defi/offers
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+productId | String | 否 | 项目ID  
+protocolType | String | 否 | 项目类型  
+`staking`：锁仓挖矿 `defi`：DEFI  
+ccy | String | 否 | 投资币种，如 `BTC`  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [
+           {
+                "ccy": "GLMR",  
+                "productId":"1234",    
+                "protocol": "glimmar",      //锁仓挖矿
+                "protocolType":"staking",  
+                "term":"15",
+                "apy":"0.5496",
+                "earlyRedeem":true,
+                "investData":[
+                  {
+                    "ccy":"GLMR",
+                    "bal":"100",
+                    "minAmt":"1",
+                    "maxAmt":""
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "GLMR",
+                    "earningType":"1"         // 每日发放
+                 }
+                ],
+            },
+            {
+                "ccy": "USDT", 
+                "productId":"2234",       
+                "protocol": "compond",      //DEFI-loan
+                "protocolType":"defi", 
+                "term":"0",
+                "apy":"0.12",
+                "earlyRedeem":true,
+                "investData":[
+                  {
+                    "ccy":"USDT",
+                    "bal":"20",
+                    "minAmt":"1",
+                    "maxAmt":""
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "USDT",
+                    "earningType":"0"      // 赎回发放
+                 },
+                 {
+                    "ccy": "COMP",
+                    "earningType":"1"      // 每日发放
+                 }
+                ],
+            },
+            {
+                "ccy": "ETH",  
+                "productId":"3234",     
+                "protocol": "sushiswap",      //DEFI
+                "protocolType":"defi",  
+                "term":"0",
+                "apy":"0.12",
+                "earlyRedeem":true,
+                "investData":[
+                  {
+                    "ccy":"USDT",
+                    "bal":"20",
+                    "minAmt":"100",
+                    "maxAmt":""
+                  },
+                  {
+                    "ccy":"ETH",
+                    "bal":"20",
+                    "minAmt":"0.03",
+                    "maxAmt":""
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "SUSHI",
+                    "earningType":"1"      // 每日发放
+                 }
+                ]
+    
+            },
+            {
+                "ccy": "LON",   
+                "productId":"4234",   
+                "protocol": "tokenlon",      //DEFI-pos
+                "protocolType":"defi",  
+                "earningCcy": ["LON"],
+                "term":"7",
+                "apy":"0.12",
+                "earlyRedeem":true,
+                "investData":[
+                  {
+                    "ccy":"LON",
+                    "bal":"1",
+                    "minAmt":"0.1",
+                    "maxAmt":""
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "LON",
+                    "earningType":"0"      // 赎回发放
+                 }
+                ]
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ccy | String | 币种名称，如 `BTC`  
+productId | String | 项目ID  
+protocol | String | 项目名称  
+protocolType | String | 项目类型  
+`staking`：锁仓挖矿 `defi`：DEFI  
+term | String | 项目期限  
+活期为0，其他则显示定期天数  
+apy | String | 预估年化  
+如果年化为7% ，则该字段为0.07  
+earlyRedeem | Boolean | 项目是否支持提前赎回  
+investData | Array | 目前用户资金账户中可用来投资的目标币种信息  
+>ccy | String | 投资币种，如`BTC`  
+>bal | String | 可投数量  
+>minAmt | String | 最小申购量  
+>maxAmt | String | 最大申购量  
+earningData | Array | 收益信息  
+>ccy | String | 收益币种，如`BTC`  
+>earningType | String | 收益类型  
+`0`: 预估收益  
+`1`: 累计发放收益  
+  
+### 申购项目
+
+#### 限速： 2次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`POST /api/v5/finance/staking-defi/purchase`
+
+> 请求示例
+    
+    
+    // 投资100ZIL30天的锁仓挖矿项目
+    POST /api/v5/finance/staking-defi/purchase
+    body 
+    {
+        "productId":"1234",
+        "investData":[
+          {
+            "ccy":"ZIL",
+            "amt":"100"
+          }
+        ],
+        "term":"30",
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+productId | String | 是 | 项目ID  
+investData | Array | 是 | 投资信息  
+>ccy | String | 是 | 投资币种，如 `BTC`  
+>amt | String | 是 | 投资数量  
+term | String | 可选 | 投资期限  
+定期项目必须指定投资期限  
+  
+> 返回结果
+    
+    
+    // 投资成功
+    {
+      "code": "0",
+      "msg": "",
+      "data": [
+        {
+          "ordId": "754147"
+        }
+      ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ordId | String | 订单ID  
+  
+### 赎回项目
+
+#### 限速： 2次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`POST /api/v5/finance/staking-defi/redeem`
+
+> 请求示例
+    
+    
+    // 提前赎回项目投资
+    POST /api/v5/finance/staking-defi/redeem
+    body 
+    {
+        "ordId":"754147",
+        "protocolType":"defi",
+        "allowEarlyRedeem":true
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ordId | String | 是 | 订单ID  
+protocolType | String | 是 | 项目类型  
+`staking`：锁仓挖矿 `defi`：DEFI  
+allowEarlyRedeem | Boolean | 否 | 是否提前赎回  
+默认为`false`  
+  
+> 返回结果
+    
+    
+    {
+      "code": "0",
+      "msg": "",
+      "data": [
+        {
+          "ordId": "754147"
+        }
+      ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ordId | String | 订单ID  
+  
+### 撤销项目申购/赎回
+
+#### 限速： 2次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`POST /api/v5/finance/staking-defi/cancel`
+
+> 请求示例
+    
+    
+    POST /api/v5/finance/staking-defi/cancel
+    body 
+    {
+        "ordId":"754147",
+        "protocolType":"defi"
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ordId | String | 是 | 订单ID  
+protocolType | String | 是 | 项目类型  
+`staking`：锁仓挖矿 `defi`：DEFI  
+  
+> 返回结果
+    
+    
+    {
+      "code": "0",
+      "msg": "",
+      "data": [
+        {
+          "ordId": "754147"
+        }
+      ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ordId | String | 订单ID  
+  
+### 查看活跃订单
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/finance/staking-defi/orders-active`
+
+> 请求示例
+    
+    
+    GET /api/v5/finance/staking-defi/orders-active
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+productId | String | 否 | 项目ID  
+protocolType | String | 否 | 项目类型  
+`staking`：锁仓挖矿 `defi`：DEFI  
+ccy | String | 否 | 投资币种，如 `BTC`  
+state | String | 否 | 订单状态  
+`8`: 待上车（预约中）  
+`13`: 订单取消中  
+`9`: 上链中  
+`1`: 收益中  
+`2`: 赎回中  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [
+           {
+                "ordId":"123456",
+                "state":"1",
+                "ccy": "GLMR",      
+                "protocol": "glimmar",      //锁仓挖矿
+                "protocolType":"staking",  
+                "term":"15",
+                "apy":"0.5496",
+                "investData":[
+                  {
+                    "ccy":"GLMR",
+                    "amt":"100"
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "GLMR",
+                    "earningType":"1"         // 每日发放
+                    "earnings":"3",
+                 }
+                ],
+                "purchasedTime":"1597026383085"
+            },
+            {
+                "ordId":"123457",
+                "state":"1",
+                "ccy": "USDT",      
+                "protocol": "compond",      //DEFI-loan
+                "protocolType":"defi", 
+                "term":"0",
+                "apy":"0.12",
+                "investData":[
+                  {
+                    "ccy":"USDT",
+                    "amt":"20",
+                    "minAmt":"1",
+                    "maxAmt":""
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "USDT",
+                    "earningType":"0"      // 赎回发放
+                    "earnings":"3",        //预估收益
+                 },
+                 {
+                    "ccy": "COMP",
+                    "earningType":"1"      // 每日发放
+                    "earnings":"3",        // 累计收益
+                 }
+                ],
+                "purchasedTime":"1597026383085"
+            },
+            {
+                "ordId":"123458",
+                "state":"1",
+                "ccy": "ETH",      
+                "protocol": "sushiswap",      //DEFI
+                "protocolType":"defi",  
+                "term":"0",
+                "apy":"0.12",
+                "investData":[
+                  {
+                    "ccy":"USDT",
+                    "amt":"100",
+                  },
+                  {
+                    "ccy":"ETH",
+                    "amt":"0.03"
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "SUSHI",
+                    "earningType":"1"      // 每日发放
+                    "earnings":"3",        // 累计收益
+                 }
+                ],
+                "purchasedTime":"1597026383085"
+            },
+            {
+                "ordId":"123458",
+                "state":"3",
+                "ccy": "LON",      
+                "protocol": "tokenlon",      //DEFI-pos
+                "protocolType":"defi",  
+                "earningCcy": ["LON"],
+                "term":"7",
+                "apy":"0.12",
+                "investData":[
+                  {
+                    "ccy":"LON",
+                    "amt":"1"
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "LON",
+                    "earningType":"0"      // 赎回发放
+                    "earnings":"3",        // 累计收益
+                 }
+                ],
+                "purchasedTime":"1597026383085"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ccy | String | 币种名称，如 `BTC`  
+ordId | String | 订单ID  
+productId | String | 项目ID  
+state | String | 订单状态  
+8: 待上车（预约中）  
+13: 订单取消中  
+9: 上链中  
+1: 收益中  
+2: 赎回中  
+protocol | String | 项目名称  
+protocolType | String | 项目类型  
+`staking`：锁仓挖矿 `defi`：DEFI  
+term | String | 项目期限  
+活期为0，其他则显示定期天数  
+apy | String | 预估年化  
+如果年化为7% ，则该字段为0.07  
+保留到小数点后4位（截位）  
+investData | Array | 用户投资信息  
+>ccy | String | 投资币种，如`BTC`  
+>amt | String | 已投资数量  
+earningData | Array | 收益信息  
+>ccy | String | 收益币种，如`BTC`  
+>earningType | String | 收益类型  
+`0`: 预估收益  
+`1`: 实际到账收益  
+>earnings | String | 收益数量  
+purchasedTime | String | 用户订单创建时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
+  
+### 查看历史订单
+
+#### 限速： 6次/s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/finance/staking-defi/orders-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/finance/staking-defi/orders-history
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+productId | String | 否 | 项目ID  
+protocolType | String | 否 | 项目类型  
+`staking`：锁仓挖矿 `defi`：DEFI  
+ccy | String | 否 | 投资币种，如 `BTC`  
+after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
+before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
+limit | String | 否 | 返回结果的数量，默认100条,最大值为100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [
+           {
+                "ordId":"123456",
+                "state":"3",
+                "ccy": "GLMR",      
+                "protocol": "glimmar",      //锁仓挖矿
+                "protocolType":"staking",  
+                "term":"15",
+                "apy":"0.5496",
+                "investData":[
+                  {
+                    "ccy":"GLMR",
+                    "amt":"100"
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "GLMR",
+                    "earningType":"1"         // 每日发放
+                    "realizedEarnings":"3"
+                 }
+                ],
+                "purchasedTime":"1597026383085",
+                "redeemedTime":"1597126383085"
+            },
+            {
+                "ordId":"123457",
+                "state":"3",
+                "ccy": "USDT",      
+                "protocol": "compond",      //DEFI-loan
+                "protocolType":"defi", 
+                "term":"0",
+                "apy":"0.12",
+                "investData":[
+                  {
+                    "ccy":"USDT",
+                    "amt":"20"
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "USDT",
+                    "earningType":"0"      // 赎回发放
+                    "realizedEarnings":"3"
+                 },
+                 {
+                    "ccy": "COMP",
+                    "earningType":"1"      // 每日发放
+                    "realizedEarnings":"3"
+                 }
+                ],
+                "purchasedTime":"1597026383085",
+                "redeemedTime":"1597126383085"
+            },
+            {
+                "ordId":"123458",
+                "state":"3",
+                "ccy": "ETH",      
+                "protocol": "sushiswap",      //DEFI
+                "protocolType":"defi",  
+                "term":"0",
+                "apy":"0.12",
+                "investData":[
+                  {
+                    "ccy":"USDT",
+                    "amt":"100",
+                  },
+                  {
+                    "ccy":"ETH",
+                    "amt":"0.03"
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "SUSHI",
+                    "earningType":"1"      // 每日发放
+                    "realizedEarnings":"3"
+                 }
+                ],
+                "purchasedTime":"1597026383085",
+                "redeemedTime":"1597126383085"
+    
+            },
+            {
+                "ordId":"123458",
+                "state":"3",
+                "ccy": "LON",      
+                "protocol": "tokenlon",      //DEFI-pos
+                "protocolType":"defi",  
+                "earningCcy": ["LON"],
+                "term":"7",
+                "apy":"0.12",
+                "investData":[
+                  {
+                    "ccy":"LON",
+                    "amt":"1"
+                  }
+                ],
+                "earningData": [
+                 {
+                    "ccy": "LON",
+                    "earningType":"0"      // 赎回发放
+                    "realizedEarnings":"3"
+                 }
+                ],
+                "purchasedTime":"1597026383085",
+                "redeemedTime":"1597126383085"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+ccy | String | 币种名称，如 `BTC`  
+ordId | String | 订单ID  
+productId | String | 项目ID  
+state | String | 订单状态  
+3: 订单已完成（包含撤销和已赎回两种状态）  
+protocol | String | 项目名称  
+protocolType | String | 项目类型  
+`staking`：锁仓挖矿 `defi`：DEFI  
+term | String | 项目期限  
+活期为0，其他则显示定期天数  
+apy | String | 预估年化  
+如果年化为7% ，则该字段为0.07  
+保留到小数点后4位（截位）  
+investData | Array | 用户投资信息  
+>ccy | String | 投资币种，如`BTC`  
+>amt | String | 已投资数量  
+earningData | Array | 收益信息  
+>ccy | String | 收益币种，如`BTC`  
+>earningType | String | 收益类型  
+0: `预估收益`  
+1: `实际到账收益`  
+>realizedEarnings | String | 已赎回订单累计收益  
+该字段只在订单处于赎回状态时有效  
+purchasedTime | String | 用户订单创建时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
+redeemedTime | String | 用户订单赎回时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
   
 ## 行情数据
 
