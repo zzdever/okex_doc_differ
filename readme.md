@@ -54,6 +54,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 批量取消询价单 
       * 取消所有询价单 
       * 执行报价
+      * 设置可报价产品 
       * 报价 
       * 取消报价单 
       * 批量取消报价单 
@@ -1252,7 +1253,8 @@ instType | String | 产品类型
 instId | String | 产品ID  
 tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
 clOrdId | String | 客户自定义订单ID  
@@ -1414,7 +1416,8 @@ instType | String | 产品类型
 instId | String | 产品ID  
 tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
 clOrdId | String | 客户自定义订单ID  
@@ -1575,7 +1578,8 @@ instType | String | 产品类型
 instId | String | 产品ID  
 tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
 clOrdId | String | 客户自定义订单ID  
@@ -1742,7 +1746,8 @@ instType | String | 产品类型
 instId | String | 产品ID  
 tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
 ordId | String | 订单ID  
 clOrdId | String | 客户自定义订单ID  
@@ -2438,7 +2443,8 @@ posSide | String | 持仓方向
 tdMode | String | 交易模式  
 tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 state | String | 订单状态 ，`live`：待生效 `pause`：暂停生效 `partially_effective`:部分生效  
 lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 tpTriggerPx | String | 止盈触发价  
@@ -2634,7 +2640,8 @@ posSide | String | 持仓方向
 tdMode | String | 交易模式  
 tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 state | String | 订单状态  
 `effective`： 已生效  
 `canceled`：已撤销  
@@ -3178,14 +3185,14 @@ quoteId | String | 是 | 报价单ID
 code | String | 结果代码，0 表示成功。  
 msg | String | 错误信息，如果代码不为 0，则不为空。  
 data | Array of objects | 包含结果的对象数组  
-> cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
+> cTime | String | 交易执行的时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > blockTdId | String | 大宗交易ID  
-> tTraderCode | String | 询价价方唯一标识代码。询价时 Anonymous 设置为 `True` 时不可见。  
-> mTraderCode | String | 报价方唯一标识代码。 报价时 Anonymous 设置为 `True` 时不可见。  
+> tTraderCode | String | 询价价方唯一标识代码。询价时 anonymous 设置为 `true` 时不可见。  
+> mTraderCode | String | 报价方唯一标识代码。 报价时 anonymous 设置为 `true` 时不可见。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
@@ -3194,6 +3201,83 @@ data | Array of objects | 包含结果的对象数组
 >> fee | String | 手续费，正数代表平台返佣 ，负数代表平台扣除  
 >> feeCcy | String | 手续费币种  
 >> tradeId | String | 最新的成交Id.  
+  
+### 设置可报价产品
+
+用于maker设置特定的接受询价和报价的产品
+
+#### 限速: 5次/2s
+
+#### 限速规则：UserID
+
+#### HTTP Requests
+
+`POST /api/v5/rfq/maker-instrument-settings`
+
+> 请求示例
+    
+    
+    POST /api/v5/rfq/maker-instrument-settings
+    [
+        {
+            "instType":"OPTION",
+            "data":
+                [{"uly":"BTC-USD"},
+                {"uly":"SOL-USD"}]
+        },
+        {
+            "instType":"FUTURES",
+            "data":
+                [{"uly":"BTC-USD"},
+                {"uly":"ETH-USD"}]
+        },
+        {
+            "instType":"SWAP",
+            "data":
+                [{"uly":"BTC-USD"},
+                {"uly":"ETH-USD"}
+            ]
+        },
+        {
+            "instType":"SPOT",
+            "data":
+                [{"instId":"BTC-USDT"},
+                 {"instId":"TRX-USDT"}]
+        }
+    ]
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 是 | 产品类别，枚举值包括`FUTURES`,`OPTION`,`SWAP`和`SPOT`  
+data | Array of objects | 是 | instType的元素  
+> uly | String | 可选 | 标的指数  
+> instId | String | 否 | 产品ID，如 `BTC-USDT`  
+  
+> 返回示例
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "result":true
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，`0` 表示成功  
+msg | String | 错误信息，如果代码不为`0`，则不为空  
+data | Array of objects | 请求返回值，包含请求结果  
+> result | Boolean | 请求结果，枚举值为`true`,`false`  
   
 ### 报价
 
@@ -3553,7 +3637,7 @@ data | Array of objects | 包含结果的对象数组
 > 请求示例
     
     
-    POST /api/v5/rfq/rfqs
+    GET /api/v5/rfq/rfqs
     
 
 #### 请求参数
@@ -3563,8 +3647,7 @@ data | Array of objects | 包含结果的对象数组
 rfqId | String | 否 | 询价单ID .  
 clRfqId | String | 否 | 客户询价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准  
 state | String | 否 | 询价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
-`traded_away`  
+`active` `canceled` `pending_fill` `filled` `expired` `failed` `traded_away`  
 `traded_away` 仅适用于报价方  
 beginId | String | 否 | 请求的起始询价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束询价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
@@ -3630,18 +3713,18 @@ data | Array of objects | 包含结果的对象数组
 > cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 询价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
-`traded_away`  
+`active` `canceled` `pending_fill` `filled` `expired` `failed` `traded_away`  
 `traded_away` 仅适用于报价方  
 > counterparties | Array of srings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
-> traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
+> traderCode | String | 询价方唯一标识代码，询价时 anonymous 设置为 `true` 时不可见  
 > rfqId | String | 询价单ID  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
+`buy`或`sell`  
 >> tgtCcy | String | 委托数量的类型  
   
 ### 获取报价单信息
@@ -3659,7 +3742,7 @@ data | Array of objects | 包含结果的对象数组
 > 请求示例
     
     
-    POST /api/v5/rfq/quotes
+    GET /api/v5/rfq/quotes
     
 
 #### 请求参数
@@ -3755,7 +3838,7 @@ data | Array of objects | 包含结果的数组
 > 请求示例
     
     
-    POST /api/v5/rfq/trades
+    GET /api/v5/rfq/trades
     
 
 #### 请求参数
@@ -3769,8 +3852,7 @@ blockTdId | String | 否 | 大宗交易ID
 clQuoteId | String | 否 | 由用户设置的报价单ID。如果同时传递了 `clQuoteId` 和 `quoteId`，则 quoteId
 将被视为主要标识符  
 state | String | 否 | 询价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
-`traded_away`  
+`active` `canceled` `pending_fill` `filled` `expired` `failed` `traded_away`  
 `traded_away` 仅适用于报价方  
 beginId | String | 否 | 请求的起始大宗交易ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束大宗交易ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
@@ -3842,8 +3924,8 @@ data | Array of objects | 包含结果的对象数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > blockTdId | String | 大宗交易ID  
-> tTraderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
-> mTraderCode | String | 报价方唯一标识代码。报价时 Anonymous 设置为 `True` 时不可见  
+> tTraderCode | String | 询价方唯一标识代码，询价时 anonymous 设置为 `true` 时不可见  
+> mTraderCode | String | 报价方唯一标识代码。报价时 anonymous 设置为 `true` 时不可见  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
@@ -3868,7 +3950,7 @@ data | Array of objects | 包含结果的对象数组
 > 请求示例
     
     
-    POST /api/v5/rfq/public-trades
+    GET /api/v5/rfq/public-trades
     
 
 #### 请求参数
@@ -9982,7 +10064,7 @@ ordId | String | 订单ID
   
 ### 撤销项目申购/赎回
 
-撤销后的资金返回资金账户。
+撤销申购后的资金返回资金账户。
 
 #### 限速： 2次/s
 
@@ -12240,7 +12322,7 @@ ts | String | 系统时间，Unix时间戳的毫秒数格式，如 `159702638308
 
 最近1天的爆仓单信息
 
-#### 限速： 2次/2s
+#### 限速：40次/2s
 
 #### 限速规则：IP
 
@@ -13563,7 +13645,8 @@ data | Object | 否 | 登陆失败后返回的数据
 > apiKey | String | 是 | 登陆失败后返回的APIKey  
 多账户批量登录的用户只能订阅 WebSocket 频道，不能使用 WebSocket 交易
 
-**sign** :签名字符串，签名算法如下：
+**api_key** :调用API的唯一标识。需要用户手动设置一个 **passphrase** :APIKey的密码 **timestamp**
+:Unix Epoch 时间戳，单位为秒 **sign** :签名字符串，签名算法如下：
 
 先将`timestamp` 、 `method` 、`requestPath` 进行字符串拼接，再使用HMAC
 SHA256方法将拼接后的字符串和SecretKey加密，然后进行Base64编码
@@ -13576,7 +13659,7 @@ SHA256方法将拼接后的字符串和SecretKey加密，然后进行Base64编�
 sign=CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(timestamp +'GET'\+
 '/users/self/verify', secret))
 
-**method** 总是 'GET'。
+**method** 总是 'GET'
 
 **requestPath** 总是 '/users/self/verify'
 
@@ -13820,7 +13903,8 @@ args | Array | 是 | 请求参数
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
 > tgtCcy | String | 否 | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 > banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时，系统不会改单，下单会失败，仅适用于币币市价单  
 expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -14018,7 +14102,8 @@ args | Array | 是 | 请求参数
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
 > tgtCcy | String | 否 | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 > banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时，系统不会改单，下单会失败，仅适用于币币市价单  
 expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -15809,7 +15894,8 @@ data | Array | 订阅的数据
 非保证金模式 `cash`：现金  
 > tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 > lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 > state | String | 订单状态  
 `live`：待生效  
@@ -16024,7 +16110,8 @@ data | Array | 订阅的数据
 非保证金模式 `cash`：现金  
 > tgtCcy | String | 币币市价单委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`订单  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
 > lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
 > state | String | 订单状态  
 `live`：待生效  
@@ -17580,8 +17667,8 @@ data | Array | 订阅的数据
 > instId | String | 产品ID，如 `BTC-USD-SWAP`  
 > category | String | 手续费档位，每个交易产品属于哪个档位手续费  
 > uly | String | 标的指数，如 `BTC-USD` ，仅适用于`交割/永续/期权`  
-> baseCcy | String | 交易货币币种，如 `BTC-USDT` 中`BTC` ，仅适用于`币币`  
-> quoteCcy | String | 计价货币币种，如 `BTC-USDT` 中 `USDT` ，仅适用于`币币`  
+> baseCcy | String | 交易货币币种，如 `BTC-USDT` 中`BTC` ，仅适用于`币币/币币杠杆`  
+> quoteCcy | String | 计价货币币种，如 `BTC-USDT` 中 `USDT` ，仅适用于`币币/币币杠杆`  
 > settleCcy | String | 盈亏结算和保证金币种，如 `BTC` ，仅适用于 `交割/永续/期权`  
 > ctVal | String | 合约面值  
 > ctMult | String | 合约乘数  
@@ -17590,7 +17677,7 @@ data | Array | 订阅的数据
 > stk | String | 行权价格， 仅适用于`期权`  
 > listTime | String | 上线日期， 仅适用于 `交割/永续/期权`  
 > expTime | String | 交割日期， 仅适用于 `交割/期权`  
-> lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`  
+> lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`。可用来分辨`币币杠杆`和`币币`  
 > tickSz | String | 下单价格精度，如 `0.0001`  
 > lotSz | String | 下单数量精度，如 `1`：BTC-USDT-200925 `0.001`：BTC-USDT  
 > minSz | String | 最小下单数量  
@@ -18051,7 +18138,6 @@ args | Array | 是 | 请求订阅的频道列表
 > instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-`SWAP`：永续  
 > uly | String | 可选 | 标的指数  
 `uly`和`instId`必须指定一个  
 > instId | String | 可选 | 产品ID  
@@ -19892,6 +19978,9 @@ APIKey 不存在 | 200 | 59506
 无效的产品ID {0} | 200 | 70004  
 组合交易的数量不能超过最大值 | 200 | 70005  
 不满足最小资产要求 | 200 | 70006  
+该产品类型 {0} 的标的指数 {0} 不存在 | 200 | 70007  
+Data数组必须至少含有一个有效元素 | 200 | 70009  
+产品类型 {0} 存在重复设置 | 200 | 70011  
 组合交易中的产品ID重复 | 200 | 70100  
 clRfqId重复 | 200 | 70101  
 未指定对手方 | 200 | 70102  
@@ -19899,6 +19988,7 @@ clRfqId重复 | 200 | 70101
 总价值应该大于最小值{0} | 200 | 70105  
 下单数量小于最小交易数量 | 200 | 70106  
 对手方的数量不能超过最大值 | 200 | 70107  
+所选产品无有效对手方 | 200 | 70109  
 不能取消处于{0}状态的询价单 | 200 | 70200  
 取消失败，由于询价单数量超过限制数量{0} | 200 | 70203  
 取消失败，由于您没有询价挂单 | 200 | 70207  
