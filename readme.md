@@ -1910,13 +1910,13 @@ fee | String | 手续费金额或者返佣金额，手续费扣除为‘负数�
 ts | String | 成交明细产生时间，Unix时间戳的毫秒数格式，如`1597026383085`  
 tradeId  
 当成交明细所归属的订单种类（category）为
-partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"
+partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"  
 tag  
-Order tag, always "sys:blocktrade" for block trading.  
+订单标签, 对于大宗交易总是 "sys:blocktrade" 。  
 ordId  
-Order ID, always "" for block trading.  
+订单ID, 对于大宗交易总是 "" 。  
 clOrdId  
-Client-supplied order ID, always "" for block trading.
+用户自定义订单ID, 对于大宗交易总是 "" 。
 
 ### 获取成交明细（近三个月）
 
