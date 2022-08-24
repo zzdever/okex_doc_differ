@@ -4296,7 +4296,7 @@ details | Array | 各个账户的资产估值
         "to":"18"
     }
     
-    母账户从资金账户划转1.5USDT到子账户的交易账户
+    母账户从资金账户划转1.5USDT到子账户的资金账户
     POST /api/v5/asset/transfer
     body 
     {
@@ -4343,6 +4343,9 @@ loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`或`组合保�
 true 或 false，默认false  
 clientId | String | 否 | 客户自定义ID  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+omitPosRisk | String | 否 | 是否忽略仓位风险  
+默认为`false`  
+仅适用于`组合保证金模式`  
   
 > 返回结果
     
@@ -5934,7 +5937,8 @@ ccy | String | 否 | 币种，如 `BTC`
                         "uTime": "1620722938250",
                         "upl": "0",
                         "uplLiab": "0",
-                        "stgyEq":"0"
+                        "stgyEq":"0",
+                        "spotInUseAmt":""
                     },
                     {
                         "availBal": "",
@@ -5959,7 +5963,8 @@ ccy | String | 否 | 币种，如 `BTC`
                         "uTime": "1620722938250",
                         "upl": "0.570822125136023",
                         "uplLiab": "0",
-                        "stgyEq":"0"
+                        "stgyEq":"0",
+                        "spotInUseAmt":""
                     }
                 ],
                 "imr": "3372.2942371050594217",
@@ -6035,6 +6040,8 @@ details | Array | 各币种资产详细信息
 > stgyEq | String | 策略权益  
 > isoUpl | String | 逐仓未实现盈亏  
 适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
+> spotInUseAmt | String | 现货对冲占用数量  
+适用于`组合保证金模式`  
 当前账户等级下无效字段返回""  币种余额小于 1e-8 的币种信息，会在 details 中过滤掉不返回。
 
 各账户等级下有效字段分布
@@ -6150,6 +6157,8 @@ posId | String | 否 | 持仓ID
             "posCcy":"",
             "posId":"307173036051017730",
             "posSide":"long",
+            "spotInUseAmt": "",
+            "spotInUseCcy": "",
             "thetaBS":"",
             "thetaPA":"",
             "tradeId":"109844",
@@ -6215,6 +6224,10 @@ vegaBS | String | 美金本位持仓仓位vega，仅适用于`期权`
 vegaPA | String | 币本位持仓仓位vega，仅适用于`期权`  
 cTime | String | 持仓创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 uTime | String | 最近一次持仓更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+spotInUseAmt | String | 现货对冲占用数量  
+适用于`组合保证金模式`  
+spotInUseCcy | String | 现货对冲占用币种，如 `BTC`  
+适用于`组合保证金模式`  
 PM账户下，持仓的 IMR MMR的数据是后端服务以ristUnit为最小粒度重新计算，相同riskUnit全仓仓位的imr和mmr返回值相同。
 
 ### 查看历史持仓信息
@@ -6701,11 +6714,12 @@ notes | String | 备注
                 "autoLoan": true,
                 "ctIsoMode": "automatic",
                 "greeksType": "PA",
-                "level": "Lv3",
+                "level": "Lv1",
                 "levelTmp": "",
-                "mgnIsoMode": "autonomy",
+                "mgnIsoMode": "automatic",
                 "posMode": "net_mode",
-                "uid": "781767883763712"
+                "spotOffsetType": "",
+                "uid": "44705892343619584"
             }
         ],
         "msg": ""
@@ -6732,6 +6746,9 @@ ctIsoMode | String | 衍生品的逐仓保证金划转模式
 `automatic`：开仓划转 `autonomy`：自主划转  
 mgnIsoMode | String | 币币杠杆的逐仓保证金划转模式  
 `automatic`：开仓划转 `autonomy`：自主划转  
+spotOffsetType | String | 现货对冲类型  
+`1`：现货对冲模式U模式 `2`：现货对冲模式币模式 `3`：非现货对冲模式  
+适用于`组合保证金模式`  
   
 ### 设置持仓模式
 
@@ -6931,6 +6948,10 @@ px | String | 否 | 委托价格
 leverage | String | 否 | 开仓杠杆倍数  
 默认为当前杠杆倍数  
 仅适用于`币币杠杆/交割/永续`  
+unSpotOffset | Boolean | 否 | `true`：禁止现货对冲，`false`：允许现货对冲  
+默认为`false`  
+仅适用于`组合保证金模式`  
+开启现货对冲模式下有效，否则忽略此参数。  
   
 > 返回结果
     
@@ -6991,9 +7012,10 @@ tdMode | String | 是 | 交易模式
 `cross`：全仓 `isolated`：逐仓 `cash`：非保证金  
 ccy | String | 可选 | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
 reduceOnly | Boolean | 否 | 是否为只减仓模式，仅适用于`币币杠杆`  
-px | String | 否 | 委托价格  
-当不填委托价时会按当前最新成交价计算  
-当指定多个产品ID查询时，忽略该参数，按当前最新成交价计算  
+unSpotOffset | Boolean | 否 | `true`：禁止现货对冲，`false`：允许现货对冲  
+默认为`false`  
+仅适用于`组合保证金模式`  
+开启现货对冲模式下有效，否则忽略此参数。  
   
 > 返回结果
     
@@ -7299,7 +7321,7 @@ instType | String | 产品类型
 ts | String | 数据返回时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 category | String | 币种类别，注意：此参数已废弃  
 备注：  
-maker的值：正数，代表是返佣的费率；负数，代表平台扣除的费率。
+maker/taker的值：正数，代表是返佣的费率；负数，代表平台扣除的费率。
 
 ### 获取计息记录
 
@@ -7583,12 +7605,16 @@ ccy | String | 否 | 币种，如 `BTC`
         "data": [{
                 "ccy": "BTC",
                 "maxWd": "124",
-                "maxWdEx": "125"
+                "maxWdEx": "125",
+                "spotOffsetMaxWd": "",
+                "spotOffsetMaxWdEx": ""
             },
             {
                 "ccy": "ETH",
                 "maxWd": "10",
-                "maxWdEx": "12"
+                "maxWdEx": "12",
+                "spotOffsetMaxWd": "",
+                "spotOffsetMaxWdEx": ""
             }
         ]
     }
@@ -7601,6 +7627,10 @@ ccy | String | 否 | 币种，如 `BTC`
 ccy | String | 币种  
 maxWd | String | 最大可划转数量（不支持`跨币种保证金模式`借币转出）  
 maxWdEx | String | 最大可划转数量（支持`跨币种保证金模式`借币转出）  
+spotOffsetMaxWd | String | 现货对冲不支持借币最大可转数量  
+仅适用于`组合保证金模式`  
+spotOffsetMaxWdEx | String | 现货对冲支持借币的最大可转数量  
+仅适用于`组合保证金模式`  
   
 ### 查看账户特定风险状态
 
@@ -7688,13 +7718,13 @@ amt | String | 是 | 借/还币的数量
         "code": "0",
         "data": [
             {
-                "amt": "102",
-                "availLoan": "97",
+                "amt": "100",
+                "availLoan": "100",
                 "ccy": "USDT",
                 "loanQuota": "6000000",
                 "posLoan": "0",
-                "side": "repay",
-                "usedLoan": "97"
+                "side": "borrow",
+                "usedLoan": "100"
             }
         ],
         "msg": ""
@@ -7709,8 +7739,8 @@ ccy | String | 借贷币种，如 `BTC`
 side | String | `borrow`：借币，`repay`：还币  
 amt | String | 借/还币的数量  
 loanQuota | String | 借币限额  
-posLoan | String | 当前账户开仓占用  
-availLoan | String | 当前账户剩余可用  
+posLoan | String | 当前账户负债占用（锁定额度内）  
+availLoan | String | 当前账户剩余可用（锁定额度内）  
 usedLoan | String | 当前账户已借额度  
   
 ### 获取尊享借币还币历史
@@ -7851,9 +7881,9 @@ records | Array | 各币种详细信息
 > usedLmt | String | 已借额度  
 > interest | String | 已计未扣利息  
 仅适用于`市场借币`  
-> posLoan | String | 当前账户开仓占用  
+> posLoan | String | 当前账户负债占用（锁定额度内）  
 仅适用于`尊享借币`  
-> availLoan | String | 当前账户剩余可用  
+> availLoan | String | 当前账户剩余可用（锁定额度内）  
 仅适用于`尊享借币`  
 > usedLoan | String | 当前账户已借额度  
 仅适用于`尊享借币`  
@@ -8565,6 +8595,9 @@ fromSubAccount | String | 是 | 转出子账户的子账户名称
 toSubAccount | String | 是 | 转入子账户的子账户名称  
 loanTrans | Boolean | 否 | 是否支持`跨币种保证金模式`或`组合保证金模式`下的借币转入/转出  
 true 或 false，默认false  
+omitPosRisk | String | 否 | 是否忽略仓位风险  
+默认为`false`  
+仅适用于`组合保证金模式`  
   
 > 返回结果
     
@@ -8860,6 +8893,8 @@ sCode | String | 事件执行结果的code，0代表成功
 sMsg | String | 事件执行失败时的msg  
   
 ### 网格策略停止
+
+每次最多可以撤销10个网格策略。
 
 #### 限速： 20次/2s
 
@@ -14860,6 +14895,7 @@ msg | String | 否 | 错误消息
               "isoLiab": "0",
               "coinUsdPrice": "60000",
               "stgyEq":"0",
+              "spotInUseAmt":"",
               "isoUpl":""
             }
           ]
@@ -14910,6 +14946,7 @@ msg | String | 否 | 错误消息
               "isoLiab": "0",
               "coinUsdPrice": "60000",
               "stgyEq":"0",
+              "spotInUseAmt":"",
               "isoUpl":""
             },
             {
@@ -14935,6 +14972,7 @@ msg | String | 否 | 错误消息
               "isoLiab": "0",
               "coinUsdPrice": "1.00007",
               "stgyEq":"0",
+              "spotInUseAmt":"",
               "isoUpl":""
             }
           ]
@@ -15008,6 +15046,8 @@ details | Array | 各币种资产详细信息
 > stgyEq | String | 策略权益  
 > isoUpl | String | 逐仓未实现盈亏  
 适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
+> spotInUseAmt | String | 现货对冲占用数量  
+适用于`组合保证金模式`  
   
 如果同时成交多个订单，那么将对账户频道的推送尽量进行聚合。
 
@@ -15127,6 +15167,7 @@ msg | String | 否 | 错误消息
     {
         "arg":{
             "channel":"positions",
+            "uid": "77982378738415879",
             "instType":"FUTURES"
         },
         "data":[
@@ -15161,6 +15202,8 @@ msg | String | 否 | 错误消息
                 "posCcy":"",
                 "posId":"307173036051017730",
                 "posSide":"long",
+                "spotInUseAmt": "",
+                "spotInUseCcy": "",
                 "thetaBS":"",
                 "thetaPA":"",
                 "tradeId":"109844",
@@ -15215,6 +15258,8 @@ msg | String | 否 | 错误消息
         "posCcy":"",
         "posId":"307173036051017730",
         "posSide":"long",
+        "spotInUseAmt": "",
+        "spotInUseCcy": "",
         "thetaBS":"",
         "thetaPA":"",
         "tradeId":"109844",
@@ -15255,6 +15300,8 @@ msg | String | 否 | 错误消息
         "posCcy":"",
         "posId":"307173036051017730",
         "posSide":"long",
+        "spotInUseAmt": "",
+        "spotInUseCcy": "",
         "thetaBS":"",
         "thetaPA":"",
         "tradeId":"109844",
@@ -15321,6 +15368,10 @@ data | Array | 订阅的数据
 > thetaPA | String | 币本位持仓仓位theta，仅适用于`期权`  
 > vegaBS | String | 美金本位持仓仓位vega，仅适用于`期权`  
 > vegaPA | String | 币本位持仓仓位vega，仅适用于`期权`  
+> spotInUseAmt | String | 现货对冲占用数量  
+适用于`组合保证金模式`  
+> spotInUseCcy | String | 现货对冲占用币种，如 `BTC`  
+适用于`组合保证金模式`  
 > cTime | String | 持仓创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > uTime | String | 最近一次持仓更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > pTime | String | 持仓信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -17075,7 +17126,7 @@ data | Array | 订阅的数据
 `0`：默认，`1`：市价卖币成功 `-1`：市价卖币失败  
 仅适用于`现货网格`  
 > tag | String | 订单标签  
-> pTime | String | 订单信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+> pTime | String | 网格策略的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 合约网格策略委托订单频道
 
@@ -17264,7 +17315,7 @@ data | Array | 订阅的数据
 仅适用于`合约网格`  
 > uly | String | 标的指数  
 > tag | String | 订单标签  
-> pTime | String | 订单信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+> pTime | String | 网格策略的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 合约网格持仓频道
 
@@ -19812,6 +19863,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 拒绝交易（失败的原因可能是资金不足，clTReqId重复，quoteId过期等） | 200 | 52913  
 询价量超过有效范围 | 200 | 52914  
 询价量太大流动性不足无法报价 | 200 | 52915  
+资金账户余额不足 | 200 | 52916  
   
 ### 币币/币币杠杆类
 
@@ -20096,5 +20148,5 @@ books50-l2-tbt深度频道仅支持手续费等级为VIP4及以上的用户订�
 
 # API问题反馈
 
-添加官方API技术支持QQ社群，QQ号：2356571147，3431422133 备注：API+姓名+账号，与专业量化人员交流。  
+添加官方API技术支持QQ社群，QQ号：2356571147，180731406 备注：API+姓名+账号，与专业量化人员交流。  
 
