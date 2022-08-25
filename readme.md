@@ -20,6 +20,7 @@ API接口 Broker接入 最佳实践 更新日志
     * 交易时效性 
       * REST 
       * WebSocket 
+  * 大宗交易
   * 做市商申请
   * 交互式浏览器 
     * 使用说明 
@@ -47,6 +48,12 @@ API接口 Broker接入 最佳实践 更新日志
       * 撤销高级策略委托订单 
       * 获取未完成策略委托单列表 
       * 获取历史策略委托单列表 
+      * 获取一键兑换主流币币种列表 
+      * 一键兑换主流币交易 
+      * 获取一键兑换主流币历史记录 
+      * 获取一键还债币种列表 
+      * 一键还债交易 
+      * 获取一键还债历史记录 
     * 大宗交易 
       * 获取报价方信息 
       * 询价 
@@ -242,6 +249,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 指数行情频道 
       * Status 频道 
       * 公共大宗交易频道 
+      * 公共大宗交易单腿交易频道
       * 大宗交易行情频道 
   * 错误码 
     * REST 
@@ -441,6 +449,44 @@ expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格
         }]
     }
     
+
+# 大宗交易
+
+大宗交易时指在非公开市场进行的、私下议定的、满足规定最小交易手数的期货、期权、交割、永续或混合产品的大单交易。
+交易细节一经确认，此笔交易会被提交到OKX以进行保证金计算，清算和执行。
+
+**基本概念**
+
+  1. **询价单（RFQs） -** 询价单，由询价方发给报价方. 询价单包括询价方希望交易的一种或多种产品及其数量。
+  2. **报价单 -** 报价单，由报价方发给询价方对询价单的报价。
+  3. **交易** \- 当询价方接受并执行报价方的报价单，一笔交易就由此产生。
+
+**基本工作流程**
+
+  1. 询价方创建一个询价单（RFQ），并选择希望收到此询价单的报价方。 
+  2. 不同报价方发送报价单回应此询价单。
+  3. 询价方选择执行最好的报价单产生交易。OKX收到此笔交易并做结算。
+  4. 询价方和报价方收到交易执行的确认。
+  5. 交易详情发布在公共市场数据频道上（不包含交易方信息）。
+
+**询价方角度**
+
+  1. 询价方使用POST /api/v5/rfq/create-rfq创建询价单。询价方可以可通过GET /api/v5/public/instruments查询可询价产品信息，即通过GET /api/v5/rfq/counterparties查询可选择报价方信息。
+  2. 询价方可以在询价单有效时任何时候通过POST /api/v5/rfq/cancel-rfq取消询价单。
+  3. 报价方，如果是询价方选择的报价方之一，会在rfqs推送频道收到询价单信息，并可作出相应报价。
+  4. 询价方，在quotes推送频道收到报价信息后，可以选择最优报价并通过POST /api/v5/rfq/execute-quote执行。
+  5. 询价方会在struc-block-trades推送频道收到交易成功执行确认。
+  6. 询价方也会在public-struc-block-trades推送频道收到此笔交易以及其他OKX大宗交易的确认信息。
+
+**报价方角度**
+
+  1. 当有一个新的询价单发出，并且报价方是被选择的报价方之一时，报价方会在rfqs推送频道接收到此询价单信息。
+  2. 报价方创建一个单向或者双向的报价单并通过POST /api/v5/rfq/create-quote发出。
+  3. 报价方可以通过POST /api/v5/rfq/cancel-quote任意取消一个有效的报价单。
+  4. 询价方选择执行最优报价单。
+  5. 报价方通过quotes推送频道接收他们报价单的状态更新。
+  6. 报价方会在struc-block-trades推送频道收到他们报价单的交易成功执行确认。
+  7. 报价方也会在public-struc-block-trades推送频道收到此笔交易以及其他OKX大宗交易的确认信息。
 
 # 做市商申请
 
@@ -2701,6 +2747,409 @@ activePx | String | 移动止盈止损激活价格
 moveTriggerPx | String | 移动止盈止损触发价格  
 仅适用于`移动止盈止损`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取一键兑换主流币币种列表
+
+获取小币一键兑换主流币币种列表。仅可兑换余额在 $10 以下小币币种。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/easy-convert-currency-list`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/easy-convert-currency-list
+    
+
+#### 请求参数
+
+无
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "fromData": [
+                    {
+                        "fromAmt": "6.580712708344864",
+                        "fromCcy": "ADA"
+                    },
+                    {
+                        "fromAmt": "2.9970000013055097",
+                        "fromCcy": "USDC"
+                    }
+                ],
+                "toCcy": [
+                    "USDT",
+                    "BTC",
+                    "ETH",
+                    "OKB"
+                ]
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+fromData | Array | 当前拥有并可兑换的小币币种列表信息  
+> fromCcy | String | 可兑换币种  
+> fromAmt | String | 可兑换币种数量  
+toCcy | Array | 可转换成的主流币币种列表  
+  
+### 一键兑换主流币交易
+
+进行小币一键兑换主流币交易。仅可兑换余额在 $10 以下小币币种。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`POST /api/v5/trade/easy-convert`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/easy-convert
+    body
+    {
+        "fromCcy": ["ADA","USDC"], //逗号分隔小币
+        "toCcy": "OKB" 
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+fromCcy | Array | 是 | 小币支付币种  
+单次最多同时选择5个币种，如有多个币种则用逗号隔开  
+toCcy | String | 是 | 兑换的主流币  
+只选择一个币种，且不能和小币支付币种重复  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "fillFromSz": "6.5807127",
+                "fillToSz": "0.17171580105126",
+                "fromCcy": "ADA",
+                "status": "running",
+                "toCcy": "OKB",
+                "uTime": "1661419684687"
+            },
+            {
+                "fillFromSz": "2.997",
+                "fillToSz": "0.1683755161661844",
+                "fromCcy": "USDC",
+                "status": "running",
+                "toCcy": "OKB",
+                "uTime": "1661419684687"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+status | String | 当前兑换进度/状态  
+`running`: 进行中  
+`filled`: 已完成  
+`failed`: 失败  
+fromCcy | String | 小币支付币种  
+toCcy | String | 兑换的主流币  
+fillFromSz | String | 小币偿还币种支付数量  
+fillToSz | String | 兑换的主流币成交数量  
+uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
+  
+### 获取一键兑换主流币历史记录
+
+查询一键兑换主流币的历史记录与进度状态。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/easy-convert-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/easy-convert-history
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
+limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "fillFromSz": "0.1761712511667539",
+                "fillToSz": "6.7342205900000000",
+                "fromCcy": "OKB",
+                "status": "filled",
+                "toCcy": "ADA",
+                "uTime": "1661313307979"
+            },
+            {
+                "fillFromSz": "0.1722106121112177",
+                "fillToSz": "2.9971018300000000",
+                "fromCcy": "OKB",
+                "status": "filled",
+                "toCcy": "USDC",
+                "uTime": "1661313307979"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+fromCcy | String | 小币支付币种  
+fromSz | String | 对应的小币支付数量  
+toCcy | String | 兑换到的主流币  
+toSz | String | 兑换到的主流币数量  
+status | String | 当前兑换进度/状态  
+`running`: 进行中  
+`filled`: 已完成  
+`failed`: 失败  
+uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
+  
+### 获取一键还债币种列表
+
+查询一键还债币种列表。负债币种包括全仓负债和逐仓负债。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/one-click-repay-currency-list`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/one-click-repay-currency-list
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+debtType | String | 否 | 负债类型  
+`cross`: 全仓负债  
+`isolated`: 逐仓负债  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "debtData": [
+                    {
+                        "debtAmt": "29.653478",
+                        "debtCcy": "LTC"
+                    },
+                    {
+                        "debtAmt": "237803.6828295906051002",
+                        "debtCcy": "USDT"
+                    }
+                ],
+                "debtType": "cross",
+                "repayData": [
+                    {
+                        "repayAmt": "0.4978335419825104",
+                        "repayCcy": "ETH"
+                    }
+                ]
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+debtData | Array | 负债币种信息  
+> debtCcy | String | 负债币种  
+> debtAmt | String | 可负债币种数量  
+包括本金和利息  
+debtType | String | 负债类型  
+`cross`: 全仓负债  
+`isolated`: 逐仓负债  
+repayData | Array | 偿还币种信息  
+> repayCcy | String | 可偿还负债的币种  
+> repayAmt | String | 可偿还负债的币种可用资产数量  
+  
+### 一键还债交易
+
+交易一键偿还小额全仓债务。不支持逐仓负债的偿还。根据资金和交易账户的剩余可用余额为最大偿还数量。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`POST /api/v5/trade/one-click-repay`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/one-click-repay
+    body
+    {
+        "debtCcy": ["ETH","BTC"], //逗号分隔债务币
+        "repayCcy": "USDT" //用USDT偿还ETH和BTC
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+debtCcy | Array | 是 | 负债币种  
+单次最多同时选择5个币种，如有多个币种则用逗号隔开  
+repayCcy | String | 是 | 偿还币种  
+只选择一个币种，且不能和负债币种重复  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "debtCcy": "ETH", 
+                "fillDebtSz": "0.01023052",
+                "fillRepaySz": "30", 
+                "repayCcy": "USDT", 
+                "status": "filled",
+                "uTime": "1646188520338"
+            },
+            {
+                "debtCcy": "BTC", 
+                "fillFromSz": "3",
+                "fillToSz": "60,221.15910001",
+                "repayCcy": "USDT",
+                "status": "filled",
+                "uTime": "1646188520338"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+status | String | 当前还债进度/状态  
+`running`: 进行中  
+`filled`: 已完成  
+`failed`: 失败  
+debtCcy | String | 负债币种  
+repayCcy | String | 偿还币种  
+fillDebtSz | String | 负债币种成交数量  
+fillRepaySz | String | 偿还币种成交数量  
+uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
+  
+### 获取一键还债历史记录
+
+查询一键还债的历史记录与进度状态。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/one-click-repay-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/one-click-repay-history
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
+limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "debtCcy": "USDC",
+                "fillDebtSz": "6950.4865447900000000",
+                "fillRepaySz": "4.3067975995094930",
+                "repayCcy": "ETH",
+                "status": "filled",
+                "uTime": "1661256148746"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+debtCcy | String | 负债币种  
+debtSz | String | 对应的负债币种成交数量  
+repayCcy | String | 偿还币种  
+repaySz | String | 偿还币种实际支付数量  
+status | String | 当前还债进度/状态  
+`running`: 进行中  
+`filled`: 已完成  
+`failed`: 失败  
+uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
   
 ## 大宗交易
 
@@ -5758,6 +6207,7 @@ szCcy | String | 是 | 用户报价币种
 clTReqId | String | 否 | 用户自定义的订单标识  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 tag | String | 否 | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
   
 > 返回结果
     
@@ -19434,6 +19884,102 @@ data | Array | 订阅的数据
 >> side | String | 询价单方向，从 Taker的视角看  
 >> tradeId | String | 最新成交Id  
   
+### 公共大宗交易单腿交易频道
+
+获取最新大宗交易单腿交易信息. 当有大宗交易时就会推送.
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "public-block-trades",
+          "instId": "BTC-USDT-SWAP"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `public-block-trades`  
+> instId | String | 是 | 产品 ID, e.g., BTC-USDT-SWAP.  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "public-block-trades",
+        "instId": "BTC-USDT-SWAP"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"args\":[{ \"channel\" : \"public-block-trades\""}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必需 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `public-block-trades`  
+> instId | String | 是 | 产品 ID, e.g., BTC-USDT-SWAP.  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+      "arg": {
+        "channel": "public-block-trades",
+        "instId": "BTC-USDT-SWAP"
+      },
+      "data": [
+        {
+          "instId": "BTC-USDT-SWAP",
+          "tradeId": "482866817984270338",
+          "px": "21950",
+          "sz": "100",
+          "side": "buy",
+          "ts": "1661396420687"
+        }
+      ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> instId | String | 产品 ID, e.g., BTC-USDT-SWAP.  
+data | Array | 公共大宗交易单腿交易信息  
+> instId | String | 产品 ID, e.g., BTC-USDT-SWAP.  
+> tradeId | String | 交易 ID, 由柜台提供.  
+> px | String | 该单腿交易价格.  
+> sz | String | 交易数量.  
+> side | String | 交易方向, buy, sell, 从taker角度看.  
+> ts | String | 成交时间, 时间戳格式，以毫秒为单位. e.g. 1597026383085.  
+  
 ### 大宗交易行情频道
 
 获取最近24小时大宗交易量
@@ -19619,7 +20165,7 @@ APIKey 与当前环境不匹配 | 401 | 50101
 ordId或clOrdId至少填一个 | 200 | 51003  
 委托数量超过用户当前档位，请调低杠杆 | 200 | 51004  
 委托数量大于单笔上限 | 200 | 51005  
-委托价格不在限价范围内 | 200 | 51006  
+委托价格不在限价范围内（最高买入价：{0}，最低卖出价：{1}） | 200 | 51006  
 委托失败，委托数量不可小于 1 张（用户下单数量不足 1 张时） | 200 | 51007  
 委托失败，账户可用余额不足 | 200 | 51008  
 下单功能被平台冻结 | 200 | 51009  
@@ -19800,6 +20346,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 用户没有执行mass cancel的权限 | 200 | 51411  
 委托已触发，暂不支持撤单 | 200 | 51412  
 撤单失败，接口不支持该委托类型的撤单 | 200 | 51413  
+下单失败，现货交易仅支持设置最新价为触发价格，请更改触发价格并重试 | 200 | 51415  
 价格和数量不能同时为空 | 200 | 51500  
 修改订单超过最大允许单数{0} | 400 | 51501  
 修改订单失败，用户保证金不足 | 200 | 51502  
