@@ -62,7 +62,6 @@ API接口 Broker接入 最佳实践 更新日志
       * 取消所有询价单 
       * 执行报价
       * 设置可报价产品 
-      * 重设MMP状态
       * 报价 
       * 取消报价单 
       * 批量取消报价单 
@@ -144,7 +143,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取网格策略委托订单详情 
       * 获取网格策略委托子订单信息 
       * 获取网格策略委托持仓 
-      * 现货/天地网格提取利润 
+      * 现货网格提取利润 
       * 调整保证金计算 
       * 调整保证金 
       * 网格策略智能回测（公共） 
@@ -231,7 +230,6 @@ API接口 Broker接入 最佳实践 更新日志
       * 大宗交易频道 
       * 现货网格策略委托订单频道 
       * 合约网格策略委托订单频道 
-      * 天地网格策略委托订单频道 
       * 合约网格持仓频道 
       * 网格策略子订单频道 
     * 公共频道 
@@ -3671,7 +3669,7 @@ data | Array of objects | 包含结果的对象数组
   
 ### 设置可报价产品
 
-用于maker设置特定的接受询价和报价的产品, 以及数量和价格范围。
+用于maker设置特定的接受询价和报价的产品
 
 #### 限速: 5次/2s
 
@@ -3686,56 +3684,30 @@ data | Array of objects | 包含结果的对象数组
     
     POST /api/v5/rfq/maker-instrument-settings
     [
-        {"instType": "OPTION",
-         "data":
-            [{    
-                "uly": "BTC-USD",
-                "maxBlockSz": "10000",
-                "makerPxBand": "5"
-                },
-            {
-                "uly": "SOL-USD",
-                "maxBlockSz": "100000",
-                "makerPxBand": "15"
-                }
+        {
+            "instType":"OPTION",
+            "data":
+                [{"uly":"BTC-USD"},
+                {"uly":"SOL-USD"}]
+        },
+        {
+            "instType":"FUTURES",
+            "data":
+                [{"uly":"BTC-USD"},
+                {"uly":"ETH-USD"}]
+        },
+        {
+            "instType":"SWAP",
+            "data":
+                [{"uly":"BTC-USD"},
+                {"uly":"ETH-USD"}
             ]
         },
-        {"instType": "FUTURES",
-         "data":
-            [
-            {
-                "uly": "BTC-USD",
-                "maxBlockSz": "10000",
-                "makerPxBand": "5"
-            },
-            {
-                "uly": "ETH-USDT",
-                "maxBlockSz": "100000",
-                "makerPxBand": "15"
-            }
-            ]
-        },
-        {"instType:": "SWAP",
-         "data":
-            [{
-                "uly": "BTC-USD",
-                "maxBlockSz": "10000",
-                "makerPxBand": "5"
-                },
-            {
-                "uly": "ETH-USDT"
-                }
-            ]
-        },
-        {"instType:": "SPOT",
-         "data":
-            [{
-                "instId": "BTC-USDT"
-                },
-            {
-                "instId": "TRX-USDT"
-                }
-            ]
+        {
+            "instType":"SPOT",
+            "data":
+                [{"instId":"BTC-USDT"},
+                 {"instId":"TRX-USDT"}]
         }
     ]
     
@@ -3748,12 +3720,6 @@ instType | String | 是 | 产品类别，枚举值包括`FUTURES`,`OPTION`,`SWAP
 data | Array of objects | 是 | instType的元素  
 > uly | String | 可选 | 标的指数  
 > instId | String | 否 | 产品ID，如 `BTC-USDT`  
-> maxBlockSz | String | 否 | 该种产品最大可交易数量。FUTURES, OPTION and SWAP
-> 的单位是合约数量。SPOT的单位是交易货币。  
-> makerPxBand | String | 否 | 价格限制以价格精度tick为单位，以标记价格为基准。  
-设置makerPxBand为1个tick代表:  
-如果买一价 > 标记价格 + 1 tick, 操作将被拦截  
-如果 买一价 < 标记价格 - 1 tick, 操作将被拦截  
   
 > 返回示例
     
@@ -3777,50 +3743,6 @@ code | String | 结果代码，`0` 表示成功
 msg | String | 错误信息，如果代码不为`0`，则不为空  
 data | Array of objects | 请求返回值，包含请求结果  
 > result | Boolean | 请求结果，枚举值为`true`,`false`  
-  
-### 重设MMP状态
-
-重设MMP状态为无效。
-
-#### 限速: 5次/2s
-
-#### 限速规则：UserID
-
-#### HTTP Requests
-
-`POST /api/v5/rfq/mmp-reset`
-
-> 请求示例
-    
-    
-    POST /api/v5/rfq/mmp-reset
-    
-    
-
-#### 请求参数
-
-None
-
->
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "ts":"1597026383085"
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 描述  
----|---|---  
-code | String | 结果代码，`0` 表示成功  
-msg | String | 错误信息，如果代码不为`0`，则不为空  
-data | Array of objects | 请求返回值，包含请求结果  
-ts | String | 重设时间. Unix 时间戳的毫秒数格式，如 `1597026383085`.  
   
 ### 报价
 
@@ -3878,37 +3800,27 @@ legs | Array of objects | 是 | 组合交易
     
     
     {
-        "code":"",
+        "code":"0",
         "msg":"",
         "data":[
             {
-                "validUntil":"1608997227834",
-                "uTime":"1608267227834",
-                "cTime":"1608267227834",
+                "cTime":"1611038342698",
+                "uTime":"1611038342698",
+                "quoteId":"84069", 
+                "clQuoteId":"q002",
+                "rfqId":"22537",
+                "quoteSide":"buy",
+                "state":"active",
+                "validUntil":"1611038442838",
                 "legs":[
                     {
-                        "px":"46000",
-                        "sz":"25",
-                        "instId":"BTC-USD-220114-25000-C",
-                        "side":"sell",
-                        "tgtCcy":""
-                    },
-                    {
-                        "px":"4000",
-                        "sz":"25",
-                        "instId":"ETH-USD-220114-25000-C",
+                        "px":"39450.0",
+                        "sz":"200000",
+                        "instId":"BTC-USDT-SWAP",
                         "side":"buy",
                         "tgtCcy":""
-                    }
-                ],
-                "quoteId":"25092",
-                "rfqId":"18753",
-                "quoteSide":"sell",
-                "state":"active",
-                "reason": "mmp_canceled"
-                "clQuoteId":"",
-                "clRfqId":"",
-                "traderCode":"Aksha"
+                    }            
+                ]
             }
         ]
     }
@@ -3925,7 +3837,6 @@ data | Array of objects | 包含结果的对象数组
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 报价单的状态  
 `active` `canceled` `pending_fill` `filled` `expired` `failed`  
-> reason | String | 状态原因. 有效值包括 `mmp_canceled`.  
 > validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -4344,7 +4255,6 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "rfqId":"18753",
                 "quoteSide":"sell",
                 "state":"canceled",
-                "reason":"mmp_canceled",
                 "clQuoteId":"cq001",
                 "clRfqId":"cr001",
                 "traderCode":"Trader1"
@@ -4364,7 +4274,6 @@ data | Array of objects | 包含结果的数组
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 报价单的状态  
 `active` `canceled` `pending_fill` `filled` `expired` `failed`  
-> reason | String | 状态原因. 有效值包括 `mmp_canceled`.  
 > validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -5118,6 +5027,8 @@ type | String | 否 | 账单类型
 `145`：系统回收  
 `146`：客户回馈  
 `147`：sushi 增发收益  
+`148`：转出  
+`149`：转入  
 `150`：节点返佣  
 `151`：邀请奖励  
 `152`：经纪商返佣  
@@ -9311,40 +9222,22 @@ subAcct | String | 子账户名称
         "lever": "2"
     }
     
-    # 合约网格下单
-    POST /api/v5/tradingBot/grid/order-algo
-    body
-    {
-      "instId": "BTC-USDT",
-      "algoOrdType": "moon_grid",
-      "maxPx": "5000",          
-      "minPx": "400",
-      "gridNum": "10",
-      "runType": "2",  
-      "quoteSz": "25"             
-    }
-    
 
 #### 请求参数
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 instId | String | 是 | 产品ID，如`BTC-USDT`  
-algoOrdType | String | 是 | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+algoOrdType | String | 是 | 订单类型  
+`grid`：现货网格委托，`contract_grid`：合约网格委托  
 maxPx | String | 是 | 区间最高价格  
 minPx | String | 是 | 区间最低价格  
 gridNum | String | 是 | 网格数量  
 runType | String | 否 | 网格类型  
 `1`：等差，`2`：等比  
 默认为等差  
-`天地网格`只支持`2`  
 tpTriggerPx | String | 否 | 止盈触发价  
-适用于`现货网格`/`合约网格`  
 slTriggerPx | String | 否 | 止损触发价  
-适用于`现货网格`/`合约网格`  
 tag | String | 否 | 订单标签  
   
 现货网格
@@ -9368,13 +9261,6 @@ basePos | Boolean | 否 | 是否开底仓
 默认为`false`  
 中性合约网格忽略该参数  
   
-天地网格
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-quoteSz | String | 是 | 计价币投入数量  
-您可以通过"网格策略智能回测"接口获取"天地网格"下单参数
-
 > 返回结果
     
     
@@ -9495,12 +9381,10 @@ sMsg | String | 事件执行失败时的msg
 ---|---|---|---  
 algoId | String | 是 | 策略订单ID  
 instId | String | 是 | 产品ID，如`BTC-USDT`  
-algoOrdType | String | 是 | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+algoOrdType | String | 是 | 订单类型  
+`grid`：现货网格委托，`contract_grid`：合约网格委托  
 stopType | String | 是 | 网格策略停止类型  
-现货网格/天地网格 `1`：卖出交易币，`2`：不卖出交易币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平  
   
 > 返回结果
@@ -9547,10 +9431,8 @@ sMsg | String | 事件执行失败时的msg
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-algoOrdType | String | 是 | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+algoOrdType | String | 是 | 订单类型  
+`grid`：现货网格委托，`contract_grid`：合约网格委托  
 algoId | String | 否 | 策略订单ID  
 instId | String | 否 | 产品ID，如`BTC-USDT`  
 instType | String | 否 | 产品类型  
@@ -9616,9 +9498,8 @@ instId | String | 产品ID
 cTime | String | 策略订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 uTime | String | 策略订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 algoOrdType | String | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+`grid`：现货网格  
+`contract_grid`：合约网格  
 state | String | 订单状态  
 `starting`：启动中  
 `running`：运行中  
@@ -9646,27 +9527,27 @@ cancelType | String | 网格策略停止原因
 `4`：风控停止  
 `5`：交割停止  
 stopType | String | 网格策略停止类型  
-现货网格/天地网格 `1`：卖出交易币，`2`：不卖出交易币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平，`2`：停止不平仓  
 quoteSz | String | 计价币投入数量  
-适用于`现货网格`/`天地网格`  
+仅适用于`现货网格`  
 baseSz | String | 交易币投入数量  
-适用于`现货网格`  
+仅适用于`现货网格`  
 direction | String | 合约网格类型  
 `long`：做多，`short`：做空，`neutral`：中性  
 仅适用于`合约网格`  
 basePos | Boolean | 是否开底仓  
-适用于`合约网格`  
+仅适用于`合约网格`  
 sz | String | 投入保证金，单位为`USDT`  
-适用于`合约网格`  
+仅适用于`合约网格`  
 lever | String | 杠杆倍数  
-适用于`合约网格`  
+仅适用于`合约网格`  
 actualLever | String | 实际杠杆倍数  
-适用于`合约网格`  
+仅适用于`合约网格`  
 liqPx | String | 预估强平价格  
-适用于`合约网格`  
+仅适用于`合约网格`  
 uly | String | 标的指数  
-适用于`合约网格`  
+仅适用于`合约网格`  
 tag | String | 订单标签  
   
 ### 获取历史网格策略委托单列表
@@ -9689,10 +9570,8 @@ tag | String | 订单标签
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-algoOrdType | String | 是 | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+algoOrdType | String | 是 | 订单类型  
+`grid`：现货网格委托，`contract_grid`：合约网格委托  
 algoId | String | 否 | 策略订单ID  
 instId | String | 否 | 产品ID，如`BTC-USDT`  
 instType | String | 否 | 产品类型  
@@ -9759,9 +9638,8 @@ instId | String | 产品ID
 cTime | String | 策略订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 uTime | String | 策略订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 algoOrdType | String | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+`grid`：现货网格  
+`contract_grid`：合约网格  
 state | String | 订单状态  
 `stopped`：已停止  
 maxPx | String | 区间最高价格  
@@ -9785,14 +9663,14 @@ cancelType | String | 网格策略停止原因
 `3`：止损停止  
 `4`：风控停止  
 `5`：交割停止  
-stopResult | String | 网格策略停止结果  
+stopResult | String | 现货网格策略停止结果  
 `0`：默认，`1`：市价卖币成功 `-1`：市价卖币失败  
-仅适用于`现货网格`/`天地网格`  
+仅适用于`现货网格`  
 stopType | String | 网格策略停止类型  
 现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平，`2`：停止不平仓  
 quoteSz | String | 计价币投入数量  
-仅适用于`现货网格`/`天地网格`  
+仅适用于`现货网格`  
 baseSz | String | 交易币投入数量  
 仅适用于`现货网格`  
 direction | String | 合约网格类型  
@@ -9832,10 +9710,8 @@ tag | String | 订单标签
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-algoOrdType | String | 是 | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+algoOrdType | String | 是 | 订单类型  
+`grid`：现货网格委托，`contract_grid`：合约网格委托  
 algoId | String | 是 | 策略订单ID  
   
 > 返回结果
@@ -9904,9 +9780,8 @@ instId | String | 产品ID
 cTime | String | 策略订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 uTime | String | 策略订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 algoOrdType | String | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+`grid`：现货网格  
+`contract_grid`：合约网格  
 state | String | 订单状态  
 `starting`：启动中  
 `running`：运行中  
@@ -9942,21 +9817,21 @@ cancelType | String | 网格策略停止原因
 `4`：风控停止  
 `5`：交割停止  
 stopType | String | 网格策略停止类型  
-现货网格/天地网格 `1`：卖出交易币，`2`：不卖出交易币  
+现货网格 `1`：卖出交易币，`2`：不卖出交易币  
 合约网格 `1`：市价全平，`2`：停止不平仓  
 quoteSz | String | 计价币投入数量  
-仅适用于`现货网格`/`天地网格`  
+仅适用于`现货网格`  
 baseSz | String | 交易币投入数量  
 仅适用于`现货网格`  
 curQuoteSz | String | 当前持有的计价币资产  
-仅适用于`现货网格`/`天地网格`  
+仅适用于`现货网格`  
 curBaseSz | String | 当前持有的交易币资产  
-仅适用于`现货网格`/`天地网格`  
+仅适用于`现货网格`  
 profit | String | 当前可提取利润,单位是计价币  
-仅适用于`现货网格`/`天地网格`  
-stopResult | String | 策略停止结果  
+仅适用于`现货网格`  
+stopResult | String | 现货网格策略停止结果  
 `0`：默认，`1`：市价卖币成功 `-1`：市价卖币失败  
-仅适用于`现货网格`/`天地网格`  
+仅适用于`现货网格`  
 direction | String | 合约网格类型  
 `long`：做多，`short`：做空，`neutral`：中性  
 仅适用于`合约网格`  
@@ -9997,10 +9872,8 @@ tag | String | 订单标签
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 algoId | String | 是 | 策略订单ID  
-algoOrdType | String | 是 | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+algoOrdType | String | 是 | 订单类型  
+`grid`：现货网格委托，`contract_grid`：合约网格委托  
 type | String | 是 | 子定单状态  
 `live`：未成交，`filled`：已成交  
 groupId | String | 否 | 组ID  
@@ -10053,9 +9926,8 @@ algoId | String | 策略订单ID
 instType | String | 产品类型  
 instId | String | 产品ID  
 algoOrdType | String | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+`grid`：现货网格  
+`contract_grid`：合约网格  
 groupId | String | 组ID  
 ordId | String | 子订单ID  
 cTime | String | 子订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -10175,7 +10047,7 @@ adl | String | 信号区
 分为5档，从1到5，数字越小代表adl强度越弱  
 markPx | String | 标记价格  
   
-### 现货/天地网格提取利润
+### 现货网格提取利润
 
 #### 限速： 20次/2s
 
@@ -10350,17 +10222,15 @@ algoId | String | 策略订单ID
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-algoOrdType | String | 是 | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+algoOrdType | String | 是 | 订单类型  
+`grid`：现货网格委托，`contract_grid`：合约网格委托  
 instId | String | 是 | 产品ID，如`BTC-USDT`  
 direction | String | 可选 | 合约网格类型  
 `long`：做多，`short`：做空，`neutral`：中性  
 合约网格必填  
 duration | String | 否 | 回测周期  
 `7D`：7天，`30D`：30天，`180D`：180天  
-默认`现货网格`为`7D`，`天地网格`为`180D`  
+默认为`7D`  
   
 > 返回结果
     
@@ -10395,9 +10265,8 @@ duration | String | 否 | 回测周期
 ---|---|---  
 instId | String | 产品ID  
 algoOrdType | String | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+`grid`：现货网格  
+`contract_grid`：合约网格  
 duration | String | 回测周期  
 `7D`：7天，`30D`：30天，`180D`：180天  
 gridNum | String | 网格数量  
@@ -17372,7 +17241,6 @@ msg | String | 否 | 错误消息
                 "traderCode":"SATS",
                 "quoteSide":"sell",
                 "state":"canceled",
-                "reason":"mmp_canceled",
                 "clQuoteId":""
             }
         ]
@@ -17391,7 +17259,6 @@ data | Array | 订阅的数据
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 报价单的状态  
 `active` `canceled` `pending_fill` `filled` `expired` `failed`  
-> reason | String | 状态原因,有效值包括`mmp_canceled`  
 > validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -17666,6 +17533,7 @@ data | Array | 订阅的数据
 `starting`：启动中  
 `running`：运行中  
 `stopping`：终止中  
+`no_close_position`：已停止未平仓（仅适用于合约网格）  
 `stopped`：已停止  
 > maxPx | String | 区间最高价格  
 > minPx | String | 区间最低价格  
@@ -17900,175 +17768,6 @@ data | Array | 订阅的数据
 > eq | String | 策略账户总权益  
 仅适用于`合约网格`  
 > uly | String | 标的指数  
-> tag | String | 订单标签  
-> pTime | String | 网格策略的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-  
-### 天地网格策略委托订单频道
-
-支持天地网格策略订单的首次订阅推送，定时推送和事件推送
-
-> 请求示例
-    
-    
-    {
-        "op": "subscribe",
-        "args": [{
-            "channel": "grid-orders-moon",
-            "instType": "SPOT"
-        }]
-    }
-    
-
-#### 请求参数
-
-参数 | 类型 | 是否必须 | 描述  
----|---|---|---  
-op | String | 是 | 操作，`subscribe` `unsubscribe`  
-args | Array | 是 | 请求订阅的频道列表  
-> channel | String | 是 | 频道名，`grid-orders-moon`  
-> instType | String | 是 | 产品类型  
-`SPOT`：币币  
-`ANY`：全部  
-> instId | String | 否 | 产品ID  
-> algoId | String | 否 | 策略ID  
-  
-> 成功返回示例
-    
-    
-    {
-        "event": "subscribe",
-        "arg": {
-            "channel": "grid-orders-moon",
-            "instType": "SPOT"
-        }
-    }
-    
-
-> 失败返回示例
-    
-    
-    {
-        "event": "error",
-        "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-orders-moon\", \"instType\" : \"FUTURES\"}]}"
-    }
-    
-
-#### 返回参数
-
-参数 | 类型 | 是否必须 | 描述  
----|---|---|---  
-event | String | 是 | 事件，`subscribe` `unsubscribe` `error`  
-arg | Object | 否 | 订阅的频道  
-> channel | String | 是 | 频道名  
-> instType | String | 是 | 产品类型  
-> instId | String | 否 | 产品ID  
-> algoId | String | 否 | 策略ID  
-code | String | 否 | 错误码  
-msg | String | 否 | 错误消息  
-  
-> 推送示例
-    
-    
-    {
-        "arg": {
-            "channel": "grid-orders-moon",
-            "instType": "ANY"
-        },
-        "data": [{
-            "algoId": "448965992920907776",
-            "algoOrdType": "moon_grid",
-            "annualizedRate": "0",
-            "arbitrageNum": "0",
-            "baseSz": "0",
-            "cTime": "1653313834104",
-            "cancelType": "0",
-            "curBaseSz": "0.001776289214",
-            "curQuoteSz": "46.801755866",
-            "floatProfit": "-0.4953878967772",
-            "gridNum": "6",
-            "gridProfit": "0",
-            "instId": "BTC-USDC",
-            "instType": "SPOT",
-            "investment": "100",
-            "maxPx": "33444.8",
-            "minPx": "24323.5",
-            "pTime": "1653476023742",
-            "perMaxProfitRate": "0.060375293181491054543",
-            "perMinProfitRate": "0.0455275366818586",
-            "pnlRatio": "0",
-            "quoteSz": "100",
-            "runPx": "30478.1",
-            "runType": "1",
-            "singleAmt": "0.00059261",
-            "state": "running",
-            "stopResult": "0",
-            "stopType": "0",
-            "totalAnnualizedRate": "-0.9643551057262827",
-            "totalPnl": "-0.4953878967772",
-            "tradeNum": "3",
-            "triggerTime": "1653378736894",
-            "uTime": "1653378736894"
-        }]
-    }
-    
-
-#### 推送数据参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-arg | Object | 订阅成功的频道  
-> channel | String | 频道名  
-> instType | String | 产品类型  
-data | Array | 订阅的数据  
-> algoId | String | 策略订单ID  
-> instType | String | 产品类型  
-> instId | String | 产品ID  
-> cTime | String | 策略订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-> uTime | String | 策略订单更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-> triggerTime | String | 策略订单触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-> algoOrdType | String | 策略订单类型  
-`moon_grid`：天地网格  
-> state | String | 订单状态  
-`starting`：启动中  
-`running`：运行中  
-`stopping`：终止中  
-`stopped`：已停止  
-> maxPx | String | 区间最高价格  
-> minPx | String | 区间最低价格  
-> gridNum | String | 网格数量  
-> runType | String | 网格类型  
-`1`：等差，`2`：等比  
-> tradeNum | String | 挂单成交次数  
-> arbitrageNum | String | 网格套利次数  
-> singleAmt | String | 单网格买卖量  
-> perMinProfitRate | String | 预期单网格最低利润率  
-> perMaxProfitRate | String | 预期单网格最高利润率  
-> runPx | String | 启动时价格  
-> totalPnl | String | 总收益  
-> pnlRatio | String | 收益率  
-> investment | String | 投入金额  
-天地网格如果投入了交易币则折算为计价币  
-> gridProfit | String | 网格利润  
-> floatProfit | String | 浮动盈亏  
-> totalAnnualizedRate | String | 总年化  
-> annualizedRate | String | 网格年化  
-> cancelType | String | 网格策略停止原因  
-`0`：无  
-`1`：手动停止  
-`2`：止盈停止  
-`3`：止损停止  
-`4`：风控停止  
-`5`：交割停止  
-> stopType | String | 网格策略停止类型  
-`1`：卖出交易币，`2`：不卖出交易币  
-> quoteSz | String | 计价币投入数量  
-> baseSz | String | 交易币投入数量  
-> curQuoteSz | String | 当前持有的计价币资产  
-> curBaseSz | String | 当前持有的交易币资产  
-> profit | String | 当前可提取利润,单位是计价币  
-> stopResult | String | 策略停止结果  
-`0`：默认，`1`：市价卖币成功 `-1`：市价卖币失败  
 > tag | String | 订单标签  
 > pTime | String | 网格策略的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
@@ -18311,9 +18010,8 @@ data | Array | 订阅的数据
 > instType | String | 产品类型  
 > instId | String | 产品ID  
 > algoOrdType | String | 策略订单类型  
-`grid`：现货网格委托  
-`contract_grid`：合约网格委托  
-`moon_grid`：天地网格委托  
+`grid`：现货网格  
+`contract_grid`：合约网格  
 > groupId | String | 组ID  
 > ordId | String | 子订单ID  
 > cTime | String | 子订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -20717,14 +20415,16 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 无效的报价数量 | 200 | 52903  
 无效的报价方向 | 200 | 52904  
 无效的报价 | 200 | 52905  
+无效渠道名 | 200 | 52906  
 订单找不到 | 200 | 52907  
 无效的订单ID | 200 | 52908  
 客户自定义ID重复使用 | 200 | 52909  
-服务端暂时不可用，请稍后重试 | 500 | 52910  
-询价服务不可用，请稍后重试 | 500 | 52911  
+服务端暂时不可用，请重试 | 500 | 52910  
+询价服务不可用，请重试 | 500 | 52911  
 服务端超时 | 500 | 52912  
 拒绝交易 | 200 | 52913  
-询价量太大，流动性不足导致无法报价，请稍后重试 | 200 | 52915  
+询价量超过有效范围 | 200 | 52914  
+询价量太大流动性不足无法报价 | 200 | 52915  
 资金账户余额不足 | 200 | 52916  
 询价数量不能低于下限 | 200 | 52917  
 询价数量不能超过上限 | 200 | 52918  
@@ -20928,7 +20628,6 @@ APIKey 不存在 | 200 | 59506
 组合交易的数量不能超过最大值 | 200 | 70005  
 不满足最小资产要求 | 200 | 70006  
 该产品类型 {0} 的标的指数 {0} 不存在 | 200 | 70007  
-MMP状态下操作失败。冻结时间为 {0} 秒 | 200 | 70008  
 Data数组必须至少含有一个有效元素 | 200 | 70009  
 产品类型 {0} 存在重复设置 | 200 | 70011  
 组合交易中的产品ID重复 | 200 | 70100  
@@ -20951,7 +20650,6 @@ clQuoteId重复 | 200 | 70301
 数量应该是下单数量精度的整数倍 | 200 | 70307  
 不允许对自己的询价单报价 | 200 | 70308  
 不允许对相同询价单进行同一方向的报价 | 200 | 70309  
-instId {0} 报价不可以超过你预设的价格限制 | 200 | 70310  
 不能取消处于{0}状态的报价单 | 200 | 70400  
 取消失败，由于报价单数量超过限制数量{0} | 200 | 70408  
 取消失败，由于您没有报价挂单 | 200 | 70409  
