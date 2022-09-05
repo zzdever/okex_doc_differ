@@ -571,7 +571,7 @@ APIKey和SecretKey将由平台随机生成和提供，Passphrase将由您提供�
 body`字符串（+表示字符串连接），以及SecretKey，使用HMAC SHA256方法加密，通过Base-64编码输出而得到的。
 
 如：`sign=CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(timestamp + 'GET' +
-'/users/self/verify', SecretKey))`
+'/api/v5/account/balance?ccy=BTC', SecretKey))`
 
 其中，`timestamp`的值与`OK-ACCESS-
 TIMESTAMP`请求头相同，为ISO格式，如`2020-12-08T09:08:57.715Z`。
@@ -16379,6 +16379,7 @@ data | Array | 订阅的数据
 通过API修改订单时，如果`cxlOnFail`设置为`false`且修改失败后，则`amendResult`返回 `-1`  
 通过API修改订单时，如果`cxlOnFail`设置为`true`且修改失败后，则`amendResult`返回`1`  
 通过Web/APP修改订单时，如果修改失败后，则`amendResult`返回`-1`  
+> reduceOnly | Boolean | 是否只减仓，`true` 或 `false`  
 > code | String | 错误码，默认为0  
 > msg | String | 错误消息，默认为""  
   
