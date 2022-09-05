@@ -13,7 +13,8 @@ API接口 Broker接入 最佳实践 更新日志
 [English](javascript:void\(0\);)
 
   * 概览 
-    * 满意度调研 
+    * API问题反馈 
+    * 创建我的APIKey 
     * 实盘交易 
     * 模拟盘交易 
     * 基本信息 
@@ -267,18 +268,25 @@ API接口 Broker接入 最佳实践 更新日志
       * 大宗交易 
     * WebSocket 
       * 公共 
-  * 创建我的APIKey 
-  * API问题反馈 
 
 # 概览
 
 欢迎查看 V5 API文档。我们提供完整的REST和WebSocket API以满足您的交易需求。  
 V5 API只适用于[交易账户](/support/hc/zh-cn/sections/360011507312)。  
 
-## 满意度调研
+## API问题反馈
 
-为了更好的提高V5 API的接口服务用户体验，希望您将使用V5 API过程中的感受和建议告诉我们，我们非常重视每一位用户的反馈。[V5
-API满意度调研](https://www.wjx.cn/vj/wFoyR0w.aspx)  
+为了更好的提高V5 API的接口服务用户体验，希望您将使用V5 API过程中的感受和建议告诉我们，我们非常重视每一位用户的反馈。
+
+  * [V5 API满意度调研](https://www.wjx.cn/vj/wFoyR0w.aspx)
+
+  * 添加官API技术支持Telegram社群: <https://t.me/OKXAPI>
+
+  * 添加官方API技术支持QQ社群，QQ号：2356571147，180731406 备注：API+姓名+账号，与专业量化人员交流。
+
+## 创建我的APIKey
+
+点击跳转至官网创建V5APIKey的页面 [创建我的APIKey](/account/my-api)  
 
 ## 实盘交易
 
@@ -21015,13 +21023,5 @@ passphrase不正确 | 60024
 私有服务不支持订阅公共频道 | 60028  
 books-l2-tbt深度频道仅支持手续费等级为VIP5及以上的用户订阅使用 | 60029  
 books50-l2-tbt深度频道仅支持手续费等级为VIP4及以上的用户订阅使用 | 60030  
-内部系统错误 | 63999  
-  
-# 创建我的APIKey
-
-点击跳转至官网创建V5APIKey的页面 [创建我的APIKey](/account/my-api)  
-
-# API问题反馈
-
-添加官方API技术支持QQ社群，QQ号：2356571147，180731406 备注：API+姓名+账号，与专业量化人员交流。  
+内部系统错误 | 63999
 
