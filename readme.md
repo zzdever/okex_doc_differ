@@ -3171,6 +3171,8 @@ uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026
   
 ## 大宗交易
 
+简单账户模式下不支持大宗交易
+
 ### 获取报价方信息
 
 查询可以参与交易的报价方信息。
@@ -4190,7 +4192,7 @@ data | Array of objects | 包含结果的对象数组
   
 ### 获取询价单信息
 
-获取询价单信息
+获取用户发出的或收到的询价单信息
 
 #### 限速: 2次/2s
 
@@ -4295,7 +4297,7 @@ data | Array of objects | 包含结果的对象数组
   
 ### 获取报价单信息
 
-获取报价单信息
+获取用户发出的或收到的报价单信息
 
 #### 限速: 2次/2s
 
@@ -4393,7 +4395,7 @@ data | Array of objects | 包含结果的数组
   
 ### 获取大宗交易信息
 
-获取大宗交易成交信息
+获取该用户大宗交易成交信息
 
 #### 限速: 5次/2s
 
@@ -4656,25 +4658,27 @@ ccy | String | 否 | 币种，如 `BTC`
       "msg": "",
       "data": [
         {
-          "canDep": true,
-          "canInternal": false,
-          "canWd": true,
-          "ccy": "USDT",
-          "chain": "USDT-TRC20",
-          "logoLink": "https://static.coinall.ltd/cdn/assets/imgs/221/5F74EB20302D7761.png",
-          "mainNet": false,
-          "maxFee": "1.6",
-          "maxWd": "9608350",
-          "minDep": "0.00000001",
-          "minDepArrivalConfirm": "1",
-          "minFee": "0.8",
-          "minWd": "2",
-          "minWdUnlockConfirm": "1",
-          "name": "Tether",
-          "needTag": false,
-          "usedWdQuota": "0",
-          "wdQuota": "500",
-          "wdTickSz": "3"
+            "canDep": true,
+            "canInternal": true,
+            "canWd": true,
+            "ccy": "BTC",
+            "chain": "BTC-Bitcoin",
+            "depQuotaFixed": "",
+            "logoLink": "https://static.coinall.ltd/cdn/oksupport/asset/currency/icon/btc.png",
+            "mainNet": true,
+            "maxFee": "0.0004",
+            "maxWd": "500",
+            "minDep": "0.00005",
+            "minDepArrivalConfirm": "1",
+            "minFee": "0.0002",
+            "minWd": "0.001",
+            "minWdUnlockConfirm": "3",
+            "name": "Bitcoin",
+            "needTag": false,
+            "usedDepQuotaFixed": "",
+            "usedWdQuota": "0",
+            "wdQuota": "200",
+            "wdTickSz": "8"
         }
       ]
     }
@@ -4705,6 +4709,10 @@ mainNet | Boolean | 当前链是否为主链
 needTag | Boolean | 当前链是否需要标签（tag/memo）信息  
 minDepArrivalConfirm | String | 充值到账最小网络确认数。币已到账但不可提。  
 minWdUnlockConfirm | String | 提现解锁最小网络确认数  
+depQuotaFixed | String | 充币固定限额，单位为`BTC`  
+没有充币限制则返回""  
+usedDepQuotaFixed | String | 已用充币固定额度，单位为`BTC`  
+没有充币限制则返回""  
   
 ### 获取资金账户余额
 
@@ -5802,6 +5810,8 @@ redemptAmt | String | 赎回中的数量
   
 ### 余币宝申购/赎回
 
+仅资金账户中的资产支持余币宝申购。
+
 #### 限速： 6次/s
 
 #### 限速规则：UserID
@@ -6312,7 +6322,7 @@ szCcy | String | 是 | 用户报价币种
 clTReqId | String | 否 | 用户自定义的订单标识  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+适用于broker用户  
   
 > 返回结果
     
@@ -6383,6 +6393,7 @@ after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时�
 before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
 limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
 tag | String | 否 | 订单标签  
+适用于broker用户  
   
 > 返回结果
     
@@ -10429,11 +10440,11 @@ lever | String | 杠杆倍数
   
 ## 赚币
 
-`赚币`功能模块下的API接口需要身份验证。
+`赚币`功能模块下的API接口需要身份验证。 仅资金账户中的资产支持赚币。
 
 ### 查看项目
 
-#### 限速： 6次/s
+#### 限速： 3次/s
 
 #### 限速规则：UserID
 
@@ -10763,7 +10774,7 @@ ordId | String | 订单ID
   
 ### 查看活跃订单
 
-#### 限速： 6次/s
+#### 限速： 3次/s
 
 #### 限速规则：UserID
 
@@ -10942,7 +10953,7 @@ purchasedTime | String | 用户订单创建时间，值为时间戳，Unix时间
   
 ### 查看历史订单
 
-#### 限速： 6次/s
+#### 限速： 3次/s
 
 #### 限速规则：UserID
 
