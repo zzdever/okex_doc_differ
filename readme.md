@@ -2157,6 +2157,8 @@ tgtCcy | String | 否 | 委托数量的类型
 reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
+clOrdId | String | 否 | 客户自定义订单ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
   
 止盈止损
 
@@ -2236,6 +2238,7 @@ timeInterval | String | 是 | 下单间隔
         "data":[
             {
                 "algoId":"12345689",
+                "clOrdId": "",
                 "sCode":"0",
                 "sMsg":""
             }
@@ -2248,6 +2251,7 @@ timeInterval | String | 是 | 下单间隔
 **参数名** | **类型** | **描述**  
 ---|---|---  
 algoId | String | 策略委托单ID  
+clOrdId | String | 客户自定义订单ID  
 sCode | String | 事件执行结果的code，0代表成功  
 sMsg | String | 事件执行失败时的msg  
   
@@ -2417,6 +2421,8 @@ ordType | String | 是 | 订单类型
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
 limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+clOrdId | String | 否 | 客户自定义订单ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
   
 > 返回结果
     
@@ -2430,6 +2436,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "instId":"BTC-USD-200329",
                 "ordId":"123445",
                 "ccy":"BTC",
+                "clOrdId":"",
                 "algoId":"1234",
                 "sz":"999",
                 "ordType":"oco",
@@ -2469,6 +2476,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "instId":"BTC-USD-200329",
                 "ordId":"123445",
                 "ccy":"BTC",
+                "clOrdId":"",
                 "algoId":"1234",
                 "sz":"999",
                 "ordType":"oco",
@@ -2516,6 +2524,7 @@ instId | String | 产品ID
 ccy | String | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
 ordId | String | 订单ID  
 algoId | String | 策略委托单ID  
+clOrdId | String | 客户自定义订单ID  
 sz | String | 委托数量  
 ordType | String | 订单类型  
 side | String | 订单方向  
@@ -2629,6 +2638,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "instId":"BTC-USD-200329",
                 "ordId":"123445",
                 "ccy":"BTC",
+                "clOrdId":"",
                 "algoId":"1234",
                 "sz":"999",
                 "ordType":"oco",
@@ -2667,6 +2677,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "instId":"BTC-USD-200329",
                 "ordId":"123445",
                 "ccy":"BTC",
+                "clOrdId":"",
                 "algoId":"1234",
                 "sz":"999",
                 "ordType":"oco",
@@ -2713,6 +2724,7 @@ instId | String | 产品ID
 ccy | String | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
 ordId | String | 订单ID  
 algoId | String | 策略委托单ID  
+clOrdId | String | 客户自定义订单ID  
 sz | String | 委托数量  
 ordType | String | 订单类型  
 side | String | 订单方向  
@@ -16528,6 +16540,7 @@ msg | String | 否 | 错误消息
             "instId": "BTC-USD-200329",
             "ordId": "312269865356374016",
             "ccy": "BTC",
+            "clOrdId": "",
             "algoId": "1234",
             "px": "999",
             "sz": "3",
@@ -16573,6 +16586,7 @@ data | Array | 订阅的数据
 > ccy | String | 保证金币种，仅单币种保证金账户下的全仓币币杠杆需要选择保证金币种  
 > ordId | String | 订单ID，与策略委托订单关联的订单ID  
 > algoId | String | 策略委托单ID  
+> clOrdId | String | 客户自定义订单ID  
 > sz | String | 委托数量，`币币/币币杠杆` 以币为单位；`交割/永续/期权` 以张为单位  
 > ordType | String | 订单类型  
 `conditional`：单向止盈止损  
@@ -16739,6 +16753,7 @@ msg | String | 否 | 错误消息
                 "algoId":"355056228680335360",
                 "cTime":"1630924001545",
                 "ccy":"",
+                "clOrdId": "",
                 "count":"1",
                 "instId":"BTC-USDT",
                 "instType":"SPOT",
@@ -16789,6 +16804,7 @@ data | Array | 订阅的数据
 > ccy | String | 保证金币种，仅单币种保证金账户下的全仓币币杠杆需要选择保证金币种  
 > ordId | String | 订单ID，与策略委托订单关联的订单ID  
 > algoId | String | 策略委托单ID  
+> clOrdId | String | 客户自定义订单ID  
 > sz | String | 委托数量，`币币/币币杠杆` 以币为单位；`交割/永续/期权` 以张为单位  
 > ordType | String | 订单类型  
 `iceberg`：冰山委托  
@@ -20805,7 +20821,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 ---|---|---  
 请先开通余币宝服务 | 200 | 58002  
 余币宝不支持该币种 | 200 | 58003  
-账户冻结（划转和提现接口，源或目的不允许划转） | 200 | 58004  
+账户冻结 | 200 | 58004  
 申购/赎回额度不可超过{0} | 200 | 58005  
 币种{0}不支持当前操作 | 200 | 58006  
 资金接口服务异常，请稍后再试。 | 200 | 58007  
@@ -20815,7 +20831,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 抱歉，由于当地法律法规，欧易无法为{region}未认证用户提供服务，请先认证身分以继续使用欧易 | 200 | 58011  
 抱歉，由于当地法律法规，欧易无法为{region}未认证用户提供服务，所以您无法向该用户转账 | 200 | 58012  
 行权或结算中，暂无法转入或转出 | 200 | 58100  
-划转冻结（划转接口，源或目的不允许划转） | 200 | 58101  
+划转冻结 | 200 | 58101  
 划转过于频繁，请降低划转频率 | 429 | 58102  
 您在法币区的交易异常，现已被限制划转功能，请您联系在线客服以解除限制 | 200 | 58104  
 您在法币区的交易异常，现已被限制划转功能，请您在网页或APP进行法币划  
