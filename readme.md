@@ -13,7 +13,7 @@ API接口 Broker接入 最佳实践 更新日志
 [English](javascript:void\(0\);)
 
   * 概览 
-    * API问题反馈 
+    * API学习资源与技术支持 
     * 创建我的APIKey 
     * 实盘交易 
     * 模拟盘交易 
@@ -274,14 +274,14 @@ API接口 Broker接入 最佳实践 更新日志
 欢迎查看 V5 API文档。我们提供完整的REST和WebSocket API以满足您的交易需求。  
 V5 API只适用于[交易账户](/support/hc/zh-cn/sections/360011507312)。  
 
-## API问题反馈
+## API学习资源与技术支持
 
-为了更好的提高V5 API的接口服务用户体验，希望您将使用V5 API过程中的感受和建议告诉我们，我们非常重视每一位用户的反馈。
-
-  * [V5 API满意度调研](https://www.wjx.cn/vj/wFoyR0w.aspx)
-
-  * 添加官API技术支持Telegram社群: <https://t.me/OKXAPI>
-
+  * 学习使用V5 API交易: [V5 API使用指南](/docs-v5/trick_zh/#part1)
+  * 官方 Python SDK: [python-okx](https://pypi.org/project/python-okx/)
+  * 官方Discord社群: [OKX Official Discord Channel](https://discord.gg/ctn6hNWvQe)
+  * 官方Telegram社群: [OKX API](https://t.me/OKXAPI)
+  * 订阅API更新: [OKX API Announcement](https://t.me/OKExAPIChannel)
+  * 请花1分钟时间帮助我们提升我们的服务: [V5 API 满意度调研](https://www.wjx.cn/vj/wFoyR0w.aspx)
   * 添加官方API技术支持QQ社群，QQ号：2356571147，180731406 备注：API+姓名+账号，与专业量化人员交流。
 
 ## 创建我的APIKey
@@ -16413,7 +16413,7 @@ data | Array | 订阅的数据
 > amendResult | String | 修改订单的结果  
 `-1`： 失败  
 `0`：成功  
-`1`：自动撤单（因为修改成功导致订单自动撤销）  
+`1`：自动撤单（因为修改失败导致订单自动撤销）  
 通过API修改订单时，如果`cxlOnFail`设置为`false`且修改失败后，则`amendResult`返回 `-1`  
 通过API修改订单时，如果`cxlOnFail`设置为`true`且修改失败后，则`amendResult`返回`1`  
 通过Web/APP修改订单时，如果修改失败后，则`amendResult`返回`-1`  
@@ -20716,7 +20716,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 撤单失败，订单已处于撤销中 | 200 | 51410  
 用户没有执行mass cancel的权限 | 200 | 51411  
 委托已触发，暂不支持撤单 | 200 | 51412  
-撤单失败，接口不支持该委托类型的撤单 | 200 | 51413  
+撤单失败，该接口不支持该委托类型的撤单 | 200 | 51413  
 下单失败，现货交易仅支持设置最新价为触发价格，请更改触发价格并重试 | 200 | 51415  
 价格和数量不能同时为空 | 200 | 51500  
 修改订单超过最大允许单数{0} | 400 | 51501  
@@ -20727,7 +20727,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 修改订单失败，订单已撤销 | 200 | 51509  
 修改订单失败，订单已完成 | 200 | 51510  
 操作失败，订单价格不满足Post Only条件 | 200 | 51511  
-修改订单失败，批量改单不允许一批量请求中包含相同的订单 | 200 | 51512  
+批量修改订单失败。同一批量改单请求中不允许包含相同订单。 | 200 | 51512  
 对于正在处理的同一订单，改单请求次数不得超过3次 | 200 | 51513  
 查询订单的状态不存在 | 200 | 51600  
 订单状态和订单id不能同时存在 | 200 | 51601  
