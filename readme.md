@@ -277,7 +277,6 @@ V5 API只适用于[交易账户](/support/hc/zh-cn/sections/360011507312)。
 ## API学习资源与技术支持
 
   * 学习使用V5 API交易: [V5 API使用指南](/docs-v5/trick_zh/#part1)
-  * 官方 Python SDK: [python-okx](https://pypi.org/project/python-okx/)
   * 官方Discord社群: [OKX Official Discord Channel](https://discord.gg/ctn6hNWvQe)
   * 官方Telegram社群: [OKX API](https://t.me/OKXAPI)
   * 订阅API更新: [OKX API Announcement](https://t.me/OKExAPIChannel)
