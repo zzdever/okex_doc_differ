@@ -5280,7 +5280,7 @@ to | String | 否 | 资金充值到账账户
 ---|---|---  
 invoice | String | invoice 号码  
 cTime | String | 生成invoice时间  
-仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`adeed.choudhury@okcoin.com`申请
+仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`nan.meng@okg.com`申请
 
 ### 获取充值地址信息
 
@@ -13205,7 +13205,9 @@ tdMode | String | 是 | 保证金模式
 uly | String | 可选 | 标的指数，支持多uly，半角逗号分隔，最大不超过3个  
 当产品类型是 `永续`、`交割`、`期权` 之一时必填，当产品类型是 `MARGIN` 时忽略  
 instId | String | 可选 | 产品ID，支持多instId，半角逗号分隔，最大不超过5个  
-仅适用`币币杠杆`，且必填写  
+仅适用`币币杠杆`，`instId`和`ccy`必须传一个，若传两个，以`instId`为主  
+ccy | String | 可选 | 保证金币种  
+仅适用杠杆全仓，该值生效时，返回的是`跨币种保证金模式`和`组合保证金模式`下的借币量  
 tier | String | 否 | 查指定档位  
   
 > 返回结果
@@ -13239,14 +13241,18 @@ tier | String | 否 | 查指定档位
 uly | String | 标的指数  
 instId | String | 币对  
 tier | String | 仓位档位  
-minSz | String | 该档位最少持仓数量 期权/永续/交割 最小持仓量 默认0  
-maxSz | String | 该档位最多持仓数量 期权/永续/交割  
+minSz | String | 该档位最少借币量或者持仓数量 杠杆/期权/永续/交割 最小持仓量 默认0  
+当 `ccy` 参数生效时，返回 `ccy` 的最小借币量  
+maxSz | String | 该档位最多借币量或者持仓数量 杠杆/期权/永续/交割  
+当 `ccy` 参数生效时，返回 `ccy` 的最大借币量  
 mmr | String | 维持保证金率  
 imr | String | 最低初始保证金率  
 maxLever | String | 最高可用杠杆倍数  
 optMgnFactor | String | 期权保证金系数 （仅适用于期权）  
-quoteMaxLoan | String | 计价货币 最大借币量（仅适用于杠杆），例如 BTC-USDT 里的 USDT最大借币量  
-baseMaxLoan | String | 交易货币 最大借币量（仅适用于杠杆），例如 BTC-USDT 里的 BTC最大借币量  
+quoteMaxLoan | String | 计价货币 最大借币量（仅适用于杠杆，且`instId`参数生效时），例如 BTC-USDT 里的
+USDT最大借币量  
+baseMaxLoan | String | 交易货币 最大借币量（仅适用于杠杆，且`instId`参数生效时），例如 BTC-USDT 里的
+BTC最大借币量  
   
 ### 获取市场借币杠杆利率和借币限额
 
@@ -20534,7 +20540,6 @@ ordId或clOrdId至少填一个 | 200 | 51003
 委托失败，因为 {0} 剩余的母账户限额不足，导致可借不足（需借 {1}，剩余额度 {2}，限额 {3}，已用额度 {4}） | 200 | 51008  
 委托失败，因为 {0} 剩余的币对限额不足，导致可借不足 | 200 | 51008  
 委托失败，因为 {0} 剩余的借贷池限额不足，导致可借不足 | 200 | 51008  
-委托失败，因为借贷池剩余的 {0} 不足，导致可借不足 | 200 | 51008  
 委托失败，账户资产不足，美金层面有效保证金小于 IMR | 200 | 51008  
 委托失败，账户资产不足，且 Delta 校验不通过 | 200 | 51008  
 委托失败，账户余额不足 | 200 | 51008  
