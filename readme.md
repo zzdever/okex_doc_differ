@@ -5575,7 +5575,7 @@ memo | String | 否 | 闪电网络提币的备注
 ---|---|---  
 wdId | String | 提币申请ID  
 cTime | String | 提币ID生成时间  
-仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`adeed.choudhury@okcoin.com`申请
+仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`nan.meng@okg.com`申请
 
 ### 撤销提币
 
