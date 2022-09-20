@@ -2427,90 +2427,50 @@ clOrdId | String | 否 | 客户自定义订单ID
     
     
     {
-        "code":"0",
-        "msg":"",
-        "data":[
+        "code": "0",
+        "data": [
             {
-                "instType":"FUTURES",
-                "instId":"BTC-USD-200329",
-                "ordId":"123445",
-                "ccy":"BTC",
-                "clOrdId":"",
-                "algoId":"1234",
-                "sz":"999",
-                "ordType":"oco",
-                "side":"buy",
-                "posSide":"long",
-                "tdMode":"cross",
+                "activePx": "",
+                "actualPx": "",
+                "actualSide": "",
+                "actualSz": "0",
+                "algoId": "492453578716610560",
+                "cTime": "1663682082511",
+                "callbackRatio": "",
+                "callbackSpread": "",
+                "ccy": "",
+                "clOrdId": "hahawang",
+                "instId": "BTC-USDT-SWAP",
+                "instType": "SWAP",
+                "lever": "3",
+                "moveTriggerPx": "",
+                "ordId": "0",
+                "ordPx": "",
+                "ordType": "conditional",
+                "posSide": "long",
+                "pxLimit": "",
+                "pxSpread": "",
+                "pxVar": "",
+                "side": "buy",
+                "slOrdPx": "-1",
+                "slTriggerPx": "22000",
+                "slTriggerPxType": "last",
+                "state": "live",
+                "sz": "10",
+                "szLimit": "",
+                "tag": "",
+                "tdMode": "cross",
                 "tgtCcy": "",
-                "state":"1",
-                "lever":"20",
-                "tpTriggerPx":"",
-                "tpTriggerPxType":"",
-                "tpOrdPx":"",
-                "slTriggerPx":"",
-                "slTriggerPxType":"",
-                "slOrdPx": "",
-                "triggerPx":"99",
-                "triggerPxType": "last",
-                "ordPx":"12",
-                "actualSz":"",
-                "actualPx":"",
-                "actualSide":"",
-                "pxVar":"",
-                "pxSpread":"",
-                "pxLimit":"",
-                "szLimit":"",
-                "tag": "adadadadad",
-                "timeInterval":"",
-                "triggerTime":"1597026383085",
-                "callbackRatio":"",
-                "callbackSpread":"",
-                "activePx":"",
-                "moveTriggerPx":"",
-                "cTime":"1597026383000"
-            },
-            {
-                "instType":"FUTURES",
-                "instId":"BTC-USD-200329",
-                "ordId":"123445",
-                "ccy":"BTC",
-                "clOrdId":"",
-                "algoId":"1234",
-                "sz":"999",
-                "ordType":"oco",
-                "side":"buy",
-                "posSide":"long",
-                "tdMode":"cross",
-                "tgtCcy": "",
-                "state":"1",
-                "lever":"20",
-                "tpTriggerPx":"",
-                "tpTriggerPxType":"",
-                "tpOrdPx":"",
-                "slTriggerPx":"",
-                "slTriggerPxType":"",
-                "slOrdPx": "",
-                "triggerPx":"99",
-                "triggerPxType": "last",
-                "ordPx":"12",
-                "actualSz":"",
-                "actualPx":"",
-                "actualSide":"",
-                "pxVar":"",
-                "pxSpread":"",
-                "pxLimit":"",
-                "szLimit":"",
-                "tag": "adadadadad",
-                "timeInterval":"",
-                "triggerTime":"1597026383085",
-                "callbackRatio":"",
-                "callbackSpread":"",
-                "activePx":"",
-                "moveTriggerPx":"",
-                "cTime":"1597026383000"
+                "timeInterval": "",
+                "tpOrdPx": "",
+                "tpTriggerPx": "",
+                "tpTriggerPxType": "",
+                "triggerPx": "",
+                "triggerPxType": "",
+                "triggerTime": ""
             }
-        ]
+        ],
+        "msg": ""
     }
     
 
@@ -20720,7 +20680,6 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 撤单失败，订单已处于撤销中 | 200 | 51410  
 用户没有执行mass cancel的权限 | 200 | 51411  
 委托已触发，暂不支持撤单 | 200 | 51412  
-撤单失败，该接口不支持该委托类型的撤单 | 200 | 51413  
 下单失败，现货交易仅支持设置最新价为触发价格，请更改触发价格并重试 | 200 | 51415  
 价格和数量不能同时为空 | 200 | 51500  
 修改订单超过最大允许单数{0} | 400 | 51501  
@@ -20840,7 +20799,6 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 您在法币区的交易异常，现已被限制划转功能，请您联系在线客服以解除限制 | 200 | 58104  
 您在法币区的交易异常，现已被限制划转功能，请您在网页或APP进行法币划  
 转操作以完成身份验证 | 200 | 58105  
-请先开通币币杠杆账户 | 200 | 58106  
 请先开通交割合约账户 | 200 | 58107  
 请先开通期权合约账户 | 200 | 58108  
 请先开通永续合约账户 | 200 | 58109  
@@ -20987,6 +20945,7 @@ APIKey 不存在 | 200 | 59506
 MMP状态下操作失败。冻结时间为 {0} 秒 | 200 | 70008  
 Data数组必须至少含有一个有效元素 | 200 | 70009  
 产品类型 {0} 存在重复设置 | 200 | 70011  
+同一个instType{1}下的instFamily/instId{0} 存在重复设置 | 200 | 70012  
 组合交易中的产品ID重复 | 200 | 70100  
 clRfqId重复 | 200 | 70101  
 未指定对手方 | 200 | 70102  
