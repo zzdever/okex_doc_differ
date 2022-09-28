@@ -4741,7 +4741,7 @@ ccy | String | 否 | 币种，如 `BTC`
 ---|---|---  
 ccy | String | 币种，如 `BTC`  
 bal | String | 余额  
-frozenBal | String | 冻结（不可用）  
+frozenBal | String | 冻结余额  
 availBal | String | 可用余额  
   
 ### 获取账户资产估值
@@ -6215,6 +6215,7 @@ rfqSzCcy | String | 是 | 询价币种
 clQReqId | String | 否 | 客户端自定义的订单标识  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 tag | String | 否 | 订单标签  
+适用于broker用户  
   
 > 返回结果
     
@@ -7013,7 +7014,7 @@ instType | String | 否 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
   
-ccy | String | 否 | 保证金币种  
+ccy | String | 否 | 账单币种  
 mgnMode | String | 否 | 仓位类型  
 `isolated`：逐仓  
 `cross`：全仓  
@@ -7137,7 +7138,7 @@ instType | String | 否 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
   
-ccy | String | 否 | 保证金币种  
+ccy | String | 否 | 账单币种  
 mgnMode | String | 否 | 仓位类型  
 `isolated`：逐仓 `cross`：全仓  
 ctType | String | 否 | `linear`： 正向合约  
@@ -11815,8 +11816,8 @@ after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
-香港时间开盘价k线：[6H/12H/1D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+香港时间开盘价k线：[6H/12H/1D/1W/1M]  
+UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/1Wutc/1Mutc]  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -13570,8 +13571,8 @@ type | String | 否 | 风险准备金类型
 `liquidation_balance_deposit`：强平注入 ；`bankruptcy_loss`：穿仓亏损
 ；`platform_revenue`：平台收入注入  
 默认返回全部类型  
-uly | String | 否 | 标的指数， 仅适用于`交割/永续/期权`，且必填写  
-ccy | String | 否 | 币种， 仅适用`币币杠杆`，且必填写  
+uly | String | 可选 | 标的指数， 仅适用于`交割/永续/期权`，且必填写  
+ccy | String | 可选 | 币种， 仅适用`币币杠杆`，且必填写  
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，传的值为对应接口的`ts`  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
@@ -20949,6 +20950,7 @@ ordIds 和 clOrdIds 不能同时为空 | 200 | 51407
 您的一部分现货正用于仓位间的 Delta 对冲，若划转数量超过可用金额，可能会影响现有的现货对冲结构，进而导致维持保证金率增加，请留意您的风险水平。 |
 200 | 58122  
 from和to不可相同 | 200 | 58123  
+资金划转中，划转id：{trId}，请通过接口(GET /api/v5/asset/transfer-state)获取最新状态 | 200 | 58124  
 该币种暂不支持从{0}提现至{1}，敬请谅解 | 200 | 58200  
 今日提现金额累计超过每日限额 | 200 | 58201  
 NEO最小提现数量为1，且提现数量必须为整数 | 200 | 58202  
@@ -21043,7 +21045,7 @@ APIKey 不存在 | 200 | 59506
 {0}该子账户被冻结 | 200 | 59508  
 用户没有重置做市商保护状态的权限 | 200 | 59509  
 子账户不存在 | 200 | 59510  
-不支持为独立经济商子账号设置主动转出权限，所有独立经济商子账户默认有主动转出权限 | 200 | 59512  
+不支持为独立经纪商子账号设置主动转出权限，所有独立经纪商子账户默认有主动转出权限 | 200 | 59512  
 子账户名称已存在 | 200 | 59601  
 创建的APIkey数量超过上限 | 200 | 59602  
 创建子账户超过上限时 | 200 | 59603  
