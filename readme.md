@@ -307,22 +307,6 @@ AWS 地址如下：
 
   * WebSocket私有频道：`wss://wsaws.okx.com:8443/ws/v5/private`  
 
-新的域名已启用，旧的域名将择期下线，请您尽快切换到新的域名。
-
-  * `旧的`REST：`https://www.okex.com`  
-
-  * `旧的`WebSocket公共频道：`wss://ws.okex.com:8443/ws/v5/public`  
-
-  * `旧的`WebSocket私有频道：`wss://ws.okex.com:8443/ws/v5/private`
-
-`旧的AWS 地址如下`：
-
-  * REST：`https://aws.okex.com`  
-
-  * WebSocket公共频道：`wss://wsaws.okex.com:8443/ws/v5/public`  
-
-  * WebSocket私有频道：`wss://wsaws.okex.com:8443/ws/v5/private`
-
 ## 模拟盘交易
 
 目前可以进行V5 API的模拟盘交易，用户可以通过模拟盘API请求除了`提币`、`充值`和`申购赎回`外的所有接口。
@@ -332,16 +316,7 @@ AWS 地址如下：
   * REST：`https://www.okx.com`
   * WebSocket公共频道：`wss://wspap.okx.com:8443/ws/v5/public?brokerId=9999`  
 
-  * WebSocket私有频道：`wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999`  
-
-新的域名已启用，旧的域名将择期下线，请您尽快切换到新的域名。
-
-`旧的模拟盘API交易地址如下`：
-
-  * REST：`https://www.okex.com`
-  * WebSocket公共频道：`wss://wspap.okex.com:8443/ws/v5/public?brokerId=9999`  
-
-  * WebSocket私有频道：`wss://wspap.okex.com:8443/ws/v5/private?brokerId=9999`
+  * WebSocket私有频道：`wss://wspap.okx.com:8443/ws/v5/private?brokerId=9999`
 
 模拟盘的账户与欧易的账户是互通的，如果您已经有欧易账户，可以直接登录。
 
@@ -18686,7 +18661,8 @@ data | Array | 订阅的数据
 
 ### 行情频道
 
-获取产品的最新成交价、买一价、卖一价和24小时交易量等信息，每100ms有成交就推送一次数据。
+获取产品的最新成交价、买一价、卖一价和24小时交易量等信息。  
+最快100ms推送一次，没有触发事件时不推送，触发推送的事件有：成交、买一卖一发生变动。
 
 > 请求示例
     
