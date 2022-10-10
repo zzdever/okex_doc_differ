@@ -573,9 +573,9 @@ SecretKey为用户申请APIKey时所生成。如：`22582BD0CFF14C41EDBF1AB98506
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -627,7 +627,7 @@ px | String | 可选 | 委托价格，仅适用于`limit`、`post_only`、`fok`�
 reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-tgtCcy | String | 否 | 市价单委托数量的类型，仅适用于`币币`市价订单  
+tgtCcy | String | 否 | 市价单委托数量`sz`的单位，仅适用于`币币`市价订单  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 买单默认`quote_ccy`， 卖单默认`base_ccy`  
 banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
@@ -706,7 +706,7 @@ optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交�
 只减仓，下单时，此参数设置为 true 时，表示此笔订单具有减仓属性，只会减少持仓数量，不会增加新的持仓仓位  
 仅适用于`单币种账户模式`和`跨币种账户模式`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  tgtCcy  
-市价单委托数量的类型：仅适用于币币市价下单交易。  
+市价单委托数量`sz`的单位：仅适用于币币市价下单交易。  
 交易货币：base_ccy  
 计价货币：quote_ccy  
 您在使用交易货币买入或者计价货币卖出时，请知晓：  
@@ -728,9 +728,9 @@ USDT的市价为200，用户被锁定的余额为6个LTC，最终成交5个LTC�
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。
 
@@ -795,7 +795,7 @@ px | String | 否 | 委托价格，仅适用于`limit`、`post_only`、`fok`、`
 reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-tgtCcy | String | 否 | 市价单委托数量的类型，仅适用于`币币`市价订单  
+tgtCcy | String | 否 | 市价单委托数量`sz`的单位，仅适用于`币币`市价订单  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 买单默认`quote_ccy`， 卖单默认`base_ccy`  
 banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
@@ -844,9 +844,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -905,9 +905,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。
 
@@ -980,9 +980,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -1051,9 +1051,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。
 
@@ -1138,9 +1138,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -1208,9 +1208,9 @@ tag | String | 订单标签
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -1291,7 +1291,7 @@ instType | String | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 instId | String | 产品ID  
-tgtCcy | String | 币币市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -1454,7 +1454,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
 ---|---|---  
 instType | String | 产品类型  
 instId | String | 产品ID  
-tgtCcy | String | 币币市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -1616,7 +1616,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
 ---|---|---  
 instType | String | 产品类型  
 instId | String | 产品ID  
-tgtCcy | String | 币币市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -1784,7 +1784,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
 ---|---|---  
 instType | String | 产品类型  
 instId | String | 产品ID  
-tgtCcy | String | 币币市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -2076,9 +2076,9 @@ clOrdId
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -2237,9 +2237,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -2300,9 +2300,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -2466,7 +2466,7 @@ ordType | String | 订单类型
 side | String | 订单方向  
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
-tgtCcy | String | 币币市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -2666,7 +2666,7 @@ ordType | String | 订单类型
 side | String | 订单方向  
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
-tgtCcy | String | 币币市价单委托数量的类型  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -4923,6 +4923,7 @@ type | String | 否 | 划转类型
 `1`：母账户转子账户(仅适用于母账户APIKey)  
 `2`：子账户转母账户(仅适用于母账户APIKey)  
 `3`：子账户转母账户(仅适用于子账户APIKey)  
+`4`：子账户转子账户(仅适用于子账户APIKey，且目标账户需要是同一母账户下的其他子账户)  
 默认是`0`  
   
 > 返回结果
@@ -8753,7 +8754,9 @@ subAcct | String | 子账户名称
 label | String | 子账户备注  
 mobile | String | 子账户绑定手机号  
 gAuth | Boolean | 子账户是否开启的登录时的谷歌验证 `true`：已开启 `false`：未开启  
-canTransOut | Boolean | 是否可以主动转出，`false`：不可转出，`true`：可以转出  
+canTransOut | Boolean | 是否可以主动转出  
+`false`：不可转出  
+`true`：可以转出  
 ts | String | 子账户创建时间，Unix时间戳的毫秒数格式 ，如 `1597026383085`  
   
 ### 重置子账户的APIKey
@@ -9175,7 +9178,9 @@ transId | String | 划转ID
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 subAcct | String | 是 | 子账户名称，支持设置多个（不超过20个），子账户名称之间半角逗号分隔  
-canTransOut | Boolean | 否 | 是否可以主动转出，`false`：不可转出，`true`：可以转出，默认为`true`  
+canTransOut | Boolean | 否 | 是否可以主动转出，默认为`true`  
+`false`：不可转出  
+`true`：可以转出  
   
 > 返回结果
     
@@ -9198,7 +9203,9 @@ canTransOut | Boolean | 否 | 是否可以主动转出，`false`：不可转出�
 **参数名** | **类型** | **描述**  
 ---|---|---  
 subAcct | String | 子账户名称  
-canTransOut | Boolean | 是否可以主动转出，`false`：不可转出，`true`：可以转出  
+canTransOut | Boolean | 是否可以主动转出  
+`false`：不可转出  
+`true`：可以转出  
   
 ### 查看被托管的子账户列表
 
@@ -9257,9 +9264,9 @@ subAcct | String | 子账户名称
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -9390,7 +9397,7 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
 #### HTTP请求
 
@@ -9451,9 +9458,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 #### HTTP请求
 
@@ -12496,7 +12503,7 @@ maxStopSz | String | 合约或现货止盈止损委托的单笔最大委托数�
 
 #### 限速： 40次/2s
 
-#### 限速规则：IP +(instrumentType、uly)
+#### 限速规则：IP + (instrumentType + uly)
 
 #### HTTP请求
 
@@ -14606,9 +14613,9 @@ msg | String | 否 | 错误消息
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 同`下单` REST API 共享限速
 
@@ -14664,7 +14671,7 @@ args | Array | 是 | 请求参数
 > reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-> tgtCcy | String | 否 | 币币市价单委托数量的类型  
+> tgtCcy | String | 否 | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -14775,7 +14782,7 @@ optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交�
 只减仓，下单时，此参数设置为 true 时，表示此笔订单具有减仓属性，只会减少持仓数量，不会增加新的持仓仓位  
 仅适用于`单币种账户模式`和`跨币种账户模式`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  tgtCcy  
-市价单委托数量的类型：仅适用于币币市价下单交易。  
+市价单委托数量`sz`的单位：仅适用于币币市价下单交易。  
 交易货币：base_ccy  
 计价货币：quote_ccy  
 您在使用交易货币买入或者计价货币卖出时，请知晓：  
@@ -14797,9 +14804,9 @@ USDT的市价为200，用户被锁定的余额为6个LTC，最终成交5个LTC�
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。  同`批量下单` REST API
 共享限速
@@ -14863,7 +14870,7 @@ args | Array | 是 | 请求参数
 > reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-> tgtCcy | String | 否 | 币币市价单委托数量的类型  
+> tgtCcy | String | 否 | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -14977,9 +14984,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 同`撤单` REST API 共享限速
 
@@ -15078,9 +15085,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。  同`批量撤单` REST API
 共享限速
@@ -15216,9 +15223,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 同`改单` REST API 共享限速
 
@@ -15332,9 +15339,9 @@ newSz : 当修改已经部分成交的订单时，新的委托数量必须大于
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID +(instrumentType、underlying)
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID +(instrumentType、instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。  同`批量改单` REST
 API 共享限速
@@ -16433,7 +16440,7 @@ data | Array | 订阅的数据
 > tdMode | String | 交易模式  
 保证金模式 `isolated`：逐仓 `cross`：全仓  
 非保证金模式 `cash`：现金  
-> tgtCcy | String | 市价单委托数量的类型  
+> tgtCcy | String | 市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 `quote_ccy`：计价货币  
 > fillPx | String | 最新成交价格  
 > tradeId | String | 最新成交ID  
@@ -16675,7 +16682,7 @@ data | Array | 订阅的数据
 > tdMode | String | 交易模式  
 保证金模式 `cross`：全仓 `isolated`：逐仓  
 非保证金模式 `cash`：现金  
-> tgtCcy | String | 币币市价单委托数量的类型  
+> tgtCcy | String | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
@@ -16893,7 +16900,7 @@ data | Array | 订阅的数据
 > tdMode | String | 交易模式  
 保证金模式 `cross`：全仓 `isolated`：逐仓  
 非保证金模式 `cash`：现金  
-> tgtCcy | String | 币币市价单委托数量的类型  
+> tgtCcy | String | 币币市价单委托数量`sz`的单位  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`市价订单  
 默认买单为`quote_ccy`，卖单为`base_ccy`  
