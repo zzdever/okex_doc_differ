@@ -21,7 +21,7 @@ API接口 Broker接入 最佳实践 更新日志
     * 交易时效性 
       * REST 
       * WebSocket 
-  * 大宗交易
+  * 大宗交易 
   * 做市商申请
   * 交互式浏览器 
     * 使用说明 
@@ -3226,6 +3226,8 @@ counterparties | Array of strings | 是 | 报价方列表。
 anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示公开询价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给报价方。  
 clRfqId | String | 否 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+allowPartialExecution | Boolean | 否 |
+RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为`true`或`false`。默认为`false`。  
 legs | Array of objects | 是 | 组合交易，每次最多可以提交15组交易信息  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
@@ -3247,6 +3249,7 @@ legs | Array of objects | 是 | 组合交易，每次最多可以提交15组交�
                 "traderCode":"SATOSHI",
                 "rfqId":"22534",
                 "clRfqId":"rfq01",
+                "allowPartialExecution": false,
                 "state":"active",
                 "validUntil":"1611033857557",
                 "counterparties":[
@@ -3288,6 +3291,8 @@ data | Array of objects | 询价单结果
 > counterparties | Array of strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户端敏感信息，不会公开，对报价方返回""。  
+> allowPartialExecution | Boolean |
+> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为`true`或`false`。  
 > traderCode | String | 询价方唯一标识代码。  
 > rfqId | String | 询价单ID  
 > legs | Array of objects | 组合交易  
@@ -3559,7 +3564,17 @@ data | Array of objects | 包含结果的对象数组
     POST /api/v5/rfq/execute-quote
     {
         "rfqId":"22540",
-        "quoteId":"84073"
+        "quoteId":"84073",
+        "legs":[
+        {
+            "sz":"25",
+            "instId":"BTC-USD-20220114-13250-C"
+        },
+        {
+            "sz":"25",
+            "instId":"BTC-USDT"
+        }
+         ]
     }
     
 
@@ -3569,6 +3584,10 @@ data | Array of objects | 包含结果的对象数组
 ---|---|---|---  
 rfqId | String | 是 | 询价单ID  
 quoteId | String | 是 | 报价单ID  
+legs | Array of objects | 否 |
+用于部分执行的腿的数量。腿的数量比例必须与原RFQ相同。注意：每条腿的`tgtCcy`和`side`和原RFQ一致，`px`和对应Quote一致。  
+> instId | String | 是 | 产品ID, 如 "BTC-USDT-SWAP".  
+> sz | String | 是 | 该条腿的部分执行数量  
   
 > 响应示例
     
@@ -3711,9 +3730,11 @@ data | Array of objects | 包含结果的对象数组
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 instType | String | 是 | 产品类别，枚举值包括`FUTURES`,`OPTION`,`SWAP`和`SPOT`  
+includeAll | Boolean | 否 | 是否接收该instType下所有产品。有效值为`true`或`false`。默认`false`。  
+data | Array of objects | Yes | Elements of the instType.  
 data | Array of objects | 是 | instType的元素  
-> uly | String | 可选 | 标的指数  
-> instId | String | 否 | 产品ID，如 `BTC-USDT`  
+> uly | String | 可选 | 标的指数。只对`FUTURES`, `OPTION` and `SWAP`产品类别有效且必须。  
+> instId | String | 可选 | 产品ID，如 `BTC-USDT`。对`SPOT`产品类别有效且必须。  
 > maxBlockSz | String | 否 | 该种产品最大可交易数量。FUTURES, OPTION and SWAP
 > 的单位是合约数量。SPOT的单位是交易货币。  
 > makerPxBand | String | 否 | 价格限制以价格精度tick为单位，以标记价格为基准。  
@@ -3829,7 +3850,8 @@ rfqId | String | 是 | 询价单ID
 clQuoteId | String | 否 | 报价单自定义ID  
 anonymous | Boolean | 否 | 是否匿名报价，`true`表示匿名报价，`false`表示公开报价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给询价方。  
-quoteSide | String | 是 | 询价单方向， `buy` 或者 `sell`  
+quoteSide | String | 是 | 询价单方向， `buy` 或者
+`sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理  
 expiresIn | String | 否 | 报价单的有效时长（以秒为单位）。 10到120之间的任何整数。 默认值为60  
 legs | Array of objects | 是 | 组合交易  
 > instId | String | 是 | 产品ID  
@@ -3898,7 +3920,8 @@ data | Array of objects | 包含结果的对象数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方唯一标识代码。  
-> quoteSide | String | 报价单方向，`buy` 或者 `sell`。  
+> quoteSide | String | 报价单方向，`buy` 或者
+> `sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
@@ -4185,6 +4208,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "clRfqId": "",
                 "traderCode": "VITALIK",
                 "validUntil": "1650969031817",
+                "allowPartialExecution": false,
                 "state": "filled",
                 "counterparties": [
                     "SATOSHI"
@@ -4240,6 +4264,8 @@ data | Array of objects | 包含结果的对象数组
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > traderCode | String | 询价方唯一标识代码，询价时 anonymous 设置为 `true` 时不可见  
 > rfqId | String | 询价单ID  
+> allowPartialExecution | Boolean |
+> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为`true`或`false`。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
@@ -4337,7 +4363,8 @@ data | Array of objects | 包含结果的数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方唯一标识代码，报价时 Anonymous 设置为 `True` 时不可见。  
-> quoteSide | String | 询价单方向， `buy` 或者 `sell`  
+> quoteSide | String | 询价单方向， `buy` 或者
+> `sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
@@ -4957,7 +4984,6 @@ type | String | 否 | 划转类型
 transId | String | 划转 ID  
 clientId | String | 客户自定义ID  
 ccy | String | 划转币种  
-`6`：资金账户 `18`：交易账户  
 amt | String | 划转量  
 type | String | 划转类型  
 `0`：账户内划转  
@@ -4968,6 +4994,7 @@ type | String | 划转类型
 from | String | 转出账户  
 `6`：资金账户 `18`：交易账户  
 to | String | 转入账户  
+`6`：资金账户 `18`：交易账户  
 subAcct | String | 子账户名称  
 instId | String | 已废弃  
 toInstId | String | 已废弃  
@@ -17380,6 +17407,7 @@ msg | String | 否 | 错误消息
                 "clRfqId":"",
                 "state":"active",
                 "validUntil":"1611033857557",
+                "allowPartialExecution": false,
                 "counterparties":[
                     "DSK4",
                     "DSK5"
@@ -17422,6 +17450,8 @@ data | Array | 订阅的数据
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
 > rfqId | String | 询价单ID  
+> allowPartialExecution | Boolean |
+> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。>有效值为`true`或`false`。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
@@ -17543,7 +17573,8 @@ data | Array | 订阅的数据
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > traderCode | String | 报价方唯一标识代码，报价时 Anonymous 设置为 `True` 时不可见。  
-> quoteSide | String | 询价单方向， `buy` 或者 `sell`  
+> quoteSide | String | 询价单方向， `buy` 或者
+> `sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
@@ -20967,6 +20998,7 @@ NEO最小提现数量为1，且提现数量必须为整数 | 200 | 58202
 提币地址不合法 | 200 | 58222  
 该类型币种暂不支持链上提币到 OKX 地址，请通过内部转账进行提币 | 200 | 58224  
 抱歉，由于当地法律法规，欧易无法为{region}未认证用户提供服务，所以您无法向该用户转账 | 200 | 58225  
+{chainName} 已下线，不支持提币 | 200 | 58225  
 创建充值地址超过上限 | 200 | 58300  
 充值地址不存在 | 200 | 58301  
 充值地址需要标签 | 200 | 58302  
@@ -20993,6 +21025,7 @@ fromCcy与toCcy不可相同 | 200 | 58358
 ---|---|---  
 挂单或持仓存在，无法设置 | 200 | 59000  
 当前存在借币，暂不可切换 | 200 | 59001  
+子账户挂单、持仓或策略存在，无法设置 | 200 | 59002  
 只支持同一业务线下交易产品ID | 200 | 59004  
 逐仓自主划转保证金模式，初次划入仓位的资产价值需大于10000USDT | 200 | 59005  
 当前存在持仓，请撤销所有挂单后进行杠杆倍数修改 | 200 | 59100  
@@ -21074,13 +21107,16 @@ MMP状态下操作失败。冻结时间为 {0} 秒 | 200 | 70008
 Data数组必须至少含有一个有效元素 | 200 | 70009  
 产品类型 {0} 存在重复设置 | 200 | 70011  
 同一个instType{1}下的instFamily/instId{0} 存在重复设置 | 200 | 70012  
+交易产品设置中需选择至少一个交易品种 | 200 | 70013  
+不允许对所有产品类别设置includeAll=True. | 200 | 70014  
 组合交易中的产品ID重复 | 200 | 70100  
 clRfqId重复 | 200 | 70101  
 未指定对手方 | 200 | 70102  
 无效的对手方 | 200 | 70103  
-总价值应该大于最小值{0} | 200 | 70105  
+非全现货的RFQ总价值应该大于最小名义值{0} | 200 | 70105  
 下单数量小于最小交易数量 | 200 | 70106  
 对手方的数量不能超过最大值 | 200 | 70107  
+全现货的RFQ总价值应该大于最小名义值{spotMinNotional} | 200 | 70108  
 所选产品无有效对手方 | 200 | 70109  
 不能取消处于{0}状态的询价单 | 200 | 70200  
 取消失败，由于询价单数量超过限制数量{0} | 200 | 70203  
@@ -21100,9 +21136,11 @@ instId {0} 报价不可以超过你预设的价格限制 | 200 | 70310
 取消失败，由于您没有报价挂单 | 200 | 70409  
 询价单{0}没有被{1}报价 | 200 | 70501  
 组合交易没有匹配{0}的组合交易 | 200 | 70502  
-执行的组合交易没有匹配{0}的组合交易 | 200 | 70503  
+执行腿的价值总和小于大宗交易的最小名义值 | 200 | 70503  
 执行失败，因为询价单的状态是{0} | 200 | 70504  
 执行失败，因为报价单的状态是{0} | 200 | 70505  
+腿的数量比例与原RFQ不一致 | 200 | 70506  
+部分执行尝试失败。须设置allowPartialExecution为`true` | 200 | 70507  
 正在执行报价 | 200 | 70511  
 大宗交易不存在 | 200 | 56000  
 多腿的数量不能超过 {0} | 200 | 56001  
