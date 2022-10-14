@@ -721,6 +721,11 @@ USDT下单买入，最终成交 3000/400 = 7.5个 LTC。
 以市价下单 卖出 1000USDT为例，用户可卖为1200USDT，1000 < 1200，挂单成功。LTC-
 USDT的市价为200，用户被锁定的余额为6个LTC，最终成交5个LTC； 若市场波动过大，LTC-USDT的市价为100，100*6 <
 1000，当用户被锁定的余额不够卖出下单指定的计价货币数量时，系統使用用户被锁定的最大余额6个LTC下单，最终成交 6 * 100 = 600 USDT。
+px  
+期权下单时，委托价格需为 tickSz 的整数倍。  
+当不为整数倍时，取值规则以tickSz取 0.0005 为例：  
+当委托价格对0.0005的余数大于0.00025或者委托价格小于0.0005时，向上取；  
+当委托价格对0.0005的余数小于等于0.00025，且委托价格大于0.0005时，向下取。
 
 ### 批量下单
 
@@ -1384,6 +1389,8 @@ instType | String | 否 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 instId | String | 否 | 产品ID，如`BTC-USD-200927`  
 ordType | String | 否 | 订单类型  
 `market`：市价单  
@@ -1539,6 +1546,8 @@ instType | String | 是 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 instId | String | 否 | 产品ID，如`BTC-USD-190927`  
 ordType | String | 否 | 订单类型  
 `market`：市价单  
@@ -1707,6 +1716,8 @@ instType | String | 是 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 instId | String | 否 | 产品ID，如`BTC-USD-200927`  
 ordType | String | 否 | 订单类型  
 `market`：市价单  
@@ -1876,6 +1887,8 @@ instType | String | 否 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 instId | String | 否 | 产品 ID，如`BTC-USD-190927`  
 ordId | String | 否 | 订单 ID  
 after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
@@ -1988,6 +2001,8 @@ instType | String | 是 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 instId | String | 否 | 产品 ID，如`BTC-USD-190927`  
 ordId | String | 否 | 订单 ID  
 after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
@@ -3674,27 +3689,27 @@ data | Array of objects | 包含结果的对象数组
         {"instType": "OPTION",
          "data":
             [{    
-                "uly": "BTC-USD",
+                "instFamily": "BTC-USD",
                 "maxBlockSz": "10000",
                 "makerPxBand": "5"
-                },
-            {
-                "uly": "SOL-USD",
+             },
+             {
+                "instFamily": "SOL-USD",
                 "maxBlockSz": "100000",
                 "makerPxBand": "15"
-                }
+             }
             ]
         },
         {"instType": "FUTURES",
          "data":
             [
             {
-                "uly": "BTC-USD",
+                "instFamily": "BTC-USD",
                 "maxBlockSz": "10000",
                 "makerPxBand": "5"
             },
             {
-                "uly": "ETH-USDT",
+                "instFamily": "ETH-USDT",
                 "maxBlockSz": "100000",
                 "makerPxBand": "15"
             }
@@ -3703,12 +3718,12 @@ data | Array of objects | 包含结果的对象数组
         {"instType:": "SWAP",
          "data":
             [{
-                "uly": "BTC-USD",
+                "instFamily": "BTC-USD",
                 "maxBlockSz": "10000",
                 "makerPxBand": "5"
                 },
             {
-                "uly": "ETH-USDT"
+                "instFamily": "ETH-USDT"
                 }
             ]
         },
@@ -3731,9 +3746,9 @@ data | Array of objects | 包含结果的对象数组
 ---|---|---|---  
 instType | String | 是 | 产品类别，枚举值包括`FUTURES`,`OPTION`,`SWAP`和`SPOT`  
 includeAll | Boolean | 否 | 是否接收该instType下所有产品。有效值为`true`或`false`。默认`false`。  
-data | Array of objects | Yes | Elements of the instType.  
 data | Array of objects | 是 | instType的元素  
-> uly | String | 可选 | 标的指数。只对`FUTURES`, `OPTION` and `SWAP`产品类别有效且必须。  
+> instFamily | String | 可选 | 交易品种  
+`交割/永续/期权`情况下必填  
 > instId | String | 可选 | 产品ID，如 `BTC-USDT`。对`SPOT`产品类别有效且必须。  
 > maxBlockSz | String | 否 | 该种产品最大可交易数量。FUTURES, OPTION and SWAP
 > 的单位是合约数量。SPOT的单位是交易货币。  
@@ -7842,7 +7857,9 @@ instType | String | 是 | 产品类型
 instId | String | 否 | 产品ID，如 `BTC-USDT`  
 仅适用于instType为`币币/币币杠杆`  
 uly | String | 否 | 标的指数  
-仅适用于instType为`交割/永续/期权`，如 `BTC-USD`  
+适用于`交割/永续/期权`，如 `BTC-USD`  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`，如 `BTC-USD`  
   
 > 返回结果
     
@@ -8686,7 +8703,13 @@ instType | String | 是 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
   
-uly | String | 是 | 标的指数， 如BTC-USDT，支持多个查询（不超过3个），uly之间半角逗号分隔  
+uly | String | 可选 | 标的指数，如 `BTC-USDT`，支持多个查询（不超过3个），`uly`之间半角逗号分隔  
+适用于`交割/永续/期权`  
+`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+instFamily | String | 可选 | 交易品种，如 `BTC-
+USDT`，支持多个查询（不超过5个），`instFamily`之间半角逗号分隔  
+适用于`交割/永续/期权`  
+`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
   
 > 返回结果
     
@@ -8695,6 +8718,7 @@ uly | String | 是 | 标的指数， 如BTC-USDT，支持多个查询（不超�
       "code": "0",
       "data": [
         {
+          "instFamily": "BTC-USD",
           "maxSz": "10000",
           "posType": "",
           "uly": "BTC-USDT"
@@ -8709,6 +8733,9 @@ uly | String | 是 | 标的指数， 如BTC-USDT，支持多个查询（不超�
 参数名 | 类型 | 描述  
 ---|---|---  
 uly | String | 标的指数  
+适用于`交割/永续/期权`  
+instFamily | String | 交易品种  
+适用于`交割/永续/期权`  
 maxSz | String | 最大持仓量  
 posType | String | 限仓类型，仅适用于组合保证金模式下的期权全仓。  
 `1`：所有合约挂单 + 持仓张数，`2`：所有合约总挂单张数，`3`：所有合约总挂单单数，`4`：同方向合约挂单 +
@@ -11164,7 +11191,10 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 标的指数，仅适用于`交割/永续/期权` ，如 `BTC-USD`  
+uly | String | 否 | 标的指数  
+适用于`交割/永续/期权`，如 `BTC-USD`  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`，如 `BTC-USD`  
   
 > 返回结果
     
@@ -12255,7 +12285,10 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 标的指数，仅适用于`交割/永续/期权` ，如 `BTC-USD`  
+uly | String | 否 | 标的指数  
+适用于`交割/永续/期权`，如 `BTC-USD`  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`，如 `BTC-USD`  
   
 > 返回结果
     
@@ -12443,6 +12476,7 @@ instType | String | 是 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 uly | String | 可选 | 标的指数，仅适用于`交割/永续/期权`，期权必填  
+instFamily | String | 否 | 标的指数，仅适用于`交割/永续/期权`  
 instId | String | 否 | 产品ID  
   
 > 返回结果
@@ -12452,35 +12486,36 @@ instId | String | 否 | 产品ID
         "code":"0",
         "msg":"",
         "data":[
-        {
-            "instType":"SWAP",
-            "instId":"LTC-USD-SWAP",
-            "uly":"LTC-USD",
-            "category":"1",
-            "baseCcy":"",
-            "quoteCcy":"",
-            "settleCcy":"LTC",
-            "ctVal":"10",
-            "ctMult":"1",
-            "ctValCcy":"USD",
-            "optType":"C",
-            "stk":"",
-            "listTime":"1597026383085",
-            "expTime":"1597026383085",
-            "lever":"10",
-            "tickSz":"0.01",
-            "lotSz":"1",
-            "minSz":"1",
-            "ctType":"inverse",
-            "alias":"this_week",
-            "state":"live",
-            "maxLmtSz":"10000",
-            "maxMktSz":"99999",
-            "maxTwapSz":"99999",
-            "maxIcebergSz":"99999",
-            "maxTriggerSz":"9999",
-            "maxStopSz":"9999"
-        }
+            {
+                "alias": "",
+                "baseCcy": "OKB",
+                "category": "1",
+                "ctMult": "",
+                "ctType": "",
+                "ctVal": "",
+                "ctValCcy": "",
+                "expTime": "",
+                "instFamily": "",
+                "instId": "OKB-USDT",
+                "instType": "SPOT",
+                "lever": "10",
+                "listTime": "1606468571000",
+                "lotSz": "0.000001",
+                "maxIcebergSz": "999999999999",
+                "maxLmtSz": "999999999999",
+                "maxMktSz": "",
+                "maxStopSz": "",
+                "maxTriggerSz": "999999999999",
+                "maxTwapSz": "999999999999",
+                "minSz": "0.01",
+                "optType": "",
+                "quoteCcy": "USDT",
+                "settleCcy": "",
+                "state": "live",
+                "stk": "",
+                "tickSz": "0.001",
+                "uly": ""
+            }
       ]
     }
     
@@ -12492,6 +12527,7 @@ instId | String | 否 | 产品ID
 instType | String | 产品类型  
 instId | String | 产品id， 如 `BTC-USD-SWAP`  
 uly | String | 标的指数，如 `BTC-USD`，仅适用于`交割/永续/期权`  
+instFamily | String | 交易品种，如 `BTC-USD`，仅适用于`交割/永续/期权`  
 category | String | 手续费档位，每个交易产品属于哪个档位手续费  
 baseCcy | String | 交易货币币种，如 `BTC-USDT` 中的 `BTC` ，仅适用于`币币/币币杠杆`  
 quoteCcy | String | 计价货币币种，如 `BTC-USDT` 中的`USDT` ，仅适用于`币币/币币杠杆`  
@@ -12557,7 +12593,10 @@ maxStopSz | String | 合约或现货止盈止损委托的单笔最大委托数�
 instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 是 | 标的指数，仅适用于`交割/期权`  
+uly | String | 可选 | 标的指数  
+`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+instFamily | String | 可选 | 交易品种  
+`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
 after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，传的值为对应接口的`ts`  
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
@@ -12617,7 +12656,7 @@ details | String | 详细数据
 
 #### 限速： 20次/2s
 
-#### 限速规则：IP +instrumentID
+#### 限速规则：IP + instrumentID
 
 #### HTTP请求
 
@@ -12637,7 +12676,12 @@ instType | String | 是 | 产品类型
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-uly | String | 否 | 标的指数，仅适用于`交割/永续/期权`，期权必填  
+uly | String | 可选 | 标的指数  
+适用于`交割/永续/期权`  
+`期权`情况下，`uly`和`instFamily`必须传一个  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
+`期权`情况下，`uly`和`instFamily`必须传一个  
 instId | String | 否 | 产品ID，如 `BTC-USD-180216`  
 仅适用于`交割/永续/期权`  
   
@@ -12866,7 +12910,10 @@ ts | String | 限价数据更新时间 ，Unix时间戳的毫秒数格式，如 
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-uly | String | 是 | 标的指数，仅适用于期权  
+uly | String | 可选 | 标的指数，仅适用于期权  
+`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+instFamily | String | 可选 | 交易品种，仅适用于期权  
+`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
 expTime | String | 否 | 合约到期日，格式为"YYMMDD"，如 "200527"  
   
 > 返回结果
@@ -13150,7 +13197,9 @@ mgnMode | String | 否 | 保证金模式
 instId | String | 否 | 产品ID，仅适用于`币币杠杆`  
 ccy | String | 否 | 币种 ，仅适用于`币币杠杆`（全仓）  
 uly | String | 可选 | 标的指数  
-`交割/永续/期权`合约情况下，该参数必填  
+`交割/永续/期权`合约情况下，`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+instFamily | String | 可选 | 交易品种  
+`交割/永续/期权`合约情况下，`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
 alias | String | 可选 | `this_week`：本周  
 `next_week`：次周  
 `quarter`：季度  
@@ -13253,6 +13302,9 @@ instType | String | 是 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 uly | String | 否 | 标的指数  
+适用于`交割/永续/期权`  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 instId | String | 否 | 产品ID，如 `BTC-USD-SWAP`  
   
 > 返回结果
@@ -13315,7 +13367,10 @@ instType | String | 是 | 产品类型
 tdMode | String | 是 | 保证金模式  
 `isolated`：逐仓 ；`cross`：全仓  
 uly | String | 可选 | 标的指数，支持多uly，半角逗号分隔，最大不超过3个  
-当产品类型是 `永续`、`交割`、`期权` 之一时必填，当产品类型是 `MARGIN` 时忽略  
+当产品类型是`永续`、`交割`、`期权` 之一时，`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
+当产品类型是 `MARGIN` 时忽略  
+instFamily | String | 可选 | 交易品种，支持多instFamily，半角逗号分隔，最大不超过5个  
+当产品类型是`永续`、`交割`、`期权` 之一时,`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
 instId | String | 可选 | 产品ID，支持多instId，半角逗号分隔，最大不超过5个  
 仅适用`币币杠杆`，`instId`和`ccy`必须传一个，若传两个，以`instId`为主  
 ccy | String | 可选 | 保证金币种  
@@ -13333,6 +13388,7 @@ tier | String | 否 | 查指定档位
                 "baseMaxLoan": "50",
                 "imr": "0.1",
                 "instId": "BTC-USDT",
+                "instFamily": "",
                 "maxLever": "10",
                 "maxSz": "50",
                 "minSz": "0",
@@ -13351,6 +13407,9 @@ tier | String | 否 | 查指定档位
 **参数名** | **类型** | **描述**  
 ---|---|---  
 uly | String | 标的指数  
+适用于`交割/永续/期权`  
+instFamily | String | 交易品种  
+适用于`交割/永续/期权`  
 instId | String | 币对  
 tier | String | 仓位档位  
 minSz | String | 该档位最少借币量或者持仓数量 杠杆/期权/永续/交割 最小持仓量 默认0  
@@ -13588,7 +13647,10 @@ type | String | 否 | 风险准备金类型
 `liquidation_balance_deposit`：强平注入 ；`bankruptcy_loss`：穿仓亏损
 ；`platform_revenue`：平台收入注入  
 默认返回全部类型  
-uly | String | 可选 | 标的指数， 仅适用于`交割/永续/期权`，且必填写  
+uly | String | 可选 | 标的指数  
+`交割/永续/期权`情况下，`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+instFamily | String | 可选 | 交易品种  
+`交割/永续/期权`情况下，`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
 ccy | String | 可选 | 币种， 仅适用`币币杠杆`，且必填写  
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，传的值为对应接口的`ts`  
@@ -13610,6 +13672,7 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
                         "type": "liquidation_balance_deposit"
                     }
                 ],
+                "instFamily": "BTC-USD",
                 "total": "883110357.6581"
             }
         ],
@@ -13622,6 +13685,9 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
 **参数名** | **类型** | **描述**  
 ---|---|---  
 total | String | 平台风险准备金总计，单位为USD  
+instFamily | String | 交易品种  
+适用于`交割/永续/期权`  
+details | Array | 风险准备金详情  
 > balance | String | 风险准备金总量  
 > amt | String | 风险准备金更新数量  
 > ccy | String | 风险准备金总量对应的币种  
@@ -14699,9 +14765,7 @@ args | Array | 是 | 请求参数
 `fok`：全部成交或立即取消  
 `ioc`：立即成交并取消剩余  
 `optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-> sz | String | 是 | 当type为limit时，表示买入或卖出的数量  
-当type为market时，现货交易买入时，表示买入的总金额，而  
-当其他产品买入或卖出时，表示数量  
+> sz | String | 是 | 委托数量  
 > px | String | 否 | 委托价，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
 > reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
@@ -14832,6 +14896,11 @@ USDT下单买入，最终成交 3000/400 = 7.5个 LTC。
 以市价下单 卖出 1000USDT为例，用户可卖为1200USDT，1000 < 1200，挂单成功。LTC-
 USDT的市价为200，用户被锁定的余额为6个LTC，最终成交5个LTC； 若市场波动过大，LTC-USDT的市价为100，100*6 <
 1000，当用户被锁定的余额不够卖出下单指定的计价货币数量时，系統使用用户被锁定的最大余额6个LTC下单，最终成交 6 * 100 = 600 USDT。
+px  
+期权下单时，委托价格需为 tickSz 的整数倍。  
+当不为整数倍时，取值规则以tickSz取 0.0005 为例：  
+当委托价格对0.0005的余数大于0.00025或者委托价格小于0.0005时，向上取；  
+当委托价格对0.0005的余数小于等于0.00025，且委托价格大于0.0005时，向下取。
 
 ### 批量下单
 
@@ -14897,10 +14966,7 @@ args | Array | 是 | 请求参数
 `fok`：全部成交或立即取消单  
 `ioc`：立即成交并取消剩余单  
 `optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-> sz | String | 是 | 买入或卖出的数量  
-当type为limit时，表示买入或卖出的数量  
-当type为market时，表示买入或卖出的总金额，而  
-当其他产品买入或卖出时，表示数量  
+> sz | String | 是 | 委托数量  
 > px | String | 否 | 委托价，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
 > reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
@@ -15825,7 +15891,7 @@ details | Array | 各币种资产详细信息
         "args": [{
             "channel": "positions",
             "instType": "FUTURES",
-            "uly": "BTC-USD",
+            "instFamily": "BTC-USD",
             "instId": "BTC-USD-200329"
         }]
     }
@@ -15856,7 +15922,8 @@ args | Array | 是 | 请求订阅的频道列表
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`：全部  
-> uly | String | 否 | 标的指数  
+> instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 否 | 产品ID  
   
 > 成功返回示例：单个
@@ -15867,7 +15934,7 @@ args | Array | 是 | 请求订阅的频道列表
         "arg": {
             "channel": "positions",
             "instType": "FUTURES",
-            "uly": "BTC-USD",
+            "instFamily": "BTC-USD",
             "instId": "BTC-USD-200329"
         }
     }
@@ -15907,8 +15974,9 @@ arg | Object | 否 | 订阅的频道
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-`ANY`： 全部  
-> uly | String | 否 | 标的指数  
+`ANY`：全部  
+> instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -16074,7 +16142,7 @@ arg | Object | 订阅成功的频道
 > channel | String | 频道名  
 > uid | String | 用户标识  
 > instType | String | 产品类型  
-> uly | String | 标的指数  
+> instFamily | String | 交易品种  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -16285,7 +16353,7 @@ data | Array | 订阅的数据
         "args": [{
             "channel": "orders",
             "instType": "FUTURES",
-            "uly": "BTC-USD",
+            "instFamily": "BTC-USD",
             "instId": "BTC-USD-200329"
         }]
     }
@@ -16299,7 +16367,7 @@ data | Array | 订阅的数据
         "args": [{
             "channel": "orders",
             "instType": "FUTURES",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         }]
     }
     
@@ -16318,7 +16386,8 @@ args | Array | 是 | 请求订阅的频道列表
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`：全部  
-> uly | String | 否 | 标的指数  
+> instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 否 | 产品ID  
   
 > 成功返回示例：单个
@@ -16329,7 +16398,7 @@ args | Array | 是 | 请求订阅的频道列表
         "arg": {
             "channel": "orders",
             "instType": "FUTURES",
-            "uly": "BTC-USD",
+            "instFamily": "BTC-USD",
             "instId": "BTC-USD-200329"
         }
     }
@@ -16343,7 +16412,7 @@ args | Array | 是 | 请求订阅的频道列表
         "arg": {
             "channel": "orders",
             "instType": "FUTURES",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         }
     }
     
@@ -16371,8 +16440,9 @@ arg | Object | 否 | 订阅的频道
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-`ANY`： 全部  
-> uly | String | 否 | 标的指数  
+`ANY`：全部  
+> instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -16448,7 +16518,7 @@ arg | Object | 订阅成功的频道
 > channel | String | 频道名  
 > uid | String | 用户标识  
 > instType | String | 产品类型  
-> uly | String | 标的指数  
+> instFamily | String | 交易品种  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -16552,7 +16622,7 @@ data | Array | 订阅的数据
         "args": [{
             "channel": "orders-algo",
             "instType": "FUTURES",
-            "uly": "BTC-USD",
+            "instFamily": "BTC-USD",
             "instId": "BTC-USD-200329"
         }]
     }
@@ -16566,7 +16636,7 @@ data | Array | 订阅的数据
         "args": [{
             "channel": "orders-algo",
             "instType": "FUTURES",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         }]
     }
     
@@ -16584,7 +16654,8 @@ args | Array | 是 | 请求订阅的频道列表
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `ANY`：全部  
-> uly | String | 否 | 标的指数  
+> instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 否 | 产品ID  
   
 > 成功返回示例：单个
@@ -16595,7 +16666,7 @@ args | Array | 是 | 请求订阅的频道列表
         "arg": {
             "channel": "orders-algo",
             "instType": "FUTURES",
-            "uly": "BTC-USD",
+            "instFamily": "BTC-USD",
             "instId": "BTC-USD-200329"
         }
     }
@@ -16609,7 +16680,7 @@ args | Array | 是 | 请求订阅的频道列表
         "arg": {
             "channel": "orders-algo",
             "instType": "FUTURES",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         }
     }
     
@@ -16637,7 +16708,8 @@ arg | Object | 否 | 订阅的频道
 `SWAP`：永续合约  
 `FUTURES`：交割合约  
 `ANY`：全部  
-> uly | String | 否 | 标的指数  
+> instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -16695,7 +16767,8 @@ arg | Object | 订阅成功的频道
 > channel | String | 频道名  
 > uid | String | 用户标识  
 > instType | String | 产品类型  
-> uly | String | 标的指数  
+> instFamily | String | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -17011,7 +17084,8 @@ args | Array | 是 | 请求订阅的频道列表
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`：全部  
-> uly | String | 否 | 标的指数  
+> instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 否 | 产品ID  
   
 > 成功返回示例：单个
@@ -17022,7 +17096,7 @@ args | Array | 是 | 请求订阅的频道列表
         "arg": {
             "channel": "liquidation-warning",
             "instType": "FUTURES",
-            "uly": "BTC-USD",
+            "instFamily": "BTC-USD",
             "instId": "BTC-USD-200329"
         }
     }
@@ -17051,7 +17125,8 @@ arg | Object | 否 | 订阅的频道
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `ANY`： 全部  
-> uly | String | 否 | 标的指数  
+> instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -17116,9 +17191,9 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
-> uly | String | 用户标识  
+> uid | String | 用户标识  
 > instType | String | 产品类型  
-> uly | String | 标的指数  
+> instFamily | String | 交易品种  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -18602,6 +18677,7 @@ msg | String | 否 | 错误消息
         "data": [{
             "instType": "FUTURES",
             "instId": "BTC-USD-191115",
+            "instFamily": "BTC-USD",
             "uly": "BTC-USD",
             "category":"1",
             "baseCcy": "",
@@ -18629,6 +18705,7 @@ msg | String | 否 | 错误消息
         }, {
             "instType": "FUTURES",
             "instId": "BTC-USD-201115",
+            "instFamily": "BTC-USD",
             "uly": "BTC-USD",
             "category":"1",
             "baseCcy": "",
@@ -18668,17 +18745,18 @@ data | Array | 订阅的数据
 > instType | String | 产品类型  
 > instId | String | 产品ID，如 `BTC-USD-SWAP`  
 > category | String | 手续费档位，每个交易产品属于哪个档位手续费  
-> uly | String | 标的指数，如 `BTC-USD` ，仅适用于`交割/永续/期权`  
-> baseCcy | String | 交易货币币种，如 `BTC-USDT` 中`BTC` ，仅适用于`币币/币币杠杆`  
-> quoteCcy | String | 计价货币币种，如 `BTC-USDT` 中 `USDT` ，仅适用于`币币/币币杠杆`  
-> settleCcy | String | 盈亏结算和保证金币种，如 `BTC` ，仅适用于 `交割/永续/期权`  
+> uly | String | 标的指数，如 `BTC-USD`，仅适用于`交割/永续/期权`  
+> instFamily | String | 交易品种，如 `BTC-USD`，仅适用于`交割/永续/期权`  
+> baseCcy | String | 交易货币币种，如 `BTC-USDT`中`BTC`，仅适用于`币币/币币杠杆`  
+> quoteCcy | String | 计价货币币种，如 `BTC-USDT`中`USDT`，仅适用于`币币/币币杠杆`  
+> settleCcy | String | 盈亏结算和保证金币种，如 `BTC`，仅适用于 `交割/永续/期权`  
 > ctVal | String | 合约面值  
 > ctMult | String | 合约乘数  
 > ctValCcy | String | 合约面值计价币种  
 > optType | String | 期权类型，`C`：看涨期权 `P`：看跌期权 ，仅适用于`期权`  
-> stk | String | 行权价格， 仅适用于`期权`  
-> listTime | String | 上线日期， 仅适用于 `交割/永续/期权`  
-> expTime | String | 交割日期， 仅适用于 `交割/期权`  
+> stk | String | 行权价格，仅适用于`期权`  
+> listTime | String | 上线日期，仅适用于 `交割/永续/期权`  
+> expTime | String | 交割日期，仅适用于 `交割/期权`  
 > lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`。可用来分辨`币币杠杆`和`币币`  
 > tickSz | String | 下单价格精度，如 `0.0001`  
 > lotSz | String | 下单数量精度，如 `1`：BTC-USDT-200925 `0.001`：BTC-USDT  
@@ -19126,7 +19204,7 @@ data | Array | 订阅的数据
         "args": [{
             "channel": "estimated-price",
             "instType": "FUTURES",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         }]
     }
     
@@ -19141,9 +19219,10 @@ args | Array | 是 | 请求订阅的频道列表
 > instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-> uly | String | 可选 | 标的指数  
-`uly`和`instId`必须指定一个  
+> instFamily | String | 可选 | 交易品种  
+`instFamily`和`instId`必须指定一个  
 > instId | String | 可选 | 产品ID  
+`instFamily`和`instId`必须指定一个  
   
 > 成功返回示例
     
@@ -19153,7 +19232,7 @@ args | Array | 是 | 请求订阅的频道列表
         "arg": {
             "channel": "estimated-price",
             "instType": "FUTURES",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         }
     }
     
@@ -19164,7 +19243,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"estimated-price\", \"instId\" : \"FUTURES\",\"uly\" :\"BTC-USD\"}]}"
+        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"estimated-price\", \"instId\" : \"FUTURES\",\"instFamily\" :\"BTC-USD\"}]}"
     }
     
 
@@ -19179,7 +19258,7 @@ arg | Object | 否 | 订阅的频道
 `FUTURES`：交割合约  
 `OPTION`：期权  
 `SWAP`：永续  
-> uly | String | 否 | 标的指数  
+> instFamily | String | 否 | 交易品种  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
@@ -19191,7 +19270,7 @@ msg | String | 否 | 错误消息
         "arg": {
             "args": "estimated-price",
             "instType": "FUTURES",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         },
         "data": [{
             "instType": "FUTURES",
@@ -19212,7 +19291,7 @@ arg | Object | 订阅成功的频道
 `OPTION`：期权  
 `FUTURES`：交割  
 `SWAP`：永续  
-> uly | String | 标的指数  
+> instFamily | String | 交易品种  
 > instId | String | 产品ID  
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
@@ -19757,7 +19836,7 @@ asks和bids值数组举例说明： ["411.8", "10", "0", "4"]
         "op": "subscribe",
         "args": [{
             "channel": "opt-summary",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         }]
     }
     
@@ -19769,7 +19848,7 @@ asks和bids值数组举例说明： ["411.8", "10", "0", "4"]
 op | String | 是 | 操作，`subscribe` `unsubscribe`  
 args | Array | 是 | 请求订阅的频道列表  
 > channel | String | 是 | 频道名，`opt-summary`  
-> uly | String | 是 | 标的指数  
+> instFamily | String | 是 | 交易品种  
   
 > 返回示例
     
@@ -19778,7 +19857,7 @@ args | Array | 是 | 请求订阅的频道列表
         "event": "subscribe",
         "arg": {
             "channel": "opt-summary",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         }
     }
     
@@ -19789,7 +19868,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"opt-summary\", \"uly\" : \"BTC-USD\"}]}"
+        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"opt-summary\", \"instFamily\" : \"BTC-USD\"}]}"
     }
     
 
@@ -19800,7 +19879,7 @@ args | Array | 是 | 请求订阅的频道列表
 event | String | 是 | 事件，`subscribe` `unsubscribe` `error`  
 arg | Object | 否 | 订阅的频道  
 > channel | String | 是 | 频道名  
-> uly | String | 是 | 标的指数  
+> instFamily | String | 是 | 交易品种  
 code | String | 否 | 错误码  
 msg | String | 否 | 错误消息  
   
@@ -19810,7 +19889,7 @@ msg | String | 否 | 错误消息
     {
         "arg": {
             "channel": "opt-summary",
-            "uly": "BTC-USD"
+            "instFamily": "BTC-USD"
         },
         "data": [{
             "instType": "OPTION",
@@ -19841,7 +19920,7 @@ msg | String | 否 | 错误消息
 ---|---|---  
 arg | Object | 订阅成功的频道  
 > channel | String | 频道名  
-> uly | String | 标的指数  
+> instFamily | String | 交易品种  
 data | Array | 订阅的数据  
 > instType | String | 产品类型， `OPTION`  
 > instId | String | 产品ID  
@@ -19928,13 +20007,16 @@ msg | String | 否 | 错误消息
             "channel": "funding-rate",
             "instId": "BTC-USD-SWAP"
         },
-        "data": [{
-            "instType": "SWAP",
-            "instId": "BTC-USD-SWAP",
-            "fundingRate": "0.018",
-            "nextFundingRate": "",
-            "fundingTime": "1597026383085"
-        }]
+        "data": [
+            {
+                "fundingRate": "0.0001515",
+                "fundingTime": "1622822400000",
+                "instId": "BTC-USD-SWAP",
+                "instType": "SWAP",
+                "nextFundingRate": "0.00029",
+                "nextFundingTime": "1622851200000"
+            }
+        ]
     }
     
 
@@ -19949,8 +20031,9 @@ data | Array | 订阅的数据
 > instType | String | 产品类型，`SWAP`  
 > instId | String | 产品ID，如 `BTC-USD-SWAP`  
 > fundingRate | String | 资金费率  
-> nextFundingRate | String | 下一期预测资金费率  
 > fundingTime | String | 最新的到期结算的资金费时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+> nextFundingRate | String | 下一期预测资金费率  
+> nextFundingTime | String | 下一期资金费时间，Unix时间戳的毫秒数格式，如 `1622851200000`  
   
 ### 指数K线频道
 
@@ -20623,16 +20706,16 @@ body不能为空 | 400 | 50000
 Api 已被冻结，请联系客服处理 | 400 | 50100  
 APIKey 与当前环境不匹配 | 401 | 50101  
 请求时间戳过期 | 401 | 50102  
-请求头"OK_ACCESS_KEY"不能为空 | 401 | 50103  
-请求头"OK_ACCESS_PASSPHRASE"不能为空 | 401 | 50104  
-请求头"OK_ACCESS_PASSPHRASE"错误 | 401 | 50105  
-请求头"OK_ACCESS_SIGN"不能为空 | 401 | 50106  
-请求头"OK_ACCESS_TIMESTAMP"不能为空 | 401 | 50107  
+请求头"OK-ACCESS-KEY"不能为空 | 401 | 50103  
+请求头"OK-ACCESS-PASSPHRASE"不能为空 | 401 | 50104  
+请求头"OK-ACCESS-PASSPHRASE"错误 | 401 | 50105  
+请求头"OK-ACCESS-SIGN"不能为空 | 401 | 50106  
+请求头"OK-ACCESS-TIMESTAMP"不能为空 | 401 | 50107  
 券商ID不存在 | 401 | 50108  
 券商域名不存在 | 401 | 50109  
 您的IP{0}不在APIKey绑定IP名单中 (您可以将您的IP加入到APIKey绑定白名单中) | 401 | 50110  
-无效的OK_ACCESS_KEY | 401 | 50111  
-无效的OK_ACCESS_TIMESTAMP | 401 | 50112  
+无效的OK-ACCESS-KEY | 401 | 50111  
+无效的OK-ACCESS-TIMESTAMP | 401 | 50112  
 无效的签名 | 401 | 50113  
 无效的授权 | 401 | 50114  
 无效的请求类型 | 405 | 50115  
@@ -21162,11 +21245,11 @@ instId {0} 报价不可以超过你预设的价格限制 | 200 | 70310
 
 错误消息 | 错误码  
 ---|---  
-"OK_ACCESS_KEY"不能为空 | 60001  
-"OK_ACCESS_SIGN"不能为空 | 60002  
-"OK_ACCESS_PASSPHRASE"不能为空 | 60003  
-无效的 OK_ACCESS_TIMESTAMP | 60004  
-无效的 OK_ACCESS_KEY | 60005  
+"OK-ACCESS-KEY"不能为空 | 60001  
+"OK-ACCESS-SIGN"不能为空 | 60002  
+"OK-ACCESS-PASSPHRASE"不能为空 | 60003  
+无效的 OK-ACCESS-TIMESTAMP | 60004  
+无效的 OK-ACCESS-KEY | 60005  
 请求时间戳过期 | 60006  
 无效的签名 | 60007  
 公共服务不支持订阅私有频道 | 60028  
