@@ -2143,7 +2143,7 @@ tag | String | 否 | 订单标签
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 tgtCcy | String | 否 | 委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`单向止盈止损买单  
+仅适用于`币币`单向止盈止损市价买单  
 默认买为`计价货币`，卖为`交易货币`  
 reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
@@ -6144,8 +6144,8 @@ ts | String | 时间，Unix时间戳的毫秒数格式，如 `1597026383085`
 参数名 | 类型 | 描述  
 ---|---|---  
 ccy | String | 币种名称，如 `BTC`  
-min | String | 支持闪兑的最小值  
-max | String | 支持闪兑的最大值  
+min | String | 支持闪兑的最小值(已废弃)  
+max | String | 支持闪兑的最大值(已废弃)  
   
 ### 获取闪兑币对信息
 
@@ -6205,7 +6205,7 @@ quoteCcyMin | String | 计价货币支持闪兑的最小值
   
 ### 闪兑预估询价
 
-#### 限速： 2次/s
+#### 限速：10次/s
 
 #### 限速规则：UserID
 
@@ -6290,7 +6290,7 @@ quoteSz | String | 闪兑计价币数量
   
 ### 闪兑交易
 
-#### 限速： 2次/s
+#### 限速：10次/s
 
 #### 限速规则：UserID
 
@@ -10055,7 +10055,7 @@ algoOrdType | String | 是 | 策略订单类型
 `grid`：现货网格委托  
 `contract_grid`：合约网格委托  
 `moon_grid`：天地网格委托  
-type | String | 是 | 子定单状态  
+type | String | 是 | 子订单状态  
 `live`：未成交，`filled`：已成交  
 groupId | String | 否 | 组ID  
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
@@ -12476,7 +12476,7 @@ instType | String | 是 | 产品类型
 `FUTURES`：交割合约  
 `OPTION`：期权  
 uly | String | 可选 | 标的指数，仅适用于`交割/永续/期权`，期权必填  
-instFamily | String | 否 | 标的指数，仅适用于`交割/永续/期权`  
+instFamily | String | 否 | 交易品种，仅适用于`交割/永续/期权`  
 instId | String | 否 | 产品ID  
   
 > 返回结果
@@ -12679,7 +12679,7 @@ instType | String | 是 | 产品类型
 uly | String | 可选 | 标的指数  
 适用于`交割/永续/期权`  
 `期权`情况下，`uly`和`instFamily`必须传一个  
-instFamily | String | 否 | 交易品种  
+instFamily | String | 可选 | 交易品种  
 适用于`交割/永续/期权`  
 `期权`情况下，`uly`和`instFamily`必须传一个  
 instId | String | 否 | 产品ID，如 `BTC-USD-180216`  
@@ -13197,9 +13197,9 @@ mgnMode | String | 否 | 保证金模式
 instId | String | 否 | 产品ID，仅适用于`币币杠杆`  
 ccy | String | 否 | 币种 ，仅适用于`币币杠杆`（全仓）  
 uly | String | 可选 | 标的指数  
-`交割/永续/期权`合约情况下，`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+`交割/永续/期权`情况下，`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
 instFamily | String | 可选 | 交易品种  
-`交割/永续/期权`合约情况下，`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+`交割/永续/期权`情况下，`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
 alias | String | 可选 | `this_week`：本周  
 `next_week`：次周  
 `quarter`：季度  
@@ -13370,7 +13370,7 @@ uly | String | 可选 | 标的指数，支持多uly，半角逗号分隔，最�
 当产品类型是`永续`、`交割`、`期权` 之一时，`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
 当产品类型是 `MARGIN` 时忽略  
 instFamily | String | 可选 | 交易品种，支持多instFamily，半角逗号分隔，最大不超过5个  
-当产品类型是`永续`、`交割`、`期权` 之一时,`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
+当产品类型是`永续`、`交割`、`期权` 之一时，`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
 instId | String | 可选 | 产品ID，支持多instId，半角逗号分隔，最大不超过5个  
 仅适用`币币杠杆`，`instId`和`ccy`必须传一个，若传两个，以`instId`为主  
 ccy | String | 可选 | 保证金币种  
@@ -13648,9 +13648,9 @@ type | String | 否 | 风险准备金类型
 ；`platform_revenue`：平台收入注入  
 默认返回全部类型  
 uly | String | 可选 | 标的指数  
-`交割/永续/期权`情况下，`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+`交割/永续/期权`情况下，`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
 instFamily | String | 可选 | 交易品种  
-`交割/永续/期权`情况下，`uly`与`instFamily`必须传一个,若传两个，以`instFamily`为主  
+`交割/永续/期权`情况下，`uly`与`instFamily`必须传一个，若传两个，以`instFamily`为主  
 ccy | String | 可选 | 币种， 仅适用`币币杠杆`，且必填写  
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，传的值为对应接口的`ts`  
@@ -15654,7 +15654,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"account\", \"ccy\" : \"BTC\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"account\", \"ccy\" : \"BTC\"}]}"
     }
     
 
@@ -15958,7 +15958,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"positions\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"positions\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -16251,7 +16251,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"balance_and_position\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"balance_and_position\"}]}"
     }
     
 
@@ -16423,7 +16423,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"orders\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"orders\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -16691,7 +16691,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"orders-algo\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"orders-algo\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -16903,7 +16903,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"algo-advance\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"algo-advance\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -17108,7 +17108,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"liquidation-warning\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"liquidation-warning\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -17307,7 +17307,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"account-greeks\", \"ccy\" : \"BTC\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"account-greeks\", \"ccy\" : \"BTC\"}]}"
     }
     
 
@@ -17451,7 +17451,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
       "event": "error",
       "code": "60012",
-      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"rfqs\"}]}"
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"rfqs\"}]}"
     }
     
 
@@ -17573,7 +17573,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
       "event": "error",
       "code": "60012",
-      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"quotes\"}]}"
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"quotes\"}]}"
     }
     
 
@@ -17697,7 +17697,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
       "event": "error",
       "code": "60012",
-      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"struc-block-trades\""}]}"
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"struc-block-trades\""}]}"
     }
     
 
@@ -17832,7 +17832,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-orders-spot\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-orders-spot\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -18013,7 +18013,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-orders-contract\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-orders-contract\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -18201,7 +18201,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-orders-moon\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-orders-moon\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -18366,7 +18366,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-positions\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-positions\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -18496,7 +18496,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-sub-orders\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"grid-sub-orders\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -18646,7 +18646,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"instruments\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"instruments\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -18827,7 +18827,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"tickers\", \"instId\" : \"LTC-USD-200327\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"tickers\", \"instId\" : \"LTC-USD-200327\"}]}"
     }
     
 
@@ -18943,7 +18943,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"open-interest\", \"instId\" : \"LTC-USD-SWAP\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"open-interest\", \"instId\" : \"LTC-USD-SWAP\"}]}"
     }
     
 
@@ -19041,7 +19041,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"candle1D\", \"instId\" : \"BTC-USD-191227\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"candle1D\", \"instId\" : \"BTC-USD-191227\"}]}"
     }
     
 
@@ -19141,7 +19141,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"trades\", \"instId\" : \"BTC-USD-191227\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"trades\", \"instId\" : \"BTC-USD-191227\"}]}"
     }
     
 
@@ -19243,7 +19243,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"estimated-price\", \"instId\" : \"FUTURES\",\"instFamily\" :\"BTC-USD\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"estimated-price\", \"instId\" : \"FUTURES\",\"instFamily\" :\"BTC-USD\"}]}"
     }
     
 
@@ -19342,7 +19342,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"mark-price\", \"instId\" : \"LTC-USD-190628\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"mark-price\", \"instId\" : \"LTC-USD-190628\"}]}"
     }
     
 
@@ -19462,7 +19462,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"mark-price-candle1D\", \"instId\" : \"BTC-USD-190628\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"mark-price-candle1D\", \"instId\" : \"BTC-USD-190628\"}]}"
     }
     
 
@@ -19549,7 +19549,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"price-limit\", \"instId\" : \"LTC-USD-190628\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"price-limit\", \"instId\" : \"LTC-USD-190628\"}]}"
     }
     
 
@@ -19650,7 +19650,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"books\", \"instId\" : \"BTC-USD-191227\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"books\", \"instId\" : \"BTC-USD-191227\"}]}"
     }
     
 
@@ -19868,7 +19868,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"opt-summary\", \"instFamily\" : \"BTC-USD\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"opt-summary\", \"instFamily\" : \"BTC-USD\"}]}"
     }
     
 
@@ -19984,7 +19984,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"funding-rate\", \"instId\" : \"BTC-USD-SWAP\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"funding-rate\", \"instId\" : \"BTC-USD-SWAP\"}]}"
     }
     
 
@@ -20107,7 +20107,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"index-candle30m\", \"instId\" : \"BTC-USD\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"index-candle30m\", \"instId\" : \"BTC-USD\"}]}"
     }
     
 
@@ -20194,7 +20194,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"index-tickers\", \"instId\" : \"BTC-USDT\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"index-tickers\", \"instId\" : \"BTC-USDT\"}]}"
     }
     
 
@@ -20288,7 +20288,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"statuss\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"statuss\"}]}"
     }
     
 
@@ -20387,7 +20387,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
       "event": "error",
       "code": "60012",
-      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"public-struc-block-trades\""}]}"
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"public-struc-block-trades\""}]}"
     }
     
 
@@ -20495,7 +20495,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
       "event": "error",
       "code": "60012",
-      "msg": "Unrecognized request: {\"op\": \"subscribe\", \"args\":[{ \"channel\" : \"public-block-trades\""}]}"
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"args\":[{ \"channel\" : \"public-block-trades\""}]}"
     }
     
 
@@ -20591,7 +20591,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Unrecognized request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"block-tickers\", \"instId\" : \"LTC-USD-200327\"}]}"
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"block-tickers\", \"instId\" : \"LTC-USD-200327\"}]}"
     }
     
 
@@ -21081,7 +21081,7 @@ NEO最小提现数量为1，且提现数量必须为整数 | 200 | 58202
 提币地址不合法 | 200 | 58222  
 该类型币种暂不支持链上提币到 OKX 地址，请通过内部转账进行提币 | 200 | 58224  
 抱歉，由于当地法律法规，欧易无法为{region}未认证用户提供服务，所以您无法向该用户转账 | 200 | 58225  
-{chainName} 已下线，不支持提币 | 200 | 58225  
+{chainName} 已下线，不支持提币 | 200 | 58226  
 创建充值地址超过上限 | 200 | 58300  
 充值地址不存在 | 200 | 58301  
 充值地址需要标签 | 200 | 58302  
