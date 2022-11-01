@@ -3365,8 +3365,8 @@ data | Array of objects | 询价单结果
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 rfqId | String | 可选 | 询价单ID  
-clRfqId | String | 可选 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当
-clRfqId 和 rfqId 都传时，以 rfqId 为准。  
+clRfqId | String | 可选 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+当 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
   
 > 返回示例
     
@@ -8518,7 +8518,7 @@ records | Array | 各币种详细信息
     body
     {
        "instType":"SWAP",
-       "inclRealPos":"true",
+       "inclRealPos":true,
        "simPos":[
          {
               "pos":"10",
@@ -8535,7 +8535,7 @@ records | Array | 各币种详细信息
     POST /api/v5/account/simulated_margin
     body
     {
-       "inclRealPos":"true"
+       "inclRealPos":true
     }
     
     
@@ -21032,6 +21032,7 @@ REST API 错误码从 50000 到 59999
 51410 | 200 | 撤单失败，订单已处于撤销中  
 51411 | 200 | 用户没有执行mass cancel的权限  
 51412 | 200 | 委托已触发，暂不支持撤单  
+51413 | 200 | 撤单失败，接口不支持该委托类型的撤单  
 51415 | 200 | 下单失败，现货交易仅支持设置最新价为触发价格，请更改触发价格并重试  
 51500 | 200 | 价格和数量不能同时为空  
 51501 | 400 | 修改订单超过最大允许单数{0}  
