@@ -21,10 +21,36 @@ API接口 Broker接入 最佳实践 更新日志
     * 交易时效性 
       * REST 
       * WebSocket 
-  * 大宗交易工作流程 
   * 做市商申请
   * 交互式浏览器 
     * 使用说明 
+  * 大宗交易 
+    * 大宗交易工作流程 
+    * REST API 
+      * 获取报价方信息 
+      * 询价 
+      * 取消询价单 
+      * 批量取消询价单 
+      * 取消所有询价单 
+      * 执行报价
+      * 设置可报价产品 
+      * 重设MMP状态 
+      * 报价 
+      * 取消报价单 
+      * 批量取消报价单 
+      * 取消所有报价单 
+      * 获取询价单信息 
+      * 获取报价单信息 
+      * 获取大宗交易信息 
+      * 获取大宗交易公共成交数据 
+    * WebSocket 私有频道 
+      * 询价频道 
+      * 报价频道 
+      * 大宗交易频道 
+    * WebSocket 公共频道 
+      * 公共大宗交易频道 
+      * 公共大宗交易单腿交易频道 
+      * 大宗交易行情频道 
   * REST API
     * 请求验证 
       * 生成APIKey 
@@ -55,23 +81,6 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取一键还债币种列表 
       * 一键还债交易 
       * 获取一键还债历史记录 
-    * 大宗交易 
-      * 获取报价方信息 
-      * 询价 
-      * 取消询价单 
-      * 批量取消询价单 
-      * 取消所有询价单 
-      * 执行报价
-      * 设置可报价产品 
-      * 重设MMP状态
-      * 报价 
-      * 取消报价单 
-      * 批量取消报价单 
-      * 取消所有报价单 
-      * 获取询价单信息 
-      * 获取报价单信息 
-      * 获取大宗交易信息 
-      * 获取大宗交易公共成交数据 
     * 资金 
       * 获取币种列表 
       * 获取资金账户余额 
@@ -230,9 +239,6 @@ API接口 Broker接入 最佳实践 更新日志
       * 高级策略委托订单频道 
       * 爆仓风险预警推送频道 
       * 账户greeks频道 
-      * 询价频道 
-      * 报价频道 
-      * 大宗交易频道 
       * 现货网格策略委托订单频道 
       * 合约网格策略委托订单频道 
       * 天地网格策略委托订单频道 
@@ -254,9 +260,6 @@ API接口 Broker接入 最佳实践 更新日志
       * 指数K线频道 
       * 指数行情频道 
       * Status 频道 
-      * 公共大宗交易频道 
-      * 公共大宗交易单腿交易频道 
-      * 大宗交易行情频道 
   * 错误码 
     * REST 
       * 公共 
@@ -437,47 +440,6 @@ expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格
     }
     
 
-# 大宗交易工作流程
-
-大宗交易时指在非公开市场进行的、私下议定的、满足规定最小交易手数的期货、期权、交割、永续或混合产品的大单交易。
-交易细节一经确认，此笔交易会被提交到OKX以进行保证金计算，清算和执行。
-
-**基本概念**
-
-  1. **询价单（RFQs） -** 询价单，由询价方发给报价方. 询价单包括询价方希望交易的一种或多种产品及其数量。
-  2. **报价单 -** 报价单，由报价方发给询价方对询价单的报价。
-  3. **交易** \- 当询价方接受并执行报价方的报价单，一笔交易就由此产生。
-
-**基本工作流程**
-
-要以询价方或报价方身份进行交易，用户需要在交易账户中存入至少100,000美元。
-此外，成为报价方请填写此表格[请填写表格以访问大宗交易](https://share.hsforms.com/1mYdfKtJJR3CC03IyCeC6hg3a1fq).
-
-  1. 询价方创建一个询价单（RFQ），并选择希望收到此询价单的报价方。 
-  2. 不同报价方发送报价单回应此询价单。
-  3. 询价方选择执行最好的报价单产生交易。OKX收到此笔交易并做结算。
-  4. 询价方和报价方收到交易执行的确认。
-  5. 交易详情发布在公共市场数据频道上（不包含交易方信息）。
-
-**询价方角度**
-
-  1. 询价方使用POST /api/v5/rfq/create-rfq创建询价单。询价方可以可通过GET /api/v5/public/instruments查询可询价产品信息，即通过GET /api/v5/rfq/counterparties查询可选择报价方信息。
-  2. 询价方可以在询价单有效时任何时候通过POST /api/v5/rfq/cancel-rfq取消询价单。
-  3. 报价方，如果是询价方选择的报价方之一，会在rfqs推送频道收到询价单信息，并可作出相应报价。
-  4. 询价方，在quotes推送频道收到报价信息后，可以选择最优报价并通过POST /api/v5/rfq/execute-quote执行。
-  5. 询价方会在struc-block-trades推送频道收到交易成功执行确认。
-  6. 询价方也会在public-struc-block-trades推送频道收到此笔交易以及其他OKX大宗交易的确认信息。
-
-**报价方角度**
-
-  1. 当有一个新的询价单发出，并且报价方是被选择的报价方之一时，报价方会在rfqs推送频道接收到此询价单信息。
-  2. 报价方创建一个单向或者双向的报价单并通过POST /api/v5/rfq/create-quote发出。
-  3. 报价方可以通过POST /api/v5/rfq/cancel-quote任意取消一个有效的报价单。
-  4. 询价方选择执行最优报价单。
-  5. 报价方通过quotes推送频道接收他们报价单的状态更新。
-  6. 报价方会在struc-block-trades推送频道收到他们报价单的交易成功执行确认。
-  7. 报价方也会在public-struc-block-trades推送频道收到此笔交易以及其他OKX大宗交易的确认信息。
-
 # 做市商申请
 
 满足以下任意条件的用户即可申请加入欧易做市商计划：
@@ -513,2660 +475,50 @@ expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格
 
 立即体验 [交互式浏览器](/demo-trading-explorer/v5/zh)
 
-# REST API
+# 大宗交易
 
-## 请求验证
+## 大宗交易工作流程
 
-### 生成APIKey
+大宗交易时指在非公开市场进行的、私下议定的、满足规定最小交易手数的期货、期权、交割、永续或混合产品的大单交易。
+交易细节一经确认，此笔交易会被提交到OKX以进行保证金计算，清算和执行。
 
-在对任何请求进行签名之前，您必须通过交易网站创建一个APIKey。创建APIKey后，您将获得3个必须记住的信息：
+**基本概念**
 
-  * APIKey
-  * SecretKey
-  * Passphrase
+  1. **询价单（RFQs） -** 询价单，由询价方发给报价方. 询价单包括询价方希望交易的一种或多种产品及其数量。
+  2. **报价单 -** 报价单，由报价方发给询价方对询价单的报价。
+  3. **交易** \- 当询价方接受并执行报价方的报价单，一笔交易就由此产生。
 
-APIKey和SecretKey将由平台随机生成和提供，Passphrase将由您提供以确保API访问的安全性。平台将存储Passphrase加密后的哈希值进行验证，但如果您忘记Passphrase，则无法恢复，请您通过交易网站重新生成新的APIKey。
+**基本工作流程**
 
-每个APIKey最多可绑定20个IP地址；未绑定IP且拥有交易或提币权限的APIKey，将在闲置30天之后自动删除。
+要以询价方或报价方身份进行交易，用户需要在交易账户中存入至少100,000美元。
+此外，要成为报价方[请填写表格以访问大宗交易](https://share.hsforms.com/1mYdfKtJJR3CC03IyCeC6hg3a1fq).
 
-### 发起请求
+  1. 询价方创建一个询价单（RFQ），并选择希望收到此询价单的报价方。 
+  2. 不同报价方发送报价单回应此询价单。
+  3. 询价方选择执行最好的报价单产生交易。OKX收到此笔交易并做结算。
+  4. 询价方和报价方收到交易执行的确认。
+  5. 交易详情发布在公共市场数据频道上（不包含交易方信息）。
 
-所有REST私有请求头都必须包含以下内容：
+**询价方角度**
 
-  * `OK-ACCESS-KEY`字符串类型的APIKey。
+  1. 询价方使用POST /api/v5/rfq/create-rfq创建询价单。询价方可以可通过GET /api/v5/public/instruments查询可询价产品信息，即通过GET /api/v5/rfq/counterparties查询可选择报价方信息。
+  2. 询价方可以在询价单有效时任何时候通过POST /api/v5/rfq/cancel-rfq取消询价单。
+  3. 报价方，如果是询价方选择的报价方之一，会在rfqs推送频道收到询价单信息，并可作出相应报价。
+  4. 询价方，在quotes推送频道收到报价信息后，可以选择最优报价并通过POST /api/v5/rfq/execute-quote执行。
+  5. 询价方会在struc-block-trades推送频道收到交易成功执行确认。
+  6. 询价方也会在public-struc-block-trades推送频道收到此笔交易以及其他OKX大宗交易的确认信息。
 
-  * `OK-ACCESS-SIGN`使用HMAC SHA256哈希函数获得哈希值，再使用Base-64编码（请参阅签名）。
+**报价方角度**
 
-  * `OK-ACCESS-TIMESTAMP`发起请求的时间（UTC），如：2020-12-08T09:08:57.715Z
+  1. 当有一个新的询价单发出，并且报价方是被选择的报价方之一时，报价方会在rfqs推送频道接收到此询价单信息。
+  2. 报价方创建一个单向或者双向的报价单并通过POST /api/v5/rfq/create-quote发出。
+  3. 报价方可以通过POST /api/v5/rfq/cancel-quote任意取消一个有效的报价单。
+  4. 询价方选择执行最优报价单。
+  5. 报价方通过quotes推送频道接收他们报价单的状态更新。
+  6. 报价方会在struc-block-trades推送频道收到他们报价单的交易成功执行确认。
+  7. 报价方也会在public-struc-block-trades推送频道收到此笔交易以及其他OKX大宗交易的确认信息。
 
-  * `OK-ACCESS-PASSPHRASE`您在创建API密钥时指定的Passphrase。
-
-所有请求都应该含有application/json类型内容，并且是有效的JSON。
-
-### 签名
-
-> 生成签名
-
-`OK-ACCESS-SIGN`的请求头是对`timestamp + method + requestPath +
-body`字符串（+表示字符串连接），以及SecretKey，使用HMAC SHA256方法加密，通过Base-64编码输出而得到的。
-
-如：`sign=CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(timestamp + 'GET' +
-'/api/v5/account/balance?ccy=BTC', SecretKey))`
-
-其中，`timestamp`的值与`OK-ACCESS-
-TIMESTAMP`请求头相同，为ISO格式，如`2020-12-08T09:08:57.715Z`。
-
-method是请求方法，字母全部大写：`GET/POST`。
-
-requestPath是请求接口路径。如：`/api/v5/account/balance`
-
-body是指请求主体的字符串，如果请求没有主体（通常为GET请求）则body可省略。如：`{"instId":"BTC-
-USDT","lever":"5","mgnMode":"isolated"}`
-
-GET请求参数是算作requestPath，不算body
-
-SecretKey为用户申请APIKey时所生成。如：`22582BD0CFF14C41EDBF1AB98506286D`
-
-## 交易
-
-`交易`功能模块下的API接口需要身份验证。
-
-### 下单
-
-只有当您的账户有足够的资金才能下单。
-
-#### 限速： 60次/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-#### HTTP请求
-
-`POST /api/v5/trade/order`
-
-> 请求示例
-    
-    
-    币币下单：
-    POST /api/v5/trade/order
-    body
-    {
-        "instId":"BTC-USDT",
-        "tdMode":"cash",
-        "clOrdId":"b15",
-        "side":"buy",
-        "ordType":"limit",
-        "px":"2.15",
-        "sz":"2"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID，如 `BTC-USD-190927-5000-C`  
-tdMode | String | 是 | 交易模式  
-保证金模式：`isolated`：逐仓 ；`cross`：全仓  
-非保证金模式：`cash`：非保证金  
-ccy | String | 否 | 保证金币种，仅适用于`单币种保证金模式`下的`全仓杠杆`订单  
-clOrdId | String | 否 | 客户自定义订单ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
-side | String | 是 | 订单方向  
-`buy`：买， `sell`：卖  
-posSide | String | 可选 | 持仓方向  
-在双向持仓模式下必填，且仅可选择 `long` 或 `short`。 仅适用交割、永续。  
-ordType | String | 是 | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-sz | String | 是 | 委托数量  
-px | String | 可选 | 委托价格，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
-reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
-仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
-仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-tgtCcy | String | 否 | 市价单委托数量`sz`的单位，仅适用于`币币`市价订单  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-买单默认`quote_ccy`， 卖单默认`base_ccy`  
-banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
-为true时，余额不足时，系统不会改单，下单会失败，仅适用于币币市价单  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "clOrdId":"oktswap6",
-                "ordId":"12345689",
-                "tag":"",
-                "sCode":"0",
-                "sMsg":""
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-ordId | String | 订单ID  
-clOrdId | String | 客户自定义订单ID  
-tag | String | 订单标签  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-tdMode  
-交易模式，下单时需要指定  
-**简单交易模式：**  
-\- 币币和期权买方：cash  
-**单币种保证金模式：**  
-\- 逐仓杠杆：isolated  
-\- 全仓杠杆：cross  
-\- 全仓币币：cash  
-\- 全仓交割/永续/期权：cross  
-\- 逐仓交割/永续/期权：isolated  
-**跨币种保证金模式：**  
-\- 逐仓杠杆：isolated  
-\- 全仓币币：cross  
-\- 全仓交割/永续/期权：cross  
-\- 逐仓交割/永续/期权：isolated  
-**组合保证金模式：**  
-\- 逐仓杠杆：isolated  
-\- 全仓币币：cross  
-\- 全仓交割/永续/期权：cross  
-\- 逐仓交割/永续/期权：isolated  
-clOrdId  
-clOrdId是用户自定义的唯一ID用来识别订单。如果在请求参数中传入了，那它一定会在返回参数内，并且可以用于查询订单，撤销订单，修改订单等接口。
-clOrdId不能与当前所有的挂单的clOrdId重复  posSide  
-持仓方向，单向持仓模式下此参数非必填，如果填写仅可以选择net；在双向持仓模式下必填，且仅可选择 long 或 short。  
-双向持仓模式下，side和posSide需要进行组合  
-开多：买入开多（side 填写 buy； posSide 填写 long ）  
-开空：卖出开空（side 填写 sell； posSide 填写 short ）  
-平多：卖出平多（side 填写 sell；posSide 填写 long ）  
-平空：买入平空（side 填写 buy； posSide 填写 short ）  ordType  
-订单类型，创建新订单时必须指定，您指定的订单类型将影响需要哪些订单参数和撮合系统如何执行您的订单，以下是有效的ordType：  
-普通委托：  
-limit：限价单，要求指定sz 和 px  
-market：市价单，币币和币币杠杆，是市价委托吃单；交割合约和永续合约，是自动以最高买/最低卖价格委托，遵循限价机制；期权合约不支持市价委托  
-高级委托：  
-post_only：限价委托，在下单那一刻只做maker，如果该笔订单的任何部分会吃掉当前挂单深度，则该订单将被全部撤销。  
-fok：限价委托，全部成交或立即取消，如果无法全部成交该笔订单，则该订单将被全部撤销。  
-ioc：限价委托，立即成交并取消剩余，立即按照委托价格撮合成交，并取消该订单剩余未完成数量，不会在深度列表上展示委托数量。  
-optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交割合约和永续合约。  sz  
-交易数量，表示要购买或者出售的数量。  
-当币币/币币杠杆以限价买入和卖出时，指交易货币数量。  
-当币币/币币杠杆以市价买入时，指计价货币的数量。  
-当币币/币币杠杆以市价卖出时，指交易货币的数量。  
-当交割、永续、期权买入和卖出时，指合约张数。  reduceOnly  
-只减仓，下单时，此参数设置为 true 时，表示此笔订单具有减仓属性，只会减少持仓数量，不会增加新的持仓仓位  
-对于同一产品，所有反方向挂单的张数加上当前只减仓下单张数，不能超过持仓张数  
-仅适用于`单币种账户模式`和`跨币种账户模式`  
-仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  tgtCcy  
-市价单委托数量`sz`的单位：仅适用于币币市价下单交易。  
-交易货币：base_ccy  
-计价货币：quote_ccy  
-您在使用交易货币买入或者计价货币卖出时，请知晓：  
-1.如果您输入的数量大于当前可买或者可卖的数量，系统将按照您的最大可买或者可卖数量帮您完成交易，如果您希望按照指定数量成交，那您可以尝试使用限价单，等待市场价格波动到锁定的余额可以买入或卖出您指定的数量。  
-2.如果您输入的数量不大于当前可买或者可卖的数量，那当市场价格波动过大时，锁定的余额可能没办法买入您输入的交易货币数量或卖出您输入的计价货币数量，为保证您的交易体验，我们基于【能买多少买多少】或者【能卖多少卖多少】的原则，更改下单的数量帮您完成交易。此外，我们将尽量多锁定一点余额来规避更改下单数量的情况。  
-2.1 交易币买入例子：  
-以市价下单 买入 10个LTC为例，用户可买为11个，此时 10 < 11，挂单成功。当LTC-USDT的市价为200，用户被锁定余额为3,000
-USDT，200*10 < 3,000，最终成交10个LTC； 若市场波动过大，LTC-USDT的市价为400，此时400*10 >
-3,000，当用户被锁定的余额不够买入下单指定的交易货币数量时，系統使用用户被锁定的最大余额3,000 USDT下单买入，最终成交 3,000/400 =
-7.5个 LTC。  
-2.2 计价币卖出例子：  
-以市价下单 卖出 1,000USDT为例，用户可卖为1,200USDT，1,000 < 1,200，挂单成功。LTC-
-USDT的市价为200，用户被锁定的余额为6个LTC，最终成交5个LTC； 若市场波动过大，LTC-USDT的市价为100，100*6 <
-1,000，当用户被锁定的余额不够卖出下单指定的计价货币数量时，系統使用用户被锁定的最大余额6个LTC下单，最终成交 6 * 100 = 600 USDT。
-px  
-期权下单时，委托价格需为 tickSz 的整数倍。  
-当不为整数倍时，取值规则以tickSz取 0.0005 为例：  
-当委托价格对0.0005的余数大于0.00025或者委托价格小于0.0005时，向上取；  
-当委托价格对0.0005的余数小于等于0.00025，且委托价格大于0.0005时，向下取。
-
-### 批量下单
-
-每次最多可以批量提交20个新订单。请求参数应该按数组格式传递。
-
-#### 限速：300个/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。
-
-#### HTTP请求
-
-`POST /api/v5/trade/batch-orders`
-
-> 请求示例
-    
-    
-     币币批量下单：
-     POST：/api/v5/trade/batch-orders
-     body
-     [
-        {
-            "instId":"BTC-USDT",
-            "tdMode":"cash",
-            "clOrdId":"b15",
-            "side":"buy",
-            "ordType":"limit",
-            "px":"2.15",
-            "sz":"2"
-        },
-        {
-            "instId":"BTC-USDT",
-            "tdMode":"cash",
-            "clOrdId":"b15",
-            "side":"buy",
-            "ordType":"limit",
-            "px":"2.15",
-            "sz":"2"
-        }
-    ]
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID，如 `BTC-USD-190927-5000-C`  
-tdMode | String | 是 | 交易模式  
-保证金模式：`isolated`：逐仓 ；`cross`：全仓  
-非保证金模式：`cash`：非保证金  
-ccy | String | 否 | 保证金币种，仅适用于`单币种保证金模式`下的`全仓杠杆`订单  
-clOrdId | String | 否 | 客户自定义订单ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-16位之间。  
-side | String | 是 | 订单方向 `buy`：买， `sell`：卖  
-posSide | String | 可选 | 持仓方向  
-在双向持仓模式下必填，且仅可选择 `long` 或 `short`。 仅适用交割、永续。  
-ordType | String | 是 | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-sz | String | 是 | 委托数量  
-px | String | 否 | 委托价格，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
-reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
-仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
-仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-tgtCcy | String | 否 | 市价单委托数量`sz`的单位，仅适用于`币币`市价订单  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-买单默认`quote_ccy`， 卖单默认`base_ccy`  
-banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
-为true时，余额不足时，系统不会改单，下单会失败，仅适用于币币市价单  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "clOrdId":"oktswap6",
-                "ordId":"12345689",
-                "tag":"",
-                "sCode":"0",
-                "sMsg":""
-            },
-            {
-                "clOrdId":"oktswap7",
-                "ordId":"12344",
-                "tag":"",
-                "sCode":"0",
-                "sMsg":""
-            },
-         .......
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-ordId | String | 订单ID  
-clOrdId | String | 客户自定义订单ID  
-tag | String | 订单标签  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-在组合保证金账户模式下，或者全部成功，或者全部失败。
-
-### 撤单
-
-撤销之前下的未完成订单。
-
-#### 限速： 60次/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-#### HTTP请求
-
-`POST /api/v5/trade/cancel-order`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/cancel-order
-    body
-    {
-        "ordId":"2510789768709120",
-        "instId":"BTC-USD-190927"
-    }
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID，如 `BTC-USD-190927`  
-ordId | String | 可选 | 订单ID， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
-clOrdId | String | 可选 | 用户自定义ID  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "clOrdId":"oktswap6",
-                "ordId":"12345689",
-                "sCode":"0",
-                "sMsg":""
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-ordId | String | 订单ID  
-clOrdId | String | 客户自定义订单ID  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-撤单返回sCode等于0不能严格认为该订单已经被撤销，只表示您的撤单请求被系统服务器所接受，撤单结果以订单频道推送的状态或者查询订单状态为准  
-
-### 批量撤单
-
-撤销未完成的订单，每次最多可以撤销20个订单。请求参数应该按数组格式传递。
-
-#### 限速：300个/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。
-
-#### HTTP请求
-
-`POST /api/v5/trade/cancel-batch-orders`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/cancel-batch-orders
-    body
-    [
-        {
-            "instId":"BTC-USDT",
-            "ordId":"12312"
-        },
-        {
-            "instId":"BTC-USDT",
-            "ordId":"1212"
-        }
-    ]
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID，如 `BTC-USD-190927`  
-ordId | String | 可选 | 订单ID， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
-clOrdId | String | 可选 | 用户自定义ID  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "clOrdId":"oktswap6",
-                "ordId":"12345689",
-                "sCode":"0",
-                "sMsg":""
-            },
-            {
-                "clOrdId":"oktswap7",
-                "ordId":"12344",
-                "sCode":"0",
-                "sMsg":""
-            },
-         .......
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-ordId | String | 订单ID  
-clOrdId | String | 客户自定义订单ID  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-  
-### 修改订单
-
-修改当前未成交的挂单
-
-#### 限速： 60次/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-#### HTTP请求
-
-`POST /api/v5/trade/amend-order`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/amend-order
-    body
-    {
-        "ordId":"2510789768709120",
-        "newSz":"2",
-        "instId":"BTC-USDT"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID  
-cxlOnFail | Boolean | 否 | `false`：不自动撤单 `true`：自动撤单
-当订单修改失败时，该订单是否需要自动撤销。默认为`false`  
-ordId | String | 可选 | 订单ID， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
-clOrdId | String | 可选 | 用户自定义order ID  
-reqId | String | 否 | 用户自定义修改事件ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-newSz | String | 可选 | 修改的新数量，`newSz`和`newPx`不可同时为空。对于部分成交订单，该数量应包含已成交数量。  
-newPx | String | 可选 | 修改的新价格  
-newSz  
-修改的数量<=该笔订单已成交数量时，该订单的状态会修改为完全成交状态。  
-
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-             "clOrdId":"",
-             "ordId":"12344",
-             "reqId":"b12344",
-             "sCode":"0",
-             "sMsg":""
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-ordId | String | 订单ID  
-clOrdId | String | 用户自定义ID  
-reqId | String | 用户自定义修改事件ID  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-修改订单返回sCode等于0不能严格认为该订单已经被修改，只表示您的修改订单请求被系统服务器所接受，改单结果以订单频道推送的状态或者查询订单状态为准  
-
-### 批量修改订单
-
-修改未完成的订单，一次最多可批量修改20个订单。请求参数应该按数组格式传递。
-
-#### 限速：300个/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。
-
-#### HTTP请求
-
-`POST /api/v5/trade/amend-batch-orders`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/amend-batch-orders
-    body
-    [
-        {
-            "ordId":"2510789768709120",
-            "newSz":"2",
-            "instId":"BTC-USDT"
-        },
-        {
-            "ordId":"2510789768709121",
-            "newSz":"2",
-            "instId":"BTC-USDT"
-        }
-    ]
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID  
-cxlOnFail | Boolean | 否 | `false` ：不自动撤单 `true`：自动撤单
-当订单修改失败时，该订单是否需要自动撤销，默认为`false`  
-ordId | String | 可选 | 订单ID， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
-clOrdId | String | 可选 | 用户自定义order ID  
-reqId | String | 否 | 用户自定义修改事件ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-newSz | String | 可选 | 修改的新数量，`newSz`和`newPx`不可同时为空。对于部分成交订单，该数量应包含已成交数量。  
-newPx | String | 可选 | 修改的新价格  
-newSz  
-修改的数量<=该笔订单已成交数量时，该订单的状态会修改为完全成交状态。  
-
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "clOrdId":"oktswap6",
-                "ordId":"12345689",
-                "reqId":"b12344",
-                "sCode":"0",
-                "sMsg":""
-            },
-            {
-                "clOrdId":"oktswap7",
-                "ordId":"12344",
-                "reqId":"b12344",
-                "sCode":"0",
-                "sMsg":""
-            },
-         .......
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-ordId | String | 订单ID  
-clOrdId | String | 用户自定义ID  
-reqId | String | 用户自定义修改事件ID  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-  
-### 市价仓位全平
-
-市价平掉指定交易产品的持仓
-
-#### 限速： 20次/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-#### HTTP请求
-
-`POST /api/v5/trade/close-position`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/close-position
-    body
-    {
-        "instId":"BTC-USDT-SWAP",
-        "mgnMode":"cross"
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID  
-posSide | String | 可选 | 持仓方向  
-单向持仓模式下：可不填写此参数，默认值net，如果填写，仅可以填写net  
-双向持仓模式下： 必须填写此参数，且仅可以填写 `long`：平多 ，`short`：平空  
-mgnMode | String | 是 | 保证金模式  
-`cross`：全仓 ； `isolated`：逐仓  
-ccy | String | 可选 | 保证金币种，单币种保证金模式的全仓币币杠杆平仓必填  
-autoCxl | Boolean | 否 | 当市价全平时，平仓单是否需要自动撤销,默认为false.  
-`false`：不自动撤单 `true`：自动撤单  
-clOrdId | String | 否 | 客户自定义ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-               {
-                "instId":"BTC-USDT-SWAP",
-                "posSide":"long"
-              }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instId | String | 产品ID  
-posSide | String | 持仓方向  
-clOrdId | String | 客户自定义ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-tag | String | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
-如果不自动撤单，那有任何平仓挂单的情况下，市价全平会返回错误码信息，提示用户先撤销平仓挂单  
-
-### 获取订单信息
-
-查订单信息
-
-#### 限速： 60次/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-#### HTTP请求
-
-`GET /api/v5/trade/order`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/order?ordId=2510789768709120&instId=BTC-USDT
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID ，如`BTC-USD-190927`  
-ordId | String | 可选 | 订单ID ， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
-clOrdId | String | 可选 | 用户自定义ID  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "instType":"FUTURES",
-                "instId":"BTC-USD-200329",
-                "ccy":"",
-                "ordId":"123445",
-                "clOrdId":"b1",
-                "tag":"",
-                "px":"999",
-                "sz":"3",
-                "pnl":"5",
-                "ordType":"limit",
-                "side":"buy",
-                "posSide":"long",
-                "tdMode":"isolated",
-                "accFillSz":"0",
-                "fillPx":"0",
-                "tradeId":"0",
-                "fillSz":"0",
-                "fillTime":"0",
-                "source": "",
-                "state":"live",
-                "avgPx":"0",
-                "lever":"20",
-                "tpTriggerPx":"",
-                "tpTriggerPxType":"last",
-                "tpOrdPx":"",
-                "slTriggerPx":"",
-                "slTriggerPxType":"last",
-                "slOrdPx":"",
-                "feeCcy":"",
-                "fee":"",
-                "rebateCcy":"",
-                "rebate":"",
-                "tgtCcy":"",
-                "category":"",
-                "reduceOnly": "false",
-                "uTime":"1597026383085",
-                "cTime":"1597026383085"
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instType | String | 产品类型  
-`SPOT`：币币  
-`MARGIN`：币币杠杆  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`OPTION`：期权  
-instId | String | 产品ID  
-tgtCcy | String | 币币市价单委托数量`sz`的单位  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`市价订单  
-默认买单为`quote_ccy`，卖单为`base_ccy`  
-ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
-ordId | String | 订单ID  
-clOrdId | String | 客户自定义订单ID  
-tag | String | 订单标签  
-px | String | 委托价格  
-sz | String | 委托数量  
-pnl | String | 收益  
-ordType | String | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-side | String | 订单方向  
-posSide | String | 持仓方向  
-tdMode | String | 交易模式  
-accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
-tradeId | String | 最新成交ID  
-fillSz | String | 最新成交数量  
-fillTime | String | 最新成交时间  
-avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
-state | String | 订单状态  
-`canceled`：撤单成功  
-`live`：等待成交  
-`partially_filled`：部分成交  
-`filled`：完全成交  
-lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
-tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 止盈触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-tpOrdPx | String | 止盈委托价  
-slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 止损触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-slOrdPx | String | 止损委托价  
-feeCcy | String | 交易手续费币种  
-fee | String | 手续费与返佣  
-对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
-对于交割、永续和期权，为订单交易累计的手续费和返佣  
-rebateCcy | String | 返佣金币种  
-source | String | 订单来源  
-`13`:策略委托单触发后的生成的限价单  
-rebate | String |
-返佣金额，仅适用于币币和杠杆，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为正数，如：0.01  
-category | String | 订单种类  
-`normal`：普通委托  
-`twap`：TWAP自动换币  
-`adl`：ADL自动减仓  
-`full_liquidation`：强制平仓  
-`partial_liquidation`：强制减仓  
-`delivery`：交割  
-`ddh`：对冲减仓类型订单  
-reduceOnly | String | 是否只减仓，`true` 或 `false`  
-uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如：`1597026383085`  
-cTime | String | 订单创建时间，Unix时间戳的毫秒数格式， 如 ：`1597026383085`  
-  
-### 获取未成交订单列表
-
-获取当前账户下所有未成交订单信息
-
-#### 限速： 60次/2s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`GET /api/v5/trade/orders-pending`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/orders-pending?ordType=post_only,fok,ioc&instType=SPOT
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instType | String | 否 | 产品类型  
-`SPOT`：币币  
-`MARGIN`：币币杠杆  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`OPTION`：期权  
-uly | String | 否 | 标的指数  
-instFamily | String | 否 | 交易品种  
-适用于`交割/永续/期权`  
-instId | String | 否 | 产品ID，如`BTC-USD-200927`  
-ordType | String | 否 | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-state | String | 否 | 订单状态  
-`live`：等待成交  
-`partially_filled`：部分成交  
-after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
-before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
-limit | String | 否 | 返回结果的数量，最大为100，默认100条  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "msg": "",
-        "data": [
-            {
-                "accFillSz": "0",
-                "avgPx": "",
-                "cTime": "1618235248028",
-                "category": "normal",
-                "ccy": "",
-                "clOrdId": "",
-                "fee": "0",
-                "feeCcy": "BTC",
-                "fillPx": "",
-                "fillSz": "0",
-                "fillTime": "",
-                "instId": "BTC-USDT",
-                "instType": "SPOT",
-                "lever": "5.6",
-                "ordId": "301835739059335168",
-                "ordType": "limit",
-                "pnl": "0",
-                "posSide": "net",
-                "px": "59200",
-                "rebate": "0",
-                "rebateCcy": "USDT",
-                "side": "buy",
-                "slOrdPx": "",
-                "slTriggerPx": "",
-                "slTriggerPxType": "last",
-                "source": "",
-                "state": "live",
-                "sz": "1",
-                "tag": "",
-                "tdMode": "cross",
-                "tgtCcy": "",
-                "tpOrdPx": "",
-                "tpTriggerPx": "",
-                "tpTriggerPxType": "last",
-                "tradeId": "",
-                "reduceOnly": "false",
-                "uTime": "1618235248028"
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instType | String | 产品类型  
-instId | String | 产品ID  
-tgtCcy | String | 币币市价单委托数量`sz`的单位  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`市价订单  
-默认买单为`quote_ccy`，卖单为`base_ccy`  
-ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
-ordId | String | 订单ID  
-clOrdId | String | 客户自定义订单ID  
-tag | String | 订单标签  
-px | String | 委托价格  
-sz | String | 委托数量  
-pnl | String | 收益  
-ordType | String | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-side | String | 订单方向  
-posSide | String | 持仓方向  
-tdMode | String | 交易模式  
-accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格。如果还没成交，系统返回`0`。  
-tradeId | String | 最新成交ID  
-fillSz | String | 最新成交数量  
-fillTime | String | 最新成交时间  
-avgPx | String | 成交均价。如果还没成交，系统返回`0`。  
-state | String | 订单状态  
-`live`：等待成交  
-`partially_filled`：部分成交  
-  
-lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
-tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 止盈触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 止损触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-slOrdPx | String | 止损委托价  
-feeCcy | String | 交易手续费币种  
-fee | String | 手续费与返佣  
-对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
-对于交割、永续和期权，为订单交易累计的手续费和返佣  
-rebateCcy | String | 返佣金币种  
-source | String | 订单来源  
-`13`:策略委托单触发后的生成的限价单  
-rebate | String |
-返佣金额，仅适用于币币和杠杆，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
-category | String | 订单种类  
-`normal`： 普通委托  
-reduceOnly | String | 是否只减仓，`true` 或 `false`  
-uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-  
-### 获取历史订单记录（近七天）
-
-获取最近7天的已经完结状态的订单数据，已经撤销的未成交单 只保留2小时
-
-#### 限速： 40次/2s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`GET /api/v5/trade/orders-history`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/orders-history?ordType=post_only,fok,ioc&instType=SPOT
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instType | String | 是 | 产品类型  
-`SPOT`：币币  
-`MARGIN`：币币杠杆  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`OPTION`：期权  
-uly | String | 否 | 标的指数  
-instFamily | String | 否 | 交易品种  
-适用于`交割/永续/期权`  
-instId | String | 否 | 产品ID，如`BTC-USD-190927`  
-ordType | String | 否 | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-state | String | 否 | 订单状态  
-`canceled`：撤单成功  
-`filled`：完全成交  
-category | String | 否 | 订单种类  
-`twap`：TWAP自动换币  
-`adl`：ADL自动减仓  
-`full_liquidation`：强制平仓  
-`partial_liquidation`：强制减仓  
-`delivery`：交割  
-`ddh`：对冲减仓类型订单  
-after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
-before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
-begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
-end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
-limit | String | 否 | 返回结果的数量，最大为100，默认100条  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "instType":"FUTURES",
-                "instId":"BTC-USD-200329",
-                "ccy":"",
-                "ordId":"123445",
-                "clOrdId":"b1",
-                "tag":"",
-                "px":"999",
-                "sz":"3",
-                "ordType":"limit",
-                "side":"buy",
-                "posSide":"long",
-                "tdMode":"isolated",
-                "accFillSz":"0",
-                "fillPx":"0",
-                "tradeId":"0",
-                "fillSz":"0",
-                "fillTime":"0",
-                "source": "",
-                "state":"filled",
-                "avgPx":"0",
-                "lever":"20",
-                "tpTriggerPx":"",
-                "tpTriggerPxType":"last",
-                "tpOrdPx":"",
-                "slTriggerPx":"",
-                "slTriggerPxType":"last",
-                "slOrdPx":"",
-                "feeCcy":"",
-                "fee":"",
-                "rebateCcy":"",
-                "rebate":"",
-                "tgtCcy":"",
-                "pnl":"",
-                "category":"",
-                "reduceOnly": "false",
-                "uTime":"1597026383085",
-                "cTime":"1597026383085"
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instType | String | 产品类型  
-instId | String | 产品ID  
-tgtCcy | String | 币币市价单委托数量`sz`的单位  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`市价订单  
-默认买单为`quote_ccy`，卖单为`base_ccy`  
-ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
-ordId | String | 订单ID  
-clOrdId | String | 客户自定义订单ID  
-tag | String | 订单标签  
-px | String | 委托价格  
-sz | String | 委托数量  
-ordType | String | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-side | String | 订单方向  
-posSide | String | 持仓方向  
-tdMode | String | 交易模式  
-accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
-tradeId | String | 最新成交ID  
-fillSz | String | 最新成交数量  
-fillTime | String | 最新成交时间  
-avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
-state | String | 订单状态  
-`canceled`：撤单成功  
-`filled`：完全成交  
-lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
-tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 止盈触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-tpOrdPx | String | 止盈委托价  
-slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 止损触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-slOrdPx | String | 止损委托价  
-feeCcy | String | 交易手续费币种  
-fee | String | 手续费与返佣  
-对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
-对于交割、永续和期权，为订单交易累计的手续费和返佣  
-rebateCcy | String | 返佣金币种  
-source | String | 订单来源  
-`13`:策略委托单触发后的生成的限价单  
-rebate | String |
-返佣金额，仅适用于币币和杠杆，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
-pnl | String | 收益  
-category | String | 订单种类  
-`normal`：普通委托  
-`twap`：TWAP自动换币  
-`adl`：ADL自动减仓  
-`full_liquidation`：强制平仓  
-`partial_liquidation`：强制减仓  
-`delivery`：交割  
-`ddh`：对冲减仓类型订单  
-reduceOnly | String | 是否只减仓，`true` 或 `false`  
-uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如`1597026383085`  
-cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-  
-### 获取历史订单记录（近三个月）
-
-获取最近3个月的已经完结状态的订单数据
-
-#### 限速： 20次/2s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`GET /api/v5/trade/orders-history-archive`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/orders-history-archive?ordType=post_only,fok,ioc&instType=SPOT
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instType | String | 是 | 产品类型  
-`SPOT`：币币  
-`MARGIN`：币币杠杆  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`OPTION`：期权  
-uly | String | 否 | 标的指数  
-instFamily | String | 否 | 交易品种  
-适用于`交割/永续/期权`  
-instId | String | 否 | 产品ID，如`BTC-USD-200927`  
-ordType | String | 否 | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-state | String | 否 | 订单状态  
-`canceled`：撤单成功  
-`filled`：完全成交  
-category | String | 否 | 订单种类  
-`twap`：TWAP自动换币  
-`adl`：ADL自动减仓  
-`full_liquidation`：强制平仓  
-`partial_liquidation`：强制减仓  
-`delivery`：交割  
-`ddh`：对冲减仓类型订单  
-after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
-before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
-begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
-end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
-limit | String | 否 | 返回结果的数量，最大为100，默认100条  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "instType":"FUTURES",
-                "instId":"BTC-USD-200329",
-                "ccy":"",
-                "ordId":"123445",
-                "clOrdId":"b1",
-                "tag":"",
-                "px":"999",
-                "sz":"3",
-                "ordType":"limit",
-                "side":"buy",
-                "posSide":"long",
-                "tdMode":"isolated",
-                "accFillSz":"0",
-                "fillPx":"0",
-                "tradeId":"0",
-                "fillSz":"0",
-                "fillTime":"0",
-                "source": "",
-                "state":"filled",
-                "avgPx":"0",
-                "lever":"20",
-                "tpTriggerPx":"",
-                "tpTriggerPxType":"last",
-                "tpOrdPx":"",
-                "slTriggerPx":"",
-                "slTriggerPxType":"last",
-                "slOrdPx":"",
-                "feeCcy":"",
-                "fee":"",
-                "rebateCcy":"",
-                "rebate":"",
-                "tgtCcy":"",
-                "pnl":"",
-                "category":"",
-                "reduceOnly": "false",
-                "uTime":"1597026383085",
-                "cTime":"1597026383085"
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instType | String | 产品类型  
-instId | String | 产品ID  
-tgtCcy | String | 币币市价单委托数量`sz`的单位  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`市价订单  
-默认买单为`quote_ccy`，卖单为`base_ccy`  
-ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
-ordId | String | 订单ID  
-clOrdId | String | 客户自定义订单ID  
-tag | String | 订单标签  
-px | String | 委托价格  
-sz | String | 委托数量  
-ordType | String | 订单类型  
-`market`：市价单  
-`limit`：限价单  
-`post_only`：只做maker单  
-`fok`：全部成交或立即取消  
-`ioc`：立即成交并取消剩余  
-`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
-side | String | 订单方向  
-posSide | String | 持仓方向  
-tdMode | String | 交易模式  
-accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
-tradeId | String | 最新成交ID  
-fillSz | String | 最新成交数量  
-fillTime | String | 最新成交时间  
-avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
-state | String | 订单状态  
-`canceled`：撤单成功  
-`filled`：完全成交  
-lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
-tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 止盈触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-tpOrdPx | String | 止盈委托价  
-slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 止损触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-slOrdPx | String | 止损委托价  
-feeCcy | String | 交易手续费币种  
-fee | String | 手续费与返佣  
-对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
-对于交割、永续和期权，为订单交易累计的手续费和返佣  
-rebateCcy | String | 返佣金币种  
-rebate | String |
-返佣金额，仅适用于币币和杠杆，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
-pnl | String | 收益  
-source | String | 订单来源  
-`13`:策略委托单触发后的生成的限价单  
-category | String | 订单种类  
-`normal`：普通委托  
-`twap`：TWAP自动换币  
-`adl`：ADL自动减仓  
-`full_liquidation`：强制平仓  
-`partial_liquidation`：强制减仓  
-`delivery`：交割  
-`ddh`：对冲减仓类型订单  
-reduceOnly | String | 是否只减仓，`true` 或 `false`  
-uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-该接口不包含`已撤销的完全无成交`类型订单数据，可通过`获取历史订单记录（近七天)`接口获取。  
-
-### 获取成交明细（近三天）
-
-获取近3天的订单成交明细信息
-
-#### 限速：60次/2s
-
-#### 限速规则：UserID
-
-#### HTTP 请求
-
-`GET /api/v5/trade/fills`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/fills
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instType | String | 否 | 产品类型  
-`SPOT`：币币  
-`MARGIN`：币币杠杆  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`OPTION`：期权  
-uly | String | 否 | 标的指数  
-instFamily | String | 否 | 交易品种  
-适用于`交割/永续/期权`  
-instId | String | 否 | 产品 ID，如`BTC-USD-190927`  
-ordId | String | 否 | 订单 ID  
-after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
-before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
-begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
-end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
-limit | String | 否 | 返回结果的数量，最大为100，默认100条  
-  
-> 返回结果
-    
-    
-    {
-      "code": "0",
-      "msg": "",
-      "data": [
-        {
-          "instType": "FUTURES",
-          "instId": "BTC-USD-200329",
-          "tradeId": "123",
-          "ordId": "312269865356374016",
-          "clOrdId": "b16",
-          "billId": "1111",
-          "tag": "",
-          "fillPx": "999",
-          "fillSz": "3",
-          "side": "buy",
-          "posSide": "long",
-          "execType": "M",
-          "feeCcy": "",
-          "fee": "",
-          "ts": "1597026383085"
-        },
-        {
-          "instType": "FUTURES",
-          "instId": "BTC-USD-200329",
-          "tradeId": "123",
-          "ordId": "312269865356374016",
-          "clOrdId": "b16",
-          "billId": "1111",
-          "tag": "",
-          "fillPx": "999",
-          "fillSz": "3",
-          "side": "buy",
-          "posSide": "long",
-          "execType": "M",
-          "feeCcy": "",
-          "fee": "",
-          "ts": "1597026383085"
-        }
-      ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instType | String | 产品类型  
-instId | String | 产品 ID  
-tradeId | String | 最新成交 ID  
-ordId | String | 订单 ID  
-clOrdId | String | 用户自定义订单ID  
-billId | String | 账单 ID  
-tag | String | 订单标签  
-fillPx | String | 最新成交价格  
-fillSz | String | 最新成交数量  
-side | String | 订单方向 `buy`：买 `sell`：卖  
-posSide | String | 持仓方向 `long`：多 `short`：空 单向持仓模式返回 `net`  
-execType | String | 流动性方向 `T`：taker `M`：maker  
-feeCcy | String | 交易手续费币种或者返佣金币种  
-fee | String | 手续费金额或者返佣金额，手续费扣除为‘负数’，如-0.01；手续费返佣为‘正数’，如 0.01  
-ts | String | 成交明细产生时间，Unix时间戳的毫秒数格式，如`1597026383085`  
-tradeId  
-当成交明细所归属的订单种类（category）为
-partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"  
-tag  
-订单标签, 对于大宗交易总是 "sys:blocktrade" 。  
-ordId  
-订单ID, 对于大宗交易总是 "" 。  
-clOrdId  
-用户自定义订单ID, 对于大宗交易总是 "" 。
-
-### 获取成交明细（近三个月）
-
-获取近3个月订单成交明细信息
-
-#### 限速： 10 次/2s
-
-#### 限速规则：UserID
-
-#### HTTP 请求
-
-`GET /api/v5/trade/fills-history`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/fills-history
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instType | String | 是 | 产品类型  
-`SPOT`：币币  
-`MARGIN`：币币杠杆  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`OPTION`：期权  
-uly | String | 否 | 标的指数  
-instFamily | String | 否 | 交易品种  
-适用于`交割/永续/期权`  
-instId | String | 否 | 产品 ID，如`BTC-USD-190927`  
-ordId | String | 否 | 订单 ID  
-after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
-before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
-begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
-end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
-limit | String | 否 | 返回结果的数量，最大为100，默认100条  
-  
-> 返回结果
-    
-    
-    {
-      "code": "0",
-      "msg": "",
-      "data": [
-        {
-          "instType": "FUTURES",
-          "instId": "BTC-USD-200329",
-          "tradeId": "123",
-          "ordId": "312269865356374016",
-          "clOrdId": "b16",
-          "billId": "1111",
-          "tag": "",
-          "fillPx": "999",
-          "fillSz": "3",
-          "side": "buy",
-          "posSide": "long",
-          "execType": "M",
-          "feeCcy": "",
-          "fee": "",
-          "ts": "1597026383085"
-        },
-        {
-          "instType": "FUTURES",
-          "instId": "BTC-USD-200329",
-          "tradeId": "123",
-          "ordId": "312269865356374016",
-          "clOrdId": "b16",
-          "billId": "1111",
-          "tag": "",
-          "fillPx": "999",
-          "fillSz": "3",
-          "side": "buy",
-          "posSide": "long",
-          "execType": "M",
-          "feeCcy": "",
-          "fee": "",
-          "ts": "1597026383085"
-        }
-      ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instType | String | 产品类型  
-instId | String | 产品 ID  
-tradeId | String | 最新成交 ID  
-ordId | String | 订单 ID  
-clOrdId | String | 用户自定义订单ID  
-billId | String | 账单 ID  
-tag | String | 订单标签  
-fillPx | String | 最新成交价格  
-fillSz | String | 最新成交数量  
-side | String | 订单方向 `buy`：买 `sell`：卖  
-posSide | String | 持仓方向 `long`：多 `short`：空 单向持仓模式返回 `net`  
-execType | String | 流动性方向 `T`：taker `M`：maker  
-feeCcy | String | 交易手续费币种或者返佣金币种  
-fee | String | 手续费金额或者返佣金额 ，手续费扣除 为 ‘负数’，如 -0.01 ； 手续费返佣 为 ‘正数’，如 0.01  
-ts | String | 成交明细产生时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
-tradeId  
-当成交明细所归属的订单种类（category）为
-partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"
-tag  
-订单标签, 对于大宗交易总是 "sys:blocktrade" 。  
-ordId  
-订单ID, 对于大宗交易总是 "" 。  
-clOrdId  
-用户自定义订单ID, 对于大宗交易总是 "" 。
-
-### 策略委托下单
-
-提供单向止盈止损委托、双向止盈止损委托、计划委托、冰山委托、时间加权委托、移动止盈止损委托
-
-#### 限速： 20次/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-#### HTTP请求
-
-`POST /api/v5/trade/order-algo`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/order-algo
-    body
-    {
-        "instId":"BTC-USDT",
-        "tdMode":"cross",
-        "side":"buy",
-        "ordType":"conditional",
-        "sz":"2",
-        "tpTriggerPx":"15",
-        "tpOrdPx":"18"
-    }
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-instId | String | 是 | 产品ID，如 `BTC-USD-190927-5000-C`  
-tdMode | String | 是 | 交易模式  
-保证金模式 `isolated`：逐仓，`cross：`全仓  
-非保证金模式 `cash`：非保证金  
-ccy | String | 否 | 保证金币种  
-仅适用于单币种保证金模式下的全仓杠杆订单  
-side | String | 是 | 订单方向  
-`buy`：买  
-`sell`：卖  
-posSide | String | 可选 | 持仓方向  
-在双向持仓模式下必填，且仅可选择 `long` 或 `short`  
-ordType | String | 是 | 订单类型  
-`conditional`：单向止盈止损  
-`oco`：双向止盈止损  
-`trigger`：计划委托  
-`move_order_stop`：移动止盈止损  
-`iceberg`：冰山委托  
-`twap`：时间加权委托  
-sz | String | 是 | 委托数量  
-tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
-tgtCcy | String | 否 | 委托数量的类型  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`单向止盈止损市价买单  
-默认买为`计价货币`，卖为`交易货币`  
-reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
-仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
-仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-clOrdId | String | 否 | 客户自定义订单ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-  
-止盈止损
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-tpTriggerPx | String | 否 | 止盈触发价，如果填写此参数，必须填写 止盈委托价  
-tpTriggerPxType | String | 否 | 止盈触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-默认为`last`  
-tpOrdPx | String | 否 | 止盈委托价，如果填写此参数，必须填写 止盈触发价  
-委托价格为-1时，执行市价止盈  
-slTriggerPx | String | 否 | 止损触发价，如果填写此参数，必须填写 止损委托价  
-slTriggerPxType | String | 否 | 止损触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-默认为`last`  
-slOrdPx | String | 否 | 止损委托价，如果填写此参数，必须填写 止损触发价  
-委托价格为-1时，执行市价止损  
-止盈止损  
-当用户进行单向止盈止损委托（ordType=conditional）时，如果用户同时传了止盈止损四个参数，只进行止损的功能校验，忽略止盈的业务逻辑校验。
-
-计划委托
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-triggerPx | String | 是 | 计划委托触发价格  
-orderPx | String | 是 | 委托价格  
-委托价格为`-1`时，执行市价委托  
-triggerPxType | String | 否 | 计划委托触发价格类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-默认为`last`  
-交割、永续合约的买卖模式下，不支持计划委托
-
-移动止盈止损
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-callbackRatio | String | 可选 | 回调幅度的比例，如 `0.05`  
-`callbackRatio`和`callbackSpread`只能传入一个  
-callbackSpread | String | 可选 | 回调幅度的价距  
-activePx | String | 否 | 激活价格  
-  
-冰山委托
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-pxVar | String | 可选 | 挂单价距离盘口的比例  
-`pxVar`和`pxSpread`只能传入一个  
-pxSpread | String | 可选 | 挂单价距离盘口的价距  
-szLimit | String | 是 | 单笔数量  
-pxLimit | String | 是 | 挂单限制价  
-  
-时间加权
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-pxVar | String | 可选 | 吃单价优于盘口的比例  
-`pxVar`和`pxSpread`只能传入一个  
-pxSpread | String | 可选 | 吃单单价优于盘口的价距  
-szLimit | String | 是 | 单笔数量  
-pxLimit | String | 是 | 挂单限制价  
-timeInterval | String | 是 | 下单间隔  
-  
-了解更多关于[冰山委托和时间加权委托](/support/hc/zh-cn/articles/4408404800781)
-
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "algoId":"12345689",
-                "clOrdId": "",
-                "sCode":"0",
-                "sMsg":""
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-algoId | String | 策略委托单ID  
-clOrdId | String | 客户自定义订单ID  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-  
-### 撤销策略委托订单
-
-撤销策略委托订单（不包含冰山委托、时间加权、移动止盈止损等高级策略订单），每次最多可以撤销10个策略委托单
-
-#### 限速： 20次/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-#### HTTP请求
-
-`POST /api/v5/trade/cancel-algos`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/cancel-algos
-    body
-    [
-        {
-            "algoId":"198273485",
-            "instId":"BTC-USDT"
-        },
-        {
-            "algoId":"198273485",
-            "instId":"BTC-USDT"
-        }
-    ]
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-algoId | String | 是 | 策略委托单ID  
-instId | String | 是 | 产品ID 如 `BTC-USDT`  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "algoId":"1234",
-                "sCode":"0",
-                "sMsg":""
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-algoId | String | 订单ID  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-  
-### 撤销高级策略委托订单
-
-撤销冰山委托、时间加权、移动止盈止损委托订单，每次最多可以撤销10个策略委托单
-
-#### 限速： 20次/2s
-
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
-
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
-
-#### HTTP请求
-
-`POST /api/v5/trade/cancel-advance-algos`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/cancel-advance-algos
-    body
-    [
-        {
-            "algoId":"198273485",
-            "instId":"BTC-USDT"
-        },
-        {
-            "algoId":"198273485",
-            "instId":"BTC-USDT"
-        }
-    ]
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-algoId | String | 是 | 策略委托单ID  
-instId | String | 是 | 产品ID 如 `BTC-USDT`  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "algoId":"1234",
-                "sCode":"0",
-                "sMsg":""
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-algoId | String | 订单ID  
-sCode | String | 事件执行结果的code，0代表成功  
-sMsg | String | 事件执行失败时的msg  
-  
-### 获取未完成策略委托单列表
-
-获取当前账户下未触发的策略委托单列表
-
-#### 限速： 20次/2s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`GET /api/v5/trade/orders-algo-pending`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/orders-algo-pending?ordType=conditional
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-algoId | String | 否 | 策略委托单ID  
-instType | String | 否 | 产品类型  
-`SPOT`：币币  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`MARGIN`：杠杆  
-instId | String | 否 | 产品ID，`BTC-USD-190927`  
-ordType | String | 是 | 订单类型  
-`conditional`：单向止盈止损  
-`oco`：双向止盈止损  
-`trigger`：计划委托  
-`move_order_stop`：移动止盈止损  
-`iceberg`：冰山委托  
-`twap`：时间加权委托  
-after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
-before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
-limit | String | 否 | 返回结果的数量，最大为100，默认100条  
-clOrdId | String | 否 | 客户自定义订单ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "activePx": "",
-                "actualPx": "",
-                "actualSide": "",
-                "actualSz": "0",
-                "algoId": "492453578716610560",
-                "cTime": "1663682082511",
-                "callbackRatio": "",
-                "callbackSpread": "",
-                "ccy": "",
-                "clOrdId": "hahawang",
-                "instId": "BTC-USDT-SWAP",
-                "instType": "SWAP",
-                "lever": "3",
-                "moveTriggerPx": "",
-                "ordId": "0",
-                "ordPx": "",
-                "ordType": "conditional",
-                "posSide": "long",
-                "pxLimit": "",
-                "pxSpread": "",
-                "pxVar": "",
-                "side": "buy",
-                "slOrdPx": "-1",
-                "slTriggerPx": "22000",
-                "slTriggerPxType": "last",
-                "state": "live",
-                "sz": "10",
-                "szLimit": "",
-                "tag": "",
-                "tdMode": "cross",
-                "tgtCcy": "",
-                "timeInterval": "",
-                "tpOrdPx": "",
-                "tpTriggerPx": "",
-                "tpTriggerPxType": "",
-                "triggerPx": "",
-                "triggerPxType": "",
-                "reduceOnly": "false",
-                "triggerTime": ""
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instType | String | 产品类型  
-instId | String | 产品ID  
-ccy | String | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
-ordId | String | 订单ID  
-algoId | String | 策略委托单ID  
-clOrdId | String | 客户自定义订单ID  
-sz | String | 委托数量  
-ordType | String | 订单类型  
-side | String | 订单方向  
-posSide | String | 持仓方向  
-tdMode | String | 交易模式  
-tgtCcy | String | 币币市价单委托数量`sz`的单位  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`市价订单  
-默认买单为`quote_ccy`，卖单为`base_ccy`  
-state | String | 订单状态 ，`live`：待生效 `pause`：暂停生效 `partially_effective`:部分生效  
-lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
-tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 止盈触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-tpOrdPx | String | 止盈委托价  
-slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 止损触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-slOrdPx | String | 止损委托价  
-triggerPx | String | 计划委托触发价格  
-triggerPxType | String | 计划委托触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-ordPx | String | 计划委托委托价格  
-actualSz | String | 实际委托量  
-actualPx | String | 实际委托价  
-actualSide | String | 实际触发方向， `tp`：止盈 `sl`： 止损  
-triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-pxVar | String | 价格比例  
-仅适用于`冰山委托`和`时间加权委托`  
-pxSpread | String | 价距  
-仅适用于`冰山委托`和`时间加权委托`  
-szLimit | String | 单笔数量  
-仅适用于`冰山委托`和`时间加权委托`  
-tag | String | 订单标签  
-pxLimit | String | 挂单限制价  
-仅适用于`冰山委托`和`时间加权委托`  
-timeInterval | String | 下单间隔  
-仅适用于`时间加权委托`  
-callbackRatio | String | 回调幅度的比例  
-仅适用于`移动止盈止损`  
-callbackSpread | String | 回调幅度的价距  
-仅适用于`移动止盈止损`  
-activePx | String | 移动止盈止损激活价格  
-仅适用于`移动止盈止损`  
-moveTriggerPx | String | 移动止盈止损触发价格  
-仅适用于`移动止盈止损`  
-reduceOnly | String | 是否只减仓，`true` 或 `false`  
-cTime | String | 订单创建时间， Unix时间戳的毫秒数格式，如 `1597026383085`  
-  
-### 获取历史策略委托单列表
-
-获取最近3个月当前账户下所有策略委托单列表
-
-#### 限速： 20次/2s
-
-#### 限速规则：UserID
-
-#### HTTP请求
-
-`GET /api/v5/trade/orders-algo-history`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/orders-algo-history?state=effective&ordType=conditional
-    
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-ordType | String | 是 | 订单类型  
-`conditional`：单向止盈止损  
-`oco`：双向止盈止损  
-`trigger`：计划委托  
-`move_order_stop`：移动止盈止损  
-`iceberg`：冰山委托  
-`twap`：时间加权委托  
-state | String | 可选 | 订单状态  
-  
-`effective`：已生效  
-`canceled`：已经撤销  
-`order_failed`：委托失败  
-【state和algoId必填且只能填其一】  
-algoId | String | 可选 | 策略委托单ID 【`state`和`algoId`必填且只能填其一】  
-instType | String | 否 | 产品类型  
-`SPOT`：币币  
-`SWAP`：永续合约  
-`FUTURES`：交割合约  
-`MARGIN`：杠杆  
-instId | String | 否 | 产品ID，`BTC-USD-190927`  
-after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
-before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
-limit | String | 否 | 返回结果的数量，最大为100，默认100条  
-  
-> 返回结果
-    
-    
-    {
-        "code":"0",
-        "msg":"",
-        "data":[
-            {
-                "instType":"FUTURES",
-                "instId":"BTC-USD-200329",
-                "ordId":"123445",
-                "ccy":"BTC",
-                "clOrdId":"",
-                "algoId":"1234",
-                "sz":"999",
-                "ordType":"oco",
-                "side":"buy",
-                "posSide":"long",
-                "tdMode":"cross",
-                "tgtCcy": "",
-                "state":"effective",
-                "lever":"20",
-                "tpTriggerPx":"",
-                "tpTriggerPxType":"",
-                "tpOrdPx":"",
-                "slTriggerPx":"",
-                "slTriggerPxType":"",
-                "triggerPx":"99",
-                "triggerPxType":"last",
-                "ordPx":"12",
-                "actualSz":"",
-                "actualPx":"",
-                "actualSide":"",
-                "pxVar":"",
-                "pxSpread":"",
-                "pxLimit":"",
-                "szLimit":"",
-                "tag": "adadadadad",
-                "timeInterval":"",
-                "callbackRatio":"",
-                "callbackSpread":"",
-                "activePx":"",
-                "moveTriggerPx":"",
-                "reduceOnly": "false",
-                "triggerTime":"1597026383085",
-                "cTime":"1597026383000"
-            },
-            {
-                "instType":"FUTURES",
-                "instId":"BTC-USD-200329",
-                "ordId":"123445",
-                "ccy":"BTC",
-                "clOrdId":"",
-                "algoId":"1234",
-                "sz":"999",
-                "ordType":"oco",
-                "side":"buy",
-                "posSide":"long",
-                "tdMode":"cross",
-                "tgtCcy": "",
-                "state":"effective",
-                "lever":"20",
-                "tpTriggerPx":"",
-                "tpTriggerPxType":"",
-                "tpOrdPx":"",
-                "slTriggerPx":"",
-                "slTriggerPxType":"",
-                "triggerPx":"99",
-                "triggerPxType":"last",
-                "ordPx":"12",
-                "actualSz":"",
-                "actualPx":"",
-                "actualSide":"",
-                "pxVar":"",
-                "pxSpread":"",
-                "pxLimit":"",
-                "szLimit":"",
-                "tag": "adadadadad",
-                "timeInterval":"",
-                "callbackRatio":"",
-                "callbackSpread":"",
-                "activePx":"",
-                "moveTriggerPx":"",
-                "reduceOnly": "false",
-                "triggerTime":"1597026383085",
-                "cTime":"1597026383000"
-            }
-        ]
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-instType | String | 产品类型  
-instId | String | 产品ID  
-ccy | String | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
-ordId | String | 订单ID  
-algoId | String | 策略委托单ID  
-clOrdId | String | 客户自定义订单ID  
-sz | String | 委托数量  
-ordType | String | 订单类型  
-side | String | 订单方向  
-posSide | String | 持仓方向  
-tdMode | String | 交易模式  
-tgtCcy | String | 币币市价单委托数量`sz`的单位  
-`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
-仅适用于`币币`市价订单  
-默认买单为`quote_ccy`，卖单为`base_ccy`  
-state | String | 订单状态  
-`effective`： 已生效  
-`canceled`：已撤销  
-`order_failed`：委托失败  
-lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
-tpTriggerPx | String | 止盈触发价  
-tpTriggerPxType | String | 止盈触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-tpOrdPx | String | 止盈委托价  
-slTriggerPx | String | 止损触发价  
-slTriggerPxType | String | 止损触发价类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-slOrdPx | String | 止损委托价  
-triggerPx | String | 计划委托触发价格  
-triggerPxType | String | 计划委托触发价格  
-ordPx | String | 计划委托委托价格类型  
-`last`：最新价格  
-`index`：指数价格  
-`mark`：标记价格  
-actualSz | String | 实际委托量  
-actualPx | String | 实际委托价  
-actualSide | String | 实际触发方向 `tp`：止盈 `sl`： 止损  
-triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-pxVar | String | 价格比例  
-仅适用于`冰山委托`和`时间加权委托`  
-pxSpread | String | 价距  
-仅适用于`冰山委托`和`时间加权委托`  
-szLimit | String | 单笔数量  
-仅适用于`冰山委托`和`时间加权委托`  
-pxLimit | String | 挂单限制价  
-仅适用于`冰山委托`和`时间加权委托`  
-tag | String | 订单标签  
-timeInterval | String | 下单间隔  
-仅适用于`时间加权委托`  
-callbackRatio | String | 回调幅度的比例  
-仅适用于`移动止盈止损`  
-callbackSpread | String | 回调幅度的价距  
-仅适用于`移动止盈止损`  
-activePx | String | 移动止盈止损激活价格  
-仅适用于`移动止盈止损`  
-moveTriggerPx | String | 移动止盈止损触发价格  
-仅适用于`移动止盈止损`  
-reduceOnly | String | 是否只减仓，`true` 或 `false`  
-cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-  
-### 获取一键兑换主流币币种列表
-
-获取小币一键兑换主流币币种列表。仅可兑换余额在 $10 以下小币币种。
-
-#### 限速：1次/2s
-
-#### 限速规则：UserID
-
-#### HTTP 请求
-
-`GET /api/v5/trade/easy-convert-currency-list`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/easy-convert-currency-list
-    
-
-#### 请求参数
-
-无
-
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "fromData": [
-                    {
-                        "fromAmt": "6.580712708344864",
-                        "fromCcy": "ADA"
-                    },
-                    {
-                        "fromAmt": "2.9970000013055097",
-                        "fromCcy": "USDC"
-                    }
-                ],
-                "toCcy": [
-                    "USDT",
-                    "BTC",
-                    "ETH",
-                    "OKB"
-                ]
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-fromData | Array | 当前拥有并可兑换的小币币种列表信息  
-> fromCcy | String | 可兑换币种  
-> fromAmt | String | 可兑换币种数量  
-toCcy | Array | 可转换成的主流币币种列表  
-  
-### 一键兑换主流币交易
-
-进行小币一键兑换主流币交易。仅可兑换余额在 $10 以下小币币种。
-
-#### 限速：1次/2s
-
-#### 限速规则：UserID
-
-#### HTTP 请求
-
-`POST /api/v5/trade/easy-convert`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/easy-convert
-    body
-    {
-        "fromCcy": ["ADA","USDC"], //逗号分隔小币
-        "toCcy": "OKB" 
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-fromCcy | Array | 是 | 小币支付币种  
-单次最多同时选择5个币种，如有多个币种则用逗号隔开  
-toCcy | String | 是 | 兑换的主流币  
-只选择一个币种，且不能和小币支付币种重复  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "fillFromSz": "6.5807127",
-                "fillToSz": "0.17171580105126",
-                "fromCcy": "ADA",
-                "status": "running",
-                "toCcy": "OKB",
-                "uTime": "1661419684687"
-            },
-            {
-                "fillFromSz": "2.997",
-                "fillToSz": "0.1683755161661844",
-                "fromCcy": "USDC",
-                "status": "running",
-                "toCcy": "OKB",
-                "uTime": "1661419684687"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-status | String | 当前兑换进度/状态  
-`running`: 进行中  
-`filled`: 已完成  
-`failed`: 失败  
-fromCcy | String | 小币支付币种  
-toCcy | String | 兑换的主流币  
-fillFromSz | String | 小币偿还币种支付数量  
-fillToSz | String | 兑换的主流币成交数量  
-uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
-  
-### 获取一键兑换主流币历史记录
-
-查询一键兑换主流币的历史记录与进度状态。
-
-#### 限速：1次/2s
-
-#### 限速规则：UserID
-
-#### HTTP 请求
-
-`GET /api/v5/trade/easy-convert-history`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/easy-convert-history
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
-before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
-limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "fillFromSz": "0.1761712511667539",
-                "fillToSz": "6.7342205900000000",
-                "fromCcy": "OKB",
-                "status": "filled",
-                "toCcy": "ADA",
-                "uTime": "1661313307979"
-            },
-            {
-                "fillFromSz": "0.1722106121112177",
-                "fillToSz": "2.9971018300000000",
-                "fromCcy": "OKB",
-                "status": "filled",
-                "toCcy": "USDC",
-                "uTime": "1661313307979"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-fromCcy | String | 小币支付币种  
-fromSz | String | 对应的小币支付数量  
-toCcy | String | 兑换到的主流币  
-toSz | String | 兑换到的主流币数量  
-status | String | 当前兑换进度/状态  
-`running`: 进行中  
-`filled`: 已完成  
-`failed`: 失败  
-uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
-  
-### 获取一键还债币种列表
-
-查询一键还债币种列表。负债币种包括全仓负债和逐仓负债。
-
-#### 限速：1次/2s
-
-#### 限速规则：UserID
-
-#### HTTP 请求
-
-`GET /api/v5/trade/one-click-repay-currency-list`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/one-click-repay-currency-list
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-debtType | String | 否 | 负债类型  
-`cross`: 全仓负债  
-`isolated`: 逐仓负债  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "debtData": [
-                    {
-                        "debtAmt": "29.653478",
-                        "debtCcy": "LTC"
-                    },
-                    {
-                        "debtAmt": "237803.6828295906051002",
-                        "debtCcy": "USDT"
-                    }
-                ],
-                "debtType": "cross",
-                "repayData": [
-                    {
-                        "repayAmt": "0.4978335419825104",
-                        "repayCcy": "ETH"
-                    }
-                ]
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-debtData | Array | 负债币种信息  
-> debtCcy | String | 负债币种  
-> debtAmt | String | 可负债币种数量  
-包括本金和利息  
-debtType | String | 负债类型  
-`cross`: 全仓负债  
-`isolated`: 逐仓负债  
-repayData | Array | 偿还币种信息  
-> repayCcy | String | 可偿还负债的币种  
-> repayAmt | String | 可偿还负债的币种可用资产数量  
-  
-### 一键还债交易
-
-交易一键偿还小额全仓债务。不支持逐仓负债的偿还。根据资金和交易账户的剩余可用余额为最大偿还数量。
-
-#### 限速：1次/2s
-
-#### 限速规则：UserID
-
-#### HTTP 请求
-
-`POST /api/v5/trade/one-click-repay`
-
-> 请求示例
-    
-    
-    POST /api/v5/trade/one-click-repay
-    body
-    {
-        "debtCcy": ["ETH","BTC"], //逗号分隔债务币
-        "repayCcy": "USDT" //用USDT偿还ETH和BTC
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-debtCcy | Array | 是 | 负债币种  
-单次最多同时选择5个币种，如有多个币种则用逗号隔开  
-repayCcy | String | 是 | 偿还币种  
-只选择一个币种，且不能和负债币种重复  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "debtCcy": "ETH", 
-                "fillDebtSz": "0.01023052",
-                "fillRepaySz": "30", 
-                "repayCcy": "USDT", 
-                "status": "filled",
-                "uTime": "1646188520338"
-            },
-            {
-                "debtCcy": "BTC", 
-                "fillFromSz": "3",
-                "fillToSz": "60,221.15910001",
-                "repayCcy": "USDT",
-                "status": "filled",
-                "uTime": "1646188520338"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-status | String | 当前还债进度/状态  
-`running`: 进行中  
-`filled`: 已完成  
-`failed`: 失败  
-debtCcy | String | 负债币种  
-repayCcy | String | 偿还币种  
-fillDebtSz | String | 负债币种成交数量  
-fillRepaySz | String | 偿还币种成交数量  
-uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
-  
-### 获取一键还债历史记录
-
-查询一键还债的历史记录与进度状态。
-
-#### 限速：1次/2s
-
-#### 限速规则：UserID
-
-#### HTTP 请求
-
-`GET /api/v5/trade/one-click-repay-history`
-
-> 请求示例
-    
-    
-    GET /api/v5/trade/one-click-repay-history
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必须 | 描述  
----|---|---|---  
-after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
-before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
-limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
-  
-> 返回结果
-    
-    
-    {
-        "code": "0",
-        "data": [
-            {
-                "debtCcy": "USDC",
-                "fillDebtSz": "6950.4865447900000000",
-                "fillRepaySz": "4.3067975995094930",
-                "repayCcy": "ETH",
-                "status": "filled",
-                "uTime": "1661256148746"
-            }
-        ],
-        "msg": ""
-    }
-    
-
-#### 返回参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-debtCcy | String | 负债币种  
-debtSz | String | 对应的负债币种成交数量  
-repayCcy | String | 偿还币种  
-repaySz | String | 偿还币种实际支付数量  
-status | String | 当前还债进度/状态  
-`running`: 进行中  
-`filled`: 已完成  
-`failed`: 失败  
-uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
-  
-## 大宗交易
+## REST API
 
 简单账户模式下不支持大宗交易
 
@@ -4646,6 +1998,3341 @@ data | Array of objects | 包含结果的对象数组.
 >> sz | String | 成交数量  
 >> side | String | 询价单方向，从 Taker的视角看  
 >> tradeId | String | 最新成交ID  
+  
+## WebSocket 私有频道
+
+### 询价频道
+
+获取用户自身发送或接收的询价信息。每当用户自身发送或接收询价时，数据都将被推送。
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "rfqs"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `rfqs`  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "rfqs"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"rfqs\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `rfqs`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg":{
+            "channel":"rfqs",
+            "uid": "77982378738415879"
+        },
+        "data":[
+            {
+                "cTime":"1611033737572",
+                "uTime":"1611033737572",
+                "traderCode":"DSK2",
+                "rfqId":"22534",
+                "clRfqId":"",
+                "state":"active",
+                "validUntil":"1611033857557",
+                "allowPartialExecution": false,
+                "counterparties":[
+                    "DSK4",
+                    "DSK5"
+                ],
+                "legs":[
+                    {
+                        "instId":"BTCUSD-211208-36000-C",
+                        "sz":"25.0",
+                        "side":"buy",
+                        "tgtCcy":""
+                    },
+                    {
+                        "instId":"ETHUSD-211208-45000-C",
+                        "sz":"25.0",
+                        "side":"sell",
+                        "tgtCcy":""
+                    }
+                ]
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 用户标识  
+data | Array | 订阅的数据  
+> cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
+> uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
+> state | String | 询价单的状态  
+`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
+`traded_away`  
+`traded_away` 仅适用于报价方  
+> counterparties | Array of Strings | 报价方列表  
+> validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
+> rfqId | String | 询价单ID  
+> allowPartialExecution | Boolean |
+> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。>有效值为`true`或`false`。  
+> legs | Array of objects | 组合交易  
+>> instId | String | 产品ID  
+>> sz | String | 委托数量  
+>> side | String | 询价单方向  
+>> tgtCcy | String | 委托数量的类型  
+  
+### 报价频道
+
+获取用户自身发送或接收的报价信息。每当用户自身发送或接收报价时，数据都将被推送。
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "quotes"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `quotes`  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "account"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"quotes\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `quotes`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg":{
+            "channel":"quotes"
+        },
+        "data":[
+            {
+                "validUntil":"1608997227854",
+                "uTime":"1608267227834",
+                "cTime":"1608267227834",
+                "legs":[
+                    {
+                        "px":"0.0023",
+                        "sz":"25.0",
+                        "instId":"BTC-USD-220114-25000-C",
+                        "side":"sell",
+                        "tgtCcy":""
+    
+                    },
+                    {
+                        "px":"0.0045",
+                        "sz":"25",
+                        "instId":"BTC-USD-220114-35000-C",
+                        "side":"buy",
+                        "tgtCcy":""
+    
+                    }
+                ],
+                "quoteId":"25092",
+                "rfqId":"18753",
+                "traderCode":"SATS",
+                "quoteSide":"sell",
+                "state":"canceled",
+                "reason":"mmp_canceled",
+                "clQuoteId":""
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 账户ID，账户uid和app上的一致  
+data | Array | 订阅的数据  
+> cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
+> uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
+> state | String | 报价单的状态  
+`active` `canceled` `pending_fill` `filled` `expired` `failed`  
+> reason | String | 状态原因,有效值包括`mmp_canceled`  
+> validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
+> rfqId | String | 询价单ID  
+> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> quoteId | String | 报价单ID  
+> clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> traderCode | String | 报价方唯一标识代码，报价时 Anonymous 设置为 `True` 时不可见。  
+> quoteSide | String | 询价单方向， `buy` 或者
+> `sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
+> legs | Array of objects | 组合交易  
+>> instId | String | 产品ID  
+>> sz | String | 委托数量  
+>> px | String | 委托价格  
+>> side | String | 报价单方向  
+>> tgtCcy | String | 委托数量的类型  
+  
+### 大宗交易频道
+
+获取用户自身的大宗交易信息。同一大宗交易中的所有腿都包含在同一更新中。只要用户自身作为交易对手进行大宗交易，数据都将被推送。
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "struc-block-trades"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `struc-block-trades`  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "struc-block-trades"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"struc-block-trades\""}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `struc-block-trades`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg":{
+            "channel":"struc-block-trades"
+        },
+        "data":[
+            {
+                "cTime":"1608267227834",
+                "rfqId":"18753",
+                "clRfqId":"",
+                "quoteId":"25092",
+                "clQuoteId":"",
+                "blockTdId":"180184",
+                "tTraderCode":"ANAND",
+                "mTraderCode":"WAGMI",
+                "legs":[
+                    {
+                        "px":"0.0023",
+                        "sz":"25.0",
+                        "instId":"BTC-USD-20220630-60000-C",
+                        "side":"sell",
+                        "fee":"0.1001",
+                        "feeCcy":"BTC",
+                        "tradeId":"10211",
+                        "tgtCcy":""
+    
+                    },
+                    {
+                        "px":"0.0033",
+                        "sz":"25",
+                        "instId":"BTC-USD-20220630-50000-C",
+                        "side":"buy",
+                        "fee":"0.1001",
+                        "feeCcy":"BTC",
+                        "tradeId":"10212",
+                        "tgtCcy":""
+    
+                    }
+                ]
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 用户标识  
+data | Array | 订阅的数据  
+> cTime | String | 执行创建的时间戳，Unix 时间戳格式，以毫秒为单位。  
+> rfqId | String | RFQ ID.  
+> clRfqId | String | 由用户设置的 RFQ ID。 此属性被视为客户端敏感信息。 不会暴露给 Maker，只返回空字符串“”给
+> Maker。  
+> quoteId | String | Quote ID.  
+> clQuoteId | String | 由用户设置的 Quote ID。 此属性被视为客户端敏感信息。 不会暴露给 Taker，只为 Taker
+> 返回空字符串“”。  
+> blockTdId | String | 大宗交易ID  
+> tTraderCode | String | 报价方唯一标识代码。询价时 Anonymous 设置为 `True` 时不可见。  
+> mTraderCode | String | 询价方唯一标识代码。报价时 Anonymous 设置为 `True` 时不可见。  
+> legs | Array of objects | 组合交易  
+>> instId | String | 产品ID  
+>> px | String | 成交价格  
+>> sz | String | 成交数量  
+>> side | String | 询价单方向  
+>> tgtCcy | String | 委托数量的类型  
+>> fee | String | 手续费，正数代表平台返佣 ，负数代表平台扣除。  
+>> feeCcy | String | 手续费币种  
+>> tradeId | String | 最新成交Id  
+  
+## WebSocket 公共频道
+
+### 公共大宗交易频道
+
+获取欧易的最新大宗交易信息。同一大宗交易中的所有腿都包含在同一更新中。每当欧易有大宗交易时，数据都将被推送。
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "public-struc-block-trades"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `public-struc-block-trades`  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "public-struc-block-trades"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"public-struc-block-trades\""}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `public-struc-block-trades`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg":{
+            "channel":"public-struc-block-trades"
+        },
+        "data":[
+            {
+    
+                "cTime":"1608267227834",
+                "blockTdId":"1802896",
+                "legs":[
+                    {
+                        "px":"0.323",
+                        "sz":"25.0",
+                        "instId":"BTC-USD-20220114-13250-C",
+                        "side":"sell",
+                        "tradeId":"15102"
+                    },
+                    {
+                        "px":"0.666",
+                        "sz":"25",
+                        "instId":"BTC-USD-20220114-21125-C",
+                        "side":"buy",
+                        "tradeId":"15103"
+                    }
+                ]
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+data | Array | 订阅的数据  
+> cTime | String | 执行创建的时间戳，Unix 时间戳格式，以毫秒为单位。  
+> blockTdId | String | 大宗交易ID  
+> legs | Array of objects | 组合交易  
+>> instId | String | 产品名Id  
+>> px | String | 成交价格  
+>> sz | String | 成交数量  
+>> side | String | 询价单方向，从 Taker的视角看  
+>> tradeId | String | 最新成交Id  
+  
+### 公共大宗交易单腿交易频道
+
+获取欧易的最新大宗交易单腿交易信息。大宗交易中的每条腿都在单独的更新中推送。只要有大宗交易，数据都将被推送。
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "public-block-trades",
+          "instId": "BTC-USDT-SWAP"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `public-block-trades`  
+> instId | String | 是 | 产品 ID, e.g., BTC-USDT-SWAP.  
+  
+> 成功返回示例
+    
+    
+    {
+      "event": "subscribe",
+      "arg": {
+        "channel": "public-block-trades",
+        "instId": "BTC-USDT-SWAP"
+      }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+      "event": "error",
+      "code": "60012",
+      "msg": "Illegal request: {\"op\": \"subscribe\", \"args\":[{ \"channel\" : \"public-block-trades\""}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必需 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `public-block-trades`  
+> instId | String | 是 | 产品 ID, e.g., BTC-USDT-SWAP.  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+      "arg": {
+        "channel": "public-block-trades",
+        "instId": "BTC-USDT-SWAP"
+      },
+      "data": [
+        {
+          "instId": "BTC-USDT-SWAP",
+          "tradeId": "482866817984270338",
+          "px": "21950",
+          "sz": "100",
+          "side": "buy",
+          "ts": "1661396420687"
+        }
+      ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> instId | String | 产品 ID, e.g., BTC-USDT-SWAP.  
+data | Array | 公共大宗交易单腿交易信息  
+> instId | String | 产品 ID, e.g., BTC-USDT-SWAP.  
+> tradeId | String | 交易 ID, 由柜台提供.  
+> px | String | 该单腿交易价格.  
+> sz | String | 交易数量.  
+> side | String | 交易方向, buy, sell, 从taker角度看.  
+> ts | String | 成交时间, 时间戳格式，以毫秒为单位. e.g. 1597026383085.  
+  
+### 大宗交易行情频道
+
+获取最近24小时大宗交易量  
+
+当发生成交事件时触发推送，此外，也会根据订阅维度每隔5分钟推送一次
+
+> 请求示例
+    
+    
+    {
+        "op": "subscribe",
+        "args": [{
+            "channel": "block-tickers",
+            "instId": "BTC-USDT"
+        }]
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+op | String | 是 | 操作，`subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名，`block-tickers`  
+> instId | String | 是 | 产品ID  
+  
+> 成功返回示例
+    
+    
+    {
+        "event": "subscribe",
+        "arg": {
+            "channel": "block-tickers",
+            "instId": "LTC-USD-200327"
+        }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+        "event": "error",
+        "code": "60012",
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"block-tickers\", \"instId\" : \"LTC-USD-200327\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+event | String | 是 | 事件，`subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名 `block-tickers`  
+> instId | String | 是 | 产品ID  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg": {
+            "channel": "block-tickers"
+        },
+        "data": [
+            {
+                "instType": "SWAP",
+                "instId": "LTC-USD-SWAP",
+                "volCcy24h": "0",
+                "vol24h": "0",
+                "ts": "1597026383085"
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> instId | String | 产品ID  
+data | Array | 订阅的数据  
+instId | String | 产品ID  
+instType | String | 产品类型  
+volCcy24h | String | 24小时成交量，以`币`为单位  
+如果是`衍生品`合约，数值为交易货币的数量。  
+如果是`币币/币币杠杆`，数值为计价货币的数量。  
+vol24h | String | 24小时成交量，以`张`为单位  
+如果是`衍生品`合约，数值为合约的张数。  
+如果是`币币/币币杠杆`，数值为交易货币的数量。  
+ts | String | 数据产生时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+# REST API
+
+## 请求验证
+
+### 生成APIKey
+
+在对任何请求进行签名之前，您必须通过交易网站创建一个APIKey。创建APIKey后，您将获得3个必须记住的信息：
+
+  * APIKey
+  * SecretKey
+  * Passphrase
+
+APIKey和SecretKey将由平台随机生成和提供，Passphrase将由您提供以确保API访问的安全性。平台将存储Passphrase加密后的哈希值进行验证，但如果您忘记Passphrase，则无法恢复，请您通过交易网站重新生成新的APIKey。
+
+每个APIKey最多可绑定20个IP地址；未绑定IP且拥有交易或提币权限的APIKey，将在闲置30天之后自动删除。
+
+### 发起请求
+
+所有REST私有请求头都必须包含以下内容：
+
+  * `OK-ACCESS-KEY`字符串类型的APIKey。
+
+  * `OK-ACCESS-SIGN`使用HMAC SHA256哈希函数获得哈希值，再使用Base-64编码（请参阅签名）。
+
+  * `OK-ACCESS-TIMESTAMP`发起请求的时间（UTC），如：2020-12-08T09:08:57.715Z
+
+  * `OK-ACCESS-PASSPHRASE`您在创建API密钥时指定的Passphrase。
+
+所有请求都应该含有application/json类型内容，并且是有效的JSON。
+
+### 签名
+
+> 生成签名
+
+`OK-ACCESS-SIGN`的请求头是对`timestamp + method + requestPath +
+body`字符串（+表示字符串连接），以及SecretKey，使用HMAC SHA256方法加密，通过Base-64编码输出而得到的。
+
+如：`sign=CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(timestamp + 'GET' +
+'/api/v5/account/balance?ccy=BTC', SecretKey))`
+
+其中，`timestamp`的值与`OK-ACCESS-
+TIMESTAMP`请求头相同，为ISO格式，如`2020-12-08T09:08:57.715Z`。
+
+method是请求方法，字母全部大写：`GET/POST`。
+
+requestPath是请求接口路径。如：`/api/v5/account/balance`
+
+body是指请求主体的字符串，如果请求没有主体（通常为GET请求）则body可省略。如：`{"instId":"BTC-
+USDT","lever":"5","mgnMode":"isolated"}`
+
+GET请求参数是算作requestPath，不算body
+
+SecretKey为用户申请APIKey时所生成。如：`22582BD0CFF14C41EDBF1AB98506286D`
+
+## 交易
+
+`交易`功能模块下的API接口需要身份验证。
+
+### 下单
+
+只有当您的账户有足够的资金才能下单。
+
+#### 限速： 60次/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+#### HTTP请求
+
+`POST /api/v5/trade/order`
+
+> 请求示例
+    
+    
+    币币下单：
+    POST /api/v5/trade/order
+    body
+    {
+        "instId":"BTC-USDT",
+        "tdMode":"cash",
+        "clOrdId":"b15",
+        "side":"buy",
+        "ordType":"limit",
+        "px":"2.15",
+        "sz":"2"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如 `BTC-USD-190927-5000-C`  
+tdMode | String | 是 | 交易模式  
+保证金模式：`isolated`：逐仓 ；`cross`：全仓  
+非保证金模式：`cash`：非保证金  
+ccy | String | 否 | 保证金币种，仅适用于`单币种保证金模式`下的`全仓杠杆`订单  
+clOrdId | String | 否 | 客户自定义订单ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+tag | String | 否 | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
+side | String | 是 | 订单方向  
+`buy`：买， `sell`：卖  
+posSide | String | 可选 | 持仓方向  
+在双向持仓模式下必填，且仅可选择 `long` 或 `short`。 仅适用交割、永续。  
+ordType | String | 是 | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+sz | String | 是 | 委托数量  
+px | String | 可选 | 委托价格，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
+reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
+仅适用于`单币种保证金模式`和`跨币种保证金模式`  
+tgtCcy | String | 否 | 市价单委托数量`sz`的单位，仅适用于`币币`市价订单  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+买单默认`quote_ccy`， 卖单默认`base_ccy`  
+banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
+为true时，余额不足时，系统不会改单，下单会失败，仅适用于币币市价单  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "clOrdId":"oktswap6",
+                "ordId":"12345689",
+                "tag":"",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ordId | String | 订单ID  
+clOrdId | String | 客户自定义订单ID  
+tag | String | 订单标签  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+tdMode  
+交易模式，下单时需要指定  
+**简单交易模式：**  
+\- 币币和期权买方：cash  
+**单币种保证金模式：**  
+\- 逐仓杠杆：isolated  
+\- 全仓杠杆：cross  
+\- 全仓币币：cash  
+\- 全仓交割/永续/期权：cross  
+\- 逐仓交割/永续/期权：isolated  
+**跨币种保证金模式：**  
+\- 逐仓杠杆：isolated  
+\- 全仓币币：cross  
+\- 全仓交割/永续/期权：cross  
+\- 逐仓交割/永续/期权：isolated  
+**组合保证金模式：**  
+\- 逐仓杠杆：isolated  
+\- 全仓币币：cross  
+\- 全仓交割/永续/期权：cross  
+\- 逐仓交割/永续/期权：isolated  
+clOrdId  
+clOrdId是用户自定义的唯一ID用来识别订单。如果在请求参数中传入了，那它一定会在返回参数内，并且可以用于查询订单，撤销订单，修改订单等接口。
+clOrdId不能与当前所有的挂单的clOrdId重复  posSide  
+持仓方向，单向持仓模式下此参数非必填，如果填写仅可以选择net；在双向持仓模式下必填，且仅可选择 long 或 short。  
+双向持仓模式下，side和posSide需要进行组合  
+开多：买入开多（side 填写 buy； posSide 填写 long ）  
+开空：卖出开空（side 填写 sell； posSide 填写 short ）  
+平多：卖出平多（side 填写 sell；posSide 填写 long ）  
+平空：买入平空（side 填写 buy； posSide 填写 short ）  ordType  
+订单类型，创建新订单时必须指定，您指定的订单类型将影响需要哪些订单参数和撮合系统如何执行您的订单，以下是有效的ordType：  
+普通委托：  
+limit：限价单，要求指定sz 和 px  
+market：市价单，币币和币币杠杆，是市价委托吃单；交割合约和永续合约，是自动以最高买/最低卖价格委托，遵循限价机制；期权合约不支持市价委托  
+高级委托：  
+post_only：限价委托，在下单那一刻只做maker，如果该笔订单的任何部分会吃掉当前挂单深度，则该订单将被全部撤销。  
+fok：限价委托，全部成交或立即取消，如果无法全部成交该笔订单，则该订单将被全部撤销。  
+ioc：限价委托，立即成交并取消剩余，立即按照委托价格撮合成交，并取消该订单剩余未完成数量，不会在深度列表上展示委托数量。  
+optimal_limit_ioc:市价委托，立即成交并取消剩余，仅适用于交割合约和永续合约。  sz  
+交易数量，表示要购买或者出售的数量。  
+当币币/币币杠杆以限价买入和卖出时，指交易货币数量。  
+当币币/币币杠杆以市价买入时，指计价货币的数量。  
+当币币/币币杠杆以市价卖出时，指交易货币的数量。  
+当交割、永续、期权买入和卖出时，指合约张数。  reduceOnly  
+只减仓，下单时，此参数设置为 true 时，表示此笔订单具有减仓属性，只会减少持仓数量，不会增加新的持仓仓位  
+对于同一产品，所有反方向挂单的张数加上当前只减仓下单张数，不能超过持仓张数  
+仅适用于`单币种账户模式`和`跨币种账户模式`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  tgtCcy  
+市价单委托数量`sz`的单位：仅适用于币币市价下单交易。  
+交易货币：base_ccy  
+计价货币：quote_ccy  
+您在使用交易货币买入或者计价货币卖出时，请知晓：  
+1.如果您输入的数量大于当前可买或者可卖的数量，系统将按照您的最大可买或者可卖数量帮您完成交易，如果您希望按照指定数量成交，那您可以尝试使用限价单，等待市场价格波动到锁定的余额可以买入或卖出您指定的数量。  
+2.如果您输入的数量不大于当前可买或者可卖的数量，那当市场价格波动过大时，锁定的余额可能没办法买入您输入的交易货币数量或卖出您输入的计价货币数量，为保证您的交易体验，我们基于【能买多少买多少】或者【能卖多少卖多少】的原则，更改下单的数量帮您完成交易。此外，我们将尽量多锁定一点余额来规避更改下单数量的情况。  
+2.1 交易币买入例子：  
+以市价下单 买入 10个LTC为例，用户可买为11个，此时 10 < 11，挂单成功。当LTC-USDT的市价为200，用户被锁定余额为3,000
+USDT，200*10 < 3,000，最终成交10个LTC； 若市场波动过大，LTC-USDT的市价为400，此时400*10 >
+3,000，当用户被锁定的余额不够买入下单指定的交易货币数量时，系統使用用户被锁定的最大余额3,000 USDT下单买入，最终成交 3,000/400 =
+7.5个 LTC。  
+2.2 计价币卖出例子：  
+以市价下单 卖出 1,000USDT为例，用户可卖为1,200USDT，1,000 < 1,200，挂单成功。LTC-
+USDT的市价为200，用户被锁定的余额为6个LTC，最终成交5个LTC； 若市场波动过大，LTC-USDT的市价为100，100*6 <
+1,000，当用户被锁定的余额不够卖出下单指定的计价货币数量时，系統使用用户被锁定的最大余额6个LTC下单，最终成交 6 * 100 = 600 USDT。
+px  
+期权下单时，委托价格需为 tickSz 的整数倍。  
+当不为整数倍时，取值规则以tickSz取 0.0005 为例：  
+当委托价格对0.0005的余数大于0.00025或者委托价格小于0.0005时，向上取；  
+当委托价格对0.0005的余数小于等于0.00025，且委托价格大于0.0005时，向下取。
+
+### 批量下单
+
+每次最多可以批量提交20个新订单。请求参数应该按数组格式传递。
+
+#### 限速：300个/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。
+
+#### HTTP请求
+
+`POST /api/v5/trade/batch-orders`
+
+> 请求示例
+    
+    
+     币币批量下单：
+     POST：/api/v5/trade/batch-orders
+     body
+     [
+        {
+            "instId":"BTC-USDT",
+            "tdMode":"cash",
+            "clOrdId":"b15",
+            "side":"buy",
+            "ordType":"limit",
+            "px":"2.15",
+            "sz":"2"
+        },
+        {
+            "instId":"BTC-USDT",
+            "tdMode":"cash",
+            "clOrdId":"b15",
+            "side":"buy",
+            "ordType":"limit",
+            "px":"2.15",
+            "sz":"2"
+        }
+    ]
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如 `BTC-USD-190927-5000-C`  
+tdMode | String | 是 | 交易模式  
+保证金模式：`isolated`：逐仓 ；`cross`：全仓  
+非保证金模式：`cash`：非保证金  
+ccy | String | 否 | 保证金币种，仅适用于`单币种保证金模式`下的`全仓杠杆`订单  
+clOrdId | String | 否 | 客户自定义订单ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+tag | String | 否 | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-16位之间。  
+side | String | 是 | 订单方向 `buy`：买， `sell`：卖  
+posSide | String | 可选 | 持仓方向  
+在双向持仓模式下必填，且仅可选择 `long` 或 `short`。 仅适用交割、永续。  
+ordType | String | 是 | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+sz | String | 是 | 委托数量  
+px | String | 否 | 委托价格，仅适用于`limit`、`post_only`、`fok`、`ioc`类型的订单  
+reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
+仅适用于`单币种保证金模式`和`跨币种保证金模式`  
+tgtCcy | String | 否 | 市价单委托数量`sz`的单位，仅适用于`币币`市价订单  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+买单默认`quote_ccy`， 卖单默认`base_ccy`  
+banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
+为true时，余额不足时，系统不会改单，下单会失败，仅适用于币币市价单  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "clOrdId":"oktswap6",
+                "ordId":"12345689",
+                "tag":"",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "clOrdId":"oktswap7",
+                "ordId":"12344",
+                "tag":"",
+                "sCode":"0",
+                "sMsg":""
+            },
+         .......
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ordId | String | 订单ID  
+clOrdId | String | 客户自定义订单ID  
+tag | String | 订单标签  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+在组合保证金账户模式下，或者全部成功，或者全部失败。
+
+### 撤单
+
+撤销之前下的未完成订单。
+
+#### 限速： 60次/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+#### HTTP请求
+
+`POST /api/v5/trade/cancel-order`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/cancel-order
+    body
+    {
+        "ordId":"2510789768709120",
+        "instId":"BTC-USD-190927"
+    }
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如 `BTC-USD-190927`  
+ordId | String | 可选 | 订单ID， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
+clOrdId | String | 可选 | 用户自定义ID  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "clOrdId":"oktswap6",
+                "ordId":"12345689",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ordId | String | 订单ID  
+clOrdId | String | 客户自定义订单ID  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+撤单返回sCode等于0不能严格认为该订单已经被撤销，只表示您的撤单请求被系统服务器所接受，撤单结果以订单频道推送的状态或者查询订单状态为准  
+
+### 批量撤单
+
+撤销未完成的订单，每次最多可以撤销20个订单。请求参数应该按数组格式传递。
+
+#### 限速：300个/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。
+
+#### HTTP请求
+
+`POST /api/v5/trade/cancel-batch-orders`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/cancel-batch-orders
+    body
+    [
+        {
+            "instId":"BTC-USDT",
+            "ordId":"12312"
+        },
+        {
+            "instId":"BTC-USDT",
+            "ordId":"1212"
+        }
+    ]
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如 `BTC-USD-190927`  
+ordId | String | 可选 | 订单ID， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
+clOrdId | String | 可选 | 用户自定义ID  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "clOrdId":"oktswap6",
+                "ordId":"12345689",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "clOrdId":"oktswap7",
+                "ordId":"12344",
+                "sCode":"0",
+                "sMsg":""
+            },
+         .......
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ordId | String | 订单ID  
+clOrdId | String | 客户自定义订单ID  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+  
+### 修改订单
+
+修改当前未成交的挂单
+
+#### 限速： 60次/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+#### HTTP请求
+
+`POST /api/v5/trade/amend-order`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/amend-order
+    body
+    {
+        "ordId":"2510789768709120",
+        "newSz":"2",
+        "instId":"BTC-USDT"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID  
+cxlOnFail | Boolean | 否 | `false`：不自动撤单 `true`：自动撤单
+当订单修改失败时，该订单是否需要自动撤销。默认为`false`  
+ordId | String | 可选 | 订单ID， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
+clOrdId | String | 可选 | 用户自定义order ID  
+reqId | String | 否 | 用户自定义修改事件ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+newSz | String | 可选 | 修改的新数量，`newSz`和`newPx`不可同时为空。对于部分成交订单，该数量应包含已成交数量。  
+newPx | String | 可选 | 修改的新价格  
+newSz  
+修改的数量<=该笔订单已成交数量时，该订单的状态会修改为完全成交状态。  
+
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+             "clOrdId":"",
+             "ordId":"12344",
+             "reqId":"b12344",
+             "sCode":"0",
+             "sMsg":""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ordId | String | 订单ID  
+clOrdId | String | 用户自定义ID  
+reqId | String | 用户自定义修改事件ID  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+修改订单返回sCode等于0不能严格认为该订单已经被修改，只表示您的修改订单请求被系统服务器所接受，改单结果以订单频道推送的状态或者查询订单状态为准  
+
+### 批量修改订单
+
+修改未完成的订单，一次最多可批量修改20个订单。请求参数应该按数组格式传递。
+
+#### 限速：300个/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。
+
+#### HTTP请求
+
+`POST /api/v5/trade/amend-batch-orders`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/amend-batch-orders
+    body
+    [
+        {
+            "ordId":"2510789768709120",
+            "newSz":"2",
+            "instId":"BTC-USDT"
+        },
+        {
+            "ordId":"2510789768709121",
+            "newSz":"2",
+            "instId":"BTC-USDT"
+        }
+    ]
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID  
+cxlOnFail | Boolean | 否 | `false` ：不自动撤单 `true`：自动撤单
+当订单修改失败时，该订单是否需要自动撤销，默认为`false`  
+ordId | String | 可选 | 订单ID， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
+clOrdId | String | 可选 | 用户自定义order ID  
+reqId | String | 否 | 用户自定义修改事件ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+newSz | String | 可选 | 修改的新数量，`newSz`和`newPx`不可同时为空。对于部分成交订单，该数量应包含已成交数量。  
+newPx | String | 可选 | 修改的新价格  
+newSz  
+修改的数量<=该笔订单已成交数量时，该订单的状态会修改为完全成交状态。  
+
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "clOrdId":"oktswap6",
+                "ordId":"12345689",
+                "reqId":"b12344",
+                "sCode":"0",
+                "sMsg":""
+            },
+            {
+                "clOrdId":"oktswap7",
+                "ordId":"12344",
+                "reqId":"b12344",
+                "sCode":"0",
+                "sMsg":""
+            },
+         .......
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ordId | String | 订单ID  
+clOrdId | String | 用户自定义ID  
+reqId | String | 用户自定义修改事件ID  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+  
+### 市价仓位全平
+
+市价平掉指定交易产品的持仓
+
+#### 限速： 20次/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+#### HTTP请求
+
+`POST /api/v5/trade/close-position`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/close-position
+    body
+    {
+        "instId":"BTC-USDT-SWAP",
+        "mgnMode":"cross"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID  
+posSide | String | 可选 | 持仓方向  
+单向持仓模式下：可不填写此参数，默认值net，如果填写，仅可以填写net  
+双向持仓模式下： 必须填写此参数，且仅可以填写 `long`：平多 ，`short`：平空  
+mgnMode | String | 是 | 保证金模式  
+`cross`：全仓 ； `isolated`：逐仓  
+ccy | String | 可选 | 保证金币种，单币种保证金模式的全仓币币杠杆平仓必填  
+autoCxl | Boolean | 否 | 当市价全平时，平仓单是否需要自动撤销,默认为false.  
+`false`：不自动撤单 `true`：自动撤单  
+clOrdId | String | 否 | 客户自定义ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+tag | String | 否 | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+               {
+                "instId":"BTC-USDT-SWAP",
+                "posSide":"long"
+              }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+posSide | String | 持仓方向  
+clOrdId | String | 客户自定义ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+tag | String | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
+如果不自动撤单，那有任何平仓挂单的情况下，市价全平会返回错误码信息，提示用户先撤销平仓挂单  
+
+### 获取订单信息
+
+查订单信息
+
+#### 限速： 60次/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+#### HTTP请求
+
+`GET /api/v5/trade/order`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/order?ordId=2510789768709120&instId=BTC-USDT
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID ，如`BTC-USD-190927`  
+ordId | String | 可选 | 订单ID ， `ordId`和`clOrdId`必须传一个，若传两个，以`ordId`为主  
+clOrdId | String | 可选 | 用户自定义ID  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "instType":"FUTURES",
+                "instId":"BTC-USD-200329",
+                "ccy":"",
+                "ordId":"123445",
+                "clOrdId":"b1",
+                "tag":"",
+                "px":"999",
+                "sz":"3",
+                "pnl":"5",
+                "ordType":"limit",
+                "side":"buy",
+                "posSide":"long",
+                "tdMode":"isolated",
+                "accFillSz":"0",
+                "fillPx":"0",
+                "tradeId":"0",
+                "fillSz":"0",
+                "fillTime":"0",
+                "source": "",
+                "state":"live",
+                "avgPx":"0",
+                "lever":"20",
+                "tpTriggerPx":"",
+                "tpTriggerPxType":"last",
+                "tpOrdPx":"",
+                "slTriggerPx":"",
+                "slTriggerPxType":"last",
+                "slOrdPx":"",
+                "feeCcy":"",
+                "fee":"",
+                "rebateCcy":"",
+                "rebate":"",
+                "tgtCcy":"",
+                "category":"",
+                "reduceOnly": "false",
+                "uTime":"1597026383085",
+                "cTime":"1597026383085"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+`SPOT`：币币  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+instId | String | 产品ID  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
+ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
+ordId | String | 订单ID  
+clOrdId | String | 客户自定义订单ID  
+tag | String | 订单标签  
+px | String | 委托价格  
+sz | String | 委托数量  
+pnl | String | 收益  
+ordType | String | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+side | String | 订单方向  
+posSide | String | 持仓方向  
+tdMode | String | 交易模式  
+accFillSz | String | 累计成交数量  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
+tradeId | String | 最新成交ID  
+fillSz | String | 最新成交数量  
+fillTime | String | 最新成交时间  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
+state | String | 订单状态  
+`canceled`：撤单成功  
+`live`：等待成交  
+`partially_filled`：部分成交  
+`filled`：完全成交  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
+tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+tpOrdPx | String | 止盈委托价  
+slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+slOrdPx | String | 止损委托价  
+feeCcy | String | 交易手续费币种  
+fee | String | 手续费与返佣  
+对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
+对于交割、永续和期权，为订单交易累计的手续费和返佣  
+rebateCcy | String | 返佣金币种  
+source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
+rebate | String |
+返佣金额，仅适用于币币和杠杆，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为正数，如：0.01  
+category | String | 订单种类  
+`normal`：普通委托  
+`twap`：TWAP自动换币  
+`adl`：ADL自动减仓  
+`full_liquidation`：强制平仓  
+`partial_liquidation`：强制减仓  
+`delivery`：交割  
+`ddh`：对冲减仓类型订单  
+reduceOnly | String | 是否只减仓，`true` 或 `false`  
+uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如：`1597026383085`  
+cTime | String | 订单创建时间，Unix时间戳的毫秒数格式， 如 ：`1597026383085`  
+  
+### 获取未成交订单列表
+
+获取当前账户下所有未成交订单信息
+
+#### 限速： 60次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/trade/orders-pending`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/orders-pending?ordType=post_only,fok,ioc&instType=SPOT
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 否 | 产品类型  
+`SPOT`：币币  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
+instId | String | 否 | 产品ID，如`BTC-USD-200927`  
+ordType | String | 否 | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+state | String | 否 | 订单状态  
+`live`：等待成交  
+`partially_filled`：部分成交  
+after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
+before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [
+            {
+                "accFillSz": "0",
+                "avgPx": "",
+                "cTime": "1618235248028",
+                "category": "normal",
+                "ccy": "",
+                "clOrdId": "",
+                "fee": "0",
+                "feeCcy": "BTC",
+                "fillPx": "",
+                "fillSz": "0",
+                "fillTime": "",
+                "instId": "BTC-USDT",
+                "instType": "SPOT",
+                "lever": "5.6",
+                "ordId": "301835739059335168",
+                "ordType": "limit",
+                "pnl": "0",
+                "posSide": "net",
+                "px": "59200",
+                "rebate": "0",
+                "rebateCcy": "USDT",
+                "side": "buy",
+                "slOrdPx": "",
+                "slTriggerPx": "",
+                "slTriggerPxType": "last",
+                "source": "",
+                "state": "live",
+                "sz": "1",
+                "tag": "",
+                "tdMode": "cross",
+                "tgtCcy": "",
+                "tpOrdPx": "",
+                "tpTriggerPx": "",
+                "tpTriggerPxType": "last",
+                "tradeId": "",
+                "reduceOnly": "false",
+                "uTime": "1618235248028"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instId | String | 产品ID  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
+ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
+ordId | String | 订单ID  
+clOrdId | String | 客户自定义订单ID  
+tag | String | 订单标签  
+px | String | 委托价格  
+sz | String | 委托数量  
+pnl | String | 收益  
+ordType | String | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+side | String | 订单方向  
+posSide | String | 持仓方向  
+tdMode | String | 交易模式  
+accFillSz | String | 累计成交数量  
+fillPx | String | 最新成交价格。如果还没成交，系统返回`0`。  
+tradeId | String | 最新成交ID  
+fillSz | String | 最新成交数量  
+fillTime | String | 最新成交时间  
+avgPx | String | 成交均价。如果还没成交，系统返回`0`。  
+state | String | 订单状态  
+`live`：等待成交  
+`partially_filled`：部分成交  
+  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
+tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+slOrdPx | String | 止损委托价  
+feeCcy | String | 交易手续费币种  
+fee | String | 手续费与返佣  
+对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
+对于交割、永续和期权，为订单交易累计的手续费和返佣  
+rebateCcy | String | 返佣金币种  
+source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
+rebate | String |
+返佣金额，仅适用于币币和杠杆，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
+category | String | 订单种类  
+`normal`： 普通委托  
+reduceOnly | String | 是否只减仓，`true` 或 `false`  
+uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取历史订单记录（近七天）
+
+获取最近7天的已经完结状态的订单数据，已经撤销的未成交单 只保留2小时
+
+#### 限速： 40次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/trade/orders-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/orders-history?ordType=post_only,fok,ioc&instType=SPOT
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 是 | 产品类型  
+`SPOT`：币币  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
+instId | String | 否 | 产品ID，如`BTC-USD-190927`  
+ordType | String | 否 | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+state | String | 否 | 订单状态  
+`canceled`：撤单成功  
+`filled`：完全成交  
+category | String | 否 | 订单种类  
+`twap`：TWAP自动换币  
+`adl`：ADL自动减仓  
+`full_liquidation`：强制平仓  
+`partial_liquidation`：强制减仓  
+`delivery`：交割  
+`ddh`：对冲减仓类型订单  
+after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
+before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "instType":"FUTURES",
+                "instId":"BTC-USD-200329",
+                "ccy":"",
+                "ordId":"123445",
+                "clOrdId":"b1",
+                "tag":"",
+                "px":"999",
+                "sz":"3",
+                "ordType":"limit",
+                "side":"buy",
+                "posSide":"long",
+                "tdMode":"isolated",
+                "accFillSz":"0",
+                "fillPx":"0",
+                "tradeId":"0",
+                "fillSz":"0",
+                "fillTime":"0",
+                "source": "",
+                "state":"filled",
+                "avgPx":"0",
+                "lever":"20",
+                "tpTriggerPx":"",
+                "tpTriggerPxType":"last",
+                "tpOrdPx":"",
+                "slTriggerPx":"",
+                "slTriggerPxType":"last",
+                "slOrdPx":"",
+                "feeCcy":"",
+                "fee":"",
+                "rebateCcy":"",
+                "rebate":"",
+                "tgtCcy":"",
+                "pnl":"",
+                "category":"",
+                "reduceOnly": "false",
+                "uTime":"1597026383085",
+                "cTime":"1597026383085"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instId | String | 产品ID  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
+ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
+ordId | String | 订单ID  
+clOrdId | String | 客户自定义订单ID  
+tag | String | 订单标签  
+px | String | 委托价格  
+sz | String | 委托数量  
+ordType | String | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+side | String | 订单方向  
+posSide | String | 持仓方向  
+tdMode | String | 交易模式  
+accFillSz | String | 累计成交数量  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
+tradeId | String | 最新成交ID  
+fillSz | String | 最新成交数量  
+fillTime | String | 最新成交时间  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
+state | String | 订单状态  
+`canceled`：撤单成功  
+`filled`：完全成交  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
+tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+tpOrdPx | String | 止盈委托价  
+slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+slOrdPx | String | 止损委托价  
+feeCcy | String | 交易手续费币种  
+fee | String | 手续费与返佣  
+对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
+对于交割、永续和期权，为订单交易累计的手续费和返佣  
+rebateCcy | String | 返佣金币种  
+source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
+rebate | String |
+返佣金额，仅适用于币币和杠杆，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
+pnl | String | 收益  
+category | String | 订单种类  
+`normal`：普通委托  
+`twap`：TWAP自动换币  
+`adl`：ADL自动减仓  
+`full_liquidation`：强制平仓  
+`partial_liquidation`：强制减仓  
+`delivery`：交割  
+`ddh`：对冲减仓类型订单  
+reduceOnly | String | 是否只减仓，`true` 或 `false`  
+uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如`1597026383085`  
+cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取历史订单记录（近三个月）
+
+获取最近3个月的已经完结状态的订单数据
+
+#### 限速： 20次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/trade/orders-history-archive`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/orders-history-archive?ordType=post_only,fok,ioc&instType=SPOT
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 是 | 产品类型  
+`SPOT`：币币  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
+instId | String | 否 | 产品ID，如`BTC-USD-200927`  
+ordType | String | 否 | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+state | String | 否 | 订单状态  
+`canceled`：撤单成功  
+`filled`：完全成交  
+category | String | 否 | 订单种类  
+`twap`：TWAP自动换币  
+`adl`：ADL自动减仓  
+`full_liquidation`：强制平仓  
+`partial_liquidation`：强制减仓  
+`delivery`：交割  
+`ddh`：对冲减仓类型订单  
+after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`ordId`  
+before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`ordId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "instType":"FUTURES",
+                "instId":"BTC-USD-200329",
+                "ccy":"",
+                "ordId":"123445",
+                "clOrdId":"b1",
+                "tag":"",
+                "px":"999",
+                "sz":"3",
+                "ordType":"limit",
+                "side":"buy",
+                "posSide":"long",
+                "tdMode":"isolated",
+                "accFillSz":"0",
+                "fillPx":"0",
+                "tradeId":"0",
+                "fillSz":"0",
+                "fillTime":"0",
+                "source": "",
+                "state":"filled",
+                "avgPx":"0",
+                "lever":"20",
+                "tpTriggerPx":"",
+                "tpTriggerPxType":"last",
+                "tpOrdPx":"",
+                "slTriggerPx":"",
+                "slTriggerPxType":"last",
+                "slOrdPx":"",
+                "feeCcy":"",
+                "fee":"",
+                "rebateCcy":"",
+                "rebate":"",
+                "tgtCcy":"",
+                "pnl":"",
+                "category":"",
+                "reduceOnly": "false",
+                "uTime":"1597026383085",
+                "cTime":"1597026383085"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instId | String | 产品ID  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
+ccy | String | 保证金币种，仅适用于`单币种保证金模式`下的全仓`币币杠杆`订单  
+ordId | String | 订单ID  
+clOrdId | String | 客户自定义订单ID  
+tag | String | 订单标签  
+px | String | 委托价格  
+sz | String | 委托数量  
+ordType | String | 订单类型  
+`market`：市价单  
+`limit`：限价单  
+`post_only`：只做maker单  
+`fok`：全部成交或立即取消  
+`ioc`：立即成交并取消剩余  
+`optimal_limit_ioc`：市价委托立即成交并取消剩余（仅适用交割、永续）  
+side | String | 订单方向  
+posSide | String | 持仓方向  
+tdMode | String | 交易模式  
+accFillSz | String | 累计成交数量  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
+tradeId | String | 最新成交ID  
+fillSz | String | 最新成交数量  
+fillTime | String | 最新成交时间  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
+state | String | 订单状态  
+`canceled`：撤单成功  
+`filled`：完全成交  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
+tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+tpOrdPx | String | 止盈委托价  
+slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+slOrdPx | String | 止损委托价  
+feeCcy | String | 交易手续费币种  
+fee | String | 手续费与返佣  
+对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
+对于交割、永续和期权，为订单交易累计的手续费和返佣  
+rebateCcy | String | 返佣金币种  
+rebate | String |
+返佣金额，仅适用于币币和杠杆，平台向达到指定lv交易等级的用户支付的挂单奖励（返佣），如果没有返佣金，该字段为“”。手续费返佣为`正数`，如：`0.01`  
+pnl | String | 收益  
+source | String | 订单来源  
+`13`:策略委托单触发后的生成的限价单  
+category | String | 订单种类  
+`normal`：普通委托  
+`twap`：TWAP自动换币  
+`adl`：ADL自动减仓  
+`full_liquidation`：强制平仓  
+`partial_liquidation`：强制减仓  
+`delivery`：交割  
+`ddh`：对冲减仓类型订单  
+reduceOnly | String | 是否只减仓，`true` 或 `false`  
+uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+该接口不包含`已撤销的完全无成交`类型订单数据，可通过`获取历史订单记录（近七天)`接口获取。  
+
+### 获取成交明细（近三天）
+
+获取近3天的订单成交明细信息
+
+#### 限速：60次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/fills`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/fills
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 否 | 产品类型  
+`SPOT`：币币  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
+instId | String | 否 | 产品 ID，如`BTC-USD-190927`  
+ordId | String | 否 | 订单 ID  
+after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
+before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+  
+> 返回结果
+    
+    
+    {
+      "code": "0",
+      "msg": "",
+      "data": [
+        {
+          "instType": "FUTURES",
+          "instId": "BTC-USD-200329",
+          "tradeId": "123",
+          "ordId": "312269865356374016",
+          "clOrdId": "b16",
+          "billId": "1111",
+          "tag": "",
+          "fillPx": "999",
+          "fillSz": "3",
+          "side": "buy",
+          "posSide": "long",
+          "execType": "M",
+          "feeCcy": "",
+          "fee": "",
+          "ts": "1597026383085"
+        },
+        {
+          "instType": "FUTURES",
+          "instId": "BTC-USD-200329",
+          "tradeId": "123",
+          "ordId": "312269865356374016",
+          "clOrdId": "b16",
+          "billId": "1111",
+          "tag": "",
+          "fillPx": "999",
+          "fillSz": "3",
+          "side": "buy",
+          "posSide": "long",
+          "execType": "M",
+          "feeCcy": "",
+          "fee": "",
+          "ts": "1597026383085"
+        }
+      ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instId | String | 产品 ID  
+tradeId | String | 最新成交 ID  
+ordId | String | 订单 ID  
+clOrdId | String | 用户自定义订单ID  
+billId | String | 账单 ID  
+tag | String | 订单标签  
+fillPx | String | 最新成交价格  
+fillSz | String | 最新成交数量  
+side | String | 订单方向 `buy`：买 `sell`：卖  
+posSide | String | 持仓方向 `long`：多 `short`：空 单向持仓模式返回 `net`  
+execType | String | 流动性方向 `T`：taker `M`：maker  
+feeCcy | String | 交易手续费币种或者返佣金币种  
+fee | String | 手续费金额或者返佣金额，手续费扣除为‘负数’，如-0.01；手续费返佣为‘正数’，如 0.01  
+ts | String | 成交明细产生时间，Unix时间戳的毫秒数格式，如`1597026383085`  
+tradeId  
+当成交明细所归属的订单种类（category）为
+partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"  
+tag  
+订单标签, 对于大宗交易总是 "sys:blocktrade" 。  
+ordId  
+订单ID, 对于大宗交易总是 "" 。  
+clOrdId  
+用户自定义订单ID, 对于大宗交易总是 "" 。
+
+### 获取成交明细（近三个月）
+
+获取近3个月订单成交明细信息
+
+#### 限速： 10 次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/fills-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/fills-history
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | 是 | 产品类型  
+`SPOT`：币币  
+`MARGIN`：币币杠杆  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`OPTION`：期权  
+uly | String | 否 | 标的指数  
+instFamily | String | 否 | 交易品种  
+适用于`交割/永续/期权`  
+instId | String | 否 | 产品 ID，如`BTC-USD-190927`  
+ordId | String | 否 | 订单 ID  
+after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
+before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+  
+> 返回结果
+    
+    
+    {
+      "code": "0",
+      "msg": "",
+      "data": [
+        {
+          "instType": "FUTURES",
+          "instId": "BTC-USD-200329",
+          "tradeId": "123",
+          "ordId": "312269865356374016",
+          "clOrdId": "b16",
+          "billId": "1111",
+          "tag": "",
+          "fillPx": "999",
+          "fillSz": "3",
+          "side": "buy",
+          "posSide": "long",
+          "execType": "M",
+          "feeCcy": "",
+          "fee": "",
+          "ts": "1597026383085"
+        },
+        {
+          "instType": "FUTURES",
+          "instId": "BTC-USD-200329",
+          "tradeId": "123",
+          "ordId": "312269865356374016",
+          "clOrdId": "b16",
+          "billId": "1111",
+          "tag": "",
+          "fillPx": "999",
+          "fillSz": "3",
+          "side": "buy",
+          "posSide": "long",
+          "execType": "M",
+          "feeCcy": "",
+          "fee": "",
+          "ts": "1597026383085"
+        }
+      ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instId | String | 产品 ID  
+tradeId | String | 最新成交 ID  
+ordId | String | 订单 ID  
+clOrdId | String | 用户自定义订单ID  
+billId | String | 账单 ID  
+tag | String | 订单标签  
+fillPx | String | 最新成交价格  
+fillSz | String | 最新成交数量  
+side | String | 订单方向 `buy`：买 `sell`：卖  
+posSide | String | 持仓方向 `long`：多 `short`：空 单向持仓模式返回 `net`  
+execType | String | 流动性方向 `T`：taker `M`：maker  
+feeCcy | String | 交易手续费币种或者返佣金币种  
+fee | String | 手续费金额或者返佣金额 ，手续费扣除 为 ‘负数’，如 -0.01 ； 手续费返佣 为 ‘正数’，如 0.01  
+ts | String | 成交明细产生时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
+tradeId  
+当成交明细所归属的订单种类（category）为
+partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"
+tag  
+订单标签, 对于大宗交易总是 "sys:blocktrade" 。  
+ordId  
+订单ID, 对于大宗交易总是 "" 。  
+clOrdId  
+用户自定义订单ID, 对于大宗交易总是 "" 。
+
+### 策略委托下单
+
+提供单向止盈止损委托、双向止盈止损委托、计划委托、冰山委托、时间加权委托、移动止盈止损委托
+
+#### 限速： 20次/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+#### HTTP请求
+
+`POST /api/v5/trade/order-algo`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/order-algo
+    body
+    {
+        "instId":"BTC-USDT",
+        "tdMode":"cross",
+        "side":"buy",
+        "ordType":"conditional",
+        "sz":"2",
+        "tpTriggerPx":"15",
+        "tpOrdPx":"18"
+    }
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如 `BTC-USD-190927-5000-C`  
+tdMode | String | 是 | 交易模式  
+保证金模式 `isolated`：逐仓，`cross：`全仓  
+非保证金模式 `cash`：非保证金  
+ccy | String | 否 | 保证金币种  
+仅适用于单币种保证金模式下的全仓杠杆订单  
+side | String | 是 | 订单方向  
+`buy`：买  
+`sell`：卖  
+posSide | String | 可选 | 持仓方向  
+在双向持仓模式下必填，且仅可选择 `long` 或 `short`  
+ordType | String | 是 | 订单类型  
+`conditional`：单向止盈止损  
+`oco`：双向止盈止损  
+`trigger`：计划委托  
+`move_order_stop`：移动止盈止损  
+`iceberg`：冰山委托  
+`twap`：时间加权委托  
+sz | String | 是 | 委托数量  
+tag | String | 否 | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
+tgtCcy | String | 否 | 委托数量的类型  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`单向止盈止损市价买单  
+默认买为`计价货币`，卖为`交易货币`  
+reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
+仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
+仅适用于`单币种保证金模式`和`跨币种保证金模式`  
+clOrdId | String | 否 | 客户自定义订单ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+  
+止盈止损
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+tpTriggerPx | String | 否 | 止盈触发价，如果填写此参数，必须填写 止盈委托价  
+tpTriggerPxType | String | 否 | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
+tpOrdPx | String | 否 | 止盈委托价，如果填写此参数，必须填写 止盈触发价  
+委托价格为-1时，执行市价止盈  
+slTriggerPx | String | 否 | 止损触发价，如果填写此参数，必须填写 止损委托价  
+slTriggerPxType | String | 否 | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
+slOrdPx | String | 否 | 止损委托价，如果填写此参数，必须填写 止损触发价  
+委托价格为-1时，执行市价止损  
+止盈止损  
+当用户进行单向止盈止损委托（ordType=conditional）时，如果用户同时传了止盈止损四个参数，只进行止损的功能校验，忽略止盈的业务逻辑校验。
+
+计划委托
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+triggerPx | String | 是 | 计划委托触发价格  
+orderPx | String | 是 | 委托价格  
+委托价格为`-1`时，执行市价委托  
+triggerPxType | String | 否 | 计划委托触发价格类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
+交割、永续合约的买卖模式下，不支持计划委托
+
+移动止盈止损
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+callbackRatio | String | 可选 | 回调幅度的比例，如 `0.05`  
+`callbackRatio`和`callbackSpread`只能传入一个  
+callbackSpread | String | 可选 | 回调幅度的价距  
+activePx | String | 否 | 激活价格  
+  
+冰山委托
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+pxVar | String | 可选 | 挂单价距离盘口的比例  
+`pxVar`和`pxSpread`只能传入一个  
+pxSpread | String | 可选 | 挂单价距离盘口的价距  
+szLimit | String | 是 | 单笔数量  
+pxLimit | String | 是 | 挂单限制价  
+  
+时间加权
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+pxVar | String | 可选 | 吃单价优于盘口的比例  
+`pxVar`和`pxSpread`只能传入一个  
+pxSpread | String | 可选 | 吃单单价优于盘口的价距  
+szLimit | String | 是 | 单笔数量  
+pxLimit | String | 是 | 挂单限制价  
+timeInterval | String | 是 | 下单间隔  
+  
+了解更多关于[冰山委托和时间加权委托](/support/hc/zh-cn/articles/4408404800781)
+
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "algoId":"12345689",
+                "clOrdId": "",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+algoId | String | 策略委托单ID  
+clOrdId | String | 客户自定义订单ID  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+  
+### 撤销策略委托订单
+
+撤销策略委托订单（不包含冰山委托、时间加权、移动止盈止损等高级策略订单），每次最多可以撤销10个策略委托单
+
+#### 限速： 20次/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+#### HTTP请求
+
+`POST /api/v5/trade/cancel-algos`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/cancel-algos
+    body
+    [
+        {
+            "algoId":"198273485",
+            "instId":"BTC-USDT"
+        },
+        {
+            "algoId":"198273485",
+            "instId":"BTC-USDT"
+        }
+    ]
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+algoId | String | 是 | 策略委托单ID  
+instId | String | 是 | 产品ID 如 `BTC-USDT`  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "algoId":"1234",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+algoId | String | 订单ID  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+  
+### 撤销高级策略委托订单
+
+撤销冰山委托、时间加权、移动止盈止损委托订单，每次最多可以撤销10个策略委托单
+
+#### 限速： 20次/2s
+
+#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
+
+#### HTTP请求
+
+`POST /api/v5/trade/cancel-advance-algos`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/cancel-advance-algos
+    body
+    [
+        {
+            "algoId":"198273485",
+            "instId":"BTC-USDT"
+        },
+        {
+            "algoId":"198273485",
+            "instId":"BTC-USDT"
+        }
+    ]
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+algoId | String | 是 | 策略委托单ID  
+instId | String | 是 | 产品ID 如 `BTC-USDT`  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "algoId":"1234",
+                "sCode":"0",
+                "sMsg":""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+algoId | String | 订单ID  
+sCode | String | 事件执行结果的code，0代表成功  
+sMsg | String | 事件执行失败时的msg  
+  
+### 获取未完成策略委托单列表
+
+获取当前账户下未触发的策略委托单列表
+
+#### 限速： 20次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/trade/orders-algo-pending`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/orders-algo-pending?ordType=conditional
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+algoId | String | 否 | 策略委托单ID  
+instType | String | 否 | 产品类型  
+`SPOT`：币币  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`MARGIN`：杠杆  
+instId | String | 否 | 产品ID，`BTC-USD-190927`  
+ordType | String | 是 | 订单类型  
+`conditional`：单向止盈止损  
+`oco`：双向止盈止损  
+`trigger`：计划委托  
+`move_order_stop`：移动止盈止损  
+`iceberg`：冰山委托  
+`twap`：时间加权委托  
+after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
+before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+clOrdId | String | 否 | 客户自定义订单ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "activePx": "",
+                "actualPx": "",
+                "actualSide": "",
+                "actualSz": "0",
+                "algoId": "492453578716610560",
+                "cTime": "1663682082511",
+                "callbackRatio": "",
+                "callbackSpread": "",
+                "ccy": "",
+                "clOrdId": "hahawang",
+                "instId": "BTC-USDT-SWAP",
+                "instType": "SWAP",
+                "lever": "3",
+                "moveTriggerPx": "",
+                "ordId": "0",
+                "ordPx": "",
+                "ordType": "conditional",
+                "posSide": "long",
+                "pxLimit": "",
+                "pxSpread": "",
+                "pxVar": "",
+                "side": "buy",
+                "slOrdPx": "-1",
+                "slTriggerPx": "22000",
+                "slTriggerPxType": "last",
+                "state": "live",
+                "sz": "10",
+                "szLimit": "",
+                "tag": "",
+                "tdMode": "cross",
+                "tgtCcy": "",
+                "timeInterval": "",
+                "tpOrdPx": "",
+                "tpTriggerPx": "",
+                "tpTriggerPxType": "",
+                "triggerPx": "",
+                "triggerPxType": "",
+                "reduceOnly": "false",
+                "triggerTime": ""
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instId | String | 产品ID  
+ccy | String | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
+ordId | String | 订单ID  
+algoId | String | 策略委托单ID  
+clOrdId | String | 客户自定义订单ID  
+sz | String | 委托数量  
+ordType | String | 订单类型  
+side | String | 订单方向  
+posSide | String | 持仓方向  
+tdMode | String | 交易模式  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
+state | String | 订单状态 ，`live`：待生效 `pause`：暂停生效 `partially_effective`:部分生效  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
+tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+tpOrdPx | String | 止盈委托价  
+slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+slOrdPx | String | 止损委托价  
+triggerPx | String | 计划委托触发价格  
+triggerPxType | String | 计划委托触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+ordPx | String | 计划委托委托价格  
+actualSz | String | 实际委托量  
+actualPx | String | 实际委托价  
+actualSide | String | 实际触发方向， `tp`：止盈 `sl`： 止损  
+triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+pxVar | String | 价格比例  
+仅适用于`冰山委托`和`时间加权委托`  
+pxSpread | String | 价距  
+仅适用于`冰山委托`和`时间加权委托`  
+szLimit | String | 单笔数量  
+仅适用于`冰山委托`和`时间加权委托`  
+tag | String | 订单标签  
+pxLimit | String | 挂单限制价  
+仅适用于`冰山委托`和`时间加权委托`  
+timeInterval | String | 下单间隔  
+仅适用于`时间加权委托`  
+callbackRatio | String | 回调幅度的比例  
+仅适用于`移动止盈止损`  
+callbackSpread | String | 回调幅度的价距  
+仅适用于`移动止盈止损`  
+activePx | String | 移动止盈止损激活价格  
+仅适用于`移动止盈止损`  
+moveTriggerPx | String | 移动止盈止损触发价格  
+仅适用于`移动止盈止损`  
+reduceOnly | String | 是否只减仓，`true` 或 `false`  
+cTime | String | 订单创建时间， Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取历史策略委托单列表
+
+获取最近3个月当前账户下所有策略委托单列表
+
+#### 限速： 20次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/trade/orders-algo-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/orders-algo-history?state=effective&ordType=conditional
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ordType | String | 是 | 订单类型  
+`conditional`：单向止盈止损  
+`oco`：双向止盈止损  
+`trigger`：计划委托  
+`move_order_stop`：移动止盈止损  
+`iceberg`：冰山委托  
+`twap`：时间加权委托  
+state | String | 可选 | 订单状态  
+  
+`effective`：已生效  
+`canceled`：已经撤销  
+`order_failed`：委托失败  
+【state和algoId必填且只能填其一】  
+algoId | String | 可选 | 策略委托单ID 【`state`和`algoId`必填且只能填其一】  
+instType | String | 否 | 产品类型  
+`SPOT`：币币  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+`MARGIN`：杠杆  
+instId | String | 否 | 产品ID，`BTC-USD-190927`  
+after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
+before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "instType":"FUTURES",
+                "instId":"BTC-USD-200329",
+                "ordId":"123445",
+                "ccy":"BTC",
+                "clOrdId":"",
+                "algoId":"1234",
+                "sz":"999",
+                "ordType":"oco",
+                "side":"buy",
+                "posSide":"long",
+                "tdMode":"cross",
+                "tgtCcy": "",
+                "state":"effective",
+                "lever":"20",
+                "tpTriggerPx":"",
+                "tpTriggerPxType":"",
+                "tpOrdPx":"",
+                "slTriggerPx":"",
+                "slTriggerPxType":"",
+                "triggerPx":"99",
+                "triggerPxType":"last",
+                "ordPx":"12",
+                "actualSz":"",
+                "actualPx":"",
+                "actualSide":"",
+                "pxVar":"",
+                "pxSpread":"",
+                "pxLimit":"",
+                "szLimit":"",
+                "tag": "adadadadad",
+                "timeInterval":"",
+                "callbackRatio":"",
+                "callbackSpread":"",
+                "activePx":"",
+                "moveTriggerPx":"",
+                "reduceOnly": "false",
+                "triggerTime":"1597026383085",
+                "cTime":"1597026383000"
+            },
+            {
+                "instType":"FUTURES",
+                "instId":"BTC-USD-200329",
+                "ordId":"123445",
+                "ccy":"BTC",
+                "clOrdId":"",
+                "algoId":"1234",
+                "sz":"999",
+                "ordType":"oco",
+                "side":"buy",
+                "posSide":"long",
+                "tdMode":"cross",
+                "tgtCcy": "",
+                "state":"effective",
+                "lever":"20",
+                "tpTriggerPx":"",
+                "tpTriggerPxType":"",
+                "tpOrdPx":"",
+                "slTriggerPx":"",
+                "slTriggerPxType":"",
+                "triggerPx":"99",
+                "triggerPxType":"last",
+                "ordPx":"12",
+                "actualSz":"",
+                "actualPx":"",
+                "actualSide":"",
+                "pxVar":"",
+                "pxSpread":"",
+                "pxLimit":"",
+                "szLimit":"",
+                "tag": "adadadadad",
+                "timeInterval":"",
+                "callbackRatio":"",
+                "callbackSpread":"",
+                "activePx":"",
+                "moveTriggerPx":"",
+                "reduceOnly": "false",
+                "triggerTime":"1597026383085",
+                "cTime":"1597026383000"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instId | String | 产品ID  
+ccy | String | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
+ordId | String | 订单ID  
+algoId | String | 策略委托单ID  
+clOrdId | String | 客户自定义订单ID  
+sz | String | 委托数量  
+ordType | String | 订单类型  
+side | String | 订单方向  
+posSide | String | 持仓方向  
+tdMode | String | 交易模式  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
+state | String | 订单状态  
+`effective`： 已生效  
+`canceled`：已撤销  
+`order_failed`：委托失败  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
+tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+tpOrdPx | String | 止盈委托价  
+slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+slOrdPx | String | 止损委托价  
+triggerPx | String | 计划委托触发价格  
+triggerPxType | String | 计划委托触发价格  
+ordPx | String | 计划委托委托价格类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+actualSz | String | 实际委托量  
+actualPx | String | 实际委托价  
+actualSide | String | 实际触发方向 `tp`：止盈 `sl`： 止损  
+triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+pxVar | String | 价格比例  
+仅适用于`冰山委托`和`时间加权委托`  
+pxSpread | String | 价距  
+仅适用于`冰山委托`和`时间加权委托`  
+szLimit | String | 单笔数量  
+仅适用于`冰山委托`和`时间加权委托`  
+pxLimit | String | 挂单限制价  
+仅适用于`冰山委托`和`时间加权委托`  
+tag | String | 订单标签  
+timeInterval | String | 下单间隔  
+仅适用于`时间加权委托`  
+callbackRatio | String | 回调幅度的比例  
+仅适用于`移动止盈止损`  
+callbackSpread | String | 回调幅度的价距  
+仅适用于`移动止盈止损`  
+activePx | String | 移动止盈止损激活价格  
+仅适用于`移动止盈止损`  
+moveTriggerPx | String | 移动止盈止损触发价格  
+仅适用于`移动止盈止损`  
+reduceOnly | String | 是否只减仓，`true` 或 `false`  
+cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取一键兑换主流币币种列表
+
+获取小币一键兑换主流币币种列表。仅可兑换余额在 $10 以下小币币种。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/easy-convert-currency-list`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/easy-convert-currency-list
+    
+
+#### 请求参数
+
+无
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "fromData": [
+                    {
+                        "fromAmt": "6.580712708344864",
+                        "fromCcy": "ADA"
+                    },
+                    {
+                        "fromAmt": "2.9970000013055097",
+                        "fromCcy": "USDC"
+                    }
+                ],
+                "toCcy": [
+                    "USDT",
+                    "BTC",
+                    "ETH",
+                    "OKB"
+                ]
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+fromData | Array | 当前拥有并可兑换的小币币种列表信息  
+> fromCcy | String | 可兑换币种  
+> fromAmt | String | 可兑换币种数量  
+toCcy | Array | 可转换成的主流币币种列表  
+  
+### 一键兑换主流币交易
+
+进行小币一键兑换主流币交易。仅可兑换余额在 $10 以下小币币种。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`POST /api/v5/trade/easy-convert`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/easy-convert
+    body
+    {
+        "fromCcy": ["ADA","USDC"], //逗号分隔小币
+        "toCcy": "OKB" 
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+fromCcy | Array | 是 | 小币支付币种  
+单次最多同时选择5个币种，如有多个币种则用逗号隔开  
+toCcy | String | 是 | 兑换的主流币  
+只选择一个币种，且不能和小币支付币种重复  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "fillFromSz": "6.5807127",
+                "fillToSz": "0.17171580105126",
+                "fromCcy": "ADA",
+                "status": "running",
+                "toCcy": "OKB",
+                "uTime": "1661419684687"
+            },
+            {
+                "fillFromSz": "2.997",
+                "fillToSz": "0.1683755161661844",
+                "fromCcy": "USDC",
+                "status": "running",
+                "toCcy": "OKB",
+                "uTime": "1661419684687"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+status | String | 当前兑换进度/状态  
+`running`: 进行中  
+`filled`: 已完成  
+`failed`: 失败  
+fromCcy | String | 小币支付币种  
+toCcy | String | 兑换的主流币  
+fillFromSz | String | 小币偿还币种支付数量  
+fillToSz | String | 兑换的主流币成交数量  
+uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
+  
+### 获取一键兑换主流币历史记录
+
+查询一键兑换主流币的历史记录与进度状态。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/easy-convert-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/easy-convert-history
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
+limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "fillFromSz": "0.1761712511667539",
+                "fillToSz": "6.7342205900000000",
+                "fromCcy": "OKB",
+                "status": "filled",
+                "toCcy": "ADA",
+                "uTime": "1661313307979"
+            },
+            {
+                "fillFromSz": "0.1722106121112177",
+                "fillToSz": "2.9971018300000000",
+                "fromCcy": "OKB",
+                "status": "filled",
+                "toCcy": "USDC",
+                "uTime": "1661313307979"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+fromCcy | String | 小币支付币种  
+fromSz | String | 对应的小币支付数量  
+toCcy | String | 兑换到的主流币  
+toSz | String | 兑换到的主流币数量  
+status | String | 当前兑换进度/状态  
+`running`: 进行中  
+`filled`: 已完成  
+`failed`: 失败  
+uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
+  
+### 获取一键还债币种列表
+
+查询一键还债币种列表。负债币种包括全仓负债和逐仓负债。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/one-click-repay-currency-list`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/one-click-repay-currency-list
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+debtType | String | 否 | 负债类型  
+`cross`: 全仓负债  
+`isolated`: 逐仓负债  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "debtData": [
+                    {
+                        "debtAmt": "29.653478",
+                        "debtCcy": "LTC"
+                    },
+                    {
+                        "debtAmt": "237803.6828295906051002",
+                        "debtCcy": "USDT"
+                    }
+                ],
+                "debtType": "cross",
+                "repayData": [
+                    {
+                        "repayAmt": "0.4978335419825104",
+                        "repayCcy": "ETH"
+                    }
+                ]
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+debtData | Array | 负债币种信息  
+> debtCcy | String | 负债币种  
+> debtAmt | String | 可负债币种数量  
+包括本金和利息  
+debtType | String | 负债类型  
+`cross`: 全仓负债  
+`isolated`: 逐仓负债  
+repayData | Array | 偿还币种信息  
+> repayCcy | String | 可偿还负债的币种  
+> repayAmt | String | 可偿还负债的币种可用资产数量  
+  
+### 一键还债交易
+
+交易一键偿还小额全仓债务。不支持逐仓负债的偿还。根据资金和交易账户的剩余可用余额为最大偿还数量。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`POST /api/v5/trade/one-click-repay`
+
+> 请求示例
+    
+    
+    POST /api/v5/trade/one-click-repay
+    body
+    {
+        "debtCcy": ["ETH","BTC"], //逗号分隔债务币
+        "repayCcy": "USDT" //用USDT偿还ETH和BTC
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+debtCcy | Array | 是 | 负债币种  
+单次最多同时选择5个币种，如有多个币种则用逗号隔开  
+repayCcy | String | 是 | 偿还币种  
+只选择一个币种，且不能和负债币种重复  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "debtCcy": "ETH", 
+                "fillDebtSz": "0.01023052",
+                "fillRepaySz": "30", 
+                "repayCcy": "USDT", 
+                "status": "filled",
+                "uTime": "1646188520338"
+            },
+            {
+                "debtCcy": "BTC", 
+                "fillFromSz": "3",
+                "fillToSz": "60,221.15910001",
+                "repayCcy": "USDT",
+                "status": "filled",
+                "uTime": "1646188520338"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+status | String | 当前还债进度/状态  
+`running`: 进行中  
+`filled`: 已完成  
+`failed`: 失败  
+debtCcy | String | 负债币种  
+repayCcy | String | 偿还币种  
+fillDebtSz | String | 负债币种成交数量  
+fillRepaySz | String | 偿还币种成交数量  
+uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
+  
+### 获取一键还债历史记录
+
+查询一键还债的历史记录与进度状态。
+
+#### 限速：1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP 请求
+
+`GET /api/v5/trade/one-click-repay-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/one-click-repay-history
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+after | String | 否 | 查询在此之前的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
+before | String | 否 | 查询在此之后的内容，值为时间戳，Unix时间戳为毫秒数格式，如`1597026383085`  
+limit | String | 否 | 返回的结果集数量，默认为100，最大为100  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "debtCcy": "USDC",
+                "fillDebtSz": "6950.4865447900000000",
+                "fillRepaySz": "4.3067975995094930",
+                "repayCcy": "ETH",
+                "status": "filled",
+                "uTime": "1661256148746"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+debtCcy | String | 负债币种  
+debtSz | String | 对应的负债币种成交数量  
+repayCcy | String | 偿还币种  
+repaySz | String | 偿还币种实际支付数量  
+status | String | 当前还债进度/状态  
+`running`: 进行中  
+`filled`: 已完成  
+`failed`: 失败  
+uTime | String | 交易时间戳，Unix时间戳为毫秒数格式，如 1597026383085  
   
 ## 资金
 
@@ -7414,15 +8101,31 @@ posMode | String | 持仓方式
   
 ### 设置杠杆倍数
 
-一个产品可以有如下几种杠杆倍数的设置场景：
+  
+一个产品可以有如下9种杠杆倍数的设置场景：  
+  
 
-`币币杠杆`逐仓杠杆倍数（币对层面）；
+  1. 在`逐仓`交易模式下，设置`币币杠杆`的杠杆倍数（币对层面）；  
 
-`币币杠杆`单币种保证金模式下全仓杠杆倍数（币对层面）；
+  2. `单币种保证金`账户在`全仓`交易模式下，设置`币币杠杆`的杠杆倍数（币对层面）；  
 
-`币币杠杆`跨币种保证金模式下全仓杠杆倍数（币种层面）；
+  3. `跨币种保证金`账户在`全仓`交易模式下，设置`币币杠杆`的杠杆倍数（币种层面）；  
 
-`交割/永续`逐仓/全仓杠杆倍数（合约/指数层面）。
+  4. 在`全仓`交易模式下，设置`交割`的杠杆倍数（指数层面）；  
+
+  5. 在`逐仓`交易模式、`买卖`持仓模式下，设置`交割`的杠杆倍数（合约层面）；  
+
+  6. 在`逐仓`交易模式、`开平仓`持仓模式下，设置`交割`的杠杆倍数（合约与持仓方向层面）；  
+
+  7. 在`全仓`交易模式下，设置`永续`的杠杆倍数（合约层面）；  
+
+  8. 在`逐仓`交易模式、`买卖`持仓模式下，设置`永续`的杠杆倍数（合约层面）；  
+
+  9. 在`逐仓`交易模式、`开平仓`持仓模式下，设置`永续`的杠杆倍数（合约与持仓方向层面）；  
+  
+
+注意请求参数 posSide 仅在`交割/永续`的`开平仓`持仓模式下才需要填写（参见场景6和9）。  
+请参阅右侧对应的每个案例的请求示例。  
 
 #### 限速：20次/2s
 
@@ -7435,8 +8138,8 @@ posMode | String | 持仓方式
 > 请求示例
     
     
-    设置逐仓杠杆倍数（币币杠杆），币对层面
-    POST /api/v5/account/set-leverage 
+    # 1.在`逐仓`交易模式下，设置`币币杠杆`的杠杆倍数（币对层面）
+    POST /api/v5/account/set-leverage
     body
     {
         "instId":"BTC-USDT",
@@ -7444,8 +8147,8 @@ posMode | String | 持仓方式
         "mgnMode":"isolated"
     }
     
-    设置单币种保证金模式下全仓杠杆倍数（币币杠杆），币对层面
-    POST /api/v5/account/set-leverage 
+    # 2.`单币种保证金`账户在`全仓`交易模式下，设置`币币杠杆`的杠杆倍数（币对层面）
+    POST /api/v5/account/set-leverage
     body
     {
         "instId":"BTC-USDT",
@@ -7453,8 +8156,8 @@ posMode | String | 持仓方式
         "mgnMode":"cross"
     }
     
-    设置跨币种保证金模式下全仓杠杆倍数（币币杠杆），币种层面
-    POST /api/v5/account/set-leverage 
+    # 3.`跨币种保证金`账户在`全仓`交易模式下，设置`币币杠杆`的杠杆倍数（币种层面）
+    POST /api/v5/account/set-leverage
     body
     {
         "ccy":"BTC",
@@ -7462,8 +8165,26 @@ posMode | String | 持仓方式
         "mgnMode":"cross"
     }
     
-    设置交割合约BTC-USDT-200802多头逐仓杠杆倍数，合约层面
-    POST /api/v5/account/set-leverage 
+    # 4.在`全仓`交易模式下，设置`交割`的杠杆倍数（指数层面）
+    POST /api/v5/account/set-leverage
+    body
+    {
+        "instId":"BTC-USDT-200802",
+        "lever":"5",
+        "mgnMode":"cross"
+    }
+    
+    # 5.在`逐仓`交易模式、`买卖`持仓模式下，设置`交割`的杠杆倍数（合约层面）
+    POST /api/v5/account/set-leverage
+    body
+    {
+        "instId":"BTC-USDT-200802",
+        "lever":"5",
+        "mgnMode":"isolated"
+    }
+    
+    # 6.在`逐仓`交易模式、`开平仓`持仓模式下，设置`交割`的杠杆倍数（合约与头寸层面）
+    POST /api/v5/account/set-leverage
     body
     {
         "instId":"BTC-USDT-200802",
@@ -7472,13 +8193,68 @@ posMode | String | 持仓方式
         "mgnMode":"isolated"
     }
     
-    设置交割合约的全仓杠杆倍数，指数层面
-    POST /api/v5/account/set-leverage 
+    # 7.在`全仓`交易模式下，设置`永续`的杠杆倍数（合约层面）
+    POST /api/v5/account/set-leverage
     body
     {
-        "instId":"BTC-USDT-200802",
+        "instId":"BTC-USDT-SWAP",
         "lever":"5",
         "mgnMode":"cross"
+    }
+    
+    # 8.在`逐仓`交易模式、`买卖`持仓模式下，设置`永续`的杠杆倍数（合约层面）
+    POST /api/v5/account/set-leverage
+    body
+    {
+        "instId":"BTC-USDT-SWAP",
+        "lever":"5",
+        "mgnMode":"isolated"
+    }
+    
+    # 9.在`逐仓`交易模式、`开平仓`持仓模式下，设置`永续`的杠杆倍数（合约与头寸层面）
+    POST /api/v5/account/set-leverage
+    body
+    {
+        "instId":"BTC-USDT-SWAP",
+        "lever":"5",
+        "posSide":"long",
+        "mgnMode":"isolated"
+    }
+    
+
+#### Request Parameters
+
+Parameter | Type | Required | Description  
+---|---|---|---  
+instId | String | Optional | Instrument ID  
+Either `instId` or `ccy` is required; if both are passed, `instId` will be
+used by default.  
+ccy | String | Optional | Currency used for margin  
+Only applicable to `cross` `MARGIN` of `Multi-currency margin`  
+Required when setting the leverage of automatic borrowing coin.  
+lever | String | Yes | Leverage  
+mgnMode | String | Yes | Margin mode  
+`isolated` `cross`  
+Only can be `cross` if `ccy` is passed.  
+posSide | String | Optional | Position side  
+`long` `short`  
+Only required when margin mode is `isolated` in `long/short` mode for
+`FUTURES/SWAP`.  
+  
+> Response Example
+    
+    
+    {
+      "code": "0",
+      "msg": "",
+      "data": [
+        {
+          "lever": "30",
+          "mgnMode": "isolated",
+          "instId": "BTC-USDT-SWAP",
+          "posSide": "long"
+        }
+      ]
     }
     
 
@@ -9365,7 +10141,7 @@ subAcct | String | 子账户名称
 
 #### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
 
 #### HTTP请求
 
@@ -9559,7 +10335,7 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
 
 #### HTTP请求
 
@@ -12015,7 +12791,7 @@ c | String | 收盘价格
 
 查询市场上的成交信息数据
 
-#### 限速： 20次/2s
+#### 限速： 100次/2s
 
 #### 限速规则：IP
 
@@ -14825,7 +15601,7 @@ msg | String | 否 | 错误消息
 
 #### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
 
 同`下单` REST API 共享限速
 
@@ -15020,7 +15796,7 @@ px
 
 #### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。  同`批量下单` REST API
 共享限速
@@ -15197,7 +15973,7 @@ data | Array | 请求成功后返回的数据
 
 #### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
 
 同`撤单` REST API 共享限速
 
@@ -15298,7 +16074,7 @@ data | Array | 请求成功后返回的数据
 
 #### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。  同`批量撤单` REST API
 共享限速
@@ -15436,7 +16212,7 @@ data | Array | 请求成功后返回的数据
 
 #### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
 
 同`改单` REST API 共享限速
 
@@ -15552,7 +16328,7 @@ newSz : 当修改已经部分成交的订单时，新的委托数量必须大于
 
 #### 限速规则：衍生品：UserID + (instrumentType + underlying)
 
-#### 限速规则：币币和币币杠杆：UserID + (instrumentType + instrumentID)
+#### 限速规则：币币和币币杠杆：UserID + instrumentID
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。  同`批量改单` REST
 API 共享限速
@@ -17526,386 +18302,6 @@ data | Array | 订阅的数据
 
 例：按照所有币种订阅且有5个币种资产都不为0，首次和定时推全部5个；账户的某个币种资产改变，那么账户greeks变更的触发只推这一个。
 
-### 询价频道
-
-获取用户自身发送或接收的询价信息。每当用户自身发送或接收询价时，数据都将被推送。
-
-> 请求示例
-    
-    
-    {
-      "op": "subscribe",
-      "args": [
-        {
-          "channel": "rfqs"
-        }
-      ]
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-op | String | 是 | 操作, `subscribe` `unsubscribe`  
-args | Array | 是 | 请求订阅的频道列表  
-> channel | String | 是 | 频道名, `rfqs`  
-  
-> 成功返回示例
-    
-    
-    {
-      "event": "subscribe",
-      "arg": {
-        "channel": "rfqs"
-      }
-    }
-    
-
-> 失败返回示例
-    
-    
-    {
-      "event": "error",
-      "code": "60012",
-      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"rfqs\"}]}"
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
-arg | Object | 否 | 订阅的频道  
-> channel | String | 是 | 频道名, `rfqs`  
-code | String | 否 | 错误码  
-msg | String | 否 | 错误消息  
-  
-> 推送示例
-    
-    
-    {
-        "arg":{
-            "channel":"rfqs",
-            "uid": "77982378738415879"
-        },
-        "data":[
-            {
-                "cTime":"1611033737572",
-                "uTime":"1611033737572",
-                "traderCode":"DSK2",
-                "rfqId":"22534",
-                "clRfqId":"",
-                "state":"active",
-                "validUntil":"1611033857557",
-                "allowPartialExecution": false,
-                "counterparties":[
-                    "DSK4",
-                    "DSK5"
-                ],
-                "legs":[
-                    {
-                        "instId":"BTCUSD-211208-36000-C",
-                        "sz":"25.0",
-                        "side":"buy",
-                        "tgtCcy":""
-                    },
-                    {
-                        "instId":"ETHUSD-211208-45000-C",
-                        "sz":"25.0",
-                        "side":"sell",
-                        "tgtCcy":""
-                    }
-                ]
-            }
-        ]
-    }
-    
-
-#### 推送数据参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-arg | Object | 订阅成功的频道  
-> channel | String | 频道名  
-> uid | String | 用户标识  
-data | Array | 订阅的数据  
-> cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
-> uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
-> state | String | 询价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
-`traded_away`  
-`traded_away` 仅适用于报价方  
-> counterparties | Array of Strings | 报价方列表  
-> validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
-> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
-> traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
-> rfqId | String | 询价单ID  
-> allowPartialExecution | Boolean |
-> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。>有效值为`true`或`false`。  
-> legs | Array of objects | 组合交易  
->> instId | String | 产品ID  
->> sz | String | 委托数量  
->> side | String | 询价单方向  
->> tgtCcy | String | 委托数量的类型  
-  
-### 报价频道
-
-获取用户自身发送或接收的报价信息。每当用户自身发送或接收报价时，数据都将被推送。
-
-> 请求示例
-    
-    
-    {
-      "op": "subscribe",
-      "args": [
-        {
-          "channel": "quotes"
-        }
-      ]
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-op | String | 是 | 操作, `subscribe` `unsubscribe`  
-args | Array | 是 | 请求订阅的频道列表  
-> channel | String | 是 | 频道名, `quotes`  
-  
-> 成功返回示例
-    
-    
-    {
-      "event": "subscribe",
-      "arg": {
-        "channel": "account"
-      }
-    }
-    
-
-> 失败返回示例
-    
-    
-    {
-      "event": "error",
-      "code": "60012",
-      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"quotes\"}]}"
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
-arg | Object | 否 | 订阅的频道  
-> channel | String | 是 | 频道名, `quotes`  
-code | String | 否 | 错误码  
-msg | String | 否 | 错误消息  
-  
-> 推送示例
-    
-    
-    {
-        "arg":{
-            "channel":"quotes"
-        },
-        "data":[
-            {
-                "validUntil":"1608997227854",
-                "uTime":"1608267227834",
-                "cTime":"1608267227834",
-                "legs":[
-                    {
-                        "px":"0.0023",
-                        "sz":"25.0",
-                        "instId":"BTC-USD-220114-25000-C",
-                        "side":"sell",
-                        "tgtCcy":""
-    
-                    },
-                    {
-                        "px":"0.0045",
-                        "sz":"25",
-                        "instId":"BTC-USD-220114-35000-C",
-                        "side":"buy",
-                        "tgtCcy":""
-    
-                    }
-                ],
-                "quoteId":"25092",
-                "rfqId":"18753",
-                "traderCode":"SATS",
-                "quoteSide":"sell",
-                "state":"canceled",
-                "reason":"mmp_canceled",
-                "clQuoteId":""
-            }
-        ]
-    }
-    
-
-#### 推送数据参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-arg | Object | 订阅成功的频道  
-> channel | String | 频道名  
-> uid | String | 账户ID，账户uid和app上的一致  
-data | Array | 订阅的数据  
-> cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
-> uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
-> state | String | 报价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `failed`  
-> reason | String | 状态原因,有效值包括`mmp_canceled`  
-> validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
-> rfqId | String | 询价单ID  
-> clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
-> quoteId | String | 报价单ID  
-> clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
-> traderCode | String | 报价方唯一标识代码，报价时 Anonymous 设置为 `True` 时不可见。  
-> quoteSide | String | 询价单方向， `buy` 或者
-> `sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
-> legs | Array of objects | 组合交易  
->> instId | String | 产品ID  
->> sz | String | 委托数量  
->> px | String | 委托价格  
->> side | String | 报价单方向  
->> tgtCcy | String | 委托数量的类型  
-  
-### 大宗交易频道
-
-获取用户自身的大宗交易信息。同一大宗交易中的所有腿都包含在同一更新中。只要用户自身作为交易对手进行大宗交易，数据都将被推送。
-
-> 请求示例
-    
-    
-    {
-      "op": "subscribe",
-      "args": [
-        {
-          "channel": "struc-block-trades"
-        }
-      ]
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-op | String | 是 | 操作, `subscribe` `unsubscribe`  
-args | Array | 是 | 请求订阅的频道列表  
-> channel | String | 是 | 频道名, `struc-block-trades`  
-  
-> 成功返回示例
-    
-    
-    {
-      "event": "subscribe",
-      "arg": {
-        "channel": "struc-block-trades"
-      }
-    }
-    
-
-> 失败返回示例
-    
-    
-    {
-      "event": "error",
-      "code": "60012",
-      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"struc-block-trades\""}]}"
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
-arg | Object | 否 | 订阅的频道  
-> channel | String | 是 | 频道名, `struc-block-trades`  
-code | String | 否 | 错误码  
-msg | String | 否 | 错误消息  
-  
-> 推送示例
-    
-    
-    {
-        "arg":{
-            "channel":"struc-block-trades"
-        },
-        "data":[
-            {
-                "cTime":"1608267227834",
-                "rfqId":"18753",
-                "clRfqId":"",
-                "quoteId":"25092",
-                "clQuoteId":"",
-                "blockTdId":"180184",
-                "tTraderCode":"ANAND",
-                "mTraderCode":"WAGMI",
-                "legs":[
-                    {
-                        "px":"0.0023",
-                        "sz":"25.0",
-                        "instId":"BTC-USD-20220630-60000-C",
-                        "side":"sell",
-                        "fee":"0.1001",
-                        "feeCcy":"BTC",
-                        "tradeId":"10211",
-                        "tgtCcy":""
-    
-                    },
-                    {
-                        "px":"0.0033",
-                        "sz":"25",
-                        "instId":"BTC-USD-20220630-50000-C",
-                        "side":"buy",
-                        "fee":"0.1001",
-                        "feeCcy":"BTC",
-                        "tradeId":"10212",
-                        "tgtCcy":""
-    
-                    }
-                ]
-            }
-        ]
-    }
-    
-
-#### 推送数据参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-arg | Object | 订阅成功的频道  
-> channel | String | 频道名  
-> uid | String | 用户标识  
-data | Array | 订阅的数据  
-> cTime | String | 执行创建的时间戳，Unix 时间戳格式，以毫秒为单位。  
-> rfqId | String | RFQ ID.  
-> clRfqId | String | 由用户设置的 RFQ ID。 此属性被视为客户端敏感信息。 不会暴露给 Maker，只返回空字符串“”给
-> Maker。  
-> quoteId | String | Quote ID.  
-> clQuoteId | String | 由用户设置的 Quote ID。 此属性被视为客户端敏感信息。 不会暴露给 Taker，只为 Taker
-> 返回空字符串“”。  
-> blockTdId | String | 大宗交易ID  
-> tTraderCode | String | 报价方唯一标识代码。询价时 Anonymous 设置为 `True` 时不可见。  
-> mTraderCode | String | 询价方唯一标识代码。报价时 Anonymous 设置为 `True` 时不可见。  
-> legs | Array of objects | 组合交易  
->> instId | String | 产品ID  
->> px | String | 成交价格  
->> sz | String | 成交数量  
->> side | String | 询价单方向  
->> tgtCcy | String | 委托数量的类型  
->> fee | String | 手续费，正数代表平台返佣 ，负数代表平台扣除。  
->> feeCcy | String | 手续费币种  
->> tradeId | String | 最新成交Id  
-  
 ### 现货网格策略委托订单频道
 
 支持现货网格策略订单的首次订阅推送，定时推送和事件推送
@@ -20467,304 +20863,6 @@ data | Array | 订阅的数据
 > 2021-01-28T16:30:00.000Z`  
 > ts | String | 推送时间，Unix时间戳的毫秒数格式，如：`1617788463867`  
   
-### 公共大宗交易频道
-
-获取欧易的最新大宗交易信息。同一大宗交易中的所有腿都包含在同一更新中。每当欧易有大宗交易时，数据都将被推送。
-
-> 请求示例
-    
-    
-    {
-      "op": "subscribe",
-      "args": [
-        {
-          "channel": "public-struc-block-trades"
-        }
-      ]
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-op | String | 是 | 操作, `subscribe` `unsubscribe`  
-args | Array | 是 | 请求订阅的频道列表  
-> channel | String | 是 | 频道名, `public-struc-block-trades`  
-  
-> 成功返回示例
-    
-    
-    {
-      "event": "subscribe",
-      "arg": {
-        "channel": "public-struc-block-trades"
-      }
-    }
-    
-
-> 失败返回示例
-    
-    
-    {
-      "event": "error",
-      "code": "60012",
-      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"public-struc-block-trades\""}]}"
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
-arg | Object | 否 | 订阅的频道  
-> channel | String | 是 | 频道名, `public-struc-block-trades`  
-code | String | 否 | 错误码  
-msg | String | 否 | 错误消息  
-  
-> 推送示例
-    
-    
-    {
-        "arg":{
-            "channel":"public-struc-block-trades"
-        },
-        "data":[
-            {
-    
-                "cTime":"1608267227834",
-                "blockTdId":"1802896",
-                "legs":[
-                    {
-                        "px":"0.323",
-                        "sz":"25.0",
-                        "instId":"BTC-USD-20220114-13250-C",
-                        "side":"sell",
-                        "tradeId":"15102"
-                    },
-                    {
-                        "px":"0.666",
-                        "sz":"25",
-                        "instId":"BTC-USD-20220114-21125-C",
-                        "side":"buy",
-                        "tradeId":"15103"
-                    }
-                ]
-            }
-        ]
-    }
-    
-
-#### 推送数据参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-arg | Object | 订阅成功的频道  
-> channel | String | 频道名  
-data | Array | 订阅的数据  
-> cTime | String | 执行创建的时间戳，Unix 时间戳格式，以毫秒为单位。  
-> blockTdId | String | 大宗交易ID  
-> legs | Array of objects | 组合交易  
->> instId | String | 产品名Id  
->> px | String | 成交价格  
->> sz | String | 成交数量  
->> side | String | 询价单方向，从 Taker的视角看  
->> tradeId | String | 最新成交Id  
-  
-### 公共大宗交易单腿交易频道
-
-获取欧易的最新大宗交易单腿交易信息。大宗交易中的每条腿都在单独的更新中推送。只要有大宗交易，数据都将被推送。
-
-> 请求示例
-    
-    
-    {
-      "op": "subscribe",
-      "args": [
-        {
-          "channel": "public-block-trades",
-          "instId": "BTC-USDT-SWAP"
-        }
-      ]
-    }
-    
-
-#### 请求参数
-
-参数名 | 类型 | 是否必填 | 描述  
----|---|---|---  
-op | String | 是 | 操作, `subscribe` `unsubscribe`  
-args | Array | 是 | 请求订阅的频道列表  
-> channel | String | 是 | 频道名, `public-block-trades`  
-> instId | String | 是 | 产品 ID, e.g., BTC-USDT-SWAP.  
-  
-> 成功返回示例
-    
-    
-    {
-      "event": "subscribe",
-      "arg": {
-        "channel": "public-block-trades",
-        "instId": "BTC-USDT-SWAP"
-      }
-    }
-    
-
-> 失败返回示例
-    
-    
-    {
-      "event": "error",
-      "code": "60012",
-      "msg": "Illegal request: {\"op\": \"subscribe\", \"args\":[{ \"channel\" : \"public-block-trades\""}]}"
-    }
-    
-
-#### 返回参数
-
-参数名 | 类型 | 是否必需 | 描述  
----|---|---|---  
-event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
-arg | Object | 否 | 订阅的频道  
-> channel | String | 是 | 频道名, `public-block-trades`  
-> instId | String | 是 | 产品 ID, e.g., BTC-USDT-SWAP.  
-code | String | 否 | 错误码  
-msg | String | 否 | 错误消息  
-  
-> 推送示例
-    
-    
-    {
-      "arg": {
-        "channel": "public-block-trades",
-        "instId": "BTC-USDT-SWAP"
-      },
-      "data": [
-        {
-          "instId": "BTC-USDT-SWAP",
-          "tradeId": "482866817984270338",
-          "px": "21950",
-          "sz": "100",
-          "side": "buy",
-          "ts": "1661396420687"
-        }
-      ]
-    }
-    
-
-#### 推送数据参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-arg | Object | 订阅成功的频道  
-> channel | String | 频道名  
-> instId | String | 产品 ID, e.g., BTC-USDT-SWAP.  
-data | Array | 公共大宗交易单腿交易信息  
-> instId | String | 产品 ID, e.g., BTC-USDT-SWAP.  
-> tradeId | String | 交易 ID, 由柜台提供.  
-> px | String | 该单腿交易价格.  
-> sz | String | 交易数量.  
-> side | String | 交易方向, buy, sell, 从taker角度看.  
-> ts | String | 成交时间, 时间戳格式，以毫秒为单位. e.g. 1597026383085.  
-  
-### 大宗交易行情频道
-
-获取最近24小时大宗交易量
-
-当发生成交事件时触发推送，此外，也会根据订阅维度每隔5分钟推送一次
-
-> 请求示例
-    
-    
-    {
-        "op": "subscribe",
-        "args": [{
-            "channel": "block-tickers",
-            "instId": "BTC-USDT"
-        }]
-    }
-    
-
-#### 请求参数
-
-参数 | 类型 | 是否必须 | 描述  
----|---|---|---  
-op | String | 是 | 操作，`subscribe` `unsubscribe`  
-args | Array | 是 | 请求订阅的频道列表  
-> channel | String | 是 | 频道名，`block-tickers`  
-> instId | String | 是 | 产品ID  
-  
-> 成功返回示例
-    
-    
-    {
-        "event": "subscribe",
-        "arg": {
-            "channel": "block-tickers",
-            "instId": "LTC-USD-200327"
-        }
-    }
-    
-
-> 失败返回示例
-    
-    
-    {
-        "event": "error",
-        "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"block-tickers\", \"instId\" : \"LTC-USD-200327\"}]}"
-    }
-    
-
-#### 返回参数
-
-参数 | 类型 | 是否必须 | 描述  
----|---|---|---  
-event | String | 是 | 事件，`subscribe` `unsubscribe` `error`  
-arg | Object | 否 | 订阅的频道  
-> channel | String | 是 | 频道名 `block-tickers`  
-> instId | String | 是 | 产品ID  
-code | String | 否 | 错误码  
-msg | String | 否 | 错误消息  
-  
-> 推送示例
-    
-    
-    {
-        "arg": {
-            "channel": "block-tickers"
-        },
-        "data": [
-            {
-                "instType": "SWAP",
-                "instId": "LTC-USD-SWAP",
-                "volCcy24h": "0",
-                "vol24h": "0",
-                "ts": "1597026383085"
-            }
-        ]
-    }
-    
-
-#### 推送数据参数
-
-**参数名** | **类型** | **描述**  
----|---|---  
-arg | Object | 订阅成功的频道  
-> channel | String | 频道名  
-> instId | String | 产品ID  
-data | Array | 订阅的数据  
-instId | String | 产品ID  
-instType | String | 产品类型  
-volCcy24h | String | 24小时成交量，以`币`为单位  
-如果是`衍生品`合约，数值为交易货币的数量。  
-如果是`币币/币币杠杆`，数值为计价货币的数量。  
-vol24h | String | 24小时成交量，以`张`为单位  
-如果是`衍生品`合约，数值为合约的张数。  
-如果是`币币/币币杠杆`，数值为交易货币的数量。  
-ts | String | 数据产生时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
-  
 # 错误码
 
 ## REST
@@ -20820,6 +20918,7 @@ REST API 错误码从 50000 到 59999
 50038 | 200 | 该功能模拟盘暂不支持  
 50039 | 200 | 时间戳分页时，不支持使用before参数  
 50041 | 200 | 您当前不在白名单列表，请联系客服  
+50044 | 200 | 必须指定一种broker类型  
   
 #### API 类
 
