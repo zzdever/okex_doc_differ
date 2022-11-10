@@ -1068,24 +1068,24 @@ data | Array of objects | 包含结果的对象数组
     
     POST /api/v5/rfq/maker-instrument-settings
     [
-        {"instType": "OPTION",
+        {
+         "instType": "OPTION",
          "data":
-            [{    
+            [{
                 "instFamily": "BTC-USD",
                 "maxBlockSz": "10000",
                 "makerPxBand": "5"
-             },
-             {
+            },
+            {
                 "instFamily": "SOL-USD",
                 "maxBlockSz": "100000",
                 "makerPxBand": "15"
-             }
-            ]
+            }]
         },
-        {"instType": "FUTURES",
+        {
+         "instType": "FUTURES",
          "data":
-            [
-            {
+            [{
                 "instFamily": "BTC-USD",
                 "maxBlockSz": "10000",
                 "makerPxBand": "5"
@@ -1094,30 +1094,29 @@ data | Array of objects | 包含结果的对象数组
                 "instFamily": "ETH-USDT",
                 "maxBlockSz": "100000",
                 "makerPxBand": "15"
-            }
-            ]
+            }]
         },
-        {"instType:": "SWAP",
+        {
+         "instType": "SWAP",
          "data":
             [{
                 "instFamily": "BTC-USD",
                 "maxBlockSz": "10000",
                 "makerPxBand": "5"
-                },
+             },
             {
                 "instFamily": "ETH-USDT"
-                }
-            ]
+            }]
         },
-        {"instType:": "SPOT",
+        {
+        "instType": "SPOT",
          "data":
             [{
                 "instId": "BTC-USDT"
-                },
+             },
             {
                 "instId": "TRX-USDT"
-                }
-            ]
+            }]
         }
     ]
     
@@ -9353,6 +9352,9 @@ instType | String | 否 | 产品类型
 inclRealPos | Boolean | 否 | 是否代入已有仓位  
 `true`：调整被代入的已有仓位信息  
 `false`：不代入已有仓位，仅使用simPos里新增的模拟仓位进行计算,默认为True  
+spotOffsetType | String | 否 | 现货对冲模式  
+1：现货对冲模式U模式 2：现货对冲模式币模式 3：衍生品模式  
+默认是 3  
 simPos | Array | 否 | 调整持仓列表  
 > instId | String | 否 | 交易产品ID  
 > pos | String | 否 | 持仓量  
@@ -9388,6 +9390,10 @@ simPos | Array | 否 | 调整持仓列表
                 ],
                 "riskUnit": "BTC-USD",
                 "ts": "1646639497536"
+            },
+            {
+                "acctImr": "6847.294720745276",
+                "acctMmr": "5140.116514138115"
             }
         ],
         "msg": ""
@@ -9409,6 +9415,8 @@ mr4 | String | 基差压力测试值
 mr5 | String | 利率风险压力测试值  
 mr6 | String | 极端市场波动压力测试值  
 mr7 | String | 减仓成本压力测试值  
+acctImr | String | 账户维度的最低初始保证金  
+acctMmr | String | 账户维度的维持保证金  
 posData | Array | 持仓列表  
 > instId | String | 产品ID，如 `BTC-USD-180216`  
 > instType | String | 产品类型  
@@ -9418,7 +9426,8 @@ posData | Array | 持仓列表
 > gamma | String | delta对uly价格的敏感度  
 > vega | String | 期权价格对隐含波动率的敏感度  
 > theta | String | 期权价格对剩余期限的敏感度  
-希腊值单位与账户设置一致，您可通过"config"接口查看。
+希腊值单位与账户设置一致，您可通过"config"接口查看。  为确保向前兼容，在 `data` 中新添加了一组 JSON 放置 acctImr 和
+acctMmr 参数。
 
 ### 查看账户Greeks
 
@@ -17485,6 +17494,29 @@ data | Array | 订阅的数据
 > pnl | String | 收益  
 > source | String | 订单来源  
 `13`:策略委托单触发后的生成的限价单  
+> cancelSource | String | 订单取消的来源  
+有效值及对应的含义是：  
+`0`: 已撤单：系统撤单  
+`1`: 用户主动撤单  
+`2`: 已撤单：预减仓撤单，用户保证金不足导致挂单被撤回  
+`3`: 已撤单：风控撤单，用户保证金不足有爆仓风险，导致挂单被撤回  
+`4`: 已撤单：币种借币量达到平台硬顶，系统已撤回该订单  
+`5`: 已撤单：系统撤单  
+`6`: 已撤单：触发 ADL 撤单，用户保证金率较低且有爆仓风险，导致挂单被撤回  
+`7`: 已撤单：系统撤单  
+`8`: 已撤单：系统撤单  
+`9`: 已撤单：扣除资金费用后可用余额不足，系统已撤回该订单  
+`10`: 已撤单：系统撤单  
+`11`: 已撤单：系统撤单  
+`12`: 已撤单：系统撤单  
+`13`: 已撤单：FOK 委托订单未完全成交，导致挂单被完全撤回  
+`14`: 已撤单：IOC 委托订单未完全成交，仅部分成交，导致部分挂单被撤回  
+`15`: 已撤单：系统撤单  
+`16`: 已撤单：系统撤单  
+`17`: 已撤单：平仓单被撤单，由于仓位已被市价全平  
+`18`: 已撤单：系统撤单  
+`19`: 已撤单：系统撤单  
+`20`: 系统倒计时撤单  
 > category | String | 订单种类分类  
 `normal`：普通委托订单种类  
 `twap`：TWAP订单种类  
