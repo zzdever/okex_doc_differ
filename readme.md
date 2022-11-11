@@ -6119,6 +6119,7 @@ limit | string | 否 | 返回的结果集数量，默认为100，最大为100，
           "chain": "USDT-TRC20",
           "depId": "34579090",
           "from": "",
+          "areaCodeFrom": "",
           "state": "2",
           "to": "TN4hxxxxxxxxxxxizqs",
           "ts": "1655251200000",
@@ -6136,7 +6137,8 @@ ccy | String | 币种名称，如 `BTC`
 chain | String | 币种链信息  
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 amt | String | 充值数量  
-from | String | 充值地址，只显示内部账户转账地址，不显示区块链充值地址  
+from | String | 充值账户，只显示内部账户转账地址，不显示区块链充值地址  
+areaCodeFrom | String | 如果`from`为手机号，该字段为该手机号的区号  
 to | String | 到账地址  
 txId | String | 区块转账哈希记录  
 ts | String | 充值到账时间，Unix 时间戳的毫秒数格式，如 `1655251200000`  
@@ -6197,6 +6199,8 @@ fee | String | 是 | 网络手续费≥`0`，提币到数字货币地址所需�
 chain | String | 可选 | 币种链信息  
 如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 如果没有不填此参数，则默认为主链  
+areaCode | String | 可选 | 手机区号  
+当`toAddr`为手机号时，该参数必填  
 clientId | String | 否 | 客户自定义ID  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 关于标签：某些币种如XRP充币时同时需要一个充值地址和标签（又名memo/payment_id），标签是一种保证您的充币地址唯一性的数字串，与充币地址成对出现并一一对应。请您务必遵守正确的充值步骤，在提币时输入完整信息，否则将面临丢失币的风险！
@@ -6387,7 +6391,9 @@ limit | string | 否 | 返回的结果集数量，默认为100，最大为100，
           "amt": "0.029809",
           "txId": "0x35c******b360a174d",
           "from": "156****359",
+          "areaCodeFrom": "86",
           "to": "0xa30d1fab********7CF18C7B6C579",
+          "areaCodeTo": "",
           "state": "2",
           "ts": "1655251200000",
           "wdId": "15447421"
@@ -6405,8 +6411,11 @@ chain | String | 币种链信息
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 amt | String | 数量  
 ts | String | 提币申请时间，Unix 时间戳的毫秒数格式，如 `1655251200000`  
-from | String | 提币地址（如果收币地址是 OKX 平台地址，则此处将显示用户账户）  
+from | String | 提币账户  
+可以是邮箱/手机号  
+areaCodeFrom | String | 如果`from`为手机号，该字段为该手机号的区号  
 to | String | 收币地址  
+areaCodeTo | String | 如果`to`为手机号，该字段为该手机号的区号  
 tag | String | 部分币种提币需要标签，若不需要则不返回此字段  
 pmtId | String | 部分币种提币需要此字段（payment_id），若不需要则不返回此字段  
 memo | String | 部分币种提币需要此字段，若不需要则不返回此字段  
@@ -7380,7 +7389,7 @@ details |  |  |
   
 ### 查看持仓信息
 
-获取该账户下拥有实际持仓的信息。账户为单向持仓模式会显示净持仓（`net`），账户为双向持仓模式下会分别返回多头（`long`）或空头（`short`）的仓位。
+获取该账户下拥有实际持仓的信息。账户为单向持仓模式会显示净持仓（`net`），账户为双向持仓模式下会分别返回多头（`long`）或空头（`short`）的仓位。按照仓位创建时间倒序排列。
 
 #### 限速：10次/2s
 
