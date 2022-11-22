@@ -2809,6 +2809,22 @@ tgtCcy | String | 否 | 市价单委托数量`sz`的单位，仅适用于`币币
 买单默认`quote_ccy`， 卖单默认`base_ccy`  
 banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时，系统不会改单，下单会失败，仅适用于币币市价单  
+tpTriggerPx | String | 否 | 止盈触发价，如果填写此参数，必须填写 止盈委托价  
+tpOrdPx | String | 否 | 止盈委托价，如果填写此参数，必须填写 止盈触发价  
+委托价格为-1时，执行市价止盈  
+slTriggerPx | String | 否 | 止损触发价，如果填写此参数，必须填写 止损委托价  
+slOrdPx | String | 否 | 止损委托价，如果填写此参数，必须填写 止损触发价  
+委托价格为-1时，执行市价止损  
+tpTriggerPxType | String | 否 | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
+slTriggerPxType | String | 否 | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
   
 > 返回结果
     
@@ -2983,6 +2999,22 @@ tgtCcy | String | 否 | 市价单委托数量`sz`的单位，仅适用于`币币
 买单默认`quote_ccy`， 卖单默认`base_ccy`  
 banAmend | Boolean | 否 | 是否禁止币币市价改单，true 或 false，默认false  
 为true时，余额不足时，系统不会改单，下单会失败，仅适用于币币市价单  
+tpTriggerPx | String | 否 | 止盈触发价，如果填写此参数，必须填写 止盈委托价  
+tpOrdPx | String | 否 | 止盈委托价，如果填写此参数，必须填写 止盈触发价  
+委托价格为-1时，执行市价止盈  
+slTriggerPx | String | 否 | 止损触发价，如果填写此参数，必须填写 止损委托价  
+slOrdPx | String | 否 | 止损委托价，如果填写此参数，必须填写 止损触发价  
+委托价格为-1时，执行市价止损  
+tpTriggerPxType | String | 否 | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
+slTriggerPxType | String | 否 | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为`last`  
   
 > 返回结果
     
@@ -3687,6 +3719,7 @@ slTriggerPxType | String | 止损触发价类型
 `index`：指数价格  
 `mark`：标记价格  
 slOrdPx | String | 止损委托价  
+tpOrdPx | String | 止盈委托价  
 feeCcy | String | 交易手续费币种  
 fee | String | 手续费与返佣  
 对于币币和杠杆，为订单交易累计的手续费，平台向用户收取的交易手续费，为负数。如： -0.01  
@@ -5817,8 +5850,8 @@ type | String | 否 | 账单类型
 `99`：投资人投资利息转入  
 `102`：提前还款违约金转入  
 `103`：提前还款违约金转出  
-`104`：手续费转入  
-`105`：手续费转出  
+`104`：抵押借贷手续费转入  
+`105`：抵押借贷手续费转出  
 `106`：逾期手续费转入  
 `107`：逾期手续费转出  
 `108`：逾期利息转出  
@@ -5852,8 +5885,6 @@ type | String | 否 | 账单类型
 `137`：ETH2.0申购  
 `138`：ETH2.0兑换  
 `139`：ETH2.0收益  
-`141`：手续费转入  
-`142`：手续费转出  
 `143`：系统退款  
 `145`：系统回收  
 `146`：客户回馈  
@@ -7601,7 +7632,7 @@ limit | String | 否 | 分页返回结果的数量，最大为100，默认100条
                 "pnl": "0.00000030434156",
                 "pnlRatio": "0.000906447858888",
                 "posId": "452587086133239818",
-                "posSide": "long",
+                "direction": "long",
                 "triggerPx": "",
                 "type": "allClose",
                 "uTime": "1654177174419",
@@ -13410,7 +13441,7 @@ instType | String | 产品类型
 instId | String | 产品id， 如 `BTC-USD-SWAP`  
 uly | String | 标的指数，如 `BTC-USD`，仅适用于`交割/永续/期权`  
 instFamily | String | 交易品种，如 `BTC-USD`，仅适用于`交割/永续/期权`  
-category | String | 手续费档位，每个交易产品属于哪个档位手续费  
+category | String | 币种类别，注意：此参数已废弃  
 baseCcy | String | 交易货币币种，如 `BTC-USDT` 中的 `BTC` ，仅适用于`币币/币币杠杆`  
 quoteCcy | String | 计价货币币种，如 `BTC-USDT` 中的`USDT` ，仅适用于`币币/币币杠杆`  
 settleCcy | String | 盈亏结算和保证金币种，如 `BTC` 仅适用于`交割/永续/期权`  
@@ -19272,7 +19303,7 @@ arg | Object | 订阅的频道
 data | Array | 订阅的数据  
 > instType | String | 产品类型  
 > instId | String | 产品ID，如 `BTC-USD-SWAP`  
-> category | String | 手续费档位，每个交易产品属于哪个档位手续费  
+> category | String | 币种类别，注意：此参数已废弃  
 > uly | String | 标的指数，如 `BTC-USD`，仅适用于`交割/永续/期权`  
 > instFamily | String | 交易品种，如 `BTC-USD`，仅适用于`交割/永续/期权`  
 > baseCcy | String | 交易货币币种，如 `BTC-USDT`中`BTC`，仅适用于`币币/币币杠杆`  
