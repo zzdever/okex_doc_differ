@@ -33,6 +33,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 批量取消询价单 
       * 取消所有询价单 
       * 执行报价
+      * 获取可报价产品 
       * 设置可报价产品 
       * 重设MMP状态 
       * 报价 
@@ -130,6 +131,8 @@ API接口 Broker接入 最佳实践 更新日志
       * 逐仓交易设置 
       * 查看账户最大可转余额 
       * 查看账户特定风险状态 
+      * 一键借币模式手动借币还币 
+      * 获取一键借币还币历史 
       * 尊享借币还币 
       * 获取尊享借币还币历史 
       * 获取尊享借币计息记录 
@@ -139,6 +142,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 组合保证金的虚拟持仓保证金计算 
       * 查看账户Greeks 
       * 获取组合保证金模式全仓限制 
+      * 设置组合保证金账户风险对冲模式 
     * 子账户 
       * 查看子账户列表 
       * 重置子账户的APIKey 
@@ -1060,6 +1064,116 @@ data | Array of objects | 包含结果的对象数组
 >> fee | String | 手续费，正数代表平台返佣 ，负数代表平台扣除  
 >> feeCcy | String | 手续费币种  
 >> tradeId | String | 最新的成交Id.  
+  
+### 获取可报价产品
+
+用于maker查询特定的接受询价和报价的产品, 以及数量和价格范围。
+
+#### 限速: 5次/2s
+
+#### 限速规则：UserID
+
+#### HTTP Requests
+
+`GET /api/v5/rfq/maker-instrument-settings`
+
+> 请求示例
+    
+    
+    GET /api/v5/rfq/maker-instrument-settings
+    
+
+#### 请求参数
+
+无
+
+> 返回示例
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data":
+            [
+                {"instType": "OPTION",
+                 "includeALL": true,
+                 "data":
+                    [
+                    {    
+                        "uly": "BTC-USD",
+                        "maxBlockSz": "10000",
+                        "makerPxBand": "5"
+                        },
+                    {
+                        "uly": "SOL-USD",
+                        "maxBlockSz": "100000",
+                        "makerPxBand": "15"
+                        }
+                    ]
+                },
+                {"instType": "FUTURES",
+                 "includeALL": false,
+                 "data":
+                    [
+                    {
+                        "uly": "BTC-USD",
+                        "maxBlockSz": "10000",
+                        "makerPxBand": "5"
+                    },
+                    {
+                        "uly": "ETH-USDT",
+                        "maxBlockSz": "100000",
+                        "makerPxBand": "15"
+                    }
+                    ]
+                },
+                {"instType:": "SWAP",
+                 "includeALL": false,
+                 "data":
+                    [{
+                        "uly": "BTC-USD",
+                        "maxBlockSz": "10000",
+                        "makerPxBand": "5"
+                        },
+                    {
+                        "uly": "ETH-USDT"
+                        }
+                    ]
+                },
+                    {"instType:": "SPOT",
+                     "includeALL": false,
+                     "data":
+                        [{
+                            "instId": "BTC-USDT"
+                            },
+                        {
+                            "instId": "TRX-USDT"
+                            }
+                        ]
+    
+            ]
+        }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+code | String | 结果代码，`0` 表示成功  
+msg | String | 错误信息，如果代码不为`0`，则不为空  
+data | Array of objects | 请求返回值，包含请求结果  
+instType | String | 产品类别，枚举值包括`FUTURES`,`OPTION`,`SWAP`和`SPOT`  
+includeAll | Boolean | 是否接收该instType下所有产品。有效值为`true`或`false`。默认`false`。  
+> data | Array of objects | instType的元素  
+>> instFamily | String | 交易品种  
+`交割/永续/期权`情况下必填  
+>> instId | String | 产品ID，如 `BTC-USDT`。对`SPOT`产品类别有效且必须。  
+>> maxBlockSz | String | 该种产品最大可交易数量。FUTURES, OPTION and SWAP
+的单位是合约数量。SPOT的单位是交易货币。  
+>> makerPxBand | String | 价格限制以价格精度tick为单位，以标记价格为基准。  
+设置makerPxBand为1个tick代表:  
+如果买一价 > 标记价格 + 1 tick, 操作将被拦截  
+如果 买一价 < 标记价格 - 1 tick, 操作将被拦截  
   
 ### 设置可报价产品
 
@@ -2754,9 +2868,9 @@ SecretKey为用户申请APIKey时所生成。如：`22582BD0CFF14C41EDBF1AB98506
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -2931,9 +3045,9 @@ px
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。
 
@@ -3063,9 +3177,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -3124,9 +3238,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。
 
@@ -3199,9 +3313,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -3270,9 +3384,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。
 
@@ -3357,9 +3471,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -3427,9 +3541,9 @@ tag | String | 订单标签
 
 #### 限速： 60次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -3537,7 +3651,7 @@ fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
-avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为""  
 state | String | 订单状态  
 `canceled`：撤单成功  
 `live`：等待成交  
@@ -3876,7 +3990,7 @@ fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
-avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为""  
 state | String | 订单状态  
 `canceled`：撤单成功  
 `filled`：完全成交  
@@ -4052,7 +4166,7 @@ fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
-avgPx | String | 成交均价，如果成交数量为0，该字段也为`0`  
+avgPx | String | 成交均价，如果成交数量为0，该字段也为""  
 state | String | 订单状态  
 `canceled`：撤单成功  
 `filled`：完全成交  
@@ -4326,9 +4440,9 @@ clOrdId
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -4373,9 +4487,10 @@ ordType | String | 是 | 订单类型
 `move_order_stop`：移动止盈止损  
 `iceberg`：冰山委托  
 `twap`：时间加权委托  
-sz | String | 是 | 委托数量  
+sz | String | 可选 | 委托数量  
+`sz`和`closeFraction`必填且只能填其一  
 tag | String | 否 | 订单标签  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间  
 tgtCcy | String | 否 | 委托数量的类型  
 `base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
 仅适用于`币币`单向止盈止损市价买单  
@@ -4384,7 +4499,15 @@ reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
 clOrdId | String | 否 | 客户自定义订单ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间  
+closeFraction | String | 可选 | 策略委托触发时，平仓的百分比。1 代表100%  
+现在系统只支持全部平仓，唯一接受参数为`1`  
+仅适用于`交割`或`永续`  
+仅适用于买卖模式 `posSide` = `net`  
+仅适用于减仓订单 `reduceOnly` = `true`  
+仅适用于止盈止损 `ordType` = `conditional` 或 `oco`  
+仅适用于止盈止损市价订单  
+`sz`和`closeFraction`必填且只能填其一  
   
 止盈止损
 
@@ -4487,9 +4610,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -4550,9 +4673,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -4684,6 +4807,7 @@ clOrdId | String | 否 | 客户自定义订单ID
                 "slTriggerPxType": "last",
                 "state": "live",
                 "sz": "10",
+                "closeFraction": "",
                 "szLimit": "",
                 "tag": "",
                 "tdMode": "cross",
@@ -4713,6 +4837,7 @@ ordId | String | 订单ID
 algoId | String | 策略委托单ID  
 clOrdId | String | 客户自定义订单ID  
 sz | String | 委托数量  
+closeFraction | String | 策略委托触发时，平仓的百分比。1 代表100%  
 ordType | String | 订单类型  
 side | String | 订单方向  
 posSide | String | 持仓方向  
@@ -4829,6 +4954,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "clOrdId":"",
                 "algoId":"1234",
                 "sz":"999",
+                "closeFraction":"",
                 "ordType":"oco",
                 "side":"buy",
                 "posSide":"long",
@@ -4869,6 +4995,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "clOrdId":"",
                 "algoId":"1234",
                 "sz":"999",
+                "closeFraction":"",
                 "ordType":"oco",
                 "side":"buy",
                 "posSide":"long",
@@ -4916,6 +5043,7 @@ ordId | String | 订单ID
 algoId | String | 策略委托单ID  
 clOrdId | String | 客户自定义订单ID  
 sz | String | 委托数量  
+closeFraction | String | 策略委托触发时，平仓的百分比。1 代表100%  
 ordType | String | 订单类型  
 side | String | 订单方向  
 posSide | String | 持仓方向  
@@ -7526,7 +7654,25 @@ posId | String | 否 | 持仓ID
             "upl":"-0.0000009932766034",
             "uplRatio":"-0.0025490556801078",
             "vegaBS":"",
-            "vegaPA":""
+            "vegaPA":"",
+            "closeOrderAlgo":[
+                {
+                    "algoId":"123",
+                    "slTriggerPx":"123",
+                    "slTriggerPxType":"mark",
+                    "tpTriggerPx":"123",
+                    "tpTriggerPxType":"mark",
+                    "closeFraction":"0.6"
+                },
+                {
+                    "algoId":"123",
+                    "slTriggerPx":"123",
+                    "slTriggerPxType":"mark",
+                    "tpTriggerPx":"123",
+                    "tpTriggerPxType":"mark",
+                    "closeFraction":"0.4"
+                }
+           ]
         }]
     }
     
@@ -7586,6 +7732,21 @@ spotInUseAmt | String | 现货对冲占用数量
 适用于`组合保证金模式`  
 spotInUseCcy | String | 现货对冲占用币种，如 `BTC`  
 适用于`组合保证金模式`  
+closeOrderAlgo | Array | 平仓策略委托订单  
+> algoId | String | 策略委托单ID  
+> slTriggerPx | String | 止损触发价  
+> slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+> tpTriggerPx | String | 止盈委托价  
+> tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+> closeFraction | String | 策略委托触发时，平仓的百分比。1 代表100%  
+cTime | String | 持仓创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+uTime | String | 最近一次持仓更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 PM账户下，持仓的 IMR MMR的数据是后端服务以ristUnit为最小粒度重新计算，相同riskUnit全仓仓位的imr和mmr返回值相同。
 
 ### 查看历史持仓信息
@@ -8079,7 +8240,8 @@ notes | String | 备注
                 "mgnIsoMode": "automatic",
                 "posMode": "net_mode",
                 "spotOffsetType": "",
-                "uid": "44705892343619584"
+                "uid": "44705892343619584",
+                "label": "V5 Test"
             }
         ],
         "msg": ""
@@ -8109,6 +8271,7 @@ mgnIsoMode | String | 币币杠杆的逐仓保证金划转模式
 spotOffsetType | String | 现货对冲类型  
 `1`：现货对冲模式U模式 `2`：现货对冲模式币模式 `3`：非现货对冲模式  
 适用于`组合保证金模式`  
+label | String | 当前请求API Key的备注名，不超过50位字母（区分大小写）或数字，可以是纯字母或纯数字。  
   
 ### 设置持仓模式
 
@@ -9099,6 +9262,136 @@ atRiskMgn | Array | 杠杆的risk unit列表
 ts | String | 接口数据返回时间 ，Unix时间戳的毫秒数格式，如 `1597026383085`  
 当账户进入特定风险状态后，仅可以委托降低账户风险方向的IOC类型订单.
 
+### 一键借币模式手动借币还币
+
+#### 限速：5次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/account/quick-margin-borrow-repay`
+
+> 请求示例
+    
+    
+    POST /api/v5/account/quick-margin-borrow-repay 
+    body
+    {
+        "instId":"BTC-USDT",
+        "ccy":"USDT",
+        "side":"borrow",
+        "amt":"100"
+    }
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如BTC-USDT  
+ccy | String | 是 | 借贷币种，如 `BTC`  
+side | String | 是 | `borrow`：借币，`repay`：还币  
+amt | String | 是 | 借/还币的数量  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "amt": "100",
+                "instId":"BTC-USDT",
+                "ccy": "USDT",
+                "side": "borrow"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+instId | String | 产品ID，如BTC-USDT  
+ccy | String | 借贷币种，如 `BTC`  
+side | String | `borrow`：借币，`repay`：还币  
+amt | String | 借/还币的数量  
+  
+### 获取一键借币还币历史
+
+#### 限速：5次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/account/borrow-repay-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/account/borrow-repay-history
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 否 | 产品ID，如 BTC-USDT  
+ccy | String | 否 | 借贷币种，如 `BTC`  
+side | String | 否 | `borrow`：借币，`repay`：还币  
+after | String | 否 | 请求此 ID 之前（更旧的数据）的分页内容，传的值为对应接口的`refId`  
+before | String | 否 | 请求此 ID 之后（更新的数据）的分页内容，传的值为对应接口的`refId`  
+begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
+end | String | 否 | 筛选的结束时间戳，Unix 时间戳为毫秒数格式，如 1597027383085  
+limit | String | 否 | 返回结果的数量，最大为100，默认100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "instId": "BTC-USDT",
+                "ccy": "USDT",
+                "side": "borrow",
+                "accBorrowed": "0.01",
+                "amt": "0.005",
+                "refId": "1637310691470124",
+                "ts": "1637310691470"
+            },
+            {
+                "instId": "BTC-USDT",
+                "ccy": "USDT",
+                "side": "borrow",
+                "accBorrowed": "0.01",
+                "amt": "0.005",
+                "refId": "1637310691470123",
+                "ts": "1637310691400"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID，如 BTC-USDT  
+ccy | String | 借贷币种，如 `BTC`  
+side | String | `borrow`：借币，`repay`：还币  
+accBorrowed | String | 累计借币  
+amt | String | 借/还币的数量  
+refId | String | 对应记录ID，借币或还币的ID  
+ts | String | 借/还币时间  
+  
 ### 尊享借币还币
 
 #### 限速：6次/s
@@ -9787,6 +10080,59 @@ posType | String | 限仓类型，仅适用于组合保证金模式下的期权�
 `1`：所有合约挂单 + 持仓张数，`2`：所有合约总挂单张数，`3`：所有合约总挂单单数，`4`：同方向合约挂单 +
 持仓张数，`5`：单一合约总挂单单数，`6`：单一合约挂单 + 持仓张数，`7`：单笔挂单张数"  
   
+### 设置组合保证金账户风险对冲模式
+
+设置 Portfolio Margin 账户风险对冲模式
+
+#### 限速：10次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/account/set-riskOffset-type`
+
+> 请求示例
+    
+    
+    POST /api/v5/account/set-riskOffset-type
+    body 
+    {
+        "type":"1"
+    }
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+type | String | 是 | 风险对冲模式  
+`1`：现货对冲(USDT)  
+`2`:现货对冲(币)  
+`3`:衍生品对冲  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [{
+            "type":"1"
+        }]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+type | String | 风险对冲模式  
+`1`：现货对冲(USDT)  
+`2`:现货对冲(币)  
+`3`:衍生品对冲  
+  
 ## 子账户
 
 `子账户`功能模块下的API接口需要身份验证。
@@ -10372,9 +10718,9 @@ subAcct | String | 子账户名称
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -10505,7 +10851,7 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
 #### HTTP请求
 
@@ -10566,9 +10912,9 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 20次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 #### HTTP请求
 
@@ -15962,9 +16308,9 @@ msg | String | 否 | 错误消息
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 同`下单` REST API 共享限速
 
@@ -16157,9 +16503,9 @@ px
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`下单`限速中。  同`批量下单` REST API
 共享限速
@@ -16334,9 +16680,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 同`撤单` REST API 共享限速
 
@@ -16435,9 +16781,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`撤单`限速中。  同`批量撤单` REST API
 共享限速
@@ -16573,9 +16919,9 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：60次/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 同`改单` REST API 共享限速
 
@@ -16689,9 +17035,9 @@ newSz : 当修改已经部分成交的订单时，新的委托数量必须大于
 
 #### 限速：300个/2s
 
-#### 限速规则：衍生品：UserID + (instrumentType + underlying)
+#### 限速规则（期权以外）：UserID + Instrument ID
 
-#### 限速规则：币币和币币杠杆：UserID + instrumentID
+#### 限速规则（只限期权）：UserID + Instrument Family
 
 与其他限速按接口调用次数不同，该接口限速按订单的总个数限速。如果单次批量请求中只有一个元素，则算在单个`修改订单`限速中。  同`批量改单` REST
 API 共享限速
@@ -17280,7 +17626,25 @@ msg | String | 否 | 错误消息
                 "upl":"-0.0000009932766034",
                 "uplRatio":"-0.0025490556801078",
                 "vegaBS":"",
-                "vegaPA":""
+                "vegaPA":"",
+                "closeOrderAlgo":[
+                    {
+                        "algoId":"123",
+                        "slTriggerPx":"123",
+                        "slTriggerPxType":"mark",
+                        "tpTriggerPx":"123",
+                        "tpTriggerPxType":"mark",
+                        "closeFraction":"0.6"
+                    },
+                    {
+                        "algoId":"123",
+                        "slTriggerPx":"123",
+                        "slTriggerPxType":"mark",
+                        "tpTriggerPx":"123",
+                        "tpTriggerPxType":"mark",
+                        "closeFraction":"0.4"
+                    }
+                ]
             }
         ]
     }
@@ -17336,7 +17700,25 @@ msg | String | 否 | 错误消息
         "upl":"-0.0000009932766034",
         "uplRatio":"-0.0025490556801078",
         "vegaBS":"",
-        "vegaPA":""
+        "vegaPA":"",
+        "closeOrderAlgo":[
+            {
+                "algoId":"123",
+                "slTriggerPx":"123",
+                "slTriggerPxType":"mark",
+                "tpTriggerPx":"123",
+                "tpTriggerPxType":"mark",
+                "closeFraction":"0.6"
+            },
+            {
+                "algoId":"123",
+                "slTriggerPx":"123",
+                "slTriggerPxType":"mark",
+                "tpTriggerPx":"123",
+                "tpTriggerPxType":"mark",
+                "closeFraction":"0.4"
+            }
+        ]
     }, {
         "adl":"1",
         "availPos":"1",
@@ -17378,7 +17760,25 @@ msg | String | 否 | 错误消息
         "upl":"-0.0000009932766034",
         "uplRatio":"-0.0025490556801078",
         "vegaBS":"",
-        "vegaPA":""
+        "vegaPA":"",
+        "closeOrderAlgo":[
+            {
+                "algoId":"123",
+                "slTriggerPx":"123",
+                "slTriggerPxType":"mark",
+                "tpTriggerPx":"123",
+                "tpTriggerPxType":"mark",
+                "closeFraction":"0.6"
+            },
+            {
+                "algoId":"123",
+                "slTriggerPx":"123",
+                "slTriggerPxType":"mark",
+                "tpTriggerPx":"123",
+                "tpTriggerPxType":"mark",
+                "closeFraction":"0.4"
+            }
+        ]
     }]
     }
     
@@ -17441,6 +17841,19 @@ data | Array | 订阅的数据
 适用于`组合保证金模式`  
 > spotInUseCcy | String | 现货对冲占用币种，如 `BTC`  
 适用于`组合保证金模式`  
+> closeOrderAlgo | Array | 平仓策略委托订单  
+>> algoId | String | 策略委托单ID  
+>> slTriggerPx | String | 止损触发价  
+>> slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+>> tpTriggerPx | String | 止盈委托价  
+>> tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+>> closeFraction | String | 策略委托触发时，平仓的百分比。1 代表100%  
 > cTime | String | 持仓创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > uTime | String | 最近一次持仓更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > pTime | String | 持仓信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -21502,6 +21915,10 @@ REST API 错误码从 50000 到 59999
 51312 | 200 | 移动止盈止损委托失败，委托数量范围{0}<x<={1}  
 51313 | 200 | 逐仓自主划转模式不支持策略部分  
 51317 | 200 | 币币杠杆不支持计划委托  
+51327 | 200 | closeFraction 仅适用于交割合约和永续合约  
+51328 | 200 | closeFraction 仅适用于只减仓订单  
+51329 | 200 | closeFraction 仅适用于买卖模式  
+51330 | 200 | closeFraction 仅适用于止盈止损市价订单  
 51340 | 200 | 投入保证金需大于{0}{1}  
 51341 | 200 | 当前策略状态下暂不支持平仓  
 51342 | 200 | 已有平仓单，请稍后重试  
@@ -21527,7 +21944,8 @@ REST API 错误码从 50000 到 59999
 51409 | 200 | 币对 id 或币对名称不能同时为空  
 51410 | 200 | 撤单失败，订单已处于撤销中  
 51411 | 200 | 用户没有执行mass cancel的权限  
-51412 | 200 | 委托已触发，暂不支持撤单  
+51412 | 200 | 撤单超时，请稍后重试  
+51416 | 200 | 委托已触发，暂不支持撤单  
 51413 | 200 | 撤单失败，接口不支持该委托类型的撤单  
 51415 | 200 | 下单失败，现货交易仅支持设置最新价为触发价格，请更改触发价格并重试  
 51500 | 200 | 价格和数量不能同时为空  
@@ -21748,6 +22166,8 @@ REST API 错误码从 50000 到 59999
 59310 | 200 | 当前账户不支持尊享借币  
 59311 | 200 | 存在尊享借币，无法设置  
 59312 | 200 | {币种}不支持尊享借币  
+59313 | 200 | 无法还币。在一键借币模式下，您目前没有 ${ccy} 借币（币对：${ccyPair}）  
+51152 | 200 | 一键借币模式下，不支持自动借币与自动还币和手动类型混合下单。  
 59401 | 200 | 持仓价值达到持仓限制  
 59402 | 200 | 查询条件中的instId的交易产品当前不是可交易状态，请填写单个instid逐个查询状态详情  
 59500 | 200 | 仅母账户有操作权限  
@@ -21835,6 +22255,7 @@ REST API 错误码从 50000 到 59999
 70505 | 200 | 执行失败，因为报价单的状态是{0}  
 70506 | 200 | 腿的数量比例与原RFQ不一致  
 70507 | 200 | 部分执行尝试失败。须设置allowPartialExecution为`true`  
+70508 | 200 | 没有可用的产品设置。  
 70511 | 200 | 正在执行报价  
 56000 | 200 | 大宗交易不存在  
 56001 | 200 | 多腿的数量不能超过 {0}  
