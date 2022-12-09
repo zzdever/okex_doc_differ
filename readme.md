@@ -626,16 +626,20 @@ type | String | 报价方类型（当前未生效，将返回 "" ）
             "Trader1",
             "Trader2"
         ],
+        "allowPartialExecution":false,
         "clRfqId":"rfq01",
+        "tag":"123456",
         "legs":[
             {
                 "sz":"25",
                 "side":"buy",
+                "posSide": "long",
                 "instId":"BTCUSD-221208-100000-C"
             },
             {
                 "sz":"150",
                 "side":"buy",
+                "posSide": "long",
                 "instId":"ETH-USDT",
                 "tgtCcy":"base_ccy"
             }
@@ -651,12 +655,18 @@ counterparties | Array of strings | 是 | 报价方列表。
 anonymous | Boolean | 否 | 是否匿名询价，`true`表示匿名询价，`false`表示公开询价，默认值为
 `false`，为`true`时，即使在交易执行之后，身份也不会透露给报价方。  
 clRfqId | String | 否 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+tag | String | 否 | 询价单标签，与此询价单关联的大宗交易将有相同的标签。  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
 allowPartialExecution | Boolean | 否 |
 RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为`true`或`false`。默认为`false`。  
 legs | Array of objects | 是 | 组合交易，每次最多可以提交15组交易信息  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
 > side | String | 是 | 询价单方向  
+> posSide | String | 否 | 持仓方向  
+单向持仓模式下默认为`net`。在双向持仓模式下仅可选择`long`或`short`。  
+如未指定，则处于双向持仓模式下的用户始终会开新仓位。  
+仅适用交割、永续。  
 > tgtCcy | String | 否 | 委托数量的类型  
 `base_ccy`: 交易货币 `quote_ccy`: 计价货币  
 默认为`base_ccy`，仅适用于`币币`。  
@@ -672,9 +682,10 @@ legs | Array of objects | 是 | 组合交易，每次最多可以提交15组交�
                 "cTime":"1611033737572",
                 "uTime":"1611033737572",
                 "traderCode":"SATOSHI",
+                "tag":"123456",
                 "rfqId":"22534",
                 "clRfqId":"rfq01",
-                "allowPartialExecution": false,
+                "allowPartialExecution":false,
                 "state":"active",
                 "validUntil":"1611033857557",
                 "counterparties":[
@@ -686,12 +697,14 @@ legs | Array of objects | 是 | 组合交易，每次最多可以提交15组交�
                         "instId":"BTCUSD-221208-100000-C",
                         "sz":"25",
                         "side":"buy",
+                        "posSide": "long",
                         "tgtCcy":""
                     },
                     {
                         "instId":"ETH-USDT",
                         "sz":"150",
                         "side":"buy",
+                        "posSide": "long",
                         "tgtCcy":"base_ccy"     
                     }
                 ]
@@ -716,15 +729,23 @@ data | Array of objects | 询价单结果
 > counterparties | Array of strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户端敏感信息，不会公开，对报价方返回""。  
+> tag | String | RFQ标签，与此RFQ关联的大宗交易将有相同的标签。  
 > allowPartialExecution | Boolean |
-> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为`true`或`false`。  
+> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为`true`或`false`。未指定时，默认为`false`。  
 > traderCode | String | 询价方唯一标识代码。  
 > rfqId | String | 询价单ID  
-> legs | Array of objects | 组合交易  
->> instId | String | 产品ID  
+> legs | Array of objects | 组合交易，每个请求最多可放置15条腿  
+>> instId | String | 产品ID，例如："BTC-USDT-SWAP"  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
+有效值为`buy`和`sell`。  
+>> posSide | String | 持仓方向  
+单向持仓模式下默认为`net`。如未指定，则返回""，相当于`net`。  
+在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
+仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
   
 ### 取消询价单
 
@@ -1027,6 +1048,7 @@ legs | Array of objects | 否 |
                 "clRfqId":"r0001",
                 "quoteId":"1046",
                 "clQuoteId":"q0001",
+                "tag":"123456",
                 "tTraderCode":"Trader1",
                 "mTraderCode":"Trader2",
                 "cTime":"1649670009",
@@ -1068,6 +1090,7 @@ data | Array of objects | 包含结果的对象数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > blockTdId | String | 大宗交易ID  
+> tag | String | 报价单标签，与此报价单关联的大宗交易将有相同的标签。  
 > tTraderCode | String | 询价价方唯一标识代码。询价时 anonymous 设置为 `true` 时不可见。  
 > mTraderCode | String | 报价方唯一标识代码。 报价时 anonymous 设置为 `true` 时不可见。  
 > legs | Array of objects | 组合交易  
@@ -1362,15 +1385,24 @@ ts | String | 重设时间. Unix 时间戳的毫秒数格式，如 `159702638308
     {
         "rfqId":"22539",
         "clQuoteId":"q001",
-        "anonymous": true,
+        "tag":"123456",
         "quoteSide":"buy",
+        "anonymous": true,
         "expiresIn":"30",
         "legs":[
             {
                 "px":"39450.0",
                 "sz":"200000",
                 "instId":"BTC-USDT-SWAP",
-                "side":"buy"
+                "side":"buy",
+                "posSide": "long"
+            },
+            {
+                "px":"39450.0",
+                "sz":"200000",
+                "instId":"BTC-USDT-SWAP",
+                "side":"buy",
+                "posSide": "long"
             }
         ]
     }
@@ -1382,16 +1414,22 @@ ts | String | 重设时间. Unix 时间戳的毫秒数格式，如 `159702638308
 ---|---|---|---  
 rfqId | String | 是 | 询价单ID  
 clQuoteId | String | 否 | 报价单自定义ID  
-anonymous | Boolean | 否 | 是否匿名报价，`true`表示匿名报价，`false`表示公开报价，默认值为
-`false`，为`true`时，即使在交易执行之后，身份也不会透露给询价方。  
-quoteSide | String | 是 | 询价单方向， `buy` 或者
-`sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理  
+tag | String | 否 | 报价单标签，与此报价单关联的大宗交易将有相同的标签。  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间。  
+anonymous | Boolean | 否 |
+是否匿名报价，`true`表示匿名报价，`false`表示公开报价，默认值为`false`，为`true`时，即使在交易执行之后，身份也不会透露给询价方。  
+quoteSide | String | 是 |
+报价单方向，`buy`或者`sell`。当报价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理  
 expiresIn | String | 否 | 报价单的有效时长（以秒为单位）。 10到120之间的任何整数。 默认值为60  
 legs | Array of objects | 是 | 组合交易  
 > instId | String | 是 | 产品ID  
 > sz | String | 是 | 委托数量  
 > px | String | 是 | 委托价格  
 > side | String | 是 | 报价单方向  
+> posSide | String | 否 | 持仓方向  
+单向持仓模式下默认为`net`。在双向持仓模式下仅可选择`long`或`short`。  
+如未指定，则处于双向持仓模式下的用户始终会开新仓位。  
+仅适用交割、永续。  
 > tgtCcy | String | 否 | 委托数量的类型  
 `base_ccy`: 交易货币 `quote_ccy`: 计价货币  
 默认为`base_ccy`，仅适用于`币币`。  
@@ -1413,6 +1451,7 @@ legs | Array of objects | 是 | 组合交易
                         "sz":"25",
                         "instId":"BTC-USD-220114-25000-C",
                         "side":"sell",
+                        "posSide": "long",
                         "tgtCcy":""
                     },
                     {
@@ -1420,11 +1459,13 @@ legs | Array of objects | 是 | 组合交易
                         "sz":"25",
                         "instId":"ETH-USD-220114-25000-C",
                         "side":"buy",
+                        "posSide": "long",
                         "tgtCcy":""
                     }
                 ],
                 "quoteId":"25092",
                 "rfqId":"18753",
+                "tag":"123456",
                 "quoteSide":"sell",
                 "state":"active",
                 "reason": "mmp_canceled"
@@ -1453,14 +1494,19 @@ data | Array of objects | 包含结果的对象数组
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> tag | String | 报价单标签，与此报价单关联的大宗交易将有相同的标签。  
 > traderCode | String | 报价方唯一标识代码。  
-> quoteSide | String | 报价单方向，`buy` 或者
-> `sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
+> quoteSide | String |
+> 报价单方向，`buy`或者`sell`。当报价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格  
 >> side | String | 报价单方向  
+>> posSide | String | 持仓方向  
+单向持仓模式下默认为`net`。如未指定，则返回""，相当于`net`。  
+在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
+仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
   
 ### 取消报价单
@@ -1740,6 +1786,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
             {
                 "rfqId": "123456",
                 "clRfqId": "",
+                "tag": "123456",
                 "traderCode": "VITALIK",
                 "validUntil": "1650969031817",
                 "allowPartialExecution": false,
@@ -1751,6 +1798,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                     {
                         "instId": "BTC-USDT",
                         "side": "buy",
+                        "posSide": "long",
                         "sz": "25",
                         "tgtCcy": "base_ccy"
                     }
@@ -1761,6 +1809,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
             {
                 "rfqId": "1234567",
                 "clRfqId": "",
+                "tag": "1234567",
                 "traderCode": "VITALIK",
                 "validUntil": "1650967623729",
                 "state": "filled",
@@ -1771,6 +1820,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                     {
                         "instId": "BTC-USDT",
                         "side": "buy",
+                        "posSide": "long",
                         "sz": "1500000",
                         "tgtCcy": "quote_ccy"
                     }
@@ -1796,16 +1846,23 @@ data | Array of objects | 包含结果的对象数组
 > counterparties | Array of srings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> tag | String | 询价单标签，与此询价单关联的大宗交易将有相同的标签。  
 > traderCode | String | 询价方唯一标识代码，询价时 anonymous 设置为 `true` 时不可见  
 > rfqId | String | 询价单ID  
 > allowPartialExecution | Boolean |
-> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为`true`或`false`。  
-> legs | Array of objects | 组合交易  
->> instId | String | 产品ID  
+> RFQ是否可以被部分执行，如果腿的比例和原RFQ一致。有效值为`true`或`false`。未指定时，默认为`false`。  
+> legs | Array of objects | 组合交易，每个请求最多可放置15条腿  
+>> instId | String | 产品ID，例如："BTC-USDT-SWAP"  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
-`buy`或`sell`  
+有效值为`buy`和`sell`。  
+>> posSide | String | 持仓方向  
+单向持仓模式下默认为`net`。如未指定，则返回""，相当于`net`。  
+在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
+仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
   
 ### 获取报价单信息
 
@@ -1856,6 +1913,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                         "sz":"25",
                         "instId":"BTC-USD-220114-25000-C",
                         "side":"sell",
+                        "posSide": "long",
                         "tgtCcy":""
                     },
                     {
@@ -1863,6 +1921,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                         "sz":"25",
                         "instId":"BTC-USDT",
                         "side":"buy",
+                        "posSide": "long",
                         "tgtCcy":"base_ccy"
                     }
                 ],
@@ -1873,6 +1932,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "reason":"mmp_canceled",
                 "clQuoteId":"cq001",
                 "clRfqId":"cr001",
+                "tag":"123456",
                 "traderCode":"Trader1"
             }
         ]
@@ -1896,14 +1956,19 @@ data | Array of objects | 包含结果的数组
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> tag | String | 报价单标签，与此报价单关联的大宗交易将有相同的标签。  
 > traderCode | String | 报价方唯一标识代码，报价时 Anonymous 设置为 `True` 时不可见。  
-> quoteSide | String | 询价单方向， `buy` 或者
-> `sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理  
+> quoteSide | String |
+> 报价单方向，`buy`或者`sell`。当报价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格.  
 >> side | String | 报价单方向  
+>> posSide | String | 持仓方向  
+单向持仓模式下默认为`net`。如未指定，则返回""，相当于`net`。  
+在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
+仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
   
 ### 获取大宗交易信息
@@ -1957,6 +2022,7 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条。
                 "quoteId": "0T5342O",
                 "clQuoteId": "",
                 "blockTdId": "439127542058958848",
+                "tag": "123456",
                 "legs": [
                     {
                         "instId": "BTC-USDT",
@@ -2010,6 +2076,7 @@ data | Array of objects | 包含结果的对象数组
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
 > blockTdId | String | 大宗交易ID  
+> tag | String | 交易标签，大宗交易将有与其对应的询价单或报价单相同的标签。  
 > tTraderCode | String | 询价方唯一标识代码，询价时 anonymous 设置为 `true` 时不可见  
 > mTraderCode | String | 报价方唯一标识代码。报价时 anonymous 设置为 `true` 时不可见  
 > legs | Array of objects | 组合交易  
@@ -2209,6 +2276,7 @@ msg | String | 否 | 错误消息
                 "traderCode":"DSK2",
                 "rfqId":"22534",
                 "clRfqId":"",
+                "tag":"123456",
                 "state":"active",
                 "validUntil":"1611033857557",
                 "allowPartialExecution": false,
@@ -2221,12 +2289,14 @@ msg | String | 否 | 错误消息
                         "instId":"BTCUSD-211208-36000-C",
                         "sz":"25.0",
                         "side":"buy",
+                        "posSide": "long",
                         "tgtCcy":""
                     },
                     {
                         "instId":"ETHUSD-211208-45000-C",
                         "sz":"25.0",
                         "side":"sell",
+                        "posSide": "long",
                         "tgtCcy":""
                     }
                 ]
@@ -2252,6 +2322,7 @@ data | Array | 订阅的数据
 > counterparties | Array of Strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
+> tag | String | 询价单标签，与此询价单关联的大宗交易将有相同的标签。  
 > traderCode | String | 询价方唯一标识代码，询价时 Anonymous 设置为 `True` 时不可见  
 > rfqId | String | 询价单ID  
 > allowPartialExecution | Boolean |
@@ -2260,6 +2331,10 @@ data | Array | 订阅的数据
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> side | String | 询价单方向  
+>> posSide | String | 持仓方向  
+单向持仓模式下默认为`net`。如未指定，则返回""，相当于`net`。  
+在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
+仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
   
 ### 报价频道
@@ -2323,7 +2398,8 @@ msg | String | 否 | 错误消息
     
     {
         "arg":{
-            "channel":"quotes"
+            "channel":"quotes",
+            "uid": "77982378738415879"
         },
         "data":[
             {
@@ -2336,6 +2412,7 @@ msg | String | 否 | 错误消息
                         "sz":"25.0",
                         "instId":"BTC-USD-220114-25000-C",
                         "side":"sell",
+                        "posSide": "long",
                         "tgtCcy":""
     
                     },
@@ -2344,12 +2421,14 @@ msg | String | 否 | 错误消息
                         "sz":"25",
                         "instId":"BTC-USD-220114-35000-C",
                         "side":"buy",
+                        "posSide": "long",
                         "tgtCcy":""
     
                     }
                 ],
                 "quoteId":"25092",
                 "rfqId":"18753",
+                "tag":"123456",
                 "traderCode":"SATS",
                 "quoteSide":"sell",
                 "state":"canceled",
@@ -2378,14 +2457,19 @@ data | Array | 订阅的数据
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
 > quoteId | String | 报价单ID  
 > clQuoteId | String | 报价单自定义ID，为客户敏感信息，不会公开，对询价方返回""。  
+> tag | String | 报价单标签，与此报价单关联的大宗交易将有相同的标签。  
 > traderCode | String | 报价方唯一标识代码，报价时 Anonymous 设置为 `True` 时不可见。  
-> quoteSide | String | 询价单方向， `buy` 或者
-> `sell`。当询价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
+> quoteSide | String |
+> 报价单方向，`buy`或者`sell`。当报价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格  
 >> side | String | 报价单方向  
+>> posSide | String | 持仓方向  
+单向持仓模式下默认为`net`。如未指定，则返回""，相当于`net`。  
+在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
+仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
   
 ### 大宗交易频道
@@ -2449,7 +2533,8 @@ msg | String | 否 | 错误消息
     
     {
         "arg":{
-            "channel":"struc-block-trades"
+            "channel":"struc-block-trades",
+            "uid": "77982378738415879"
         },
         "data":[
             {
@@ -2459,6 +2544,7 @@ msg | String | 否 | 错误消息
                 "quoteId":"25092",
                 "clQuoteId":"",
                 "blockTdId":"180184",
+                "tag":"123456",
                 "tTraderCode":"ANAND",
                 "mTraderCode":"WAGMI",
                 "legs":[
@@ -2506,6 +2592,7 @@ data | Array | 订阅的数据
 > clQuoteId | String | 由用户设置的 Quote ID。 此属性被视为客户端敏感信息。 不会暴露给 Taker，只为 Taker
 > 返回空字符串“”。  
 > blockTdId | String | 大宗交易ID  
+> tag | String | 交易标签，大宗交易将有与其对应的询价单或报价单相同的标签。  
 > tTraderCode | String | 报价方唯一标识代码。询价时 Anonymous 设置为 `True` 时不可见。  
 > mTraderCode | String | 询价方唯一标识代码。报价时 Anonymous 设置为 `True` 时不可见。  
 > legs | Array of objects | 组合交易  
@@ -5569,6 +5656,7 @@ ccy | String | 否 | 币种，如 `BTC`
             "ccy": "BTC",
             "chain": "BTC-Bitcoin",
             "depQuotaFixed": "",
+            "depQuoteDailyLayer2":"",
             "logoLink": "https://static.coinall.ltd/cdn/oksupport/asset/currency/icon/btc.png",
             "mainNet": true,
             "maxFee": "0.0004",
@@ -5618,6 +5706,7 @@ depQuotaFixed | String | 充币固定限额，单位为`BTC`
 没有充币限制则返回""  
 usedDepQuotaFixed | String | 已用充币固定额度，单位为`BTC`  
 没有充币限制则返回""  
+depQuoteDailyLayer2 | String | Layer2网络每日充值上限  
   
 ### 获取资金账户余额
 
@@ -21866,6 +21955,7 @@ REST API 错误码从 50000 到 59999
 50039 | 200 | 时间戳分页时，不支持使用before参数  
 50041 | 200 | IP 未被列入白名单列表，请联系客服  
 50044 | 200 | 必须指定一种broker类型  
+50047 | 200 | {0} 已经交割，对应的K线请使用{1}查询。  
   
 #### API 类
 
@@ -22218,9 +22308,9 @@ imr 占用
 58107 | 200 | 请先开通交割合约账户 |  
 58108 | 200 | 请先开通期权合约账户 |  
 58109 | 200 | 请先开通永续合约账户 |  
-58110 | 200 | 当前交易产品触发市场风控，平台已暂停相关用户的资金转出功能，请耐心等待 |  
+58110 | 200 | 当前交易产品触发市场风控，平台已暂停您的资金转出功能，请稍后重试。如需进一步的协助，请联系客服。 |  
 58111 | 200 | 永续合约正在收取资金费，暂时无法做资金划转，请稍后重试 |  
-58112 | 200 | 资金划转失败，请稍后重试 |  
+58112 | 200 | 资金划转失败，请联系客服进行处理 |  
 58114 | 400 | 转账金额必须大于 0 |  
 58115 | 200 | 子账户不存在 |  
 58116 | 200 | 转出数量大于最大可转数量 |  
@@ -22239,7 +22329,7 @@ imr 占用
 58201 | 200 | 今日提现金额累计超过每日限额 |  
 58202 | 200 | NEO最小提现数量为1，且提现数量必须为整数 |  
 58203 | 200 | 请先添加提现地址 |  
-58204 | 200 | 提现冻结 |  
+58204 | 200 | 因您的账户活动触发风控，暂停提现。请联系客户支持寻求帮助。 |  
 58205 | 200 | 提现金额大于单笔提现最大金额 |  
 58206 | 200 | 提现金额小于单笔最小提现金额 |  
 58207 | 200 | 提币地址不在免认证白名单内 |  
@@ -22253,7 +22343,7 @@ imr 占用
 58215 | 200 | 提币申请ID不存在 |  
 58216 | 200 | 不允许执行该操作 |  
 58217 | 200 | 您当前的提现地址存在风险，暂时不能提现，详情请联系客服 |  
-58218 | 200 | 您保存的提现账户已过期 |  
+58218 | 200 | 内部提现失败，请检查参数toAddr与areaCode |  
 58219 | 200 | 为保障您的资金安全，修改手机号/邮箱/谷歌验证后24小时之内将无法提现 |  
 58220 | 200 | 提币请求已撤销 |  
 58221 | 200 | 提币地址需要标签 |  
