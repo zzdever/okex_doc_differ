@@ -137,6 +137,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 尊享借币还币 
       * 获取尊享借币还币历史 
       * 获取尊享借币计息记录 
+      * 获取尊享借币扣息记录 
       * 尊享借币订单列表 
       * 尊享借币订单详情 
       * 获取借币利率与限额 
@@ -3715,6 +3716,8 @@ clOrdId | String | 可选 | 用户自定义ID
                 "tgtCcy":"",
                 "category":"",
                 "reduceOnly": "false",
+                "cancelSource": "20",
+                "cancelSourceReason": "Cancel all after triggered",
                 "uTime":"1597026383085",
                 "cTime":"1597026383085"
             }
@@ -3796,6 +3799,8 @@ category | String | 订单种类
 `delivery`：交割  
 `ddh`：对冲减仓类型订单  
 reduceOnly | String | 是否只减仓，`true` 或 `false`  
+cancelSource | String | 订单取消来源的原因枚举值代码  
+cancelSourceReason | String | 订单取消来源的对应具体原因  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如：`1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式， 如 ：`1597026383085`  
   
@@ -4060,6 +4065,8 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "pnl":"",
                 "category":"",
                 "reduceOnly": "false",
+                "cancelSource": "20",
+                "cancelSourceReason": "Cancel all after triggered",
                 "uTime":"1597026383085",
                 "cTime":"1597026383085"
             }
@@ -4134,6 +4141,8 @@ category | String | 订单种类
 `delivery`：交割  
 `ddh`：对冲减仓类型订单  
 reduceOnly | String | 是否只减仓，`true` 或 `false`  
+cancelSource | String | 订单取消来源的原因枚举值代码  
+cancelSourceReason | String | 订单取消来源的对应具体原因  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如`1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
@@ -7827,6 +7836,8 @@ posId | String | 否 | 持仓ID
             "thetaBS":"",
             "thetaPA":"",
             "tradeId":"109844",
+            "bizRefId": "",
+            "bizRefType": "",
             "quoteBal": "0",
             "baseBal": "0",
             "uTime":"1619507761462",
@@ -7926,6 +7937,8 @@ closeOrderAlgo | Array | 平仓策略委托订单
 > closeFraction | String | 策略委托触发时，平仓的百分比。1 代表100%  
 cTime | String | 持仓创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 uTime | String | 最近一次持仓更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+bizRefId | String | 外部业务id，e.g. 体验券id  
+bizRefType | String | 外部业务类型  
 PM账户下，持仓的 IMR MMR的数据是后端服务以ristUnit为最小粒度重新计算，相同riskUnit全仓仓位的imr和mmr返回值相同。
 
 ### 查看历史持仓信息
@@ -9589,7 +9602,8 @@ ts | String | 借/还币时间
     {
         "ccy":"USDT",
         "side":"borrow",
-        "amt":"100"
+        "amt":"100",
+        "ordId":"1234113444"
     }
     
     
@@ -9601,6 +9615,7 @@ ts | String | 借/还币时间
 ccy | String | 是 | 借贷币种，如 `BTC`  
 side | String | 是 | `borrow`：借币，`repay`：还币  
 amt | String | 是 | 借/还币的数量  
+ordId | String | 可选 | 借币订单ID，还币时，该字段必填  
   
 > 返回结果
     
@@ -9615,6 +9630,8 @@ amt | String | 是 | 借/还币的数量
                 "loanQuota": "6000000",
                 "posLoan": "0",
                 "side": "borrow",
+                "ordId": "1234113444",
+                "state": "1",
                 "usedLoan": "100"
             }
         ],
@@ -9628,11 +9645,18 @@ amt | String | 是 | 借/还币的数量
 ---|---|---  
 ccy | String | 借贷币种，如 `BTC`  
 side | String | `borrow`：借币，`repay`：还币  
-amt | String | 借/还币的数量  
+amt | String | 已借/还币的数量  
 loanQuota | String | 借币限额  
 posLoan | String | 当前账户负债占用（锁定额度内）  
 availLoan | String | 当前账户剩余可用（锁定额度内）  
 usedLoan | String | 当前账户已借额度  
+ordId | String | 借币订单ID  
+state | String | 订单状态  
+`1`:借币申请中  
+`2`:借币中  
+`3`:还币申请中  
+`4`:已还币  
+`5`:借币失败  
   
 ### 获取尊享借币还币历史
 
@@ -9721,6 +9745,71 @@ ts | String | 借/还币时间
 ---|---|---|---  
 ccy | String | 否 | 借贷币种，如 `BTC`，仅适用于`币币杠杆`  
 ordId | String | 否 | 借币订单ID  
+after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，Unix时间戳的毫秒数格式，如 `1597026383085`  
+before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，Unix时间戳的毫秒数格式，如 `1597026383085`  
+limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "ccy": "USDT",
+                "interest": "0.0003960833333334",
+                "interestRate": "0.0000040833333333",
+                "liab": "97",
+                "ordId": "16373124000001235",
+                "ts": "1637312400000"
+            },
+            {
+                "ccy": "USDT",
+                "interest": "0.0004083333333334",
+                "interestRate": "0.0000040833333333",
+                "liab": "100",
+                "ordId": "16370496000001234",
+                "ts": "1637049600000"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ordId | String | 借币订单ID  
+ccy | String | 借贷币种，如 `BTC`  
+interest | String | 利息  
+interestRate | String | 计息利率(小时)  
+liab | String | 计息负债  
+ts | String | 计息时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
+### 获取尊享借币扣息记录
+
+#### 限速：5次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/account/vip-interest-deducted`
+
+> 请求示例
+    
+    
+    GET /api/v5/account/vip-interest-deducted
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+ordId | String | 否 | 借币订单ID  
+ccy | String | 否 | 借贷币种，如 `BTC`，仅适用于`币币杠杆`  
 after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，Unix时间戳的毫秒数格式，如 `1597026383085`  
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，Unix时间戳的毫秒数格式，如 `1597026383085`  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
@@ -9942,6 +10031,7 @@ ccy | String | 否 | 借贷币种，如 `BTC`
                         "loanQuota": "120.0000000000000000",
                         "posLoan": "0",
                         "rate": "0.00199200",
+                        "avgRate": "0.00199200",
                         "surplusLmt": "120.0000000000000000",
                         "usedLmt": "0",
                         "usedLoan": "0.0000000000000000"
@@ -9976,6 +10066,7 @@ records | Array | 各币种详细信息
 仅适用于`尊享借币`  
 > usedLoan | String | 当前账户已借额度  
 仅适用于`尊享借币`  
+> avgRate | String | 币种已借平均利率，仅适用于`尊享借币`  
   
 ### 组合保证金的虚拟持仓保证金计算
 
@@ -17799,6 +17890,8 @@ msg | String | 否 | 错误消息
                 "posSide":"long",
                 "spotInUseAmt": "",
                 "spotInUseCcy": "",
+                "bizRefId": "",
+                "bizRefType": "",
                 "thetaBS":"",
                 "thetaPA":"",
                 "tradeId":"109844",
@@ -17873,6 +17966,8 @@ msg | String | 否 | 错误消息
         "posSide":"long",
         "spotInUseAmt": "",
         "spotInUseCcy": "",
+        "bizRefId": "",
+        "bizRefType": "",
         "thetaBS":"",
         "thetaPA":"",
         "tradeId":"109844",
@@ -17933,6 +18028,8 @@ msg | String | 否 | 错误消息
         "posSide":"long",
         "spotInUseAmt": "",
         "spotInUseCcy": "",
+        "bizRefId": "",
+        "bizRefType": "",
         "thetaBS":"",
         "thetaPA":"",
         "tradeId":"109844",
@@ -18006,6 +18103,8 @@ data | Array | 订阅的数据
 > notionalUsd | String | 以美金价值为单位的持仓数量  
 > optVal | String | 期权价值，仅适用于`期权`  
 > adl | String | 信号区，分为5档，从1到5，数字越小代表adl强度越弱  
+> bizRefId | String | 外部业务id，e.g. 体验券id  
+> bizRefType | String | 外部业务类型  
 > ccy | String | 占用保证金的币种  
 > last | String | 最新成交价  
 > usdPx | String | 美金价格  
