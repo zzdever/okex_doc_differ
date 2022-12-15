@@ -9860,12 +9860,12 @@ ts | String | 计息时间，Unix时间戳的毫秒数格式，如 `159702638308
 
 #### HTTP请求
 
-`GET /api/v5/trade/orders-history`
+`GET /api/v5/account/vip-loan-order-list`
 
 > 请求示例
     
     
-    GET /api/v5/trade/orders-history?ordType=post_only,fok,ioc&instType=SPOT
+    GET /api/v5/account/vip-loan-order-list
     
     
 
