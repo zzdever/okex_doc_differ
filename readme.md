@@ -174,6 +174,16 @@ API接口 Broker接入 最佳实践 更新日志
       * 撤销项目申购/赎回 
       * 查看活跃订单 
       * 查看历史订单 
+    * 跟单接口 
+      * 交易员获取当前带单 
+      * 交易员获取历史带单 
+      * 交易员止盈止损 
+      * 交易员平仓 
+      * 交易员获取带单合约 
+      * 交易员修改带单合约 
+      * 交易员历史分润明细 
+      * 交易员历史分润汇总 
+      * 交易员待分润明细 
     * 行情数据 
       * 获取所有产品行情信息 
       * 获取单个产品行情信息 
@@ -2973,9 +2983,12 @@ SecretKey为用户申请APIKey时所生成。如：`22582BD0CFF14C41EDBF1AB98506
 
 ### 下单
 
-只有当您的账户有足够的资金才能下单。
+只有当您的账户有足够的资金才能下单。  
+该接口支持带单合约的下单，但不支持为带单合约平仓
 
 #### 限速： 60次/2s
+
+#### 带单合约限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -3150,9 +3163,12 @@ px
 
 ### 批量下单
 
-每次最多可以批量提交20个新订单。请求参数应该按数组格式传递。
+每次最多可以批量提交20个新订单。请求参数应该按数组格式传递。  
+该接口支持带单合约的下单，但不支持为带单合约平仓
 
 #### 限速：300个/2s
+
+#### 带单合约限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -3422,6 +3438,8 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 60次/2s
 
+#### 带单合约限速：1个/2s
+
 #### 限速规则（期权以外）：UserID + Instrument ID
 
 #### 限速规则（只限期权）：UserID + Instrument Family
@@ -3492,6 +3510,8 @@ sMsg | String | 事件执行失败时的msg
 修改未完成的订单，一次最多可批量修改20个订单。请求参数应该按数组格式传递。
 
 #### 限速：300个/2s
+
+#### 带单合约限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -4556,6 +4576,8 @@ clOrdId
 提供单向止盈止损委托、双向止盈止损委托、计划委托、冰山委托、时间加权委托、移动止盈止损委托
 
 #### 限速： 20次/2s
+
+#### 带单合约限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -8187,7 +8209,7 @@ ctType | String | 否 | `linear`： 正向合约
 仅`交割/永续`有效  
 type | String | 否 | 账单类型  
 `1`：划转 `2`：交易 `3`：交割 `4`：自动换币 `5`：强平 `6`：保证金划转 `7`：扣息 `8`：资金费 `9`：自动减仓
-`10`：穿仓补偿 `11`：系统换币 `12`：策略划拨 `13`：对冲减仓 `14`: 大宗交易 `22`: 一键还债  
+`10`：穿仓补偿 `11`：系统换币 `12`：策略划拨 `13`：对冲减仓 `14`: 大宗交易 `18`: 分润 `22`: 一键还债  
 subType | String | 否 | 账单子类型  
 `1`：买入 `2`：卖出 `3`：开多 `4`：开空 `5`：平多 `6`：平空 `9`：市场借币扣息 `11`：转入 `12`：转出
 `14`：尊享借币扣息 `160`：手动追加保证金 `161`：手动减少保证金 `162`：自动追加保证金 `114`：自动换币买入
@@ -8197,7 +8219,7 @@ subType | String | 否 | 账单子类型
 `132`：对冲卖出 `170`：到期行权 `171`：到期被行权 `172`：到期作废 `112`：交割平多 `113`：交割平空
 `117`：交割/期权穿仓补偿 `173`：资金费支出 `174`：资金费收入 `200`:系统转入 `201`:手动转入 `202`:系统转出
 `203`:手动转出 `204`: 大宗交易买 `205`: 大宗交易卖 `206`: 大宗交易开多 `207`: 大宗交易开空 `208`: 大宗交易平多
-`209`: 大宗交易平空 `224`: 还债转入 `225`: 还债转出  
+`209`: 大宗交易平空 `224`: 还债转入 `225`: 还债转出 `250`: 分润支出; `251`: 分润退还; `252`: 分润收入;  
 after | String | 否 | 请求此id之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
 before | String | 否 | 请求此id之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
 begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
@@ -8310,7 +8332,7 @@ ctType | String | 否 | `linear`： 正向合约
 仅`交割/永续`有效  
 type | String | 否 | 账单类型  
 `1`：划转 `2`：交易 `3`：交割 `4`：自动换币 `5`：强平 `6`：保证金划转 `7`：扣息 `8`：资金费 `9`：自动减仓
-`10`：穿仓补偿 `11`：系统换币 `12`：策略划拨 `13`：对冲减仓 `14`: 大宗交易 `22`: 一键还债  
+`10`：穿仓补偿 `11`：系统换币 `12`：策略划拨 `13`：对冲减仓 `14`: 大宗交易 `22`: 一键还债 `18`: 分润  
 subType | String | 否 | 账单子类型  
 `1`：买入 `2`：卖出 `3`：开多 `4`：开空 `5`：平多 `6`：平空 `9`：市场借币扣息 `11`：转入 `12`：转出
 `14`：尊享借币扣息 `160`：手动追加保证金 `161`：手动减少保证金 `162`：自动追加保证金 `114`：自动换币买入
@@ -8320,7 +8342,7 @@ subType | String | 否 | 账单子类型
 `132`：对冲卖出 `170`：到期行权 `171`：到期被行权 `172`：到期作废 `112`：交割平多 `113`：交割平空
 `117`：交割/期权穿仓补偿 `173`：资金费支出 `174`：资金费收入 `200`:系统转入 `201`:手动转入 `202`:系统转出
 `203`:手动转出 `204`: 大宗交易买 `205`: 大宗交易卖 `206`: 大宗交易开多 `207`: 大宗交易开空 `208`: 大宗交易平多
-`209`: 大宗交易平空 `224`: 还债转入 `225`: 还债转出  
+`209`: 大宗交易平空 `224`: 还债转入 `225`: 还债转出 `250`: 分润支出; `251`: 分润退还; `252`: 分润收入;  
 after | String | 否 | 请求此id之前（更旧的数据）的分页内容，传的值为对应接口的`billId`  
 before | String | 否 | 请求此id之后（更新的数据）的分页内容，传的值为对应接口的`billId`  
 begin | String | 否 | 筛选的开始时间戳，Unix 时间戳为毫秒数格式，如 1597026383085  
@@ -8464,6 +8486,9 @@ spotOffsetType | String | 现货对冲类型
 `1`：现货对冲模式U模式 `2`：现货对冲模式币模式 `3`：非现货对冲模式  
 适用于`组合保证金模式`  
 label | String | 当前请求API Key的备注名，不超过50位字母（区分大小写）或数字，可以是纯字母或纯数字。  
+roleType | String | 用户角色。  
+`0`：普通用户；`1`：带单者；`2`：跟单者  
+traderInsts | String | 当前账号已经设置的带单合约，仅适用于带单者  
   
 ### 设置持仓模式
 
@@ -12181,7 +12206,7 @@ ccy | String | 否 | 投资币种，如 `BTC`
                     "ccy":"GLMR",
                     "bal":"100",
                     "minAmt":"1",
-                    "maxAmt":""
+                    "maxAmt":"100"
                   }
                 ],
                 "earningData": [
@@ -12190,6 +12215,7 @@ ccy | String | 否 | 投资币种，如 `BTC`
                     "earningType":"1"         // 每日发放
                  }
                 ],
+                "state": "purchasable"
             },
             {
                 "ccy": "USDT", 
@@ -12204,7 +12230,7 @@ ccy | String | 否 | 投资币种，如 `BTC`
                     "ccy":"USDT",
                     "bal":"20",
                     "minAmt":"1",
-                    "maxAmt":""
+                    "maxAmt":"20"
                   }
                 ],
                 "earningData": [
@@ -12217,6 +12243,7 @@ ccy | String | 否 | 投资币种，如 `BTC`
                     "earningType":"1"      // 每日发放
                  }
                 ],
+                "state": "purchasable"
             },
             {
                 "ccy": "ETH",  
@@ -12231,13 +12258,13 @@ ccy | String | 否 | 投资币种，如 `BTC`
                     "ccy":"USDT",
                     "bal":"20",
                     "minAmt":"100",
-                    "maxAmt":""
+                    "maxAmt":"0"
                   },
                   {
                     "ccy":"ETH",
                     "bal":"20",
                     "minAmt":"0.03",
-                    "maxAmt":""
+                    "maxAmt":"0"
                   }
                 ],
                 "earningData": [
@@ -12245,7 +12272,8 @@ ccy | String | 否 | 投资币种，如 `BTC`
                     "ccy": "SUSHI",
                     "earningType":"1"      // 每日发放
                  }
-                ]
+                ],
+                "state": "purchasable"
     
             },
             {
@@ -12262,7 +12290,7 @@ ccy | String | 否 | 投资币种，如 `BTC`
                     "ccy":"LON",
                     "bal":"1",
                     "minAmt":"0.1",
-                    "maxAmt":""
+                    "maxAmt":"1"
                   }
                 ],
                 "earningData": [
@@ -12270,7 +12298,8 @@ ccy | String | 否 | 投资币种，如 `BTC`
                     "ccy": "LON",
                     "earningType":"0"      // 赎回发放
                  }
-                ]
+                ],
+                "state": "purchasable"
             }
         ]
     }
@@ -12291,15 +12320,19 @@ apy | String | 预估年化
 如果年化为7% ，则该字段为0.07  
 earlyRedeem | Boolean | 项目是否支持提前赎回  
 investData | Array | 目前用户可用来投资的目标币种信息  
->ccy | String | 投资币种，如`BTC`  
->bal | String | 可投数量  
->minAmt | String | 最小申购量  
->maxAmt | String | 最大申购量  
+> ccy | String | 投资币种，如`BTC`  
+> bal | String | 可投数量  
+> minAmt | String | 最小申购量  
+> maxAmt | String | 最大申购量  
 earningData | Array | 收益信息  
->ccy | String | 收益币种，如`BTC`  
->earningType | String | 收益类型  
+> ccy | String | 收益币种，如`BTC`  
+> earningType | String | 收益类型  
 `0`: 预估收益  
 `1`: 累计发放收益  
+state | String | 项目状态  
+`purchasable`：可申购  
+`sold_out`：售罄  
+`stop`：暂停申购  
   
 ### 申购项目
 
@@ -12325,7 +12358,7 @@ earningData | Array | 收益信息
             "amt":"100"
           }
         ],
-        "term":"30",
+        "term":"30"
     }
     
 
@@ -12335,21 +12368,23 @@ earningData | Array | 收益信息
 ---|---|---|---  
 productId | String | 是 | 项目ID  
 investData | Array | 是 | 投资信息  
->ccy | String | 是 | 投资币种，如 `BTC`  
->amt | String | 是 | 投资数量  
+> ccy | String | 是 | 投资币种，如 `BTC`  
+> amt | String | 是 | 投资数量  
 term | String | 可选 | 投资期限  
 定期项目必须指定投资期限  
+tag | String | 否 | 订单标签  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字，且长度在1-16位之间  
   
 > 返回结果
     
     
-    // 投资成功
     {
       "code": "0",
       "msg": "",
       "data": [
         {
-          "ordId": "754147"
+          "ordId": "754147",
+          "tag": ""
         }
       ]
     }
@@ -12360,6 +12395,7 @@ term | String | 可选 | 投资期限
 参数名 | 类型 | 描述  
 ---|---|---  
 ordId | String | 订单ID  
+tag | String | 订单标签  
   
 ### 赎回项目
 
@@ -12402,7 +12438,8 @@ allowEarlyRedeem | Boolean | 否 | 是否提前赎回
       "msg": "",
       "data": [
         {
-          "ordId": "754147"
+          "ordId": "754147",
+          "tag": ""
         }
       ]
     }
@@ -12413,6 +12450,7 @@ allowEarlyRedeem | Boolean | 否 | 是否提前赎回
 参数名 | 类型 | 描述  
 ---|---|---  
 ordId | String | 订单ID  
+tag | String | 订单标签  
   
 ### 撤销项目申购/赎回
 
@@ -12453,7 +12491,8 @@ protocolType | String | 是 | 项目类型
       "msg": "",
       "data": [
         {
-          "ordId": "754147"
+          "ordId": "754147",
+          "tag": ""
         }
       ]
     }
@@ -12464,6 +12503,7 @@ protocolType | String | 是 | 项目类型
 参数名 | 类型 | 描述  
 ---|---|---  
 ordId | String | 订单ID  
+tag | String | 订单标签  
   
 ### 查看活跃订单
 
@@ -12521,11 +12561,14 @@ state | String | 否 | 订单状态
                 "earningData": [
                  {
                     "ccy": "GLMR",
-                    "earningType":"1"         // 每日发放
-                    "earnings":"3",
+                    "earningType":"1",         // 每日发放
+                    "earnings":"3"
                  }
                 ],
-                "purchasedTime":"1597026383085"
+                "purchasedTime":"1597026383085",
+                "estSettlementTime": "",
+                "cancelRedemptionDeadline": "",
+                "tag": ""
             },
             {
                 "ordId":"123457",
@@ -12546,16 +12589,19 @@ state | String | 否 | 订单状态
                 "earningData": [
                  {
                     "ccy": "USDT",
-                    "earningType":"0"      // 赎回发放
-                    "earnings":"3",        //预估收益
+                    "earningType":"0",      // 赎回发放
+                    "earnings":"3"        //预估收益
                  },
                  {
                     "ccy": "COMP",
-                    "earningType":"1"      // 每日发放
-                    "earnings":"3",        // 累计收益
+                    "earningType":"1",      // 每日发放
+                    "earnings":"3"        // 累计收益
                  }
                 ],
-                "purchasedTime":"1597026383085"
+                "purchasedTime":"1597026383085",
+                "estSettlementTime": "",
+                "cancelRedemptionDeadline": "",
+                "tag": ""
             },
             {
                 "ordId":"123458",
@@ -12568,7 +12614,7 @@ state | String | 否 | 订单状态
                 "investData":[
                   {
                     "ccy":"USDT",
-                    "amt":"100",
+                    "amt":"100"
                   },
                   {
                     "ccy":"ETH",
@@ -12578,11 +12624,14 @@ state | String | 否 | 订单状态
                 "earningData": [
                  {
                     "ccy": "SUSHI",
-                    "earningType":"1"      // 每日发放
-                    "earnings":"3",        // 累计收益
+                    "earningType":"1",      // 每日发放
+                    "earnings":"3"        // 累计收益
                  }
                 ],
-                "purchasedTime":"1597026383085"
+                "purchasedTime":"1597026383085",
+                "estSettlementTime": "",
+                "cancelRedemptionDeadline": "",
+                "tag": ""
             },
             {
                 "ordId":"123458",
@@ -12602,11 +12651,14 @@ state | String | 否 | 订单状态
                 "earningData": [
                  {
                     "ccy": "LON",
-                    "earningType":"0"      // 赎回发放
-                    "earnings":"3",        // 累计收益
+                    "earningType":"0",      // 赎回发放
+                    "earnings":"3"        // 累计收益
                  }
                 ],
-                "purchasedTime":"1597026383085"
+                "purchasedTime":"1597026383085",
+                "estSettlementTime": "",
+                "cancelRedemptionDeadline": "",
+                "tag": ""
             }
         ]
     }
@@ -12634,15 +12686,19 @@ apy | String | 预估年化
 如果年化为7% ，则该字段为0.07  
 保留到小数点后4位（截位）  
 investData | Array | 用户投资信息  
->ccy | String | 投资币种，如`BTC`  
->amt | String | 已投资数量  
+> ccy | String | 投资币种，如`BTC`  
+> amt | String | 已投资数量  
 earningData | Array | 收益信息  
->ccy | String | 收益币种，如`BTC`  
->earningType | String | 收益类型  
+> ccy | String | 收益币种，如`BTC`  
+> earningType | String | 收益类型  
 `0`: 预估收益  
 `1`: 实际到账收益  
->earnings | String | 收益数量  
+> earnings | String | 收益数量  
 purchasedTime | String | 用户订单创建时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
+purchasedTime | String | 用户订单创建时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
+estSettlementTime | String | 预估赎回到账时间  
+cancelRedemptionDeadline | String | 撤销赎回申请截止时间  
+tag | String | 订单标签  
   
 ### 查看历史订单
 
@@ -12697,12 +12753,13 @@ limit | String | 否 | 返回结果的数量，默认100条,最大值为100条
                 "earningData": [
                  {
                     "ccy": "GLMR",
-                    "earningType":"1"         // 每日发放
+                    "earningType":"1",         // 每日发放
                     "realizedEarnings":"3"
                  }
                 ],
                 "purchasedTime":"1597026383085",
-                "redeemedTime":"1597126383085"
+                "redeemedTime":"1597126383085",
+                "tag": ""
             },
             {
                 "ordId":"123457",
@@ -12721,17 +12778,18 @@ limit | String | 否 | 返回结果的数量，默认100条,最大值为100条
                 "earningData": [
                  {
                     "ccy": "USDT",
-                    "earningType":"0"      // 赎回发放
+                    "earningType":"0",      // 赎回发放
                     "realizedEarnings":"3"
                  },
                  {
                     "ccy": "COMP",
-                    "earningType":"1"      // 每日发放
+                    "earningType":"1",      // 每日发放
                     "realizedEarnings":"3"
                  }
                 ],
                 "purchasedTime":"1597026383085",
-                "redeemedTime":"1597126383085"
+                "redeemedTime":"1597126383085",
+                "tag": ""
             },
             {
                 "ordId":"123458",
@@ -12754,12 +12812,13 @@ limit | String | 否 | 返回结果的数量，默认100条,最大值为100条
                 "earningData": [
                  {
                     "ccy": "SUSHI",
-                    "earningType":"1"      // 每日发放
+                    "earningType":"1",      // 每日发放
                     "realizedEarnings":"3"
                  }
                 ],
                 "purchasedTime":"1597026383085",
-                "redeemedTime":"1597126383085"
+                "redeemedTime":"1597126383085",
+                "tag": ""
     
             },
             {
@@ -12780,12 +12839,13 @@ limit | String | 否 | 返回结果的数量，默认100条,最大值为100条
                 "earningData": [
                  {
                     "ccy": "LON",
-                    "earningType":"0"      // 赎回发放
+                    "earningType":"0",      // 赎回发放
                     "realizedEarnings":"3"
                  }
                 ],
                 "purchasedTime":"1597026383085",
-                "redeemedTime":"1597126383085"
+                "redeemedTime":"1597126383085",
+                "tag": ""
             }
         ]
     }
@@ -12809,17 +12869,565 @@ apy | String | 预估年化
 如果年化为7% ，则该字段为0.07  
 保留到小数点后4位（截位）  
 investData | Array | 用户投资信息  
->ccy | String | 投资币种，如`BTC`  
->amt | String | 已投资数量  
+> ccy | String | 投资币种，如`BTC`  
+> amt | String | 已投资数量  
 earningData | Array | 收益信息  
->ccy | String | 收益币种，如`BTC`  
->earningType | String | 收益类型  
+> ccy | String | 收益币种，如`BTC`  
+> earningType | String | 收益类型  
 0: `预估收益`  
 1: `实际到账收益`  
->realizedEarnings | String | 已赎回订单累计收益  
+> realizedEarnings | String | 已赎回订单累计收益  
 该字段只在订单处于赎回状态时有效  
 purchasedTime | String | 用户订单创建时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
 redeemedTime | String | 用户订单赎回时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
+tag | String | 订单标签  
+  
+## 跟单接口
+
+仅适用于带单交易员
+
+### 交易员获取当前带单
+
+按照开仓时间倒序排列
+
+#### 限速： 2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/copytrading/current-subpositions`
+
+> 请求示例
+    
+    
+    GET /api/v5/copytrading/current-subpositions?instId=BTC-USDT-SWAP
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 否 | 产品ID ，如`BTC-USDT-SWAP`  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "algoId": "",
+                "instId": "BTC-USDT-SWAP",
+                "lever": "3",
+                "mgnMode": "isolated",
+                "openAvgPx": "17116.3",
+                "openOrdId": "518560558975672320",
+                "openTime": "1669906471666",
+                "posSide": "short",
+                "slTriggerPx": "",
+                "subPos": "1",
+                "subPosId": "518560559046594560",
+                "tpTriggerPx": ""
+            },
+            {
+                "algoId": "",
+                "instId": "BTC-USDT-SWAP",
+                "lever": "3",
+                "mgnMode": "isolated",
+                "openAvgPx": "17175.1",
+                "openOrdId": "518541405921341440",
+                "openTime": "1669901905234",
+                "posSide": "long",
+                "slTriggerPx": "",
+                "subPos": "1",
+                "subPosId": "518541406042591232",
+                "tpTriggerPx": ""
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+subPosId | String | 带单仓位ID  
+posSide | String | 持仓方向  
+long：双向持仓多头  
+short：双向持仓空头  
+net：单向持仓（subPos为正代表多头，subPos为负代表空头）  
+mgnMode | String | 保证金模式，`isolated`：逐仓 ；`cross`：全仓  
+lever | String | 杠杆倍数  
+openOrdId | String | 交易员开仓订单号  
+openAvgPx | String | 开仓均价  
+openTime | String | 开仓时间  
+subPos | String | 持仓张数  
+tpTriggerPx | String | 止盈触发价，触发后以市价进行委托  
+slTriggerPx | String | 止损触发价，触发后以市价进行委托  
+algoId | String | 止盈止损委托单ID  
+  
+### 交易员获取历史带单
+
+按照平仓时间倒序排序
+
+#### 限速： 2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/copytrading/subpositions-history`
+
+> 请求示例
+    
+    
+    GET /api/v5/copytrading/subpositions-history?instId=BTC-USDT-SWAP
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 否 | 产品ID ，如`BTC-USDT-SWAP`  
+after | String | 否 | 请求此id之前（更旧的数据）的分页内容，传的值为对应接口的`subPosId`  
+before | String | 否 | 请求此id之后（更新的数据）的分页内容，传的值为对应接口的`subPosId`  
+limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "closeAvgPx": "28.63",
+                "closeTime": "1669946279797",
+                "instId": "KSM-USDT-SWAP",
+                "lever": "75",
+                "mgnMode": "isolated",
+                "openAvgPx": "28.28",
+                "openOrdId": "518727217543766016",
+                "openTime": "1669946206154",
+                "pnl": "-0.035",
+                "pnlRatio": "-0.92821782178218",
+                "posSide": "short",
+                "subPos": "1",
+                "subPosId": "518727217715351552"
+            },
+            {
+                "closeAvgPx": "28.22",
+                "closeTime": "1669946189065",
+                "instId": "KSM-USDT-SWAP",
+                "lever": "75",
+                "mgnMode": "isolated",
+                "openAvgPx": "28.58",
+                "openOrdId": "518727140142080008",
+                "openTime": "1669946187697",
+                "pnl": "-0.036",
+                "pnlRatio": "-0.9447165850244925",
+                "posSide": "long",
+                "subPos": "1",
+                "subPosId": "518727140221390848"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+subPosId | String | 带单仓位ID  
+posSide | String | 持仓方向  
+long：双向持仓多头  
+short：双向持仓空头  
+net：单向持仓（subPos为正代表多头，subPos为负代表空头）  
+mgnMode | String | 保证金模式，`isolated`：逐仓 ；`cross`：全仓  
+lever | String | 杠杆倍数  
+openOrdId | String | 交易员开仓订单号  
+openAvgPx | String | 开仓均价  
+openTime | String | 开仓时间  
+subPos | String | 持仓张数  
+closeTime | String | 平仓时间(最近一次平仓的时间，即完全平仓的时间)  
+closeAvgPx | String | 平仓均价  
+pnl | String | 收益额  
+pnlRatio | String | 收益率  
+  
+### 交易员止盈止损
+
+#### 限速： 1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/copytrading/algo-order`
+
+> 请求示例
+    
+    
+    POST /api/v5/copytrading/algo-order
+    body
+    {
+        "subPosId": "518541406042591232",
+        "tpTriggerPx": "10000"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subPosId | String | 是 | 带单仓位ID  
+tpTriggerPx | String | 可选 | 止盈触发价，触发后以市价进行委托，tpTriggerPx 和 slTriggerPx
+至少需要填写一个  
+slTriggerPx | String | 可选 | 止损触发价，触发后以市价进行委托  
+tpTriggerPxType | String | 否 | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为last  
+slTriggerPxType | String | 否 | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+默认为last  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "subPosId": "518560559046594560"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subPosId | String | 带单仓位ID  
+  
+### 交易员平仓
+
+#### 限速： 2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/copytrading/close-subposition`
+
+> 请求示例
+    
+    
+    POST /api/v5/copytrading/close-subposition
+    body
+    {
+        "subPosId": "518541406042591232",
+        "tpTriggerPx": "10000"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+subPosId | String | 是 | 带单仓位ID  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "subPosId": "518560559046594560"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+subPosId | String | 带单仓位ID  
+  
+### 交易员获取带单合约
+
+#### 限速： 2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/copytrading/instruments`
+
+> 请求示例
+    
+    
+    GET /api/v5/copytrading/instruments
+    
+    
+
+#### 请求参数
+
+无
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "enabled": true,
+                "instId": "BTC-USDT-SWAP"
+            },
+            {
+                "enabled": true,
+                "instId": "ETH-USDT-SWAP"
+            },
+            {
+                "enabled": false,
+                "instId": "ADA-USDT-SWAP"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+enabled | String | 是否设置了跟单 `true` 或 `false`  
+  
+### 交易员修改带单合约
+
+#### 限速： 2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/copytrading/set-instruments`
+
+> 请求示例
+    
+    
+    POST /api/v5/copytrading/set-instruments
+    body
+    {
+        "instId": "BTC-USDT-SWAP,ETH-USDT-SWAP"
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 是 | 产品ID，如 BTC-USDT-SWAP，多个产品用半角逗号隔开，最多支持10个产品ID  
+如果进行多个合约带单，`instId`传值需要包括所有将要带单的合约，因为当前请求设置成功后，之前的设置会被覆盖掉  
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "enabled": true,
+                "instId": "BTC-USDT-SWAP"
+            },
+            {
+                "enabled": true,
+                "instId": "ETH-USDT-SWAP"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品id， 如 BTC-USDT-SWAP  
+enabled | String | `true` 或 `false`  
+`true` 代表全部设置成功  
+`false` 代表全部设置失败  
+  
+### 交易员历史分润明细
+
+#### 限速： 2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/copytrading/profit-sharing-details`
+
+> 请求示例
+    
+    
+    GET /api/v5/copytrading/profit-sharing-details?limit=2
+    
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+after | String | 否 | 请求此id之前（更旧的数据）的分页内容，传的值为对应接口的`profitSharingId`  
+before | String | 否 | 请求此id之后（更新的数据）的分页内容，传的值为对应接口的`profitSharingId`  
+limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "ccy": "USDT",
+                "nickName": "Potato",
+                "profitSharingAmt": "0.00536",
+                "profitSharingId": "148",
+                "ts": "1669625700000"
+            },
+            {
+                "ccy": "USDT",
+                "nickName": "Apple",
+                "profitSharingAmt": "0.00336",
+                "profitSharingId": "20",
+                "ts": "1669366500000"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ccy | String | 产品ID  
+profitSharingAmt | String | 分润额，没有分润时，默认返回0  
+nickName | String | 跟单人的昵称  
+profitSharingId | String | 分润ID  
+ts | String | 分润时间  
+  
+### 交易员历史分润汇总
+
+#### 限速： 2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/copytrading/total-profit-sharing`
+
+> 请求示例
+    
+    
+    GET /api/v5/copytrading/total-profit-sharing
+    
+    
+
+#### 请求参数
+
+无
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "ccy": "USDT",
+                "totalProfitSharingAmt": "0.6584928"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ccy | String | 分润币种  
+totalProfitSharingAmt | String | 历史分润汇总  
+  
+### 交易员待分润明细
+
+#### 限速： 2次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/copytrading/unrealized-profit-sharing-details`
+
+> 请求示例
+    
+    
+    GET /api/v5/copytrading/unrealized-profit-sharing-details
+    
+    
+
+#### 请求参数
+
+无
+
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "ccy": "USDT",
+                "nickName": "Potato",
+                "ts": "1669901824779",
+                "unrealizedProfitSharingAmt": "0.455472"
+            },
+            {
+                "ccy": "USDT",
+                "nickName": "Apple",
+                "ts": "1669460210113",
+                "unrealizedProfitSharingAmt": "0.033608"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+ccy | String | 分润币种，e.g. `USDT`  
+unrealizedProfitSharingAmt | String | 待分润额  
+nickName | String | 跟单人昵称  
+ts | String | 数据更新时间  
   
 ## 行情数据
 
@@ -16575,9 +17183,12 @@ msg | String | 否 | 错误消息
 
 ### 下单
 
-只有当您的账户有足够的资金才能下单。一旦下单，您的账户资金将在订单生命周期内被冻结。被冻结的资金以及数量取决于订单指定的类型和参数
+只有当您的账户有足够的资金才能下单。一旦下单，您的账户资金将在订单生命周期内被冻结。被冻结的资金以及数量取决于订单指定的类型和参数  
+该频道支持带单合约的下单，但不支持为带单合约平仓
 
 #### 限速：60次/2s
+
+#### 带单合约限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -16770,9 +17381,12 @@ px
 
 ### 批量下单
 
-批量进行下单操作，每次可批量交易不同类型的产品，最多可下单20个
+批量进行下单操作，每次可批量交易不同类型的产品，最多可下单20个  
+该频道支持带单合约的下单，但不支持为带单合约平仓。
 
 #### 限速：300个/2s
+
+#### 带单合约限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -17190,6 +17804,8 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：60次/2s
 
+#### 带单合约限速：1个/2s
+
 #### 限速规则（期权以外）：UserID + Instrument ID
 
 #### 限速规则（只限期权）：UserID + Instrument Family
@@ -17305,6 +17921,8 @@ newSz : 当修改已经部分成交的订单时，新的委托数量必须大于
 批量进行改单操作，每次可批量修改不同类型的产品，最多改20个
 
 #### 限速：300个/2s
+
+#### 带单合约限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -18710,6 +19328,8 @@ msg | String | 否 | 错误消息
             "tag": "adadadadad",
             "actualSz": "",
             "actualPx": "",
+            "code": "0",
+            "msg": "",
             "actualSide": "",
             "triggerTime": "1597026383085",
             "cTime": "1597026383000"
@@ -18784,6 +19404,8 @@ data | Array | 订阅的数据
 > actualSide | String | 实际触发方向，`sl`：止损 `tp`：止盈  
 > triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > reduceOnly | String | 是否只减仓，`true` 或 `false`  
+> code | String | 错误码，默认为0  
+> msg | String | 错误消息，默认为""  
 > cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 高级策略委托订单频道
@@ -22304,6 +22926,18 @@ imr 占用
 51602 | 200 | 订单状态或订单id必须存在一个  
 51603 | 200 | 查询订单不存在  
 51607 | 200 | 文件正在生成中  
+51156 | 200 | 您当前身份为带单交易员。在开平仓模式下，对于带单合约标的不支持使用该接口平仓  
+51159 | 200 | 您当前身份为带单交易员，在买卖模式下，如需使用该接口下单，委托的方向必须与现有持仓和挂单保持一致  
+51162 | 200 | 您当前有 {instrument} 挂单，请撤单后重试  
+51163 | 200 | 您当前有 {instrument} 持仓，请平仓后重试  
+51166 | 200 | 当前产品不支持带单  
+51321 | 200 | 您正在带单。暂不支持使用套利、冰山或时间加权 (TWAP) 策略带单  
+51322 | 200 | 您当前身份为带单交易员。您的带单合约持仓已经市价全平，系统已撤销止盈止损委托并进行平仓  
+51323 | 200 | 您当前身份为带单交易员。您的带单合约仓位已设置止盈止损，请先撤销原有止盈止损订单  
+51324 | 200 | 您当前身份为带单交易员，并持有 {instrument} 仓位。平仓委托张数需要与可平张数一致  
+51325 | 200 | 您当前身份为带单交易员。下止盈止损单时，请选择市价作为委托价格  
+59128 | 200 | 您当前身份为带单交易员。您设置的带单合约 {instrument} 杠杆倍数不能超过 {num}×  
+59216 | 200 | 仓位不存在，请稍后重试  
   
 #### 数据类
 
@@ -22328,6 +22962,12 @@ imr 占用
 51728 | 200 | 申购数量超过最大值  
 51729 | 200 | 该项目尚未到期  
 51730 | 200 | 该项目已售罄  
+51731 | 200 | 产品现在暂停申购  
+51732 | 200 | 用户KYC等级不符合要求  
+51733 | 200 | 用户被风险管理中  
+51734 | 200 | 不支持用户所属KYC国家  
+51735 | 200 | 不支持子帐户  
+51736 | 200 | {ccy} 余额不足  
   
 ### 闪兑
 
