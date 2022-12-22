@@ -8571,7 +8571,8 @@ levelTmp | String | 特约用户的临时体验用户等级，例如 `lv3`
 ctIsoMode | String | 衍生品的逐仓保证金划转模式  
 `automatic`：开仓划转 `autonomy`：自主划转  
 mgnIsoMode | String | 币币杠杆的逐仓保证金划转模式  
-`automatic`：开仓划转 `autonomy`：自主划转 `quick_margin`：一键借币  
+`automatic`：开仓划转 `autonomy`：自主划转
+`quick_margin`：一键借币（对于新的账户，包括新的子账户，有些默认是开仓划转，另外的默认是一键借币）  
 spotOffsetType | String | 现货对冲类型  
 `1`：现货对冲模式U模式 `2`：现货对冲模式币模式 `3`：非现货对冲模式  
 适用于`组合保证金模式`  
@@ -9429,6 +9430,7 @@ greeksType | String | 当前希腊字母展示方式
 isoMode | String | 是 | 逐仓保证金划转模式  
 automatic:开仓自动划转  
 autonomy:自主划转  
+quick_margin:一键借币  
 type | String | 是 | 业务线类型  
   
 MARGIN:币币杠杆  
@@ -9456,6 +9458,7 @@ CONTRACTS:合约
 isoMode | String | 逐仓保证金划转模式  
 automatic:开仓自动划转  
 autonomy:自主划转  
+quick_margin:一键借币  
 衍生品  
 开仓划转：在开仓和平仓时自动占用和释放保证金
 自主划转：需要手动给仓位划入保证金然后开始交易。该选项主要供专业用户使用，会有初次划入仓位资金≥10,000USDT的限制。  杠杆  
