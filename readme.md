@@ -3822,7 +3822,7 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段为""  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
@@ -3996,7 +3996,7 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格。如果还没成交，系统返回`0`。  
+fillPx | String | 最新成交价格。如果还没成交，系统返回""。  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
@@ -8545,7 +8545,8 @@ notes | String | 备注
                 "posMode": "net_mode",
                 "spotOffsetType": "",
                 "uid": "44705892343619584",
-                "label": "V5 Test"
+                "label": "V5 Test",
+                "opAuth": "0"
             }
         ],
         "msg": ""
@@ -8580,6 +8581,8 @@ label | String | 当前请求API Key的备注名，不超过50位字母（区分
 roleType | String | 用户角色。  
 `0`：普通用户；`1`：带单者；`2`：跟单者  
 traderInsts | String | 当前账号已经设置的带单合约，仅适用于带单者  
+opAuth | String | 是否开通期权交易  
+`0` 未开通，`1` 已经开通  
   
 ### 设置持仓模式
 
@@ -9642,12 +9645,12 @@ amt | String | 借/还币的数量
 
 #### HTTP请求
 
-`GET /api/v5/account/borrow-repay-history`
+`GET /api/v5/account/quick-margin-borrow-repay-history`
 
 > 请求示例
     
     
-    GET /api/v5/account/borrow-repay-history
+    GET /api/v5/account/quick-margin-borrow-repay-history
     
     
 
@@ -13100,7 +13103,7 @@ algoId | String | 止盈止损委托单ID
   
 ### 交易员获取历史带单
 
-按照平仓时间倒序排序
+按照平仓时间倒序排序，可获取最近三个月的已经完结状态的订单数据
 
 #### 限速： 2次/2s
 
@@ -13265,7 +13268,6 @@ subPosId | String | 带单仓位ID
     body
     {
         "subPosId": "518541406042591232",
-        "tpTriggerPx": "10000"
     }
     
 
@@ -13344,7 +13346,7 @@ subPosId | String | 带单仓位ID
 **参数名** | **类型** | **描述**  
 ---|---|---  
 instId | String | 产品ID  
-enabled | String | 是否设置了跟单 `true` 或 `false`  
+enabled | Boolean | 是否设置了跟单 `true` 或 `false`  
   
 ### 交易员修改带单合约
 
@@ -20958,7 +20960,7 @@ data | Array | 订阅的数据
 
 ### 产品频道
 
-首次订阅推送产品的全量数据；后续当有产品状态变化时（如期货交割、期权行权、新合约/币对上线、人工暂停/恢复交易等），推送产品的增量数据。
+首次订阅推送产品的全量数据(12月28日起将不再推送全量数据，[点此查看详情](/docs-v5/log_zh/#2022-12-06))；后续当有产品状态变化时（如期货交割、期权行权、新合约/币对上线、人工暂停/恢复交易等），推送产品的增量数据。
 
 > 请求示例
     
@@ -22830,7 +22832,7 @@ REST API 错误码从 50000 到 59999
 50041 | 200 | IP 未被列入白名单列表，请联系客服  
 50044 | 200 | 必须指定一种broker类型  
 50047 | 200 | {0} 已经交割，对应的K线请使用{1}查询  
-50049 | 200 | 无仓位档位信息，该币对不支持杠杆交易  
+50049 | 200 | 无仓位档位信息，该币种不支持杠杆交易  
 50050 | 200 | 您已开通期权交易服务，请勿重复开通  
   
 #### API 类
