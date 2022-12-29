@@ -229,6 +229,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取衍生品标的指数 
       * 获取风险准备金余额 
       * 张币转换 
+      * 获取期权公共成交数据
     * 交易大数据 
       * 获取交易大数据支持币种 
       * 获取主动买入/卖出情况 
@@ -284,6 +285,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 指数K线频道 
       * 指数行情频道 
       * Status 频道 
+      * 期权公共成交频道 
   * 错误码 
     * REST 
       * 公共 
@@ -311,7 +313,7 @@ V5 API只适用于[交易账户](/support/hc/zh-cn/sections/360011507312)。
   * 官方Telegram社群: [OKX API](https://t.me/OKXAPI)
   * 订阅API更新: [OKX API Announcement](https://t.me/OKExAPIChannel)
   * 请花1分钟时间帮助我们提升我们的服务: [V5 API 满意度调研](https://www.wjx.cn/vj/wFoyR0w.aspx)
-  * 添加官方API技术支持QQ社群，QQ号：3555904836 备注：API+姓名+账号，与专业量化人员交流。如果添加过程中遇到问题，请与官网客服联系！
+  * 添加官方API技术支持QQ社群，QQ号：1511380438 备注：API+姓名+账号，与专业量化人员交流。如果添加过程中遇到问题，请与官网客服联系！
 
 ## 创建我的APIKey
 
@@ -5913,7 +5915,7 @@ chain | String | 支持提币的链
 minWd | String | 币种单笔最小提币量  
 wdAll | String | 该币种资产是否必须一次性全部提取  
 fee | String | 提币固定手续费，单位是`USDT`  
-ctAddr | Boolean | 合约地址后6位  
+ctAddr | String | 合约地址后6位  
 wdTickSz | String | 提币精度,表示小数点后的位数  
 needTag | Boolean | 提币的链是否需要标签（tag/memo）信息  
   
@@ -13103,7 +13105,7 @@ algoId | String | 止盈止损委托单ID
   
 ### 交易员获取历史带单
 
-按照平仓时间倒序排序，可获取最近三个月的已经完结状态的订单数据
+可获取最近三个月的已经完结状态的带单数据，按照平仓时间倒序排序。
 
 #### 限速： 2次/2s
 
@@ -13399,11 +13401,13 @@ instId | String | 是 | 产品ID，如 BTC-USDT-SWAP，多个产品用半角逗�
 **参数名** | **类型** | **描述**  
 ---|---|---  
 instId | String | 产品id， 如 BTC-USDT-SWAP  
-enabled | String | `true` 或 `false`  
+enabled | Boolean | `true` 或 `false`  
 `true` 代表全部设置成功  
 `false` 代表全部设置失败  
   
 ### 交易员历史分润明细
+
+可获取所有历史分润明细
 
 #### 限速： 2次/2s
 
@@ -13507,6 +13511,8 @@ ccy | String | 分润币种
 totalProfitSharingAmt | String | 历史分润汇总  
   
 ### 交易员待分润明细
+
+当有跟单仓位平仓时，待分润明细会进行更新
 
 #### 限速： 2次/2s
 
@@ -13976,8 +13982,8 @@ ts | String | 深度产生的时间
 instId | String | 是 | 产品ID，如`BTC-USD-190927-5000-C`  
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
-香港时间开盘价k线：[6H/12H/1D/2D/3D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[/6Hutc/12Hutc/1Dutc/2Dutc/3Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+香港时间开盘价k线：[6H/12H/1D/2D/3D/1W/1M/3M]  
+UTC时间开盘价k线：[/6Hutc/12Hutc/1Dutc/2Dutc/3Dutc/1Wutc/1Mutc/3Mutc]  
 after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内容，传的值为对应接口的`ts`  
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 limit | String | 否 | 分页返回的结果集数量，最大为300，不填默认返回100条  
@@ -14065,8 +14071,8 @@ after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
-香港时间开盘价k线：[6H/12H/1D/2D/3D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/2Dutc/3Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+香港时间开盘价k线：[6H/12H/1D/2D/3D/1W/1M/3M]  
+UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/2Dutc/3Dutc/1Wutc/1Mutc/3Mutc]  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -14151,8 +14157,8 @@ after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
-香港时间开盘价k线：[6H/12H/1D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[/6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+香港时间开盘价k线：[6H/12H/1D/1W/1M/3M]  
+UTC时间开盘价k线：[/6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc]  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -14293,8 +14299,8 @@ after | String | 否 | 请求此时间戳之前（更旧的数据）的分页内
 before | String | 否 | 请求此时间戳之后（更新的数据）的分页内容，传的值为对应接口的`ts`  
 bar | String | 否 | 时间粒度，默认值`1m`  
 如 [1m/3m/5m/15m/30m/1H/2H/4H]  
-香港时间开盘价k线：[6H/12H/1D/1W/1M/3M/6M/1Y]  
-UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc/6Mutc/1Yutc]  
+香港时间开盘价k线：[6H/12H/1D/1W/1M/3M]  
+UTC时间开盘价k线：[6Hutc/12Hutc/1Dutc/1Wutc/1Mutc/3Mutc]  
 limit | String | 否 | 分页返回的结果集数量，最大为100，不填默认返回100条  
   
 > 返回结果
@@ -16360,6 +16366,77 @@ instId | String | 产品ID
 px | String | 委托价格  
 sz | String | 数量，张转币时，为币的数量，币转张时，为张的数量  
 unit | String | 币的单位，coin: 币，usdt: usdt  
+  
+### 获取期权公共成交数据
+
+最多返回最近的100条成交数据
+
+#### 限速： 20次/2s
+
+#### 限速规则：IP
+
+#### HTTP请求
+
+`GET /api/v5/public/option-trades`
+
+> 请求示例
+    
+    
+    GET /api/v5/public/option-trades?instFamily=BTC-USDT
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instId | String | 可选 | 产品ID，如 BTC-USD-221230-4000-C，`instId` 和 `instFamily`
+必须传一个，若传两个，以 `instId` 为主  
+instFamily | String | 可选 | 交易品种，如 BTC-USD  
+optType | String | 否 | 期权类型，`C`：看涨期权 `P`：看跌期权  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "data": [
+            {
+                "fillVol": "0.24415013671875",
+                "fwdPx": "16676.907614127158",
+                "indexPx": "16667",
+                "instFamily": "BTC-USD",
+                "instId": "BTC-USD-221230-16600-P",
+                "markPx": "0.006308943261227884",
+                "optType": "P",
+                "px": "0.005",
+                "side": "sell",
+                "sz": "30",
+                "tradeId": "65",
+                "ts": "1672225112048"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instId | String | 产品ID  
+instFamily | String | 交易品种  
+tradeId | String | 成交ID  
+px | String | 成交价格  
+sz | String | 成交数量  
+side | String | 成交方向  
+`buy`：买  
+`sell`：卖  
+optType | String | 期权类型，C：看涨期权 P：看跌期权 ，仅适用于期权  
+fillVol | String | 成交时的隐含波动率（对应成交价格）  
+fwdPx | String | 成交时的远期价格  
+indexPx | String | 成交时的指数价格  
+markPx | String | 成交时的标记价格  
+ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`1597026383085`  
   
 ## 交易大数据
 
@@ -20960,7 +21037,8 @@ data | Array | 订阅的数据
 
 ### 产品频道
 
-首次订阅推送产品的全量数据(12月28日起将不再推送全量数据，[点此查看详情](/docs-v5/log_zh/#2022-12-06))；后续当有产品状态变化时（如期货交割、期权行权、新合约/币对上线、人工暂停/恢复交易等），推送产品的增量数据。
+当有产品状态变化时（如期货交割、期权行权、新合约/币对上线、人工暂停/恢复交易等），推送产品的增量数据。  
+(2022年12月28日起不再推送全量数据，[点此查看详情](/docs-v5/log_zh/#2022-12-06))；
 
 > 请求示例
     
@@ -21375,14 +21453,13 @@ data | Array | 订阅的数据
 op | String | 是 | 操作，`subscribe` `unsubscribe`  
 args | Array | 是 | 请求订阅的频道列表  
 > channel | String | 是 | 频道名，  
-`candle1Y`  
-`candle6M` `candle3M` `candle1M`  
+`candle3M` `candle1M`  
 `candle1W`  
 `candle1D` `candle2D` `candle3D` `candle5D`  
 `candle12H` `candle6H` `candle4H` `candle2H` `candle1H`  
 `candle30m` `candle15m` `candle5m` `candle3m` `candle1m`  
-`candle1Yutc` `candle3Mutc` `candle1Mutc` `candle1Wutc` `candle1Dutc`
-`candle2Dutc` `candle3Dutc` `candle5Dutc` `candle12Hutc` `candle6Hutc`  
+`candle3Mutc` `candle1Mutc` `candle1Wutc` `candle1Dutc` `candle2Dutc`
+`candle3Dutc` `candle5Dutc` `candle12Hutc` `candle6Hutc`  
 > instId | String | 是 | 产品ID  
   
 > 成功返回示例
@@ -21781,8 +21858,6 @@ data | Array | 订阅的数据
 op | String | 是 | 操作，`subscribe` `unsubscribe`  
 args | Array | 是 | 请求订阅的频道列表  
 > channel | String | 是 | 频道名  
-`mark-price-candle1Y`  
-`mark-price-candle6M`  
 `mark-price-candle3M`  
 `mark-price-candle1M`  
 `mark-price-candle1W`  
@@ -21800,7 +21875,6 @@ args | Array | 是 | 请求订阅的频道列表
 `mark-price-candle5m`  
 `mark-price-candle3m`  
 `mark-price-candle1m`  
-`mark-price-candle1Yutc`  
 `mark-price-candle3Mutc`  
 `mark-price-candle1Mutc`  
 `mark-price-candle1Wutc`  
@@ -22484,8 +22558,6 @@ data | Array | 订阅的数据
 op | String | 是 | 操作，`subscribe` `unsubscribe`  
 args | Array | 是 | 请求订阅的频道列表  
 > channel | String | 是 | 频道名，  
-`index-candle1Y`  
-`index-candle6M`  
 `index-candle3M`  
 `index-candle1M`  
 `index-candle1W`  
@@ -22503,7 +22575,6 @@ args | Array | 是 | 请求订阅的频道列表
 `index-candle5m`  
 `index-candle3m`  
 `index-candle1m`  
-`index-candle1Yutc`  
 `index-candle3Mutc`  
 `index-candle1Mutc`  
 `index-candle1Wutc`  
@@ -22774,6 +22845,118 @@ data | Array | 订阅的数据
 > scheDesc | String | 改期进度说明，如： `由 2021-01-26T16:30:00.000Z 改期到
 > 2021-01-28T16:30:00.000Z`  
 > ts | String | 推送时间，Unix时间戳的毫秒数格式，如：`1617788463867`  
+  
+### 期权公共成交频道
+
+获取最近的期权成交数据，有成交数据就推送，每次推送仅包含一条成交数据。
+
+> 请求示例
+    
+    
+    {
+        "op": "subscribe",
+        "args": [{
+            "channel": "option-trades",
+            "instType": "OPTION",
+            "instFamily": "BTC-USD"
+        }]
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+op | String | 是 | 操作，`subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `option-trades`  
+> instType | String | 是 | 产品类型，`OPTION`：期权  
+> instId | String | 可选 | 产品ID，如 BTC-USD-221230-4000-C，`instId` 和 `instFamily`
+> 必须传一个，若传两个，以 `instId` 为主  
+> instFamily | String | 可选 | 交易品种，如 BTC-USD  
+  
+> 成功返回示例
+    
+    
+    {
+        "event": "subscribe",
+        "arg": {
+            "channel": "option-trades",
+            "instType": "OPTION",
+            "instFamily": "BTC-USD"
+        }
+    }
+    
+    
+
+> 失败返回示例
+    
+    
+    {
+        "event": "error",
+        "code": "60012",
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"statuss\"}]}"
+    }
+    
+
+#### 返回参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+event | String | 是 | 事件，`subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg": {
+            "channel": "option-trades",
+            "instType": "OPTION",
+            "instFamily": "BTC-USD"
+        },
+        "data": [
+            {
+                "fillVol": "0",
+                "fwdPx": "16329.467390999998",
+                "indexPx": "16838.6",
+                "instFamily": "BTC-USD",
+                "instId": "BTC-USD-221230-15500-C",
+                "markPx": "0.05168589443944297",
+                "optType": "C",
+                "px": "0.01",
+                "sz": "1",
+                "tradeId": "2",
+                "ts": "1672043376263"
+            }
+        ]
+    }
+    
+
+#### 推送数据参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+data | Array | 订阅的数据  
+> instId | String | 产品ID  
+> instFamily | String | 交易品种  
+> tradeId | String | 成交ID  
+> px | String | 成交价格  
+> sz | String | 成交数量  
+> side | String | 成交方向  
+`buy`：买  
+`sell`：卖  
+> optType | String | 期权类型，C：看涨期权 P：看跌期权 ，仅适用于期权  
+> fillVol | String | 成交时的隐含波动率（对应成交价格）  
+> fwdPx | String | 成交时的远期价格  
+> indexPx | String | 成交时的指数价格  
+> markPx | String | 成交时的标记价格  
+> ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`1597026383085`  
   
 # 错误码
 
@@ -23309,6 +23492,7 @@ imr 占用
 59311 | 200 | 存在尊享借币，无法设置  
 59312 | 200 | {币种}不支持尊享借币  
 59313 | 200 | 无法还币。在一键借币模式下，您目前没有 ${ccy} 借币（币对：${ccyPair}）  
+59316 | 200 | 当前用户该币种存在借币申请中的订单，不允许借币  
 51152 | 200 | 一键借币模式下，不支持自动借币与自动还币和手动类型混合下单。  
 59401 | 200 | 持仓价值达到持仓限制  
 59402 | 200 | 查询条件中的instId的交易产品当前不是可交易状态，请填写单个instid逐个查询状态详情  
