@@ -21703,7 +21703,6 @@ arg | Object | 否 | 订阅的频道
 > instType | String | 是 | 产品类型  
 `FUTURES`：交割合约  
 `OPTION`：期权  
-`SWAP`：永续  
 > instFamily | String | 否 | 交易品种  
 > instId | String | 否 | 产品ID  
 code | String | 否 | 错误码  
@@ -22920,17 +22919,18 @@ msg | String | 否 | 错误消息
         },
         "data": [
             {
-                "fillVol": "0",
-                "fwdPx": "16329.467390999998",
-                "indexPx": "16838.6",
+                "fillVol": "0.5066007836914062",
+                "fwdPx": "16469.69928595038",
+                "indexPx": "16537.2",
                 "instFamily": "BTC-USD",
-                "instId": "BTC-USD-221230-15500-C",
-                "markPx": "0.05168589443944297",
+                "instId": "BTC-USD-230224-18000-C",
+                "markPx": "0.04690107010619562",
                 "optType": "C",
-                "px": "0.01",
-                "sz": "1",
-                "tradeId": "2",
-                "ts": "1672043376263"
+                "px": "0.045",
+                "side": "sell",
+                "sz": "2",
+                "tradeId": "38",
+                "ts": "1672286551080"
             }
         ]
     }
