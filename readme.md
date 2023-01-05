@@ -352,7 +352,7 @@ AWS 地址如下：
 
 模拟盘API交易需要在模拟盘上创建APIKey：
 
-登录欧易账户—>资产管理—>开始模拟盘交易—>个人中心—>创建模拟盘APIKey—>开始模拟交易
+登录欧易账户—>交易—>模拟交易—>个人中心—>创建模拟盘APIKey—>开始模拟交易
 
 注意：模拟盘的请求的header里面需要添加 "x-simulated-trading: 1"。
 
@@ -773,8 +773,8 @@ data | Array of objects | 询价单结果
 > cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 询价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
-`traded_away`  
+有效值为 `active` `canceled` `pending_fill` `filled` `expired` `traded_away`
+`failed`  
 `traded_away` 仅适用于报价方  
 > counterparties | Array of strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
@@ -1537,7 +1537,7 @@ data | Array of objects | 包含结果的对象数组
 > cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 报价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `failed`  
+有效值为 `active` `canceled` `pending_fill` `filled` `expired` `failed`  
 > reason | String | 状态原因. 有效值包括 `mmp_canceled`.  
 > validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
@@ -1941,7 +1941,7 @@ clRfqId | String | 否 | 询价单自定义ID， 当 clRfqId 和 rfqId 都传时
 quoteId | String | 否 | 报价单ID  
 clQuoteId | String | 否 | 报价单自定义ID，当 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
 state | String | 否 | 报价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `failed`  
+有效值为 `active` `canceled` `pending_fill` `filled` `expired` `failed`  
 beginId | String | 否 | 请求的起始报价单ID，请求此ID之后（更新的数据）的分页内容，不包括 beginId  
 endId | String | 否 | 请求的结束报价单ID，请求此ID之前（更旧的数据）的分页内容，不包括 endId  
 limit | String | 否 | 返回结果的数量，最大为100，默认100条  
@@ -2366,9 +2366,7 @@ data | Array | 订阅的数据
 > cTime | String | 询价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 询价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 询价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `traded_away` `failed`
-`traded_away`  
-`traded_away` 仅适用于报价方  
+有效值为 `active` `canceled` `filled` `expired` or `failed`  
 > counterparties | Array of Strings | 报价方列表  
 > validUntil | String | 询价单的过期时间，Unix时间戳的毫秒数格式。  
 > clRfqId | String | 询价单自定义ID，为客户敏感信息，不会公开，对报价方返回""。  
@@ -2500,7 +2498,7 @@ data | Array | 订阅的数据
 > cTime | String | 报价单创建时间，Unix时间戳的毫秒数格式。  
 > uTime | String | 报价单状态更新时间，Unix时间戳的毫秒数格式。  
 > state | String | 报价单的状态  
-`active` `canceled` `pending_fill` `filled` `expired` `failed`  
+有效值为 `active` `canceled` `filled` `expired` `failed`  
 > reason | String | 状态原因,有效值包括`mmp_canceled`  
 > validUntil | String | 报价单的过期时间，Unix时间戳的毫秒数格式。  
 > rfqId | String | 询价单ID  
@@ -2976,7 +2974,7 @@ API key 有如下3种权限，一个 API key 可以有一个或多个权限。
   * 提现 - 可以进行提币，查询账单和历史记录等账户信息；
   * 交易 - 可以下单和撤单，查询账单和历史记录等账户信息。
 
-每个APIKey最多可绑定20个IP地址；未绑定IP且拥有交易或提币权限的APIKey，将在闲置30天之后自动删除。
+每个APIKey最多可绑定20个IP地址；未绑定IP且拥有交易或提币权限的APIKey，将在闲置14天之后自动删除。
 
 ### 发起请求
 
@@ -6277,7 +6275,8 @@ type | String | 否 | 账单类型
 `128`：投资手续费转出  
 `129`：奖励转入  
 `130`：从交易账户转入  
-`131`：转出至交易账户`132`：客服冻结  
+`131`：转出至交易账户  
+`132`：客服冻结  
 `133`：客服解冻  
 `134`：客服转交  
 `135`：跨链兑换  
@@ -23585,6 +23584,7 @@ imr 占用
 70506 | 200 | 腿的数量比例与原RFQ不一致  
 70507 | 200 | 部分执行尝试失败。须设置allowPartialExecution为`true`  
 70508 | 200 | 没有可用的产品设置。  
+70509 | 200 | 交易执行失败：对手方相关错误  
 70511 | 200 | 正在执行报价  
 56000 | 200 | 大宗交易不存在  
 56001 | 200 | 多腿的数量不能超过 {legLimit}  
