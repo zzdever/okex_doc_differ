@@ -100,6 +100,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 闪电网络提币 
       * 撤销提币 
       * 获取提币记录 
+      * 获取充值/提现的详细状态
       * 小额资产兑换 
       * 获取余币宝余额 
       * 余币宝申购/赎回 
@@ -633,7 +634,7 @@ expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格
             {
                 "traderName" : "Satoshi Nakamoto",
                 "traderCode" : "SATOSHI",
-                "type" : "" //Currently not live
+                "type" : "" 
             }
         ]
     }
@@ -645,7 +646,7 @@ expTime | String | 否 | 请求有效截止时间。Unix时间戳的毫秒数格
 ---|---|---  
 traderName | String | 报价方名称  
 traderCode | String | 报价方唯一标识代码，公开可见；报价和询价的相关接口都使用该代码代表报价方。  
-type | String | 报价方类型（当前未生效，将返回 "" ）  
+type | String | 报价方类型  
   
 ### 询价
 
@@ -2416,7 +2417,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
       "event": "subscribe",
       "arg": {
-        "channel": "account"
+        "channel": "quotes"
       }
     }
     
@@ -4348,7 +4349,7 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段为``  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
@@ -6904,6 +6905,85 @@ state | String | 提币状态
 wdId | String | 提币申请ID  
 clientId | String | 客户自定义ID  
   
+### 获取充值/提现的详细状态
+
+获取充值与提现的详细状态信息与预估完成时间。
+
+#### 限速： 1次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/asset/deposit-withdraw-status`
+
+> 请求示例
+    
+    
+    // 查询充值
+    GET /api/v5/asset/deposit-withdraw-status?txId=xxxxxx&to=1672734730284&ccy=USDT&chain=USDT-ERC20
+    
+    // 查询提现
+    GET /api/v5/asset/deposit-withdraw-status?wdId=200045249
+    
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+wdId | String | 可选 | 提币申请ID，用于查询资金提现  
+`wdId`与`txId`必传其一也仅可传其一  
+txId | String | 可选 | 区块转账哈希记录ID，用于查询资金充值  
+`wdId`与`txId`必传其一也仅可传其一  
+ccy | String | 可选 | 币种，如`USDT`  
+查询充值时必填，需要与txId一并提供  
+to | String | 可选 | 资金充值到账账户地址  
+查询充值时必填，需要与txId一并提供  
+chain | String | 可选 | 币种链信息，例如 USDT-ERC20  
+查询充值时必填，需要与txId一并提供  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "data":[
+            {
+                "wdId": "200045249",
+                "txId": "16f3638329xxxxxx42d988f97", //此时提现如生成了txId将一并返回
+                "state": "Pending withdrawal: Wallet is under maintenance, please wait.",
+                "estCompleteTime": "01/09/2023, 8:10:48 PM"
+            }
+        ],
+        "msg": ""
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+estCompleteTime | String | 预估完成时间  
+时区为 UTC+8；格式为 MM/dd/yyyy, h:mm:ss AM/PM  
+estCompleteTime仅为预估完成时间，仅供参考  
+state | String | 充值/提现的现处于的详细阶段提示  
+冒号前面代表阶段，后面代表状态  
+txId | String | 区块转账哈希记录  
+如查询的是提现，则txId返回为空""，此时提现如生成了txId将一并返回  
+wdId | String | 提币申请ID  
+如查询的是充值，则wdId返回为空""  
+阶段参考  
+充值  
+阶段一：监测链上交易  
+阶段二：推送充值数据到入账环节  
+阶段三：进行入账  
+终态：充值已完成  
+提现  
+阶段一：等待提现  
+阶段二：提现中  
+终态：提现已完成 / 撤销已完成  
+
 ### 小额资产兑换
 
 将资金账户中的小额资产转化为`OKB`。24小时之内只能兑换一次。
@@ -16886,9 +16966,9 @@ ts | String | 数据产生时间
 expTime | String | 到期日（格式: YYYYMMDD，例如："20210623"）  
 callOI | String | 看涨持仓总量（以`币`为单位）  
 putOI | String | 看跌持仓总量（以`币`为单位）  
-callVolume | String | 看涨交易总量（以`币`为单位）  
-putVolume | String | 看跌交易总量（以`币`为单位）  
-返回值数组顺序分别为是：[ts,expTime,callOI,putOI,callVolume,putVolume]
+callVol | String | 看涨交易总量（以`币`为单位）  
+putVol | String | 看跌交易总量（以`币`为单位）  
+返回值数组顺序分别为是：[ts,expTime,callOI,putOI,callVol,putVol]
 
 ### 看涨看跌持仓总量及交易总量（按执行价格分）
 
@@ -16952,9 +17032,9 @@ ts | String | 数据产生时间
 strike | String | 执行价格  
 callOI | String | 看涨持仓总量（以`币`为单位）  
 putOI | String | 看跌持仓总量（以`币`为单位）  
-callVolume | String | 看涨交易总量（以`币`为单位）  
-putVolume | String | 看跌交易总量（以`币`为单位）  
-返回值数组顺序分别为是：[ts,strike,callOI,putOI,callVolume,putVolume]
+callVol | String | 看涨交易总量（以`币`为单位）  
+putVol | String | 看跌交易总量（以`币`为单位）  
+返回值数组顺序分别为是：[ts,strike,callOI,putOI,callVol,putVol]
 
 ### 看跌/看涨期权合约 主动买入/卖出量
 
@@ -17048,17 +17128,20 @@ state | String | No | 系统的状态，`scheduled`:等待中 ; `ongoing`:进行
     
     {
         "code": "0",
-        "msg": "",
-        "data": [{
-            "title": "Spot System Upgrade",
-            "state": "scheduled",
-            "begin": "1620723600000",
-            "end": "1620724200000",
-            "href": "",
-            "serviceType": "1",
-            "system": "classic",
-            "scheDesc": ""    
-        }]
+        "data": [
+            {
+                "begin": "1672823400000",
+                "end": "1672823520000",
+                "href": "",
+                "preOpenBegin": "",
+                "scheDesc": "",
+                "serviceType": "8",
+                "state": "completed",
+                "system": "unified",
+                "title": "Trading account system upgrade (in batches of accounts)"
+            }
+        ],
+        "msg": ""
     }
     
 
@@ -22811,17 +22894,20 @@ msg | String | 否 | 错误消息
         "arg": {
             "channel": "status"
         },
-        "data": [{
-            "title": "Spot System Upgrade",
-            "state": "scheduled",
-            "begin": "1610019546",
-            "href": "",
-            "end": "1610019546",
-            "serviceType": "1",
-            "system": "classic",
-            "scheDesc": "",
-            "ts": "1597026383085"
-        }]
+        "data": [
+            {
+                "begin": "1672823400000",
+                "end": "1672825980000",
+                "href": "",
+                "preOpenBegin": "",
+                "scheDesc": "",
+                "serviceType": "0",
+                "state": "completed",
+                "system": "unified",
+                "title": "Trading account WebSocket system upgrade",
+                "ts": "1672826038470"
+            }
+        ]
     }
     
 
@@ -23462,20 +23548,20 @@ imr 占用
 
 错误码 | HTTP 状态码 | 错误提示  
 ---|---|---  
-59000 | 200 | 挂单或持仓存在，无法设置  
+59000 | 200 | 设置失败，请在设置前关闭任何挂单或持仓  
 59001 | 200 | 当前存在借币，暂不可切换  
-59002 | 200 | 子账户挂单、持仓或策略存在，无法设置  
+59002 | 200 | 子账户设置失败，请在设置前关闭任何子账户挂单、持仓或策略  
 59004 | 200 | 只支持同一业务线下交易产品ID  
 59005 | 200 | 逐仓自主划转保证金模式，初次划入仓位的资产价值需大于 10,000 USDT  
-59100 | 200 | 当前存在持仓，请撤销所有挂单后进行杠杆倍数修改  
-59101 | 200 | 当前业务存在逐仓挂单，请撤销所有挂单后进行杠杆倍数修改  
-59102 | 200 | 杠杆倍数超过最大杠杆倍数，请重新调整杠杆倍数  
-59103 | 200 | 杠杆倍数过低，账户中没有足够的可用保证金可以追加，请重新调整杠杆倍数  
-59104 | 200 | 杠杆倍数过高，借币仓位已超过该杠杆倍数的最大仓位，请重新调整杠杆倍数  
-59105 | 400 | 杠杆倍数设置不能小于{0}，请重新调整杠杆倍数  
+59100 | 200 | 杠杆倍数无法修改，请撤销所有挂单后进行杠杆倍数修改  
+59101 | 200 | 杠杆倍数无法修改，请撤销所有逐仓挂单后进行杠杆倍数修改  
+59102 | 200 | 杠杆倍数超过最大杠杆倍数，请降低杠杆倍数  
+59103 | 200 | 杠杆倍数过低，账户中没有足够的可用保证金可以追加，请提高杠杆倍数  
+59104 | 200 | 杠杆倍数过高，借币仓位已超过该杠杆倍数的最大仓位，请降低杠杆倍数  
+59105 | 400 | 杠杆倍数设置不能小于{0}，请提高杠杆倍数  
 59106 | 200 | 您下单后仓位总张数所处档位的最高可用杠杆为{0}，请重新调整  
-59107 | 200 | 当前业务存在全仓挂单，请撤销所有挂单后进行杠杆倍数修改  
-59108 | 200 | 杠杆倍数过低，账户中保证金不足，请重新调整杠杆倍数  
+59107 | 200 | 杠杆倍数无法修改，请撤销所有全仓挂单后修改杠杆倍数  
+59108 | 200 | 杠杆倍数过低，账户中保证金不足，请提高杠杆倍数  
 59109 | 200 | 调整后，账户权益小于所需保证金，请重新调整杠杆倍数  
 59110 | 200 | 该{0}对应的产品业务线不支持使用tgtCcy参数  
 59111 | 200 | PM账户下衍生品全仓不支持杠杆查询  
@@ -23504,7 +23590,7 @@ imr 占用
 59501 | 200 | 每个账户最多可创建 50个APIKey  
 59502 | 200 | 备注名不可以与当前已创建的APIKey备注名重复  
 59503 | 200 | 每个 APIKey 最多可以绑定20个IP地址  
-59504 | 200 | 子账户不支持提币功能  
+59504 | 200 | 子账户不支持提币功能，请在主账户中进行提币  
 59505 | 200 | passphrase 格式不正确，支持6-32位字母和数字组合  
 （区分大小写，不支持空格符号）  
 59506 | 200 | APIKey 不存在  
