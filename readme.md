@@ -22,9 +22,9 @@ API接口 Broker接入 最佳实践 更新日志
       * REST 
       * WebSocket 
     * 限速 
-      * 交易相关API
-      * 最佳实践
-  * 做市商申请
+      * 交易相关API 
+      * 最佳实践 
+  * 做市商申请 
   * 交互式浏览器 
     * 使用说明 
   * 大宗交易 
@@ -265,6 +265,8 @@ API接口 Broker接入 最佳实践 更新日志
       * 高级策略委托订单频道 
       * 爆仓风险预警推送频道 
       * 账户greeks频道 
+      * 充值信息频道 
+      * 提币信息频道 
       * 现货网格策略委托订单频道 
       * 合约网格策略委托订单频道 
       * 天地网格策略委托订单频道 
@@ -381,13 +383,13 @@ AWS 地址如下：
 
   * 策略策略委托订单最大挂单数： 
 
-    * 计划委托：5,000个  
+    * 计划委托：500个  
 
     * 移动止盈止损：50个  
 
     * 冰山委托：100个  
 
-    * 时间加权委托：20个
+    * 时间加权委托：20个  
 
 返回数据规则如下：
 
@@ -1548,12 +1550,12 @@ data | Array of objects | 包含结果的对象数组
 > tag | String | 报价单标签，与此报价单关联的大宗交易将有相同的标签。  
 > traderCode | String | 报价方唯一标识代码。  
 > quoteSide | String |
-> 报价单方向，`buy`或者`sell`。当报价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
+> 报价单方向，有效值为`buy`或者`sell`。当报价单方向为`buy`，对maker来说，执行方向与legs里的方向相同，对taker来说相反。反之同理。  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> sz | String | 委托数量  
 >> px | String | 委托价格  
->> side | String | 报价单方向  
+>> side | String | 腿的方向，有效值为`buy`或者`sell`。  
 >> posSide | String | 持仓方向  
 单向持仓模式下默认为`net`。如未指定，则返回""，相当于`net`。  
 在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
@@ -1684,7 +1686,7 @@ quoteIds 为准。
     
     {
         "code":"2",
-        "msg":"Bulk operation partially ",
+        "msg":"Bulk operation partially succeeded.",
         "data":[
             {
                 "quoteId":"1150",
@@ -5784,7 +5786,7 @@ canInternal | Boolean | 是否可内部转账，`false`表示不可内部转账�
 minDep | String | 币种单笔最小充值量  
 minWd | String | 币种单笔最小提币量  
 maxWd | String | 币种单笔最大提币量  
-wdTickSz | String | 提币精度,表示小数点后的位数  
+wdTickSz | String | 提币精度,表示小数点后的位数。提币手续费精度与提币精度保持一致。  
 wdQuota | String | 过去24小时内提币额度，单位为`BTC`  
 usedWdQuota | String | 过去24小时内已用提币额度，单位为`BTC`  
 minFee | String | 最小提币手续费数量  
@@ -5913,7 +5915,7 @@ canWd | Boolean | 是否可提
 chain | String | 支持提币的链  
 minWd | String | 币种单笔最小提币量  
 wdAll | String | 该币种资产是否必须一次性全部提取  
-fee | String | 提币固定手续费，单位是`USDT`  
+fee | String | 提币固定手续费，单位是`USDT`。提币手续费精度为小数点后8位。  
 ctAddr | String | 合约地址后6位  
 wdTickSz | String | 提币精度,表示小数点后的位数  
 needTag | Boolean | 提币的链是否需要标签（tag/memo）信息  
@@ -6327,6 +6329,13 @@ type | String | 否 | 账单类型
 `198`：无效资产减少  
 `199`：有效资产增加  
 `200`：买入  
+`202`：价格锁定申购  
+`203`：价格锁定回款  
+`204`：价格锁定收益  
+`205`：价格锁定退款  
+`207`：双币赢精简版申购  
+`208`：双币赢精简版回款  
+`209`：双币赢精简版收益  
 `210`：双币赢精简版退款  
 `211`：投聪夺币中奖  
 `212`：多币种借贷锁定质押物  
@@ -6519,7 +6528,7 @@ ctAddr | String | 合约地址后6位
 
 根据币种，充值状态，时间范围获取充值记录，按照时间倒序排列，默认返回 100 条数据。
 
-#### 限速： 6 次/s
+#### 限速： 6次/s
 
 #### 限速规则：UserID
 
@@ -6554,6 +6563,7 @@ state | String | 否 | 充值状态
 `1`：确认到账  
 `2`：充值成功  
 `8`：因该币种暂停充值而未到账，恢复充值后自动到账  
+`11`：命中地址黑名单  
 `12`：账户或充值被冻结  
 `13`：子账户充值拦截  
 after | String | 否 | 查询在此之前的内容，值为时间戳，Unix 时间戳为毫秒数格式，如 `1654041600000`  
@@ -6603,6 +6613,7 @@ state | String | 充值状态
 `1`：确认到账  
 `2`：充值成功  
 `8`：因该币种暂停充值而未到账，恢复充值后自动到账  
+`11`：命中地址黑名单  
 `12`：账户或充值被冻结  
 `13`：子账户充值拦截  
 depId | String | 充值记录 ID  
@@ -20309,6 +20320,275 @@ data | Array | 订阅的数据
 
 例：按照所有币种订阅且有5个币种资产都不为0，首次和定时推全部5个；账户的某个币种资产改变，那么账户greeks变更的触发只推这一个。
 
+### 充值信息频道
+
+该频道使用如下服务地址  
+wss://ws.okx.com:8443/ws/v5/business，wss://wsaws.okx.com:8443/ws/v5/business
+
+当发起充值或者充值状态发生变化时会触发消息推送。  
+支持母账户或者子账户的订阅  
+
+  * 如果是母账户订阅，可以同时接受母账户与子账户的充值信息的推送  
+
+  * 如果是子账户订阅，则仅支持子账户充值信息的推送  
+
+> 请求示例
+    
+    
+    {
+        "op": "subscribe",
+        "args": [
+            {
+                "channel": "deposit-info"
+            }
+        ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `deposit-info`  
+> ccy | String | 否 | 币种名称，如 `BTC`  
+  
+> 成功返回示例
+    
+    
+    {
+        "event": "subscribe",
+        "arg": {
+            "channel": "deposit-info"
+        }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+        "event": "error",
+        "code": "60012",
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"deposit-info\""}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `deposit-info`  
+> ccy | String | 否 | 币种名称，如 `BTC`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg": {
+            "channel": "deposit-info",
+            "uid": "289320****60975104"
+        },
+        "data": [{
+            "actualDepBlkConfirm": "0",
+            "amt": "1",
+            "areaCodeFrom": "",
+            "ccy": "USDT",
+            "chain": "USDT-TRC20",
+            "depId": "88165462",
+            "from": "",
+            "pTime": "1674103661147",
+            "state": "0",
+            "subAcct": "test",
+            "to": "TEhFAqpuHa3LY*****8ByNoGnrmexeGMw",
+            "ts": "1674103661123",
+            "txId": "bc5376817*****************dbb0d729f6b",
+            "uid": "289320****60975104"
+        }]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 用户标识  
+> ccy | String | 币种名称，如 `BTC`  
+data | Array | 订阅的数据  
+> uid | String | (产生数据者的）用户标识  
+> subAcct | String | 子账户名称  
+如果是母账户产生的数据，该字段返回""  
+> pTime | String | 推送时间，Unix时间戳的毫秒数格式，如 1597026383085  
+> ccy | String | 币种名称，如 `BTC`  
+> chain | String | 币种链信息  
+有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
+> amt | String | 充值数量  
+> from | String | 充值账户，只显示内部账户转账地址，不显示区块链充值地址  
+> areaCodeFrom | String | 如果`from`为手机号，该字段为该手机号的区号  
+> to | String | 到账地址  
+> txId | String | 区块转账哈希记录  
+> ts | String | 数据更新时间，Unix 时间戳的毫秒数格式，如 `1655251200000`  
+> state | String | 充值状态  
+`0`：等待确认  
+`1`：确认到账  
+`2`：充值成功  
+`8`：因该币种暂停充值而未到账，恢复充值后自动到账  
+`11`：命中地址黑名单  
+`12`：账户或充值被冻结  
+`13`：子账户充值拦截  
+> depId | String | 充值记录 ID  
+> actualDepBlkConfirm | String | 最新的充币网络确认数  
+  
+### 提币信息频道
+
+该频道使用如下服务地址  
+wss://ws.okx.com:8443/ws/v5/business，wss://wsaws.okx.com:8443/ws/v5/business
+
+当发起提币或者提币状态发生变化时会触发消息推送。  
+支持母账户或者子账户的订阅  
+
+  * 如果是母账户订阅，可以同时接受母账户与子账户的提币信息的推送  
+
+  * 如果是子账户订阅，则仅支持子账户提币信息的推送  
+
+> 请求示例
+    
+    
+    {
+        "op": "subscribe",
+        "args": [
+            {
+                "channel": "withdrawal-info"
+            }
+        ]
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+op | String | 是 | 操作, `subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道列表  
+> channel | String | 是 | 频道名, `withdrawal-info`  
+> ccy | String | 否 | 币种名称，如 `BTC`  
+  
+> 成功返回示例
+    
+    
+    {
+        "event": "subscribe",
+        "arg": {
+            "channel": "withdrawal-info"
+        }
+    }
+    
+
+> 失败返回示例
+    
+    
+    {
+        "event": "error",
+        "code": "60012",
+        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"withdrawal-info\""}]}"
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 是否必填 | 描述  
+---|---|---|---  
+event | String | 是 | 操作, `subscribe` `unsubscribe` `error`  
+arg | Object | 否 | 订阅的频道  
+> channel | String | 是 | 频道名, `withdrawal-info`  
+> ccy | String | 否 | 币种名称，如 `BTC`  
+code | String | 否 | 错误码  
+msg | String | 否 | 错误消息  
+  
+> 推送示例
+    
+    
+    {
+        "arg": {
+            "channel": "withdrawal-info",
+            "uid": "289320*****0975104"
+        },
+        "data": [{
+            "addrEx": null,
+            "amt": "2",
+            "areaCodeFrom": "",
+            "areaCodeTo": "",
+            "ccy": "USDT",
+            "chain": "USDT-TRC20",
+            "clientId": "",
+            "fee": "0.8",
+            "from": "",
+            "memo": "",
+            "pTime": "1674103268578",
+            "pmtId": "",
+            "state": "0",
+            "subAcct": "test",
+            "tag": "",
+            "to": "TN8CKTQMnpWfT******8KipbJ24ErguhF",
+            "ts": "1674103268472",
+            "txId": "",
+            "uid": "289333*****1101696",
+            "wdId": "63754560"
+        }]
+    }
+    
+
+#### 推送数据参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> uid | String | 用户标识  
+> ccy | String | 币种名称，如 `BTC`  
+data | Array | 订阅的数据  
+> uid | String | (产生数据者的）用户标识  
+> subAcct | String | 子账户名称  
+如果是母账户产生的数据，该字段返回""  
+> pTime | String | 推送时间，Unix时间戳的毫秒数格式，如 1597026383085  
+> ccy | String | 币种  
+> chain | String | 币种链信息  
+有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
+> amt | String | 数量  
+> ts | String | 提币申请时间，Unix 时间戳的毫秒数格式，如 `1655251200000`  
+> from | String | 提币账户  
+可以是邮箱/手机号  
+> areaCodeFrom | String | 如果`from`为手机号，该字段为该手机号的区号  
+> to | String | 收币地址  
+> areaCodeTo | String | 如果`to`为手机号，该字段为该手机号的区号  
+> tag | String | 部分币种提币需要标签，若不需要则不返回此字段  
+> pmtId | String | 部分币种提币需要此字段（payment_id），若不需要则不返回此字段  
+> memo | String | 部分币种提币需要此字段，若不需要则不返回此字段  
+> addrEx | Object |
+> 提币地址备注，部分币种提币需要，若不需要则不返回此字段。如币种TONCOIN的提币地址备注标签名为comment,则该字段返回：{'comment':'123456'}  
+> txId | String | 提币哈希记录  
+内部转账该字段返回""  
+> fee | String | 提币手续费数量  
+> state | String | 提币状态  
+`-3`：撤销中  
+`-2`：已撤销  
+`-1`：失败  
+`0`：等待提币  
+`1`：提币中  
+`2`：提币成功  
+`7`: 审核通过  
+`10`: 等待划转  
+`4`, `5`, `6`, `8`, `9`, `12`: 等待客服审核  
+> wdId | String | 提币申请ID  
+> clientId | String | 客户自定义ID  
+  
 ### 现货网格策略委托订单频道
 
 支持现货网格策略订单的首次订阅推送，定时推送和事件推送
@@ -23582,7 +23862,10 @@ imr 占用
 59311 | 200 | 存在尊享借币，无法设置  
 59312 | 200 | {币种}不支持尊享借币  
 59313 | 200 | 无法还币。在一键借币模式下，您目前没有 ${ccy} 借币（币对：${ccyPair}）  
+59314 | 200 | 当前用户该订单不是借币中，不允许还币  
+59315 | 200 | VIP借币功能正在升级中,稍等10分钟之后再次操作  
 59316 | 200 | 当前用户该币种存在借币申请中的订单，不允许借币  
+59317 | 200 | 当前用户该币种的借币中的订单数量已经超过阈值  
 51152 | 200 | 一键借币模式下，不支持自动借币与自动还币和手动类型混合下单。  
 59401 | 200 | 持仓价值达到持仓限制  
 59402 | 200 | 查询条件中的instId的交易产品当前不是可交易状态，请填写单个instid逐个查询状态详情  
