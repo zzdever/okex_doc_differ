@@ -237,7 +237,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取杠杆多空比 
       * 获取合约多空持仓人数比 
       * 获取合约持仓量及交易量 
-      * 获取期权持仓量及交易量
+      * 获取期权持仓量及交易量 
       * 看涨/看跌期权合约 持仓总量比/交易总量比 
       * 看涨看跌持仓总量及交易总量（按到期日分） 
       * 看涨看跌持仓总量及交易总量（按执行价格分） 
@@ -1589,8 +1589,9 @@ data | Array of objects | 包含结果的对象数组
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 quoteId | String | 可选 | 报价单ID  
-clQuoteId | String | 可选 | 询价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当
+clQuoteId | String | 可选 | 报价单自定义ID，字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间，当
 clRfqId 和 rfqId 都传时，以 rfqId 为准。  
+rfqId | String | 否 | 询价单ID  
   
 > 返回示例
     
@@ -4173,7 +4174,7 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格，如果成交数量为0，该字段也为`0`  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段为""  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
@@ -4351,7 +4352,7 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
-fillPx | String | 最新成交价格，如果成交数量为0，该字段为``  
+fillPx | String | 最新成交价格，如果成交数量为0，该字段为""  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
 fillTime | String | 最新成交时间  
@@ -7141,10 +7142,10 @@ redemptAmt | String | 赎回中的数量
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 ccy | String | 是 | 币种名称，如 `BTC`  
-amt | String | 是 | 申购（赎回）数量  
+amt | String | 是 | 申购/赎回 数量  
 side | String | 是 | 操作类型  
 `purchase`：申购 `redempt`：赎回  
-rate | String | 是 | 申购利率  
+rate | String | 是 | 申购年利率  
 仅适用于申购，新申购的利率会覆盖上次申购的利率  
 参数取值范围在1%到365%之间  
   
@@ -7170,9 +7171,9 @@ rate | String | 是 | 申购利率
 参数名 | 类型 | 描述  
 ---|---|---  
 ccy | String | 币种名称  
-amt | String | 申购（赎回）数量  
+amt | String | 申购/赎回 数量  
 side | String | 操作类型  
-rate | String | 申购利率  
+rate | String | 申购年利率  
   
 ### 设置余币宝借贷利率
 
@@ -20568,11 +20569,11 @@ data | Array | 订阅的数据
 > areaCodeFrom | String | 如果`from`为手机号，该字段为该手机号的区号  
 > to | String | 收币地址  
 > areaCodeTo | String | 如果`to`为手机号，该字段为该手机号的区号  
-> tag | String | 部分币种提币需要标签，若不需要则不返回此字段  
-> pmtId | String | 部分币种提币需要此字段（payment_id），若不需要则不返回此字段  
-> memo | String | 部分币种提币需要此字段，若不需要则不返回此字段  
+> tag | String | 部分币种提币需要标签  
+> pmtId | String | 部分币种提币需要此字段（payment_id）  
+> memo | String | 部分币种提币需要此字段  
 > addrEx | Object |
-> 提币地址备注，部分币种提币需要，若不需要则不返回此字段。如币种TONCOIN的提币地址备注标签名为comment,则该字段返回：{'comment':'123456'}  
+> 提币地址备注。如币种TONCOIN的提币地址备注标签名为comment,则该字段返回：{'comment':'123456'}  
 > txId | String | 提币哈希记录  
 内部转账该字段返回""  
 > fee | String | 提币手续费数量  
@@ -23790,7 +23791,7 @@ imr 占用
 58210 | 200 | 提现手续费大于最大值（提现接口，提现手续费输入有误） |  
 58211 | 200 | 提现手续费小于最小值（提现接口，手续费输入有误） |  
 58212 | 200 | 提现手续费应填写为提币数量的{0}% |  
-58213 | 200 | 提现前请先设置交易密码 |  
+58213 | 200 | 内部转账不支持提币到链上地址 |  
 58214 | 200 | {chainName}维护中，暂停提币 |  
 58215 | 200 | 提币申请ID不存在 |  
 58216 | 200 | 不允许执行该操作 |  
@@ -23798,7 +23799,7 @@ imr 占用
 58218 | 200 | 内部提现失败，请检查参数toAddr与areaCode |  
 58219 | 200 | 为保障您的资金安全，修改手机号/邮箱/谷歌验证后24小时之内将无法提现 |  
 58220 | 200 | 提币请求已撤销 |  
-58221 | 200 | 提币地址需要标签 |  
+58221 | 200 | toAddr参数格式有误，提币地址需要加上标签，格式应该为“地址:标签” |  
 58222 | 200 | 提币地址不合法 |  
 58224 | 200 | 该类型币种暂不支持链上提币到 OKX 地址，请通过内部转账进行提币 |  
 58226 | 200 | {chainName} 已下线，不支持提币 |  
