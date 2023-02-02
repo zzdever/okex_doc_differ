@@ -316,7 +316,7 @@ V5 API只适用于[交易账户](/support/hc/zh-cn/sections/360011507312)。
   * 官方Telegram社群: [OKX API](https://t.me/OKXAPI)
   * 订阅API更新: [OKX API Announcement](https://t.me/OKExAPIChannel)
   * 请花1分钟时间帮助我们提升我们的服务: [V5 API 满意度调研](https://www.wjx.cn/vj/wFoyR0w.aspx)
-  * 添加官方API技术支持QQ社群，QQ号：1511380438 备注：API+姓名+账号，与专业量化人员交流。如果添加过程中遇到问题，请与官网客服联系！
+  * 如有问题请咨询线上客服
 
 ## 创建我的APIKey
 
@@ -6352,6 +6352,10 @@ type | String | 否 | 账单类型
 `222`：提币手续费退款  
 `223`：带单分润  
 `224`：服务费  
+`225`：鲨鱼鳍申购  
+`226`：鲨鱼鳍回款  
+`227`：鲨鱼鳍收益  
+`228`：鲨鱼鳍退款  
 `229`：空投发放  
 `230`：换币完成  
 `232`：利息补贴已入账  
@@ -6554,7 +6558,8 @@ ctAddr | String | 合约地址后6位
 ---|---|---|---  
 ccy | String | 否 | 币种名称，如 `BTC`  
 depId | String | 否 | 充值记录 ID  
-fromWdId | String | 否 | 提币申请 ID  
+fromWdId | String | 否 | 内部转账发起者提币申请 ID  
+如果该笔充值来自于内部转账，则该字段展示内部转账发起者的提币ID  
 txId | String | 否 | 区块转账哈希记录  
 type | String | 否 | 充值方式  
 `3`：内部转账  
@@ -6618,7 +6623,8 @@ state | String | 充值状态
 `12`：账户或充值被冻结  
 `13`：子账户充值拦截  
 depId | String | 充值记录 ID  
-fromWdId | String | 提币申请 ID  
+fromWdId | String | 内部转账发起者提币申请 ID  
+如果该笔充值来自于内部转账，则该字段展示内部转账发起者的提币ID  
 actualDepBlkConfirm | String | 最新的充币网络确认数  
 等待确认是没有达到充币确认数。  
 确认到账是够充币确认数，且币已经到账户中，但是不可提。  
@@ -15245,7 +15251,8 @@ lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`�
 tickSz | String | 下单价格精度，如 `0.0001`  
   
 lotSz | String | 下单数量精度，如 BTC-USDT-SWAP：`1`  
-minSz | String | 最小下单数量  
+minSz | String | 最小下单数量,  
+数量单位是`“交易货币”`  
 ctType | String | `linear`：正向合约  
 `inverse`：反向合约  
 仅适用于`交割/永续`  
@@ -15260,12 +15267,18 @@ state | String | 产品状态
 `suspend`：暂停中  
 `preopen`：预上线  
 `test`：测试中（测试产品，不可交易）  
-maxLmtSz | String | 合约或现货限价单的单笔最大委托数量  
-maxMktSz | String | 合约或现货市价单的单笔最大委托数量  
-maxTwapSz | String | 合约或现货时间加权单的单笔最大委托数量  
-maxIcebergSz | String | 合约或现货冰山委托的单笔最大委托数量  
-maxTriggerSz | String | 合约或现货计划委托委托的单笔最大委托数量  
-maxStopSz | String | 合约或现货止盈止损委托的单笔最大委托数量  
+maxLmtSz | String | 合约或现货限价单的单笔最大委托数量,  
+数量单位是`“交易货币”`  
+maxMktSz | String | 合约或现货市价单的单笔最大委托数量,  
+合约的数量单位是`“张”`，现货的数量单位是`“USDT”`  
+maxTwapSz | String | 合约或现货时间加权单的单笔最大委托数量,  
+数量单位是`“交易货币”`  
+maxIcebergSz | String | 合约或现货冰山委托的单笔最大委托数量,  
+数量单位是`“交易货币”`  
+maxTriggerSz | String | 合约或现货计划委托委托的单笔最大委托数量,  
+数量单位是`“交易货币”`  
+maxStopSz | String | 合约或现货止盈止损委托的单笔最大委托数量,  
+合约的数量单位是`“张”`，现货的数量单位是`“USDT”`  
 当合约预上线时，状态变更为预上线（即新生成一个合约，新合约会处于预上线状态）；
 当产品下线的时候（如交割合约被交割的时候，期权合约被行权的时候），查询不到该产品
 
@@ -21566,7 +21579,8 @@ data | Array | 订阅的数据
 > lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`。可用来分辨`币币杠杆`和`币币`  
 > tickSz | String | 下单价格精度，如 `0.0001`  
 > lotSz | String | 下单数量精度，如 `1`：BTC-USDT-200925 `0.001`：BTC-USDT  
-> minSz | String | 最小下单数量  
+> minSz | String | 最小下单数,  
+数量单位是`“交易货币”`量  
 > ctType | String | 合约类型，`linear`：正向合约 `inverse`：反向合约 ，仅适用于 `交割/永续`  
 > alias | String | 合约日期别名  
 `this_week`：本周  
@@ -21580,12 +21594,18 @@ data | Array | 订阅的数据
 `suspend`：暂停中  
 `preopen`：预上线  
 `test`：测试中（测试产品，不可交易）  
-> maxLmtSz | String | 合约或现货限价单的单笔最大委托数量  
-> maxMktSz | String | 合约或现货市价单的单笔最大委托数量  
-> maxTwapSz | String | 合约或现货时间加权单的单笔最大委托数量  
-> maxIcebergSz | String | 合约或现货冰山委托的单笔最大委托数量  
-> maxTriggerSz | String | 合约或现货计划委托委托的单笔最大委托数量  
-> maxStopSz | String | 合约或现货止盈止损委托的单笔最大委托数量  
+maxLmtSz | String | 合约或现货限价单的单笔最大委托数量,  
+数量单位是`“交易货币”`  
+maxMktSz | String | 合约或现货市价单的单笔最大委托数量,  
+合约的数量单位是`“张”`，现货的数量单位是`“USDT”`  
+maxTwapSz | String | 合约或现货时间加权单的单笔最大委托数量,  
+数量单位是`“交易货币”`  
+maxIcebergSz | String | 合约或现货冰山委托的单笔最大委托数量,  
+数量单位是`“交易货币”`  
+maxTriggerSz | String | 合约或现货计划委托委托的单笔最大委托数量,  
+数量单位是`“交易货币”`  
+maxStopSz | String | 合约或现货止盈止损委托的单笔最大委托数量,  
+合约的数量单位是`“张”`，现货的数量单位是`“USDT”`  
 产品状态变更，是触发instrument接口推送条件： 当合约预上线时，状态变更为预上线（即新生成一个合约，新合约会处于预上线状态）；
 当产品下线的时候（如交割合约被交割的时候，期权合约被行权的时候），状态变更为已过期
 
@@ -23761,7 +23781,7 @@ imr 占用
 58107 | 200 | 请先开通交割合约账户 |  
 58108 | 200 | 请先开通期权合约账户 |  
 58109 | 200 | 请先开通永续合约账户 |  
-58110 | 200 | 当前交易产品触发市场风控，平台已暂停您的资金转出功能，请稍后重试。如需进一步的协助，请联系客服。 |  
+58110 | 200 | 您所交易过或者持仓的产品触发市场风控，平台已暂停您的资金转出功能，请稍后重试。如需进一步的协助，请联系客服。 |  
 58111 | 200 | 永续合约正在收取资金费，暂时无法做资金划转，请稍后重试 |  
 58112 | 200 | 资金划转失败，请联系客服进行处理 |  
 58114 | 400 | 转账金额必须大于 0 |  
