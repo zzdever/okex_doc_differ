@@ -3030,7 +3030,7 @@ SecretKey为用户申请APIKey时所生成。如：`22582BD0CFF14C41EDBF1AB98506
 
 #### 限速： 60次/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1次/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -3213,7 +3213,7 @@ px
 
 #### 限速：300个/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -3486,7 +3486,7 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速： 60次/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1次/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -3559,7 +3559,7 @@ sMsg | String | 事件执行失败时的msg
 
 #### 限速：300个/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -4500,7 +4500,7 @@ posSide | String | 持仓方向 `long`：多 `short`：空 单向持仓模式返
 execType | String | 流动性方向 `T`：taker `M`：maker  
 feeCcy | String | 交易手续费币种或者返佣金币种  
 fee | String | 手续费金额或者返佣金额，手续费扣除为‘负数’，如-0.01；手续费返佣为‘正数’，如 0.01  
-ts | String | 成交明细产生时间，Unix时间戳的毫秒数格式，如`1597026383085`  
+ts | String | 成交时间，与订单频道的`fillTime`相同  
 tradeId  
 当成交明细所归属的订单种类（category）为
 partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"  
@@ -4614,7 +4614,7 @@ posSide | String | 持仓方向 `long`：多 `short`：空 单向持仓模式返
 execType | String | 流动性方向 `T`：taker `M`：maker  
 feeCcy | String | 交易手续费币种或者返佣金币种  
 fee | String | 手续费金额或者返佣金额 ，手续费扣除 为 ‘负数’，如 -0.01 ； 手续费返佣 为 ‘正数’，如 0.01  
-ts | String | 成交明细产生时间，Unix 时间戳的毫秒数格式，如 `1597026383085`  
+ts | String | 成交时间，与订单频道的`fillTime`相同  
 tradeId  
 当成交明细所归属的订单种类（category）为
 partial_liquidation：强制减仓、full_liquidation：强制平仓、adl：ADL自动减仓时，tradeId字段的值为"0"
@@ -4631,7 +4631,7 @@ clOrdId
 
 #### 限速： 20次/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1次/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -7905,7 +7905,7 @@ details | Array | 各币种资产详细信息
 适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
 > disEq | String | 美金层面币种折算权益  
 > availBal | String | 可用余额  
-适用于`简单交易模式`  
+适用于`简单交易模式`、`单币种保证金模式`、`跨币种保证金模式`和`组合保证金模式`  
 > frozenBal | String | 币种占用金额  
 > ordFrozen | String | 挂单冻结数量  
 > liab | String | 币种负债额  
@@ -7958,7 +7958,7 @@ details |  |  |
 > isoEq |  | 是 | 是  
 > availEq |  | 是 | 是  
 > disEq | 是 | 是 | 是  
-> availBal | 是 |  |  
+> availBal | 是 | 是 | 是  
 > frozenBal | 是 | 是 | 是  
 > ordFrozen | 是 | 是 | 是  
 > liab |  |  | 是  
@@ -17573,7 +17573,7 @@ msg | String | 否 | 错误消息
 
 #### 限速：60次/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1次/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -17774,7 +17774,7 @@ px
 
 #### 限速：300个/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -18195,7 +18195,7 @@ data | Array | 请求成功后返回的数据
 
 #### 限速：60次/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1次/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -18313,7 +18313,7 @@ newSz : 当修改已经部分成交的订单时，新的委托数量必须大于
 
 #### 限速：300个/2s
 
-#### 带单合约限速：1个/2s
+#### 跟单交易带单合约的限速：1个/2s
 
 #### 限速规则（期权以外）：UserID + Instrument ID
 
@@ -18710,7 +18710,7 @@ details | Array | 各币种资产详细信息
 适用于`单币种保证金模式`和`跨币种保证金模式`和`组合保证金模式`  
 > disEq | String | 美金层面币种折算权益  
 > availBal | String | 可用余额  
-适用于`简单交易模式`  
+适用于`简单交易模式`, `单币种保证金模式`, `跨币种保证金模式`和`组合保证金模式`  
 > frozenBal | String | 币种占用金额  
 > ordFrozen | String | 挂单冻结数量  
 > liab | String | 币种负债额  
@@ -20484,6 +20484,7 @@ msg | String | 否 | 错误消息
             "chain": "USDT-TRC20",
             "depId": "88165462",
             "from": "",
+            "fromWdId": "",
             "pTime": "1674103661147",
             "state": "0",
             "subAcct": "test",
@@ -20526,6 +20527,8 @@ data | Array | 订阅的数据
 `12`：账户或充值被冻结  
 `13`：子账户充值拦截  
 > depId | String | 充值记录 ID  
+> fromWdId | String | 内部转账发起者提币申请 ID  
+如果该笔充值来自于内部转账，则该字段展示内部转账发起者的提币申请 ID，其他情况返回""  
 > actualDepBlkConfirm | String | 最新的充币网络确认数  
   
 ### 提币信息频道
@@ -20611,8 +20614,10 @@ msg | String | 否 | 错误消息
             "chain": "USDT-TRC20",
             "clientId": "",
             "fee": "0.8",
+            "feeCcy": "USDT",
             "from": "",
             "memo": "",
+            "nonTradableAsset": false,
             "pTime": "1674103268578",
             "pmtId": "",
             "state": "0",
@@ -20643,6 +20648,8 @@ data | Array | 订阅的数据
 > ccy | String | 币种  
 > chain | String | 币种链信息  
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
+> nonTradableAsset | String | 是否为不可交易资产  
+`true`：不可交易资产，`false`：可交易资产  
 > amt | String | 数量  
 > ts | String | 提币申请时间，Unix 时间戳的毫秒数格式，如 `1655251200000`  
 > from | String | 提币账户  
@@ -20658,6 +20665,7 @@ data | Array | 订阅的数据
 > txId | String | 提币哈希记录  
 内部转账该字段返回""  
 > fee | String | 提币手续费数量  
+> feeCcy | String | 提币手续费币种，如 `USDT`  
 > state | String | 提币状态  
 `-3`：撤销中  
 `-2`：已撤销  
@@ -23652,7 +23660,7 @@ imr 占用
 51284 | 200 | 单笔数量的范围{0}~{1}  
 51285 | 200 | 委托总量的范围{0}~{1}  
 51286 | 200 | 下单金额需大于等于{0}  
-51287 | 200 | 策略不支持此合约  
+51287 | 200 | 当前策略不支持此交易品种  
 51288 | 200 | 策略正在停止中，请勿重复点击  
 51289 | 200 | 策略配置不存在，请稍后再试  
 51290 | 200 | 策略引擎正在升级，请稍后重试  
