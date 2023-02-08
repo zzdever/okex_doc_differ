@@ -6560,7 +6560,7 @@ ctAddr | String | 合约地址后6位
 ccy | String | 否 | 币种名称，如 `BTC`  
 depId | String | 否 | 充值记录 ID  
 fromWdId | String | 否 | 内部转账发起者提币申请 ID  
-如果该笔充值来自于内部转账，则该字段展示内部转账发起者的提币ID  
+如果该笔充值来自于内部转账，则该字段展示内部转账发起者的提币申请 ID  
 txId | String | 否 | 区块转账哈希记录  
 type | String | 否 | 充值方式  
 `3`：内部转账  
@@ -6585,18 +6585,32 @@ limit | string | 否 | 返回的结果集数量，默认为100，最大为100，
       "msg": "",
       "data": [
         {
-          "actualDepBlkConfirm": "17",
-          "amt": "135.705808",
-          "ccy": "USDT",
-          "chain": "USDT-TRC20",
-          "depId": "34579090",
-          "fromWdId": "",
-          "from": "",
-          "areaCodeFrom": "",
-          "state": "2",
-          "to": "TN4hxxxxxxxxxxxizqs",
-          "ts": "1655251200000",
-          "txId": "16f3638329xxxxxx42d988f97"
+            "actualDepBlkConfirm": "2",
+            "amt": "1",
+            "areaCodeFrom": "",
+            "ccy": "USDT",
+            "chain": "USDT-TRC20",
+            "depId": "88****33",
+            "from": "",
+            "fromWdId": "",
+            "state": "2",
+            "to": "TN4hGjVXMzy*********9b4N1aGizqs",
+            "ts": "1674038705000",
+            "txId": "fee235b3e812********857d36bb0426917f0df1802"
+        },
+        {
+            "actualDepBlkConfirm": "",
+            "amt": "11",
+            "areaCodeFrom": "86",
+            "ccy": "USDT",
+            "chain": "USDT-Omni",
+            "depId": "53****85",
+            "from": "158****5369",
+            "fromWdId": "",
+            "state": "2",
+            "to": "",
+            "ts": "1651809380000",
+            "txId": "36532892_**********_0_WALLET"
         }
       ]
     }
@@ -6610,9 +6624,11 @@ ccy | String | 币种名称，如 `BTC`
 chain | String | 币种链信息  
 有的币种下有多个链，必须要做区分，如`USDT`下有`USDT-ERC20`，`USDT-TRC20`，`USDT-Omni`多个链  
 amt | String | 充值数量  
-from | String | 充值账户，只显示内部账户转账地址，不显示区块链充值地址  
+from | String | 充值账户  
+如果该笔充值来自于内部转账，则该字段展示内部转账发起者的账户信息，可以是手机号、邮箱、账户名称，其他情况返回""  
 areaCodeFrom | String | 如果`from`为手机号，该字段为该手机号的区号  
 to | String | 到账地址  
+如果该笔充值来自于链上充值，则该字段展示链上地址，其他情况返回""  
 txId | String | 区块转账哈希记录  
 ts | String | 充值到账时间，Unix 时间戳的毫秒数格式，如 `1655251200000`  
 state | String | 充值状态  
@@ -6625,7 +6641,7 @@ state | String | 充值状态
 `13`：子账户充值拦截  
 depId | String | 充值记录 ID  
 fromWdId | String | 内部转账发起者提币申请 ID  
-如果该笔充值来自于内部转账，则该字段展示内部转账发起者的提币ID  
+如果该笔充值来自于内部转账，则该字段展示内部转账发起者的提币申请 ID，其他情况返回""  
 actualDepBlkConfirm | String | 最新的充币网络确认数  
 等待确认是没有达到充币确认数。  
 确认到账是够充币确认数，且币已经到账户中，但是不可提。  
@@ -6757,8 +6773,8 @@ memo | String | 否 | 闪电网络提币的备注
 
 参数名 | 类型 | 描述  
 ---|---|---  
-wdId | String | 提币申请ID  
-cTime | String | 提币ID生成时间  
+wdId | String | 提币申请 ID  
+cTime | String | 提币申请 ID生成时间  
 仅针对部分用户开放此API功能服务，如果需要此功能服务请发邮件至`pablo.magro@okx.com`申请
 
 ### 撤销提币
@@ -7209,7 +7225,7 @@ rate | String | 申购年利率
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
 ccy | String | 是 | 币种名称，如 `BTC`  
-rate | String | 是 | 贷出利率  
+rate | String | 是 | 贷出年利率  
 参数取值范围在1%到365%之间  
   
 > 返回结果
@@ -7230,7 +7246,7 @@ rate | String | 是 | 贷出利率
 参数名 | 类型 | 描述  
 ---|---|---  
 ccy | String | 币种名称，如 `BTC`  
-rate | String | 贷出利率  
+rate | String | 贷出年利率  
   
 ### 获取余币宝出借明细
 
@@ -8685,7 +8701,7 @@ spotOffsetType | String | 现货对冲类型
 label | String | 当前请求API Key的备注名，不超过50位字母（区分大小写）或数字，可以是纯字母或纯数字。  
 roleType | String | 用户角色。  
 `0`：普通用户；`1`：带单者；`2`：跟单者  
-traderInsts | String | 当前账号已经设置的带单合约，仅适用于带单者  
+traderInsts | Array | 当前账号已经设置的带单合约，仅适用于带单者  
 opAuth | String | 是否开通期权交易  
 `0` 未开通，`1` 已经开通  
 ip | String | 绑定的ip地址，多个ip用半角逗号隔开，如：`117.37.203.58,117.37.203.57`。  
@@ -11284,11 +11300,11 @@ apiKey | String | 是 | 用户的 API key
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-result | String | 用户是否与当前节点有邀请关系。 `true`, `false`  
+result | Boolean | 用户是否与当前节点有邀请关系。 `true`, `false`  
 type | String | 是否有节点返佣  
 `0` 有节点返佣  
-`2` 没有节点返佣，因为不存在邀请/召回关系，如：调用该接口的账户不是节点身份，api key不存在）`4`
-没有节点返佣，因为用户的手续费等级大于等于VIP3  
+`1` 没有节点返佣，因为调用该接口的账户不是节点身份  
+`2` 没有节点返佣，因为不存在邀请/召回关系，如：api key不存在 `4` 没有节点返佣，因为用户的手续费等级大于等于VIP3  
   
 ## 网格交易
 
