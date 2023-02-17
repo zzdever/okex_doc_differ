@@ -150,6 +150,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取组合保证金模式全仓限制 
       * 设置组合保证金账户风险对冲模式 
       * 开通期权交易 
+      * 设置自动借币 
     * 子账户 
       * 查看子账户列表 
       * 重置子账户的APIKey 
@@ -4042,7 +4043,8 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
   
 ### 获取历史订单记录（近七天）
 
-获取最近7天的已经完结状态的订单数据，已经撤销的未成交单 只保留2小时
+获取最近7天完结的订单数据（包括7天以前挂单，但近7天才成交得订单数据）。按照订单创建时间倒序排序。  
+已经撤销的未成交单 只保留2小时
 
 #### 限速： 40次/2s
 
@@ -4222,7 +4224,7 @@ cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `159
   
 ### 获取历史订单记录（近三个月）
 
-获取最近3个月的已经完结状态的订单数据
+获取最近3个月完结的订单数据（包括3个月以前挂单，但近3个月才成交的订单数据）。按照订单创建时间倒序排序。
 
 #### 限速： 20次/2s
 
@@ -4319,6 +4321,8 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "pnl":"",
                 "category":"",
                 "reduceOnly": "false",
+                "cancelSource": "20",
+                "cancelSourceReason": "Cancel all after triggered",
                 "uTime":"1597026383085",
                 "cTime":"1597026383085"
             }
@@ -4393,6 +4397,8 @@ category | String | 订单种类
 `delivery`：交割  
 `ddh`：对冲减仓类型订单  
 reduceOnly | String | 是否只减仓，`true` 或 `false`  
+cancelSource | String | 订单取消来源的原因枚举值代码  
+cancelSourceReason | String | 订单取消来源的对应具体原因  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 该接口不包含`已撤销的完全无成交`类型订单数据，可通过`获取历史订单记录（近七天)`接口获取。  
@@ -9840,6 +9846,8 @@ ts | String | 借/还币时间
   
 ### 尊享借币还币
 
+单个币种的借币订单数量最多为20个
+
 #### 限速：6次/s
 
 #### 限速规则：UserID
@@ -9878,15 +9886,11 @@ ordId | String | 可选 | 借币订单ID，还币时，该字段必填
         "code": "0",
         "data": [
             {
-                "amt": "100",
-                "availLoan": "100",
+                "amt": "70809.316200",
                 "ccy": "USDT",
-                "loanQuota": "6000000",
-                "posLoan": "0",
+                "ordId": "544199684697214976",
                 "side": "borrow",
-                "ordId": "1234113444",
-                "state": "1",
-                "usedLoan": "100"
+                "state": "1"
             }
         ],
         "msg": ""
@@ -9900,10 +9904,6 @@ ordId | String | 可选 | 借币订单ID，还币时，该字段必填
 ccy | String | 借贷币种，如 `BTC`  
 side | String | `borrow`：借币，`repay`：还币  
 amt | String | 已借/还币的数量  
-loanQuota | String | 借币限额  
-posLoan | String | 当前账户负债占用（锁定额度内）  
-availLoan | String | 当前账户剩余可用（锁定额度内）  
-usedLoan | String | 当前账户已借额度  
 ordId | String | 借币订单ID  
 state | String | 订单状态  
 `1`:借币申请中  
@@ -10688,6 +10688,53 @@ type | String | 风险对冲模式
 参数名 | 类型 | 描述  
 ---|---|---  
 ts | String | 开通时间  
+  
+### 设置自动借币
+
+仅适用于跨币种保证金模式和组合保证金模式
+
+#### 限速：5次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`POST /api/v5/account/set-auto-loan`
+
+> 请求示例
+    
+    
+    POST /api/v5/account/set-auto-loan
+    body
+    {
+        "autoLoan":true,
+    }
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+autoLoan | Boolean | 否 | 是否自动借币, `true`, `false`  
+默认为 `true`  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [{
+            "autoLoan": true
+        }]
+    }
+    
+
+#### 返回参数
+
+参数名 | 类型 | 描述  
+---|---|---  
+autoLoan | Boolean | 是否自动借币  
   
 ## 子账户
 
@@ -19567,7 +19614,7 @@ data | Array | 订阅的数据
 `13`:策略委托单触发后的生成的限价单  
 > cancelSource | String | 订单取消的来源  
 有效值及对应的含义是：  
-`0`,`5`,`7`,`8`,`10`,`11`,`12`,`15`,`16`,`18`,`19`: 已撤单：系统撤单  
+`0`: 已撤单：系统撤单  
 `1`: 用户主动撤单  
 `2`: 已撤单：预减仓撤单，用户保证金不足导致挂单被撤回  
 `3`: 已撤单：风控撤单，用户保证金不足有爆仓风险，导致挂单被撤回  
@@ -19578,6 +19625,8 @@ data | Array | 订阅的数据
 `14`: 已撤单：IOC 委托订单未完全成交，仅部分成交，导致部分挂单被撤回  
 `17`: 已撤单：平仓单被撤单，由于仓位已被市价全平  
 `20`: 系统倒计时撤单  
+`21`: 已撤单：相关仓位被完全平仓，系统已撤销该止盈止损订单  
+`22`, `23`: 已撤单：只减仓订单仅允许减少仓位数量，系统已撤销该订单  
 > category | String | 订单种类分类  
 `normal`：普通委托订单种类  
 `twap`：TWAP订单种类  
@@ -23456,7 +23505,7 @@ REST API 错误码从 50000 到 59999
 50002 | 400 | JSON 语法错误  
 50004 | 400 | 接口请求超时（不代表请求成功或者失败，请检查请求结果）  
 50005 | 410 | 接口已下线或无法使用  
-50006 | 400 | 无效的Content_Type，请使用"application/json"格式  
+50006 | 400 | 无效的 Content-Type，请使用“application/JSON”格式  
 50007 | 200 | 用户被冻结  
 50008 | 200 | 用户不存在  
 50009 | 200 | 用户处于爆仓冻结  
@@ -24119,11 +24168,11 @@ imr 占用
 
 状态码 | 文案  
 ---|---  
-1009 | Request message exceeds the maximum frame length  
-4001 | Login Failed  
-4002 | Invalid Request  
-4003 | APIKey subscription amount exceeds the limit 100  
-4004 | No data received in 30s  
-4005 | Buffer is full, cannot write data  
-4006 | Abnormal disconnection
+1009 | 用户订阅请求过大  
+4001 | 登录失败  
+4002 | 参数不合法  
+4003 | 登录账户多于100个  
+4004 | 空闲超时30秒  
+4005 | 写缓冲区满  
+4006 | 异常场景关闭
 
