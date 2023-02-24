@@ -181,7 +181,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 撤销项目申购/赎回 
       * 查看活跃订单 
       * 查看历史订单 
-    * 跟单接口 
+    * 跟单 
       * 交易员获取当前带单 
       * 交易员获取历史带单 
       * 交易员止盈止损 
@@ -314,6 +314,9 @@ V5 API只适用于[交易账户](/support/hc/zh-cn/sections/360011507312)。
 ## API学习资源与技术支持
 
   * 学习使用V5 API交易: [V5 API使用指南](/docs-v5/trick_zh/#part1)
+  * 学习使用Python交易现货: [Python 现货交易教程](https://www.okx.com/learn/spot-trading-with-jupyter-notebook)
+  * 学习使用Python交易衍生品: [Python 衍生品交易教程](https://www.okx.com/learn/derivatives-trading-with-jupyter-notebook)
+  * 使用Python SDK更简单地上手: [Python SDK](https://pypi.org/project/python-okx/)
   * 官方Discord社群: [OKX Official Discord Channel](https://discord.gg/ctn6hNWvQe)
   * 官方Telegram社群: [OKX API](https://t.me/OKXAPI)
   * 订阅API更新: [OKX API Announcement](https://t.me/OKExAPIChannel)
@@ -895,8 +898,8 @@ data | Array of objects | 包含结果的对象数组
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-rfqIds | Array of string | 可选 | 询价单IDs  
-clRfqIds | Array of string | 可选 | 询价单自定义ID，当 clRfqIds 和 rfqIds 都传时，以 rfqIds
+rfqIds | Array of strings | 可选 | 询价单IDs  
+clRfqIds | Array of strings | 可选 | 询价单自定义ID，当 clRfqIds 和 rfqIds 都传时，以 rfqIds
 为准。  
   
 > 全部成功示例
@@ -1650,8 +1653,8 @@ data | Array of objects | 包含结果的对象数组
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-quoteIds | Array of string | 可选 | 报价单ID  
-clQuoteIds | Array of string | 可选 | 报价单自定义ID，当 clQuoteIds 和 quoteIds 都传时，以
+quoteIds | Array of strings | 可选 | 报价单ID  
+clQuoteIds | Array of strings | 可选 | 报价单自定义ID，当 clQuoteIds 和 quoteIds 都传时，以
 quoteIds 为准。  
   
 > 全部成功的示例
@@ -3828,9 +3831,15 @@ side | String | 订单方向
 posSide | String | 持仓方向  
 tdMode | String | 交易模式  
 accFillSz | String | 累计成交数量  
+对于`币币`和`杠杆`，单位为交易货币，如 BTC-USDT, 单位为
+BTC；对于市价单，无论`tgtCcy`是`base_ccy`，还是`quote_ccy`，单位均为交易货币；  
+对于交割、永续以及期权，单位为张。  
 fillPx | String | 最新成交价格，如果成交数量为0，该字段为""  
 tradeId | String | 最新成交ID  
 fillSz | String | 最新成交数量  
+对于`币币`和`杠杆`，单位为交易货币，如 BTC-USDT, 单位为
+BTC；对于市价单，无论`tgtCcy`是`base_ccy`，还是`quote_ccy`，单位均为交易货币；  
+对于交割、永续以及期权，单位为张。  
 fillTime | String | 最新成交时间  
 avgPx | String | 成交均价，如果成交数量为0，该字段也为""  
 state | String | 订单状态  
@@ -5802,6 +5811,7 @@ minDep | String | 币种单笔最小充值量
 minWd | String | 币种单笔最小提币量  
 maxWd | String | 币种单笔最大提币量  
 wdTickSz | String | 提币精度,表示小数点后的位数。提币手续费精度与提币精度保持一致。  
+内部转账提币精度为小数点后8位。  
 wdQuota | String | 过去24小时内提币额度，单位为`BTC`  
 usedWdQuota | String | 过去24小时内已用提币额度，单位为`BTC`  
 minFee | String | 最小提币手续费数量  
@@ -5991,7 +6001,7 @@ AUD 、SGD 、ARS、SAR、AED、IQD
 ---|---|---  
 totalBal | String | 账户总资产估值  
 ts | String | 数据更新时间，Unix时间戳的毫秒数格式，如 1597026383085  
-details | Array | 各个账户的资产估值  
+details | Object | 各个账户的资产估值  
 > funding | String | 资金账户  
 > trading | String | 交易账户  
 > classic | String | 经典账户 (已废弃)  
@@ -7034,7 +7044,7 @@ wdId | String | 提币申请ID
 
 ### 小额资产兑换
 
-将资金账户中的小额资产转化为`OKB`。24小时之内只能兑换一次。
+将资金账户中的小额资产转化为`OKB`。24小时之内只能兑换5次。
 
 #### 限速： 1次/s
 
@@ -7057,7 +7067,7 @@ wdId | String | 提币申请ID
 
 参数名 | 类型 | 是否必须 | 描述  
 ---|---|---|---  
-ccy | Array | 是 | 需要转换的币种资产  
+ccy | Array of strings | 是 | 需要转换的币种资产，如 ["BTC","USDT"]  
   
 > 返回结果
     
@@ -7086,7 +7096,7 @@ ccy | Array | 是 | 需要转换的币种资产
 参数名 | 类型 | 描述  
 ---|---|---  
 totalCnvAmt | String | 兑换后总`OKB`数量  
-details | Array | 各币种资产转换详情  
+details | Array of objects | 各币种资产转换详情  
 > ccy | String | 币种资产,如 `BTC`  
 > amt | String | 转换前币种资产数量  
 > cnvAmt | String | 转换后的`OKB`数量  
@@ -8162,7 +8172,7 @@ spotInUseAmt | String | 现货对冲占用数量
 适用于`组合保证金模式`  
 spotInUseCcy | String | 现货对冲占用币种，如 `BTC`  
 适用于`组合保证金模式`  
-closeOrderAlgo | Array | 平仓策略委托订单  
+closeOrderAlgo | Array | 平仓策略委托订单。调用策略委托下单，且`closeFraction`=1 时，该数组才会有值。  
 > algoId | String | 策略委托单ID  
 > slTriggerPx | String | 止损触发价  
 > slTriggerPxType | String | 止损触发价类型  
@@ -9203,7 +9213,8 @@ posSide | String | 持仓方向
 `net`：单向持仓  
 双向持仓模式下会返回两个方向的杠杆倍数  
 lever | String | 杠杆倍数  
-  
+组合保证金账户下交割和永续的全仓不能获取杠杆倍数。
+
 ### 获取交易产品最大可借
 
 #### 限速：20 次/2s
@@ -13240,7 +13251,7 @@ purchasedTime | String | 用户订单创建时间，值为时间戳，Unix时间
 redeemedTime | String | 用户订单赎回时间，值为时间戳，Unix时间戳为毫秒数格式，如 `1597026383085`  
 tag | String | 订单标签  
   
-## 跟单接口
+## 跟单
 
 仅适用于带单交易员
 
@@ -16526,7 +16537,7 @@ limit | String | 否 | 分页返回的结果集数量，最大为100，不填默
 total | String | 平台风险准备金总计，单位为USD  
 instFamily | String | 交易品种  
 适用于`交割/永续/期权`  
-details | Array | 风险准备金详情  
+details | Array of objects | 风险准备金详情  
 > balance | String | 风险准备金总量  
 > amt | String | 风险准备金更新数量  
 > ccy | String | 风险准备金总量对应的币种  
@@ -16718,9 +16729,9 @@ ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`159702638308
 
 **参数名** | **类型** | **描述**  
 ---|---|---  
-contract | Array | 合约交易大数据接口功能支持的币种  
-option | Array | 期权交易大数据接口功能支持的币种  
-spot | Array | 现货交易大数据接口功能支持的币种  
+contract | Array of strings | 合约交易大数据接口功能支持的币种  
+option | Array of strings | 期权交易大数据接口功能支持的币种  
+spot | Array of strings | 现货交易大数据接口功能支持的币种  
   
 ### 获取主动买入/卖出情况
 
@@ -17430,6 +17441,7 @@ msg | String | 否 | 错误消息
 data | Object | 否 | 登陆失败后返回的数据  
 > apiKey | String | 是 | 登陆失败后返回的APIKey  
 多账户批量登录的用户只能订阅 WebSocket 频道，不能使用 WebSocket 交易
+同一个连接，可以分多次登录不同的账户，且新登录的账户默认已经订阅当前连接的频道。
 
 **api_key** :调用API的唯一标识。需要用户手动设置一个 **passphrase** :APIKey的密码 **timestamp**
 :Unix Epoch 时间戳，单位为秒 **sign** :签名字符串，签名算法如下：
@@ -19202,7 +19214,7 @@ data | Array | 订阅的数据
 适用于`组合保证金模式`  
 > spotInUseCcy | String | 现货对冲占用币种，如 `BTC`  
 适用于`组合保证金模式`  
-> closeOrderAlgo | Array | 平仓策略委托订单  
+> closeOrderAlgo | Array | 平仓策略委托订单。调用策略委托下单，且`closeFraction`=1 时，该数组才会有值。  
 >> algoId | String | 策略委托单ID  
 >> slTriggerPx | String | 止损触发价  
 >> slTriggerPxType | String | 止损触发价类型  
@@ -19574,6 +19586,9 @@ data | Array | 订阅的数据
 > fillPx | String | 最新成交价格  
 > tradeId | String | 最新成交ID  
 > fillSz | String | 最新成交数量  
+对于`币币`和`杠杆`，单位为交易货币，如 BTC-USDT, 单位为
+BTC；对于市价单，无论`tgtCcy`是`base_ccy`，还是`quote_ccy`，单位均为交易货币；  
+对于交割、永续以及期权，单位为张。  
 > fillTime | String | 最新成交时间  
 > fillFee | String | 最新一笔成交的手续费金额或者返佣金额：  
 手续费扣除 为 ‘负数’，如 -0.01 ；  
@@ -19581,7 +19596,9 @@ data | Array | 订阅的数据
 > fillFeeCcy | String | 最新一笔成交的手续费币种  
 > execType | String | 最新一笔成交的流动性方向 T：taker M：maker  
 > accFillSz | String | 累计成交数量  
-> fillNotionalUsd | String | 委托单已成交的美元价值  
+对于`币币`和`杠杆`，单位为交易货币，如 BTC-USDT, 单位为
+BTC；对于市价单，无论`tgtCcy`是`base_ccy`，还是`quote_ccy`，单位均为交易货币；  
+对于交割、永续以及期权，单位为张。  
 > avgPx | String | 成交均价，如果成交数量为0，该字段也为0  
 > state | String | 订单状态  
 `canceled`：撤单成功  
@@ -23906,11 +23923,12 @@ imr 占用
 58008 | 200 | 您没有该币种资产  
 58009 | 200 | 币对不存在  
 58010 | 200 | 该链{0}暂不支持  
-58011 | 200 | 抱歉，由于当地法律法规，欧易无法为{region}未认证用户提供服务，请先认证身分以继续使用欧易  
+58011 | 200 | 抱歉，由于当地法律法规，欧易无法为{region}未认证用户提供服务，请先认证身份以继续使用欧易  
 58012 | 200 | 抱歉，由于当地法律法规，欧易无法为{region}未认证用户提供服务，所以您无法向该用户转账  
 58100 | 200 | 行权或结算中，暂无法转入或转出  
 58101 | 200 | 划转冻结  
 58102 | 429 | 已达到速率限制。请参考相应的 API 文档与节流请求  
+58103 | 200 | 该账户划转功能暂不可用，详情请联系客服  
 58104 | 200 | 您在法币区的交易异常，现已被限制划转功能，请您联系在线客服以解除限制  
 58105 | 200 | 您在法币区的交易异常，现已被限制划转功能，请您在网页或APP进行法币划  
 转操作以完成身份验证  
@@ -23935,6 +23953,7 @@ imr 占用
 58126 | 200 | 不可交易资产划转，只能在资金账户间互转  
 58127 | 200 | 主账户 API Key 不支持当前 type 划转类型参数，请参考 API 文档描述  
 58128 | 200 | 子账户 API Key 不支持当前 type 划转类型参数，请参考 API 文档描述  
+58129 | 200 | {param}错误或{param}与type不匹配  
 58200 | 200 | 该币种暂不支持从{0}提现至{1}，敬请谅解  
 58201 | 200 | 今日提现金额累计超过每日限额  
 58202 | 200 | NEO最小提现数量为1，且提现数量必须为整数  
