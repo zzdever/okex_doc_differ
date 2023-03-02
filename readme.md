@@ -77,6 +77,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 策略委托下单 
       * 撤销策略委托订单 
       * 撤销高级策略委托订单 
+      * 获取策略委托单信息 
       * 获取未完成策略委托单列表 
       * 获取历史策略委托单列表 
       * 获取一键兑换主流币币种列表 
@@ -3791,6 +3792,8 @@ clOrdId | String | 可选 | 用户自定义ID
                 "cancelSource": "20",
                 "cancelSourceReason": "Cancel all after triggered",
                 "quickMgnType": "",
+                "algoClOrdId": "",
+                "algoId": "",
                 "uTime":"1597026383085",
                 "cTime":"1597026383085"
             }
@@ -3882,6 +3885,8 @@ cancelSource | String | 订单取消来源的原因枚举值代码
 cancelSourceReason | String | 订单取消来源的对应具体原因  
 quickMgnType | String | 一键借币类型，仅适用于杠杆逐仓的一键借币模式  
 `manual`：手动，`auto_borrow`： 自动借币，`auto_repay`： 自动还币  
+algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`是有值，否则为"",  
+algoId | String | 策略委托单ID，策略订单触发时有值，否则为""  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如：`1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式， 如 ：`1597026383085`  
   
@@ -3977,6 +3982,8 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "tradeId": "",
                 "reduceOnly": "false",
                 "quickMgnType": "",
+                "algoClOrdId": "",
+                "algoId": "",
                 "uTime": "1618235248028"
             }
         ]
@@ -4047,6 +4054,8 @@ category | String | 订单种类
 reduceOnly | String | 是否只减仓，`true` 或 `false`  
 quickMgnType | String | 一键借币类型，仅适用于杠杆逐仓的一键借币模式  
 `manual`：手动，`auto_borrow`： 自动借币，`auto_repay`： 自动还币  
+algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`是有值，否则为"",  
+algoId | String | 策略委托单ID，策略订单触发时有值，否则为""  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
@@ -4152,6 +4161,8 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "reduceOnly": "false",
                 "cancelSource": "20",
                 "cancelSourceReason": "Cancel all after triggered",
+                "algoClOrdId": "",
+                "algoId": "",
                 "uTime":"1597026383085",
                 "cTime":"1597026383085"
             }
@@ -4228,6 +4239,8 @@ category | String | 订单种类
 reduceOnly | String | 是否只减仓，`true` 或 `false`  
 cancelSource | String | 订单取消来源的原因枚举值代码  
 cancelSourceReason | String | 订单取消来源的对应具体原因  
+algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`是有值，否则为"",  
+algoId | String | 策略委托单ID，策略订单触发时有值，否则为""  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如`1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
@@ -4332,6 +4345,8 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "reduceOnly": "false",
                 "cancelSource": "20",
                 "cancelSourceReason": "Cancel all after triggered",
+                "algoClOrdId": "",
+                "algoId": "",
                 "uTime":"1597026383085",
                 "cTime":"1597026383085"
             }
@@ -4408,6 +4423,8 @@ category | String | 订单种类
 reduceOnly | String | 是否只减仓，`true` 或 `false`  
 cancelSource | String | 订单取消来源的原因枚举值代码  
 cancelSourceReason | String | 订单取消来源的对应具体原因  
+algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`是有值，否则为"",  
+algoId | String | 策略委托单ID，策略订单触发时有值，否则为""  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 该接口不包含`已撤销的完全无成交`类型订单数据，可通过`获取历史订单记录（近七天)`接口获取。  
@@ -4713,8 +4730,8 @@ tgtCcy | String | 否 | 委托数量的类型
 reduceOnly | Boolean | 否 | 是否只减仓，`true` 或 `false`，默认`false`  
 仅适用于`币币杠杆`，以及买卖模式下的`交割/永续`  
 仅适用于`单币种保证金模式`和`跨币种保证金模式`  
-clOrdId | String | 否 | 客户自定义订单ID  
-字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间  
+algoClOrdId | String | 否 | 客户自定义策略订单ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
 closeFraction | String | 可选 | 策略委托触发时，平仓的百分比。1 代表100%  
 现在系统只支持全部平仓，唯一接受参数为`1`  
 仅适用于`交割`或`永续`  
@@ -4806,6 +4823,7 @@ timeInterval | String | 是 | 下单间隔
             {
                 "algoId":"12345689",
                 "clOrdId": "",
+                "algoClOrdId": "",
                 "sCode":"0",
                 "sMsg":""
             }
@@ -4819,6 +4837,7 @@ timeInterval | String | 是 | 下单间隔
 ---|---|---  
 algoId | String | 策略委托单ID  
 clOrdId | String | 客户自定义订单ID  
+algoClOrdId | String | 客户自定义策略订单ID  
 sCode | String | 事件执行结果的code，0代表成功  
 sMsg | String | 事件执行失败时的msg  
   
@@ -4948,6 +4967,161 @@ algoId | String | 订单ID
 sCode | String | 事件执行结果的code，0代表成功  
 sMsg | String | 事件执行失败时的msg  
   
+### 获取策略委托单信息
+
+#### 限速： 20次/2s
+
+#### 限速规则：UserID
+
+#### HTTP请求
+
+`GET /api/v5/trade/order-algo`
+
+> 请求示例
+    
+    
+    GET /api/v5/trade/order-algo?algoId=1234231231423
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+algoId | String | 可选 | 策略委托单ID  
+`algoId`和`clOrdId`必须传一个，若传两个，以algoId为主  
+algoClOrdId | String | 可选 | 客户自定义策略订单ID  
+字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
+  
+> 返回结果
+    
+    
+    {
+        "code":"0",
+        "msg":"",
+        "data":[
+            {
+                "instType":"FUTURES",
+                "instId":"BTC-USD-200329",
+                "ordId":"123445",
+                "ccy":"BTC",
+                "clOrdId":"",
+                "algoId":"1234",
+                "sz":"999",
+                "closeFraction":"",
+                "ordType":"oco",
+                "side":"buy",
+                "posSide":"long",
+                "tdMode":"cross",
+                "tgtCcy": "",
+                "state":"effective",
+                "lever":"20",
+                "tpTriggerPx":"",
+                "tpTriggerPxType":"",
+                "tpOrdPx":"",
+                "slTriggerPx":"",
+                "slTriggerPxType":"",
+                "triggerPx":"99",
+                "triggerPxType":"last",
+                "ordPx":"12",
+                "actualSz":"",
+                "actualPx":"",
+                "actualSide":"",
+                "pxVar":"",
+                "pxSpread":"",
+                "pxLimit":"",
+                "szLimit":"",
+                "tag": "adadadadad",
+                "timeInterval":"",
+                "callbackRatio":"",
+                "callbackSpread":"",
+                "activePx":"",
+                "moveTriggerPx":"",
+                "reduceOnly": "false",
+                "triggerTime":"1597026383085",
+                "last": "16012",
+                "failCode": "",
+                "algoClOrdId": "",
+                "cTime":"1597026383000"
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instId | String | 产品ID  
+ccy | String | 保证金币种，仅适用于单币种保证金模式下的全仓杠杆订单  
+ordId | String | 订单ID  
+algoId | String | 策略委托单ID  
+clOrdId | String | 客户自定义订单ID  
+sz | String | 委托数量  
+closeFraction | String | 策略委托触发时，平仓的百分比。1 代表100%  
+ordType | String | 订单类型  
+side | String | 订单方向  
+posSide | String | 持仓方向  
+tdMode | String | 交易模式  
+tgtCcy | String | 币币市价单委托数量`sz`的单位  
+`base_ccy`: 交易货币 ；`quote_ccy`：计价货币  
+仅适用于`币币`市价订单  
+默认买单为`quote_ccy`，卖单为`base_ccy`  
+state | String | 订单状态  
+`effective`： 已生效  
+`canceled`：已撤销  
+`order_failed`：委托失败  
+lever | String | 杠杆倍数，0.01到125之间的数值，仅适用于 `币币杠杆/交割/永续`  
+tpTriggerPx | String | 止盈触发价  
+tpTriggerPxType | String | 止盈触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+tpOrdPx | String | 止盈委托价  
+slTriggerPx | String | 止损触发价  
+slTriggerPxType | String | 止损触发价类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+slOrdPx | String | 止损委托价  
+triggerPx | String | 计划委托触发价格  
+triggerPxType | String | 计划委托触发价格  
+ordPx | String | 计划委托委托价格类型  
+`last`：最新价格  
+`index`：指数价格  
+`mark`：标记价格  
+actualSz | String | 实际委托量  
+actualPx | String | 实际委托价  
+actualSide | String | 实际触发方向 `tp`：止盈 `sl`： 止损  
+triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+pxVar | String | 价格比例  
+仅适用于`冰山委托`和`时间加权委托`  
+pxSpread | String | 价距  
+仅适用于`冰山委托`和`时间加权委托`  
+szLimit | String | 单笔数量  
+仅适用于`冰山委托`和`时间加权委托`  
+pxLimit | String | 挂单限制价  
+仅适用于`冰山委托`和`时间加权委托`  
+tag | String | 订单标签  
+timeInterval | String | 下单间隔  
+仅适用于`时间加权委托`  
+callbackRatio | String | 回调幅度的比例  
+仅适用于`移动止盈止损`  
+callbackSpread | String | 回调幅度的价距  
+仅适用于`移动止盈止损`  
+activePx | String | 移动止盈止损激活价格  
+仅适用于`移动止盈止损`  
+moveTriggerPx | String | 移动止盈止损触发价格  
+仅适用于`移动止盈止损`  
+reduceOnly | String | 是否只减仓，`true` 或 `false`  
+quickMgnType | String | 一键借币类型，仅适用于杠杆逐仓的一键借币模式  
+`manual`：手动，`auto_borrow`： 自动借币，`auto_repay`： 自动还币  
+last | String | 下单时的最新成交价  
+failCode | String | 代表策略触发失败的原因，已撤销和已生效时为""，委托失败时有值，如 51008；  
+仅适用于单向止盈止损委托、双向止盈止损委托、移动止盈止损委托、计划委托。  
+algoClOrdId | String | 客户自定义策略订单ID  
+cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
+  
 ### 获取未完成策略委托单列表
 
 获取当前账户下未触发的策略委托单列表
@@ -4988,7 +5162,7 @@ ordType | String | 是 | 订单类型
 after | String | 否 | 请求此ID之前（更旧的数据）的分页内容，传的值为对应接口的`algoId`  
 before | String | 否 | 请求此ID之后（更新的数据）的分页内容，传的值为对应接口的`algoId`  
 limit | String | 否 | 返回结果的数量，最大为100，默认100条  
-clOrdId | String | 否 | 客户自定义订单ID  
+algoClOrdId | String | 否 | 客户自定义策略订单ID  
 字母（区分大小写）与数字的组合，可以是纯字母、纯数字且长度要在1-32位之间。  
   
 > 返回结果
@@ -5039,6 +5213,7 @@ clOrdId | String | 否 | 客户自定义订单ID
                 "reduceOnly": "false",
                 "quickMgnType": "",
                 "last": "16012",
+                "algoClOrdId": "",
                 "triggerTime": ""
             }
         ],
@@ -5113,6 +5288,7 @@ reduceOnly | String | 是否只减仓，`true` 或 `false`
 quickMgnType | String | 一键借币类型，仅适用于杠杆逐仓的一键借币模式  
 `manual`：手动，`auto_borrow`： 自动借币，`auto_repay`： 自动还币  
 last | String | 下单时的最新成交价  
+algoClOrdId | String | 客户自定义策略订单ID  
 cTime | String | 订单创建时间， Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 获取历史策略委托单列表
@@ -5209,6 +5385,8 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "reduceOnly": "false",
                 "triggerTime":"1597026383085",
                 "last": "16012",
+                "failCode": "",
+                "algoClOrdId": "",
                 "cTime":"1597026383000"
             },
             {
@@ -5251,6 +5429,8 @@ limit | String | 否 | 返回结果的数量，最大为100，默认100条
                 "reduceOnly": "false",
                 "triggerTime":"1597026383085",
                 "last": "16012",
+                "failCode": "",
+                "algoClOrdId": "",
                 "cTime":"1597026383000"
             }
         ]
@@ -5324,7 +5504,12 @@ activePx | String | 移动止盈止损激活价格
 moveTriggerPx | String | 移动止盈止损触发价格  
 仅适用于`移动止盈止损`  
 reduceOnly | String | 是否只减仓，`true` 或 `false`  
+quickMgnType | String | 一键借币类型，仅适用于杠杆逐仓的一键借币模式  
+`manual`：手动，`auto_borrow`： 自动借币，`auto_repay`： 自动还币  
 last | String | 下单时的最新成交价  
+failCode | String | 代表策略触发失败的原因，已撤销和已生效时为""，委托失败时有值，如 51008；  
+仅适用于单向止盈止损委托、双向止盈止损委托、移动止盈止损委托、计划委托。  
+algoClOrdId | String | 客户自定义策略订单ID  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
   
 ### 获取一键兑换主流币币种列表
@@ -9359,8 +9544,8 @@ makerU | String | USDT 合约挂单手续费率，仅适用于`交割/永续`
 delivery | String | 交割手续费率  
 exercise | String | 行权手续费率  
 instType | String | 产品类型  
-takerUSDC | String | USDC 交易区的吃单手续费率  
-makerUSDC | String | USDC 交易区的挂单手续费率  
+takerUSDC | String | USDC 交易区的吃单手续费率，包括 USDC 现货和 USDC 合约  
+makerUSDC | String | USDC 交易区的挂单手续费率，包括 USDC 现货和 USDC 合约  
 ts | String | 数据返回时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 category | String | 币种类别，注意：此参数已废弃  
 备注：  
@@ -16608,7 +16793,7 @@ type | String | 转换类型
 instId | String | 产品ID  
 px | String | 委托价格  
 sz | String | 数量，张转币时，为币的数量，币转张时，为张的数量  
-unit | String | 币的单位，coin: 币，usdt: usdt  
+unit | String | 币的单位，coin: 币，usds: usdt 或者 usdc  
   
 ### 获取期权公共成交数据
 
@@ -19817,6 +20002,8 @@ msg | String | 否 | 错误消息
             "code": "0",
             "msg": "",
             "actualSide": "",
+            "failCode": "",
+            "algoClOrdId": "",
             "triggerTime": "1597026383085",
             "cTime": "1597026383000"
         }]
@@ -19890,6 +20077,9 @@ data | Array | 订阅的数据
 > actualSide | String | 实际触发方向，`sl`：止损 `tp`：止盈  
 > triggerTime | String | 策略委托触发时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
 > reduceOnly | String | 是否只减仓，`true` 或 `false`  
+> failCode | String | 代表策略触发失败的原因，已撤销和已生效时为""，委托失败时有值，如 51008；  
+仅适用于单向止盈止损委托、双向止盈止损委托、移动止盈止损委托、计划委托。  
+> algoClOrdId | String | 客户自定义策略订单ID  
 > code | String | 错误码，默认为0  
 > msg | String | 错误消息，默认为""  
 > cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -20039,7 +20229,9 @@ msg | String | 否 | 错误消息
                 "callbackRatio":"",
                 "callbackSpread":"",
                 "activePx":"",
-                "moveTriggerPx":""
+                "moveTriggerPx":"",
+                "failCode": "",
+                "algoClOrdId": ""
             }
         ]
     }
@@ -20117,6 +20309,9 @@ data | Array | 订阅的数据
 仅适用于`移动止盈止损`  
 > activePx | String | 移动止盈止损激活价格  
 仅适用于`移动止盈止损`  
+> failCode | String | 代表策略触发失败的原因，已撤销和已生效时为""，委托失败时有值，如 51008；  
+仅适用于单向止盈止损委托、双向止盈止损委托、移动止盈止损委托、计划委托。  
+> algoClOrdId | String | 客户自定义策略订单ID  
 > moveTriggerPx | String | 移动止盈止损触发价格  
 仅适用于`移动止盈止损`  
 > pTime | String | 订单信息的推送时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -22740,7 +22935,7 @@ asks和bids值数组举例说明： ["411.8", "10", "0", "4"]
 \- 411.8为深度价格  
 \- 10为此价格的数量 （合约交易为合约，现货/币币杠杆为交易币的数量  
 \- 0该字段已弃用(始终为0)  
-\- 4为此价格的订单数量
+\- 4为此价格的订单数量  如果需要订阅多个50或400档频道，建议通过多个链接进行订阅，每个链接低于30条频道。
 
 #### Checksum机制
 
