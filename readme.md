@@ -728,8 +728,8 @@ legs | Array of objects | 是 | 组合交易，每次最多可以提交15组交�
 如未指定，则处于双向持仓模式下的用户始终会开新仓位。  
 仅适用交割、永续。  
 > tgtCcy | String | 否 | 委托数量的类型  
-`base_ccy`: 交易货币 `quote_ccy`: 计价货币  
-默认为`base_ccy`，仅适用于`币币`。  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
   
 > 返回示例
     
@@ -1491,8 +1491,8 @@ legs | Array of objects | 是 | 组合交易
 如未指定，则处于双向持仓模式下的用户始终会开新仓位。  
 仅适用交割、永续。  
 > tgtCcy | String | 否 | 委托数量的类型  
-`base_ccy`: 交易货币 `quote_ccy`: 计价货币  
-默认为`base_ccy`，仅适用于`币币`。  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
   
 > 返回示例
     
@@ -1568,6 +1568,8 @@ data | Array of objects | 包含结果的对象数组
 在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
 仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
   
 ### 取消报价单
 
@@ -2031,6 +2033,8 @@ data | Array of objects | 包含结果的数组
 在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
 仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
   
 ### 获取大宗交易信息
 
@@ -2308,7 +2312,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
       "event": "error",
       "code": "60012",
-      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"rfqs\"}]}"
+      "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"rfqs\"}]}"
     }
     
 
@@ -2395,6 +2399,8 @@ data | Array | 订阅的数据
 在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
 仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
   
 ### 报价频道
 
@@ -2438,7 +2444,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
       "event": "error",
       "code": "60012",
-      "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"quotes\"}]}"
+      "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"quotes\"}]}"
     }
     
 
@@ -2530,6 +2536,8 @@ data | Array | 订阅的数据
 在双向持仓模式下仅可选择`long`或`short`。 如未指定，则返回""，对应于为交易开新仓位的方向（买入=>`long`，卖出=>`short`）。  
 仅适用交割、永续。  
 >> tgtCcy | String | 委托数量的类型  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
   
 ### 大宗交易频道
 
@@ -2660,6 +2668,8 @@ data | Array | 订阅的数据
 >> sz | String | 成交数量  
 >> side | String | 询价单方向  
 >> tgtCcy | String | 委托数量的类型  
+定义`sz`属性的单位。仅适用于
+instType=`SPOT`。有效值为`base_ccy`和`quote_ccy`。未指定时，默认为`base_ccy`。  
 >> fee | String | 手续费，正数代表平台返佣 ，负数代表平台扣除。  
 >> feeCcy | String | 手续费币种  
 >> tradeId | String | 最新成交Id  
@@ -15580,7 +15590,7 @@ expTime | String | 交割/行权日期，仅适用于`交割` 和 `期权`
 Unix时间戳的毫秒数格式，如 `1597026383085`  
 lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`  
 tickSz | String | 下单价格精度，如 `0.0001`  
-  
+对于期权来说，是梯度中的最小下单价格精度。  
 lotSz | String | 下单数量精度，如 BTC-USDT-SWAP：`1`  
 minSz | String | 最小下单数量,  
 合约的数量单位是`“张”`，现货的数量单位是`“交易货币”`  
@@ -18793,7 +18803,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"account\", \"ccy\" : \"BTC\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"account\", \"ccy\" : \"BTC\"}]}"
     }
     
 
@@ -19097,7 +19107,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"positions\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"positions\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -19481,7 +19491,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"balance_and_position\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"balance_and_position\"}]}"
     }
     
 
@@ -19653,7 +19663,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"orders\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"orders\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -20735,7 +20745,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"deposit-info\""}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"deposit-info\""}]}"
     }
     
 
@@ -21823,7 +21833,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"instruments\", \"instType\" : \"FUTURES\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"instruments\", \"instType\" : \"FUTURES\"}]}"
     }
     
 
@@ -21936,6 +21946,7 @@ data | Array | 订阅的数据
 > expTime | String | 交割日期，仅适用于 `交割/期权`  
 > lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`。可用来分辨`币币杠杆`和`币币`  
 > tickSz | String | 下单价格精度，如 `0.0001`  
+对于期权来说，是梯度中的最小下单价格精度。  
 > lotSz | String | 下单数量精度，如 `1`：BTC-USDT-200925 `0.001`：BTC-USDT  
 > minSz | String | 最小下单数,  
 合约的数量单位是`“张”`，现货的数量单位是`“交易货币”`量  
@@ -22434,7 +22445,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"estimated-price\", \"instId\" : \"FUTURES\",\"instFamily\" :\"BTC-USD\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"estimated-price\", \"instId\" : \"FUTURES\",\"instFamily\" :\"BTC-USD\"}]}"
     }
     
 
@@ -22533,7 +22544,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"mark-price\", \"instId\" : \"LTC-USD-190628\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"mark-price\", \"instId\" : \"LTC-USD-190628\"}]}"
     }
     
 
@@ -22840,7 +22851,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"books\", \"instId\" : \"BTC-USD-191227\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"books\", \"instId\" : \"BTC-USD-191227\"}]}"
     }
     
 
@@ -23349,7 +23360,7 @@ args | Array | 是 | 请求订阅的频道列表
     {
         "event": "error",
         "code": "60012",
-        "msg": "Illegal request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"index-candle30m\", \"instId\" : \"BTC-USD\"}]}"
+        "msg": "Invalid request: {\"op\": \"subscribe\", \"argss\":[{ \"channel\" : \"index-candle30m\", \"instId\" : \"BTC-USD\"}]}"
     }
     
 
@@ -24191,11 +24202,15 @@ imr 占用
 58227 | 200 | 不可交易资产提币只能全部提出  
 58228 | 200 | 不可交易资产提币要求 API key 必须绑定 IP  
 58229 | 200 | 资金账户手续费不足 {fee} USDT  
+58230 | 200 | 根据法规要求，您需要完成 Lv. 1 身份认证才能继续提币  
+58231 | 200 | 根据法规要求，由于您的收款人尚未完成 Lv. 1 身份认证，交易无法完成  
 58300 | 200 | 创建充值地址超过上限  
 58301 | 200 | 充值地址不存在  
 58302 | 200 | 充值地址需要标签  
 58303 | 200 | 该链{chain}充值当前不可用  
 58304 | 200 | 创建invoice失败  
+58305 | 200 | 找不到充币地址，请完成身份认证并生成充币地址  
+58306 | 200 | 根据法规要求，您需要完成 Lv. 1 身份认证才能继续充币  
 58350 | 200 | 您的余额不足  
 58351 | 200 | invoice已经过期  
 58352 | 200 | invoice无效  
