@@ -3896,7 +3896,7 @@ cancelSource | String | 订单取消来源的原因枚举值代码
 cancelSourceReason | String | 订单取消来源的对应具体原因  
 quickMgnType | String | 一键借币类型，仅适用于杠杆逐仓的一键借币模式  
 `manual`：手动，`auto_borrow`： 自动借币，`auto_repay`： 自动还币  
-algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`是有值，否则为"",  
+algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`时有值，否则为"",  
 algoId | String | 策略委托单ID，策略订单触发时有值，否则为""  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如：`1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式， 如 ：`1597026383085`  
@@ -4250,7 +4250,7 @@ category | String | 订单种类
 reduceOnly | String | 是否只减仓，`true` 或 `false`  
 cancelSource | String | 订单取消来源的原因枚举值代码  
 cancelSourceReason | String | 订单取消来源的对应具体原因  
-algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`是有值，否则为"",  
+algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`时有值，否则为"",  
 algoId | String | 策略委托单ID，策略订单触发时有值，否则为""  
 uTime | String | 订单状态更新时间，Unix时间戳的毫秒数格式，如`1597026383085`  
 cTime | String | 订单创建时间，Unix时间戳的毫秒数格式，如 `1597026383085`  
@@ -5096,11 +5096,11 @@ slTriggerPxType | String | 止损触发价类型
 `mark`：标记价格  
 slOrdPx | String | 止损委托价  
 triggerPx | String | 计划委托触发价格  
-triggerPxType | String | 计划委托触发价格  
-ordPx | String | 计划委托委托价格类型  
+triggerPxType | String | 计划委托触发价格类型  
 `last`：最新价格  
 `index`：指数价格  
 `mark`：标记价格  
+ordPx | String | 订单委托价格  
 actualSz | String | 实际委托量  
 actualPx | String | 实际委托价  
 actualSide | String | 实际触发方向 `tp`：止盈 `sl`： 止损  
@@ -12676,6 +12676,7 @@ direction | String | 可选 | 合约网格类型
 duration | String | 否 | 回测周期  
 `7D`：7天，`30D`：30天，`180D`：180天  
 默认`现货网格`为`7D`，`天地网格`为`180D`  
+合约网格只支持`7D`  
   
 > 返回结果
     
@@ -19745,6 +19746,8 @@ msg | String | 否 | 错误消息
                 "tpTriggerPxType": "last",
                 "tradeId": "242589207",
                 "quickMgnType": "",
+                "algoClOrdId": "",
+                "algoId": "",
                 "uTime": "1654084353264"
             }
         ]
@@ -19872,6 +19875,8 @@ BTC；对于市价单，无论`tgtCcy`是`base_ccy`，还是`quote_ccy`，单位
 > reduceOnly | String | 是否只减仓，`true` 或 `false`  
 > quickMgnType | String | 一键借币类型，仅适用于杠杆逐仓的一键借币模式  
 `manual`：手动，`auto_borrow`： 自动借币，`auto_repay`： 自动还币  
+> algoClOrdId | String | 客户自定义策略订单ID。策略订单触发，且策略单有`algoClOrdId`时有值，否则为"",  
+> algoId | String | 策略委托单ID，策略订单触发时有值，否则为""  
 > code | String | 错误码，默认为0  
 > msg | String | 错误消息，默认为""  
   
@@ -22709,7 +22714,7 @@ data | Array | 订阅的数据
   
 ### 限价频道
 
-获取交易的最高买价和最低卖价。限价有变化时，每5秒推送一次数据，限价没变化时，不推送数据
+获取衍生品交易的最高买价和最低卖价。限价有变化时，每5秒推送一次数据，限价没变化时，不推送数据
 
 > 请求示例
     
@@ -22731,6 +22736,7 @@ op | String | 是 | 操作，`subscribe` `unsubscribe`
 args | Array | 是 | 请求订阅的频道列表  
 > channel | String | 是 | 频道名，`price-limit`  
 > instId | String | 是 | 产品ID  
+仅适用于`交割`/`永续`/`期权`  
   
 > 成功返回示例
     
@@ -24102,6 +24108,7 @@ imr 占用
 52921 | 200 | 报价已交易，请重新询价  
 52922 | 200 | 报价已过期，请重新询价  
 52923 | 200 | 服务异常，请稍后重试  
+52924 | 200 | 下单过于频繁，请稍后重试  
   
 ### 币币/币币杠杆类
 
