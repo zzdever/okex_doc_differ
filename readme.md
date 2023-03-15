@@ -12465,12 +12465,12 @@ redemptAmt | String | 赎回中的数量
 
 #### HTTP请求
 
-`POST /api/v5/finance/savings/purchase_redempt`
+`POST /api/v5/finance/savings/purchase-redempt`
 
 > 请求示例
     
     
-    POST /api/v5/finance/savings/purchase_redempt
+    POST /api/v5/finance/savings/purchase-redempt
     body
     {
         "ccy":"BTC",
