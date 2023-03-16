@@ -235,6 +235,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 获取风险准备金余额 
       * 张币转换 
       * 获取期权公共成交数据
+      * 获取期权价格梯度
     * 交易大数据 
       * 获取交易大数据支持币种 
       * 获取主动买入/卖出情况 
@@ -293,6 +294,7 @@ API接口 Broker接入 最佳实践 更新日志
       * 指数行情频道 
       * Status 频道 
       * 期权公共成交频道 
+      * 平台公共爆仓单频道
   * 错误码 
     * REST 
       * 公共 
@@ -2261,7 +2263,7 @@ code | String | 结果代码，0 表示成功。
 msg | String | 错误信息，如果代码不为 0，则不为空。  
 data | Array of objects | 包含结果的对象数组.  
 > cTime | String | 执行创建的时间，Unix时间戳的毫秒数格式。  
-> blockTdId | String | 大宗交易ID.  
+> blockTdId | String | 大宗交易ID  
 > legs | Array of objects | 组合交易  
 >> instId | String | 产品ID  
 >> px | String | 成交价格  
@@ -15594,7 +15596,7 @@ expTime | String | 交割/行权日期，仅适用于`交割` 和 `期权`
 Unix时间戳的毫秒数格式，如 `1597026383085`  
 lever | String | 该`instId`支持的最大杠杆倍数，不适用于`币币`、`期权`  
 tickSz | String | 下单价格精度，如 `0.0001`  
-对于期权来说，是梯度中的最小下单价格精度。  
+对于期权来说，是梯度中的最小下单价格精度，如果想要获取期权价格梯度，请使用"获取期权价格梯度"接口  
 lotSz | String | 下单数量精度，如 BTC-USDT-SWAP：`1`  
 minSz | String | 最小下单数量,  
 合约的数量单位是`“张”`，现货的数量单位是`“交易货币”`  
@@ -16225,7 +16227,7 @@ ts | String | 系统时间，Unix时间戳的毫秒数格式，如 `159702638308
   
 ### 获取平台公共爆仓单信息
 
-最近1天的爆仓单信息
+最近1天的爆仓单信息。
 
 #### 限速：40次/2s
 
@@ -16889,6 +16891,86 @@ fwdPx | String | 成交时的远期价格
 indexPx | String | 成交时的指数价格  
 markPx | String | 成交时的标记价格  
 ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`1597026383085`  
+  
+### 获取期权价格梯度
+
+获取期权价格梯度信息
+
+#### 限速：5次/2s
+
+#### 限速规则：IP
+
+#### HTTP请求
+
+`GET /api/v5/public/instrument-tick-bands`
+
+> 请求示例
+    
+    
+    GET /api/v5/public/instrument-tick-bands?instType=OPTION
+    
+
+#### 请求参数
+
+参数名 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+instType | String | Yes | 产品类型  
+`OPTION`：期权  
+instFamily | String | No | 交易品种，仅适用于期权  
+  
+> 返回结果
+    
+    
+    {
+        "code": "0",
+        "msg": "",
+        "data": [
+            {
+                "instType": "OPTION",
+                "instFamily": "BTC-USD",
+                "tickBand": [
+                    {
+                        "minPx": "0",
+                        "maxPx": "100",
+                        "tickSz": "0.1"
+                    },
+                    {
+                        "minPx": "100",
+                        "maxPx": "10000",
+                        "tickSz": "1"
+                    }
+                ]
+            },
+            {
+                "instType": "OPTION",
+                "instFamily": "ETH-USD",
+                "tickBand": [
+                    {
+                        "minPx": "0",
+                        "maxPx": "100",
+                        "tickSz": "0.1"
+                    },
+                    {
+                        "minPx": "100",
+                        "maxPx": "10000",
+                        "tickSz": "1"
+                    }
+                ]
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+instType | String | 产品类型  
+instFamily | String | 交易品种  
+tickBand | String | 下单价格精度梯度  
+> minPx | String | 最低下单价格  
+> maxPx | String | 最高下单价格  
+> tickSz | String | 下单价格精度，如 0.0001  
   
 ## 交易大数据
 
@@ -23727,6 +23809,89 @@ data | Array | 订阅的数据
 > markPx | String | 成交时的标记价格  
 > ts | String | 成交时间，Unix时间戳的毫秒数格式， 如`1597026383085`  
   
+### 平台公共爆仓单频道
+
+获取爆仓单信息。
+
+> 请求示例
+    
+    
+    {
+      "op": "subscribe",
+      "args": [
+        {
+          "channel": "liquidation-orders",
+          "instType": "SWAP"
+        }
+      ]
+    }
+    
+
+#### 请求参数
+
+参数 | 类型 | 是否必须 | 描述  
+---|---|---|---  
+op | String | 是 | 操作，`subscribe` `unsubscribe`  
+args | Array | 是 | 请求订阅的频道  
+> channel | String | 是 | 频道名，`liquidation-orders`  
+> instType | String | 是 | 产品类型  
+`SWAP`：永续合约  
+`FUTURES`：交割合约  
+  
+> 返回结果
+    
+    
+    {
+        "arg": {
+            "channel": "liquidation-orders",
+            "instType": "SWAP"
+        },
+        "data": [
+            {
+                "details": [
+                    {
+                        "bkLoss": "0",
+                        "bkPx": "",
+                        "ccy": "USDT",
+                        "posSide": "",
+                        "side": "",
+                        "sz": "989.9123170781309932",
+                        "ts": "1629962347000"
+                    }
+                ],
+                "instId": "BTC-USDT-SWAP",
+                "instType": "SWAP",
+                "uly": ""
+            }
+        ]
+    }
+    
+
+#### 返回参数
+
+**参数名** | **类型** | **描述**  
+---|---|---  
+arg | Object | 订阅成功的频道  
+> channel | String | 频道名  
+> instType | String | 产品类型  
+data | Array | 订阅的数据  
+> instType | String | 产品类型  
+> instId | String | 产品ID，如 `BTC-USD-SWAP`  
+> uly | String | 标的指数，仅适用于`交割/永续/期权`  
+> details | Array | 详细内容  
+>> side | String | 订单方向  
+`buy`：买  
+`sell`：卖  
+>> posSide | String | 持仓方向  
+`long`：多  
+`short`：空  
+`side`和`posSide`组合方式，sell/long：强平多 ; buy/short:强平空  
+>> bkPx | String | 破产价格，与系统爆仓账号委托成交的价格。  
+>> sz | String | 强平数量  
+>> bkLoss | String | 穿仓亏损数量  
+>> ccy | String | 强平币种，仅适用于`币币杠杆`  
+>> ts | String | 强平发生的时间，Unix时间戳的毫秒数格式，如 `1597026383085` /  
+  
 # 错误码
 
 ## REST
@@ -24220,7 +24385,7 @@ imr 占用
 58303 | 200 | 该链{chain}充值当前不可用  
 58304 | 200 | 创建invoice失败  
 58305 | 200 | 找不到充币地址，请完成身份认证并生成充币地址  
-58306 | 200 | 根据法规要求，您需要完成 Lv. 1 身份认证才能继续充币  
+58306 | 200 | 您需要完成 Lv. 1 身份认证才能继续充币  
 58350 | 200 | 您的余额不足  
 58351 | 200 | invoice已经过期  
 58352 | 200 | invoice无效  
